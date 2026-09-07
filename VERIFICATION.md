@@ -1,6 +1,6 @@
 # ProtoLab OS — Verification Report
 
-**Application version:** 1.0.0-poc  
+**Application version:** 1.0.1-poc  
 **Schema version:** 1  
 **Verification date:** 2026-09-07  
 **Target:** static GitHub Pages proof-of-concept
@@ -13,7 +13,7 @@ Final automated results:
 
 - **28 / 28** domain, workflow, guard-rail and data-integrity tests passed.
 - **5 / 5** persistence / JSON import-export / reset tests passed.
-- **5 / 5** UI startup/rendering smoke tests passed in a deterministic DOM harness.
+- **7 / 7** UI startup/rendering/interaction smoke tests passed in a deterministic DOM harness, including a regression test that taps inside a modal form without closing it and a separate backdrop-close test.
 - **9 / 9** static/deployment/mobile-source checks passed.
 - Required GitHub Pages assets returned **HTTP 200** from a local static server.
 - All shipped JavaScript files passed `node --check` syntax validation.
@@ -40,6 +40,7 @@ A deploying organisation should still perform normal acceptance testing on its i
 |---|---|---|
 | Application startup | PASS | UI runtime harness sets application ready flag and renders dashboard/navigation |
 | Navigation structure | PASS | UI runtime/static checks; actual Chromium click automation not claimed |
+| Modal/form interaction | PASS | Regression harness verifies taps/clicks inside modal inputs do not close the modal; backdrop and explicit Cancel/Close controls remain close paths |
 | Mobile layout/source checks | PASS | Responsive breakpoints at 820 px and 560 px; 44 px touch target baseline |
 | IndexedDB persistence | PASS (adapter harness) | `IndexedDBStorageRepository` save/load tested against deterministic IndexedDB-compatible mock |
 | Refresh persistence | PASS (adapter equivalent) | Save then reload through a new repository read path preserves state |
@@ -111,7 +112,7 @@ These scripts are optional evidence; they are **not required to run the applicat
 
 - `verification-node.js` — domain/workflow/guard-rail tests
 - `verification-repository-node.js` — IndexedDB repository adapter, export/import/reset tests
-- `verification-ui-node.js` — deterministic UI startup/render smoke harness
+- `verification-ui-node.js` — deterministic UI startup/render/interaction smoke harness, including modal tap regression
 - `verification-static.py` — static asset, relative path and responsive-source checks
 
 The production POC itself requires no Node, npm or Python.

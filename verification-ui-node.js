@@ -2,9 +2,8 @@ const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=__dirname;
 function fakeEl(){return {innerHTML:'',textContent:'',value:'',checked:false,style:{},dataset:{},className:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},appendChild(){},remove(){},click(){},focus(){},setAttribute(){},addEventListener(){},querySelector(){return null},querySelectorAll(){return []}}}
 const els={}; for(const k of ['#page','#mainNav','#actionCount','#roleSelect','#menuButton','#globalSearch','#searchResults','#sidebar','#toastRoot','#modalRoot','.brand']) els[k]=fakeEl();
-let domReady=null;
-const document={querySelector:s=>els[s]||fakeEl(),querySelectorAll:s=>[],createElement:tag=>fakeEl(),addEventListener:(ev,cb)=>{if(ev==='click'){}},body:fakeEl()};
-document.addEventListener=(ev,cb)=>{if(ev==='DOMContentLoaded')domReady=cb};
+let domReady=null; const listeners={};
+const document={querySelector:s=>els[s]||fakeEl(),querySelectorAll:s=>[],createElement:tag=>fakeEl(),addEventListener:(ev,cb)=>{(listeners[ev]||(listeners[ev]=[])).push(cb)},body:fakeEl()};
 const ctx={console,Date,Math,Intl,setTimeout,clearTimeout,Blob:class{},URL:{createObjectURL(){return'blob:x'},revokeObjectURL(){}},confirm(){return true},prompt(){return'1'},innerWidth:1200,window:null,document,navigator:{},location:{protocol:'http:'},scrollTo(){}};ctx.window=ctx;ctx.window.addEventListener=(ev,cb)=>{if(ev==='DOMContentLoaded')domReady=cb};vm.createContext(ctx);
 for(const f of ['core.js','demo-data.js','services.js']) vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
 ctx.ProtoLab.IndexedDBStorageRepository=class{async init(){return true} async load(){return ctx.ProtoLab.createDemoState()} async save(){return true} async reset(){return ctx.ProtoLab.createDemoState()} async exportJSON(s){return JSON.stringify(s)} async importJSON(t){return JSON.parse(t)}};
@@ -18,4 +17,14 @@ vm.runInContext(fs.readFileSync(path.join(root,'app.js'),'utf8'),ctx,{filename:'
  ['navigation markup rendered',/Prototype Requests/.test(els['#mainNav'].innerHTML)],
  ['role selector populated',/Engineering Requester/.test(els['#roleSelect'].innerHTML)],
  ['action count populated',Number(els['#actionCount'].textContent)>0]
-];let fail=0;for(const [n,v] of checks){console.log((v?'PASS':'FAIL')+' | '+n);if(!v)fail++}console.log(`\nRESULT: ${checks.length-fail} passed, ${fail} failed`);process.exitCode=fail?1:0})().catch(e=>{console.error(e);process.exitCode=1});
+];
+// Regression: clicking/tapping inside a modal must not be treated as a backdrop close.
+const fakeBackdrop={};
+const insideTarget={classList:{contains(){return false}},closest(sel){if(sel==='[data-modal-close]')return fakeBackdrop;return null}};
+els['#modalRoot'].innerHTML='<div class=\"modal-backdrop\"><section class=\"modal\"><input></section></div>';
+for(const cb of (listeners.click||[]))cb({target:insideTarget});
+checks.push(['modal form interaction does not close modal',els['#modalRoot'].innerHTML!=='']);
+const backdropTarget={classList:{contains(cls){return cls==='modal-backdrop'}},closest(){return null}};
+for(const cb of (listeners.click||[]))cb({target:backdropTarget});
+checks.push(['backdrop tap still closes modal',els['#modalRoot'].innerHTML==='']);
+let fail=0;for(const [n,v] of checks){console.log((v?'PASS':'FAIL')+' | '+n);if(!v)fail++}console.log(`\nRESULT: ${checks.length-fail} passed, ${fail} failed`);process.exitCode=fail?1:0})().catch(e=>{console.error(e);process.exitCode=1});
