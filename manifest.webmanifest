@@ -1,0 +1,9 @@
+{
+  "name": "ProtoLab OS — Prototype Build Management",
+  "short_name": "ProtoLab OS",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f8",
+  "theme_color": "#0c5862",
+  "icons": []
+}
