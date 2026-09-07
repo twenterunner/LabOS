@@ -1,6 +1,6 @@
 # ProtoLab OS — Verification Report
 
-**Application version:** 1.0.1-poc  
+**Application version:** 1.0.3-poc  
 **Schema version:** 1  
 **Verification date:** 2026-09-07  
 **Target:** static GitHub Pages proof-of-concept
@@ -11,10 +11,10 @@ The delivered package was checked with deterministic service/domain tests, an In
 
 Final automated results:
 
-- **28 / 28** domain, workflow, guard-rail and data-integrity tests passed.
+- **32 / 32** domain, workflow, guard-rail and data-integrity tests passed.
 - **5 / 5** persistence / JSON import-export / reset tests passed.
-- **7 / 7** UI startup/rendering/interaction smoke tests passed in a deterministic DOM harness, including a regression test that taps inside a modal form without closing it and a separate backdrop-close test.
-- **9 / 9** static/deployment/mobile-source checks passed.
+- **12 / 12** UI startup/rendering/interaction smoke tests passed in a deterministic DOM harness, including modal-touch regression checks, guided-workspace source/runtime checks, and the independent Control Plan approval path.
+- **14 / 14** static/deployment/mobile-source checks passed, including versioned asset URLs, stale service-worker cleanup, modal isolation, the guided-workspace replacement, and explicit Approver/Reviewer Control Plan permission.
 - Required GitHub Pages assets returned **HTTP 200** from a local static server.
 - All shipped JavaScript files passed `node --check` syntax validation.
 
@@ -40,7 +40,9 @@ A deploying organisation should still perform normal acceptance testing on its i
 |---|---|---|
 | Application startup | PASS | UI runtime harness sets application ready flag and renders dashboard/navigation |
 | Navigation structure | PASS | UI runtime/static checks; actual Chromium click automation not claimed |
-| Modal/form interaction | PASS | Regression harness verifies taps/clicks inside modal inputs do not close the modal; backdrop and explicit Cancel/Close controls remain close paths |
+| Guided request workspace | PASS | Horizontal workspace tabs and separate gate stepper removed from request workspace; one vertical tappable checklist shows state, owner and next action |
+| Guided owner handoff | PASS | Checklist/detail source checks include demo role handoff; Control Plan explicitly routes Quality owner → independent Approver / Reviewer |
+| Modal/form interaction | PASS | Regression harness verifies taps/clicks inside modal inputs and on the surrounding backdrop do not close the modal; only explicit Cancel/Close controls close it |
 | Mobile layout/source checks | PASS | Responsive breakpoints at 820 px and 560 px; 44 px touch target baseline |
 | IndexedDB persistence | PASS (adapter harness) | `IndexedDBStorageRepository` save/load tested against deterministic IndexedDB-compatible mock |
 | Refresh persistence | PASS (adapter equivalent) | Save then reload through a new repository read path preserves state |
@@ -58,8 +60,9 @@ A deploying organisation should still perform normal acceptance testing on its i
 | Process release | PASS | Completed development creates reusable Released process Rev A |
 | PFMEA linkage | PASS | Seeded route-linked risk items; add-risk workflow implemented |
 | Control Plan creation | PASS (source/UI) | New draft Control Plan can be created from a request |
-| Control Plan approval | PASS | Independent approval records approver/time |
-| Separation of duties | PASS | Self-approval rejected when configured |
+| Control Plan definition completion | PASS (source/UI + service guard) | Draft special-characteristic controls require target/specification, method and reaction plan before approval; draft controls are editable |
+| Control Plan approval | PASS | Independent approval records approver/time; Approver / Reviewer has explicit permission |
+| Separation of duties | PASS | Self-approval rejected; Quality owner is guided to independent Approver / Reviewer |
 | Revision control | PASS | Approved plan is superseded; new Draft revision is created rather than edited in place |
 | Build readiness gate | PASS | Seeded blocker scenario detected; exact blocker guidance generated |
 | Guard-rail behaviour | PASS | Release hold, incomplete development, invalid conditions and evidence checks covered |
@@ -103,6 +106,8 @@ The deterministic suite checks or exercises these rules:
 - measurement objective limits produce deterministic pass/fail;
 - delivered serial genealogy retains delivery evidence;
 - rework preserves original process history.
+- demo reset creates a fresh deep copy rather than reusing mutated seed arrays;
+- seeded approved Control Plans carry independent approver evidence.
 
 The application also evaluates additional invariants on startup through `ProtoLab.validateInvariants()`.
 

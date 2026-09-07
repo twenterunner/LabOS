@@ -18,13 +18,18 @@ vm.runInContext(fs.readFileSync(path.join(root,'app.js'),'utf8'),ctx,{filename:'
  ['role selector populated',/Engineering Requester/.test(els['#roleSelect'].innerHTML)],
  ['action count populated',Number(els['#actionCount'].textContent)>0]
 ];
-// Regression: clicking/tapping inside a modal must not be treated as a backdrop close.
-const fakeBackdrop={};
-const insideTarget={classList:{contains(){return false}},closest(sel){if(sel==='[data-modal-close]')return fakeBackdrop;return null}};
+// Regression: the modal is isolated from global click handling. Interacting with fields or the backdrop must not close it.
 els['#modalRoot'].innerHTML='<div class=\"modal-backdrop\"><section class=\"modal\"><input></section></div>';
+const insideTarget={classList:{contains(){return false}},closest(){return null}};
 for(const cb of (listeners.click||[]))cb({target:insideTarget});
 checks.push(['modal form interaction does not close modal',els['#modalRoot'].innerHTML!=='']);
 const backdropTarget={classList:{contains(cls){return cls==='modal-backdrop'}},closest(){return null}};
 for(const cb of (listeners.click||[]))cb({target:backdropTarget});
-checks.push(['backdrop tap still closes modal',els['#modalRoot'].innerHTML==='']);
+checks.push(['backdrop tap does not close modal on mobile',els['#modalRoot'].innerHTML!=='']);
+const appSource=fs.readFileSync(path.join(root,'app.js'),'utf8');
+checks.push(['modal backdrop is not marked as a close control',!/modal-backdrop\" data-modal-close/.test(appSource)]);
+checks.push(['modal close is bound explicitly inside modal root',/querySelectorAll\('\[data-modal-close\]'\).*closeModal/.test(appSource)]);
+checks.push(['guided checklist replaces horizontal workspace navigation',/guided-workspace/.test(appSource)&&/renderGuidedChecklist/.test(appSource)&&!/workspace-tabs\">\$\{tabs/.test(appSource)]);
+checks.push(['guided checklist rows expose owner and next action',/guide-owner/.test(appSource)&&/guide-next/.test(appSource)]);
+checks.push(['Control Plan offers direct independent-approver switch',/data-switch-role=\"approver\"/.test(appSource)&&/Approve independently/.test(appSource)]);
 let fail=0;for(const [n,v] of checks){console.log((v?'PASS':'FAIL')+' | '+n);if(!v)fail++}console.log(`\nRESULT: ${checks.length-fail} passed, ${fail} failed`);process.exitCode=fail?1:0})().catch(e=>{console.error(e);process.exitCode=1});

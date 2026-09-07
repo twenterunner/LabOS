@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.1-poc';
+  ProtoLab.VERSION = '1.0.3-poc';
   ProtoLab.SCHEMA_VERSION = 1;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -23,7 +23,7 @@
     lab_planner:['request:view','triage','plan','route:edit','materials:allocate','report:view'], process_engineer:['request:view','route:edit','process:develop','process:release','pfmea:edit','workinstruction:edit','report:view'],
     technician:['request:view','execution:run','evidence:add','measurement:add','report:view'], quality:['request:view','controlplan:edit','controlplan:approve','quality:disposition','release:review','report:approve'],
     metrology:['request:view','equipment:manage','measurement:review'], product_safety:['request:view','productsafety:approve'], lab_manager:['request:view','plan','priority:change','override:approve','release:approve','dashboard:management'],
-    approver:['request:view','approval:perform'], auditor:['request:view','audit:view','report:view'], administrator:['*']
+    approver:['request:view','approval:perform','controlplan:approve','report:view'], auditor:['request:view','audit:view','report:view'], administrator:['*']
   };
   ProtoLab.can = (role,perm) => { const p=ProtoLab.PERMISSIONS[role]||[]; return p.includes('*')||p.includes(perm); };
   ProtoLab.statusClass = s => {

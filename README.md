@@ -2,6 +2,11 @@
 
 ProtoLab OS is a completely new browser-only proof-of-concept for controlled automotive prototype build operations. It supports guided engineering requests, lab triage, process selection/development, process-risk linkage, first-class Control Plans, readiness gates, digital traveller execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting and audit history.
 
+
+## v1.0.3 guided-workflow update
+
+Request workspaces use a single vertical guided checklist rather than a horizontal tab strip and separate gate stepper. The checklist names the owner, next action and state for every major prototype-build step. Control Plan separation of duties is also explicit: the Quality owner completes the draft controls, then an independent **Approver / Reviewer** can approve the revision. The demo includes a direct role-switch shortcut for that independent approval.
+
 ## Important compliance statement
 
 This POC is designed to **support IATF 16949-aligned controls and audit-ready workflows**. Software alone does not make an organisation IATF 16949 certified. Customer-specific requirements, product-safety controls, retention rules, approval matrices and controlled organisational procedures must be configured and governed by the deploying organisation.

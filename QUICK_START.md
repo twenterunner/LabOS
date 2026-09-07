@@ -31,34 +31,22 @@ Go to **Prototype Requests**. Useful demo cases include:
 - `P26-0054` — engineering configuration change after submission.
 - `P26-0055` — delivered and traceable build.
 
-## 3. Follow the dedicated workspace
+## 3. Follow the guided request checklist
 
-Each request has one workspace with:
+Every request now uses **one vertical, tappable checklist** instead of a horizontal module menu. Follow it from top to bottom. Each row shows:
 
-- status/gate strip
-- requested and forecast dates
-- risk and owner
-- visual build flow
-- schedule
-- configuration/BOM
-- materials
-- process risk
-- Control Plan
-- equipment/people
-- serialized units
-- execution
-- characterisation
-- quality/deviations
-- approvals
-- delivery
-- cost
-- documents
-- audit trail
-- lessons learned
+- completion / action-required state
+- responsible owner and role
+- the exact next action
+- a tap target that opens the controlled detail for that step
+
+The checklist walks through request definition → triage → materials → process route/development → PFMEA/risk → Control Plan → equipment/competency → readiness → execution → characterisation → quality → release → delivery → records/lessons.
+
+For the demo, when the next action belongs to another role, the detail view can offer a **Demo: switch to …** shortcut.
 
 ## 4. Test a blocker
 
-Open `P26-0049` and the **Control Plan** tab. The readiness review explains:
+Open `P26-0049`, then tap **Create & independently approve Control Plan** in the guided checklist. The readiness review explains:
 
 - what is missing
 - why it matters
@@ -69,15 +57,15 @@ Open `P26-0049` and the **Control Plan** tab. The readiness review explains:
 
 ## 5. Test AUTO-PLAN
 
-As **Prototype Lab Coordinator / Planner**, open a request and select **Visual build flow** or **Schedule**, then choose **AUTO-PLAN**. The local planner assigns valid equipment and qualified available staff and updates the forecast.
+As **Prototype Lab Coordinator / Planner**, open a request, tap the relevant **Lab triage, feasibility & forecast** or **Define visual process route** checklist item, then choose **AUTO-PLAN**. The local planner assigns valid equipment and qualified available staff and updates the forecast.
 
 ## 6. Test controlled execution
 
-Switch to **Prototype Technician**, open a build in progress and choose **Execution**. Mandatory evidence is required. New/modified unreleased processes and invalid calibrated equipment are guarded.
+Switch to **Prototype Technician**, open a build in progress and tap **Serialise & execute digital traveller**. Mandatory evidence is required. New/modified unreleased processes and invalid calibrated equipment are guarded.
 
 ## 7. Test quality disposition
 
-Switch to **Quality Engineer**, open `P26-0050` → **Quality / deviations**. Open the disposition workflow. A release hold cannot be cleared until mandatory verification is complete.
+Switch to **Quality Engineer**, open `P26-0050` and tap **Disposition exceptions & complete quality review**. Open the disposition workflow. A release hold cannot be cleared until mandatory verification is complete.
 
 ## 8. Generate a report
 
