@@ -1,4 +1,16 @@
-# ProtoLab OS — Quick Start — REV 1.0.20
+# ProtoLab OS — Quick Start — REV 1.0.23
+
+## What changed in REV 1.0.23
+
+- Add **Planning situations** for vacations, staff absence, equipment outage/shutdown, whole-lab closure or another capacity block. They are real AUTO-PLAN constraints and are visible on the planning timeline.
+- The first lab commitment becomes the immutable **Original commitment**. Every later accepted date movement is a reason-coded replan.
+- Each build tracks original commitment, current/final commitment, replan count, net days moved, total schedule churn and actual delivery.
+- When AUTO-PLAN predicts a different date, the commitment is not silently overwritten: the build shows **Replan decision required** until the planner accepts a new commitment and records the reason.
+- Management KPIs include original-commitment hit rate, final-commitment hit rate, replan rate, average movement and replan root-cause Pareto.
+
+## What changed in REV 1.0.22
+
+Use **Prototype Requests** as the main searchable portfolio and archive. Closed builds automatically move to **Archived** but retain report and route-traveller access. Workflow colors/icons are consistent: green ✓ done, yellow ● ongoing/open, red ✕ blocker/late. Potential projects include cost. BOM/build consumables are optional and can be enabled from the request cost area. Characterisation and Build Reports were repaired and optimized.
 
 ## What changed in REV 1.0.20
 

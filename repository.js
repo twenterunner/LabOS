@@ -48,6 +48,26 @@ class MigrationService{
     (s.measurements||[]).forEach(m=>{if(!m.measurementType)m.measurementType='legacy';});
     s.dataVersion='2026.09-demo-11';s.schemaVersion=8;continue;
    }
+   if(s.schemaVersion===8){
+    P.ensureEnterpriseModel(s);
+    (s.requests||[]).forEach(r=>{r.archived=!!(r.archived||r.status==='CLOSED');r.archivedAt=r.archivedAt||(r.archived?(r.closedAt||r.deliveredAt||r.submittedAt||P.now()):null);r.consumablesEnabled=!!r.consumablesEnabled;r.buildConsumables=Array.isArray(r.buildConsumables)?r.buildConsumables:[];r.costingEnabled=r.costingEnabled!==false;});
+    s.dataVersion='2026.09-demo-12';s.schemaVersion=9;continue;
+   }
+   if(s.schemaVersion===9){
+    P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    s.planningEvents=Array.isArray(s.planningEvents)?s.planningEvents:[];
+    (s.requests||[]).forEach(r=>{
+      r.originalRequestedDate=r.originalRequestedDate||r.requiredDate||null;
+      r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];
+      if(!r.originalCommitmentDate&&r.triage?.status==='Committed'&&r.triage?.forecastDate){
+        r.originalCommitmentDate=r.triage.forecastDate;r.currentCommitmentDate=r.triage.forecastDate;
+        r.commitmentHistory.push({seq:1,type:'initial',at:r.triage.committedAt||r.submittedAt||P.now(),oldDate:null,newDate:r.triage.forecastDate,deltaDays:0,cumulativeDays:0,reasonCategory:'Initial commitment',reason:'Migrated committed timing',eventId:null,actor:'Migration'});
+      }
+      r.currentCommitmentDate=r.currentCommitmentDate||r.originalCommitmentDate||null;
+      r.actualDeliveryDate=r.actualDeliveryDate||null;r.pendingReplanContext=r.pendingReplanContext||null;
+    });
+    s.dataVersion='2026.09-demo-13';s.schemaVersion=10;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.20-poc';
-  ProtoLab.SCHEMA_VERSION = 8;
+  ProtoLab.VERSION = '1.0.23-poc';
+  ProtoLab.SCHEMA_VERSION = 10;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -73,12 +73,12 @@
     'default':['PROC-001','PROC-002','PROC-003','PROC-010','PROC-014','PROC-015','PROC-017','PROC-020','PROC-021','PROC-022'],
     'PRD-005':['PROC-001','PROC-002','PROC-003','PROC-006','PROC-014','PROC-016','PROC-017','PROC-020','PROC-021','PROC-022']
   };
-  ProtoLab.getDefaultBom = productId => (ProtoLab.DEFAULT_BOMS[productId]||[]).map((x,i)=>({id:`BOM-${productId}-${i+1}`,partNumber:x[0],description:x[1],revision:x[2],qtyPerUnit:1,unit:'pcs'}));
+  ProtoLab.getDefaultBom = productId => (ProtoLab.DEFAULT_BOMS[productId]||[]).map((x,i)=>({id:`BOM-${productId}-${i+1}`,partNumber:x[0],description:x[1],revision:x[2],qtyPerUnit:1,unit:'pcs',kind:'component',unitCost:0,wastePct:0}));
   ProtoLab.getDefaultRoute = productId => ProtoLab.deepClone(ProtoLab.DEFAULT_ROUTES[productId]||ProtoLab.DEFAULT_ROUTES.default);
   ProtoLab.ensureMaterialRequirements = (state,r) => {
     const product=state.products.find(p=>p.id===r.productId); if(product&&!product.bom?.length) product.bom=ProtoLab.getDefaultBom(product.id);
     if(!Array.isArray(r.materialRequirements)||!r.materialRequirements.length){
-      const bom=(product?.bom?.length?product.bom:ProtoLab.getDefaultBom(r.productId));
+      const bom=(product?.bom?.length?product.bom:ProtoLab.getDefaultBom(r.productId)).filter(b=>String(b.kind||'component')!=='consumable');
       r.materialRequirements=bom.map((b,i)=>({id:`MATREQ-${r.id}-${i+1}`,partNumber:b.partNumber,description:b.description,revision:b.revision,qtyPerUnit:Number(b.qtyPerUnit||1),requiredQty:Number(b.qtyPerUnit||1)*Number(r.quantity||1),unit:b.unit||'pcs'}));
     }
     return r.materialRequirements;
@@ -86,7 +86,7 @@
   ProtoLab.ensureMaterialModel = state => {
     state.materials=state.materials||[]; state.allocations=state.allocations||[]; state.approvals=state.approvals||[]; state.bookings=state.bookings||[];
     (state.products||[]).forEach(p=>{if(!p.bom?.length)p.bom=ProtoLab.getDefaultBom(p.id);if(!p.defaultRoute?.length)p.defaultRoute=ProtoLab.getDefaultRoute(p.id);});
-    const allParts=(state.products||[]).flatMap(p=>p.bom||[]);
+    const allParts=(state.products||[]).flatMap(p=>(p.bom||[]).filter(b=>String(b.kind||'component')!=='consumable'));
     allParts.forEach((b,i)=>{if(!state.materials.some(m=>m.partNumber===b.partNumber&&m.revision===b.revision)){state.materials.push({id:`STOCK-${b.partNumber}-A`,partNumber:b.partNumber,description:b.description,revision:b.revision,supplier:i%3===0?'Supplier Alpha':i%3===1?'Supplier Beta':'Internal Stores',lot:`LOT-${b.partNumber.replace(/[^A-Z0-9]/gi,'').slice(-8)}-A`,quantity:80,status:'Available',certificate:`COC-${b.partNumber}-A`,specialHandling:'Standard ESD',expiry:null});state.materials.push({id:`STOCK-${b.partNumber}-B`,partNumber:b.partNumber,description:b.description,revision:b.revision,supplier:'Internal Stores',lot:`LOT-${b.partNumber.replace(/[^A-Z0-9]/gi,'').slice(-8)}-B`,quantity:30,status:'Available',certificate:`COC-${b.partNumber}-B`,specialHandling:'Standard ESD',expiry:null});}});
     (state.requests||[]).forEach(r=>ProtoLab.ensureMaterialRequirements(state,r));
     (state.allocations||[]).forEach(a=>{if(!a.requirementId){const r=state.requests.find(x=>x.id===a.requestId),m=state.materials.find(x=>x.id===a.materialId),req=r?.materialRequirements?.find(q=>q.partNumber===m?.partNumber&&q.revision===m?.revision);if(req)a.requirementId=req.id;else if(a.status==='Issued')a.status='Unmatched';}});
@@ -110,9 +110,29 @@
   ProtoLab.normaliseMaterialSource = value => value==='Lab stock'?'Lab supplied':value==='External supplier'?'Engineering supplied':(value||'Engineering supplied');
   ProtoLab.median = values => { const a=(values||[]).filter(Number.isFinite).sort((x,y)=>x-y); if(!a.length)return null; const m=Math.floor(a.length/2); return a.length%2?a[m]:(a[m-1]+a[m])/2; };
   ProtoLab.ensurePlanningModel = state => {
-    state.standardTests=state.standardTests||[]; state.buildHistory=state.buildHistory||[]; state.competencies=state.competencies||[];
-    (state.requests||[]).forEach(r=>{r.materialOwnership=ProtoLab.normaliseMaterialSource(r.materialOwnership);ProtoLab.ensureAssuranceProfile(r);ProtoLab.ensureMaterialRequirements(state,r);ProtoLab.ensureTestRequirements(state,r);});
+    state.standardTests=state.standardTests||[]; state.buildHistory=state.buildHistory||[]; state.competencies=state.competencies||[]; state.planningEvents=state.planningEvents||[];
+    (state.requests||[]).forEach(r=>{
+      r.materialOwnership=ProtoLab.normaliseMaterialSource(r.materialOwnership);ProtoLab.ensureAssuranceProfile(r);ProtoLab.ensureMaterialRequirements(state,r);ProtoLab.ensureTestRequirements(state,r);
+      r.originalRequestedDate=r.originalRequestedDate||r.requiredDate||null;
+      r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];
+      if(!r.originalCommitmentDate&&r.triage?.status==='Committed'&&r.triage?.forecastDate){r.originalCommitmentDate=r.triage.forecastDate;r.currentCommitmentDate=r.triage.forecastDate;r.commitmentHistory.push({seq:1,type:'initial',at:r.triage.assessedAt||ProtoLab.now(),oldDate:null,newDate:r.triage.forecastDate,deltaDays:0,cumulativeDays:0,reasonCategory:'Initial commitment',reason:'Migrated from committed planning forecast.',eventId:null,actor:r.owner||'Lab Planner'});}
+      if(r.originalCommitmentDate&&!r.currentCommitmentDate)r.currentCommitmentDate=r.originalCommitmentDate;
+      if(['DELIVERED','CLOSED'].includes(r.status)&&!r.actualDeliveryDate){const ser=(state.serials||[]).find(x=>x.requestId===r.id&&x.delivery?.date);r.actualDeliveryDate=ser?.delivery?.date||r.closedAt?.slice?.(0,10)||r.archivedAt?.slice?.(0,10)||null;}
+    });
     return state;
+  };
+  ProtoLab.commitmentMetrics = r => {
+    const hist=Array.isArray(r?.commitmentHistory)?r.commitmentHistory:[],replans=hist.filter(x=>x.type==='replan'),original=r?.originalCommitmentDate||null,current=r?.currentCommitmentDate||original,actual=r?.actualDeliveryDate||null;
+    const net=(original&&current)?ProtoLab.daysBetween(original,current):0,churn=replans.reduce((n,x)=>n+Math.abs(Number(x.deltaDays||0)),0);
+    return {original,current,actual,replanCount:replans.length,netReplanDays:net,churnDays:churn,actualVsOriginalDays:(original&&actual)?ProtoLab.daysBetween(original,actual):null,actualVsFinalDays:(current&&actual)?ProtoLab.daysBetween(current,actual):null};
+  };
+  ProtoLab.recordCommitment = (state,r,newDate,{reasonCategory='',reason='',eventId=null}={}) => {
+    if(!r||!newDate)throw new Error('A forecast date is required before commitment.');r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];
+    if(!r.originalCommitmentDate){r.originalCommitmentDate=newDate;r.currentCommitmentDate=newDate;r.commitmentHistory.push({seq:r.commitmentHistory.length+1,type:'initial',at:ProtoLab.now(),oldDate:null,newDate,deltaDays:0,cumulativeDays:0,reasonCategory:'Initial commitment',reason:'First lab timing commitment.',eventId:null,actor:state.identity?.name||'Lab Planner'});return {type:'initial',changed:true};}
+    const oldDate=r.currentCommitmentDate||r.originalCommitmentDate;if(oldDate===newDate){r.currentCommitmentDate=newDate;return {type:'unchanged',changed:false};}
+    if(!String(reasonCategory||'').trim()||!String(reason||'').trim())throw new Error('Every committed replan requires a reason category and explanation.');
+    const deltaDays=ProtoLab.daysBetween(oldDate,newDate),cumulativeDays=ProtoLab.daysBetween(r.originalCommitmentDate,newDate);r.currentCommitmentDate=newDate;
+    r.commitmentHistory.push({seq:r.commitmentHistory.length+1,type:'replan',at:ProtoLab.now(),oldDate,newDate,deltaDays,cumulativeDays,reasonCategory:String(reasonCategory).trim(),reason:String(reason).trim(),eventId:eventId||null,actor:state.identity?.name||'Lab Planner'});return {type:'replan',changed:true,deltaDays,cumulativeDays};
   };
   ProtoLab.matchStandardTest = (state,name) => {
     const q=String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); if(!q)return null;
@@ -166,6 +186,27 @@
     return errors;
   };
 
+
+  ProtoLab.pipelineProjectCost = (state,project) => {
+    if(!project)return 0;
+    const product=(state.products||[]).find(p=>p.id===project.productId),qty=Math.max(1,Number(project.quantity||1)),finance=state.settings?.finance||{},techRate=Number(finance.roleRates?.technician||58),contPct=Number(finance.contingencyPct||0);
+    let bom=0,process=0,labour=0,equipment=0;
+    for(const b of product?.bom||[]){
+      const unitCost=Number(b.unitCost||0),factor=String(b.kind||'component')==='consumable'?(1+Number(b.wastePct||0)/100):1;
+      bom+=unitCost*Number(b.qtyPerUnit||1)*qty*factor;
+    }
+    const route=product?.defaultRoute?.length?product.defaultRoute:ProtoLab.getDefaultRoute(project.productId);
+    for(const pid of route||[]){
+      const p=(state.processes||[]).find(x=>x.id===pid);if(!p)continue;
+      const units=p.basis==='Batch'?1:qty,hours=Math.max(.25,(Number(p.setupTime||0)+Number(p.cycleTime||0)*units)/60);
+      process+=Number(p.fixedCharge||0)+Number(p.consumableCost||0)*units;
+      labour+=hours*techRate;
+      const eq=(state.equipment||[]).find(e=>e.capability===p.equipmentCapability);equipment+=hours*Number(eq?.hourlyCost||0);
+    }
+    const subtotal=bom+process+labour+equipment;
+    return subtotal*(1+contPct/100);
+  };
+
   ProtoLab.ensureEnterpriseModel = state => {
     state.settings=state.settings||{};
     state.settings.finance=state.settings.finance||{
@@ -178,8 +219,11 @@
     state.calibrationCertificates=state.calibrationCertificates||[];
     state.resourceCareBookings=state.resourceCareBookings||[];
     state.pipelineProjects=state.pipelineProjects||[];
+    state.planningEvents=state.planningEvents||[];
     state.settings.capacity=state.settings.capacity||{productiveStaffHoursPerWeek:32,equipmentHoursPerWeek:60};
     state.improvementProposals=state.improvementProposals||[];
+    (state.products||[]).forEach((p,pi)=>{p.bom=p.bom||[];(p.bom||[]).forEach((b,bi)=>{b.kind=b.kind||'component';b.unitCost=Number(b.unitCost??0);b.wastePct=Number(b.wastePct??0);});});
+    (state.requests||[]).forEach(r=>{r.archived=r.archived===true||r.status==='CLOSED';if(r.archived&&!r.archivedAt)r.archivedAt=r.closedAt||r.updatedAt||r.requiredDate||ProtoLab.todayISO();r.consumablesEnabled=!!r.consumablesEnabled;r.buildConsumables=Array.isArray(r.buildConsumables)?r.buildConsumables:[];r.costingEnabled=r.costingEnabled!==false;r.originalRequestedDate=r.originalRequestedDate||r.requiredDate||null;r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];if(r.originalCommitmentDate&&!r.currentCommitmentDate)r.currentCommitmentDate=r.originalCommitmentDate;});
     (state.competencies||[]).forEach((c,i)=>{c.status=c.status||'Released';c.requiredCertificate=c.requiredCertificate||`${c.id}-CERT`;c.validMonths=Number(c.validMonths||24);c.trainingDurationHours=Number(c.trainingDurationHours||4);c.owner=c.owner||'Lab Manager';});
     const today=new Date();
     (state.staff||[]).forEach((person,pi)=>{
@@ -218,12 +262,13 @@
     });
     if(!state.pipelineProjects.length){
       const ids=(state.products||[]).map(p=>p.id); state.pipelineProjects=[
-        {id:'PIPE-001',name:'Next-gen brake sensor DV',productId:ids[0],probability:0.85,startDate:new Date(today.getTime()+45*86400000).toISOString().slice(0,10),quantity:30,programme:'Platform X refresh'},
-        {id:'PIPE-002',name:'48V current sensing concept',productId:ids[1],probability:0.60,startDate:new Date(today.getTime()+80*86400000).toISOString().slice(0,10),quantity:24,programme:'Electrification study'},
-        {id:'PIPE-003',name:'Hydrogen sensing customer trial',productId:ids[4],probability:0.45,startDate:new Date(today.getTime()+110*86400000).toISOString().slice(0,10),quantity:18,programme:'H2 demonstrator'},
-        {id:'PIPE-004',name:'Steering torque sample refresh',productId:ids[6],probability:0.70,startDate:new Date(today.getTime()+65*86400000).toISOString().slice(0,10),quantity:20,programme:'Chassis update'}
+        {id:'PIPE-001',name:'Next-gen brake sensor DV',productId:ids[0],probability:0.85,startDate:new Date(today.getTime()+45*86400000).toISOString().slice(0,10),quantity:30,programme:'Platform X refresh',owner:'Mila Jansen'},
+        {id:'PIPE-002',name:'48V current sensing concept',productId:ids[1],probability:0.60,startDate:new Date(today.getTime()+80*86400000).toISOString().slice(0,10),quantity:24,programme:'Electrification study',owner:'Jonas Meijer'},
+        {id:'PIPE-003',name:'Hydrogen sensing customer trial',productId:ids[4],probability:0.45,startDate:new Date(today.getTime()+110*86400000).toISOString().slice(0,10),quantity:18,programme:'H2 demonstrator',owner:'Eva de Vries'},
+        {id:'PIPE-004',name:'Steering torque sample refresh',productId:ids[6],probability:0.70,startDate:new Date(today.getTime()+65*86400000).toISOString().slice(0,10),quantity:20,programme:'Chassis update',owner:'Mila Jansen'}
       ];
     }
+    (state.pipelineProjects||[]).forEach(p=>{p.owner=p.owner||'Unassigned';const auto=ProtoLab.pipelineProjectCost(state,p);if(!Number.isFinite(Number(p.estimatedCost))||Number(p.estimatedCost)<=0){p.estimatedCost=Number(auto.toFixed(2));p.costSource='auto';}else p.estimatedCost=Number(p.estimatedCost);p.costSource=p.costSource||'auto';});
     return state;
   };
   ProtoLab.staffQualification = (state,staff,skillId,onDate=ProtoLab.todayISO()) => {

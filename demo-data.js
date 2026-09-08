@@ -121,8 +121,16 @@ products.forEach((product,pi)=>{
  }
 });
 P.createDemoState=function(){
- const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-11',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,competencies,standardTests,buildHistory,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false}});
- P.ensureMaterialModel(state);P.ensurePlanningModel(state);P.ensureEnterpriseModel(state);
+ const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-13',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,competencies,standardTests,buildHistory,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false}});
+ P.ensureMaterialModel(state);
+ const demoConsumables={
+  'PRD-001':[{id:'BOM-PRD-001-C1',partNumber:'CONS-IPA',description:'Cleaning solvent allocation',revision:'A',qtyPerUnit:5,unit:'mL',kind:'consumable',unitCost:.02,wastePct:10,basis:'unit'}],
+  'PRD-003':[{id:'BOM-PRD-003-C1',partNumber:'CONS-ADH-01',description:'Engineering adhesive',revision:'A',qtyPerUnit:3.5,unit:'g',kind:'consumable',unitCost:.18,wastePct:12,basis:'unit'}],
+  'PRD-005':[{id:'BOM-PRD-005-C1',partNumber:'CONS-POT-02',description:'Potting compound',revision:'B',qtyPerUnit:18,unit:'g',kind:'consumable',unitCost:.07,wastePct:8,basis:'unit'}]
+ };
+ Object.entries(demoConsumables).forEach(([pid,items])=>{const p=state.products.find(x=>x.id===pid);if(p&&!p.bom.some(x=>String(x.kind||'').toLowerCase()==='consumable'))p.bom.push(...items);});
+ P.ensurePlanningModel(state);P.ensureEnterpriseModel(state);
+ const demoCostReq=state.requests.find(r=>r.productId==='PRD-005');if(demoCostReq){demoCostReq.consumablesEnabled=true;demoCostReq.buildConsumables=[{id:'BC-DEMO-01',description:'One-off masking / protection',qty:1,basis:'build',unit:'build',unitCost:9.5,wastePct:0}];}
  state.requests.forEach((r,i)=>{
    r.materialOwnership=P.normaliseMaterialSource(r.materialOwnership);
    if(r.materialOwnership==='Engineering supplied')r.materialSupply=r.materialSupply||{owner:r.requester,expectedDate:d(Math.min(5,Math.max(0,P.daysBetween(P.todayISO(),r.requiredDate)-3))),reference:`ENG-SUP-${i+1}`};
@@ -137,6 +145,8 @@ P.createDemoState=function(){
  });
  const sampleGroups={};state.serials.forEach(ser=>(sampleGroups[ser.requestId]||(sampleGroups[ser.requestId]=[])).push(ser));for(const [rid,list] of Object.entries(sampleGroups)){const req=state.requests.find(r=>r.id===rid),profile=P.ensureAssuranceProfile(req);list.forEach((ser,i)=>{ser.materials=state.allocations.filter(a=>a.requestId===ser.requestId&&a.status==='Issued').map(a=>a.lot);ser.sampleId=ser.sampleId||ser.serial;ser.sampleNumber=ser.sampleNumber||String(i+1).padStart(2,'0');ser.serialNumber=ser.serialNumber??(profile.requires.serialisation?ser.serial:'');ser.processHistory=ser.processHistory||[];});}
  state.routes.forEach(route=>(route.steps||[]).forEach(step=>{step.executionRuns=step.executionRuns||[]}));
+ state.planningEvents=state.planningEvents||[];
+ if(!state.planningEvents.length){state.planningEvents.push({id:'SIT-DEMO-VAC',type:'Vacation',scope:'staff',staffId:state.staff.find(x=>x.role==='technician')?.id||state.staff[0]?.id,equipmentId:null,start:dt(8,8),end:dt(12,17),reason:'Planned annual leave entered as a capacity constraint.',owner:'Mila Jansen',reference:'Demo vacation',active:true,createdAt:P.now()},{id:'SIT-DEMO-EQ',type:'Equipment outage',scope:'equipment',staffId:null,equipmentId:'EQ-003',start:dt(15,8),end:dt(17,17),reason:'Planned diagnostic outage for helium leak station.',owner:'Daan Mulder',reference:'Demo outage',active:true,createdAt:P.now()});}
  return state;
 };
 })();

@@ -1,24 +1,32 @@
-# ProtoLab OS REV 1.0.20 Verification
+# ProtoLab OS REV 1.0.23 Verification
 
-Focused verification for the operational-dashboard redesign.
+REV 1.0.23 was verified against the current application contract before packaging.
 
-## Automated checks
+## Current regression suites
 
-`verification-v120-node.js`: **10/10 passed**
+- `node verification-v122-node.js` — **14/14 passed**
+- `node verification-node.js` — **46/46 passed**
+- `node verification-ui-node.js` — **23/23 passed**
+- `python verification-static.py` — **31/31 passed**
+- `node verification-repository-node.js` — **6/6 passed**
+- `node verification-v123-node.js` — **8/8 passed**
 
-- REV 1.0.20 is active.
-- Week horizon returns last/current/next week.
-- Month horizon returns previous/current/next month.
-- Scheduled calibration/maintenance/training bookings are part of the operational data model.
-- Dashboard exposes horizon, product and project filters.
-- People workload versus available capacity renders for all three periods.
-- Equipment workload versus available capacity renders for all three periods.
-- Ongoing builds, deliverables/owners and intervention queue render.
-- Product/project filtering changes build demand while shared readiness downtime remains visible.
-- Dashboard links explicitly to the complementary Management KPI trend/outlook view.
+**Total: 128 passed, 0 failed.**
 
-JavaScript syntax checks passed for `app.js` and `core.js`.
-
-## Scope note
-
-This was a focused dashboard release. It does not claim a new exhaustive real-Android/browser automation pass of every historical feature. Existing data schema is unchanged from REV 1.0.19, so a demo-data reset is not required.
+REV 1.0.23 coverage includes:
+- hard planning constraints for vacation, staff absence, equipment outage/shutdown and lab-wide closure;
+- immutable original commitment plus reason-coded replan history and actual delivery comparison;
+- replan root-cause and commitment-performance KPIs;
+- app revision 1.0.23 / schema 10 and repository migration;
+- optional BOM/build consumables and cost roll-up;
+- cost on potential projects;
+- visual/action-first dashboard;
+- searchable active/archive Prototype Requests with report and Route Traveller actions;
+- one planning date header row shared by all swimlanes;
+- green ✓ / yellow ● / red ✕ workflow semantics;
+- Characterisation and Build Report rendering without the previous missing-chart exception;
+- Equipment/Calibration, Management KPIs, request workspace and all other primary navigation views render without exceptions;
+- delivered requests become archived on close;
+- BOM editor exposes component/consumable type, unit cost and waste;
+- exact BOM material/revision readiness rules remain intact;
+- no external runtime dependencies and relative GitHub Pages-safe assets.

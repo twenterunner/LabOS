@@ -1,5 +1,25 @@
 # ProtoLab OS — Prototype Build Management
 
+## REV 1.0.23 — planning situations & delivery commitment control
+- Planning now accepts explicit capacity situations such as vacations, staff absence, equipment outage/shutdown and lab closure.
+- Situations are hard constraints for AUTO-PLAN and appear as red ✕ bars on the shared planning timeline.
+- Each build preserves an immutable original commitment, current/final commitment, replan count, net movement, schedule churn and actual delivery date.
+- Every accepted commitment movement requires a reason category and explanation, optionally linked to the planning situation that caused it.
+- Management KPIs now show original-commitment hit rate, final-commitment hit rate, replan rate, average commitment movement and reason-category Pareto.
+
+## REV 1.0.22 — visual workflow, archive/search, reliable reports and optional consumable costing
+
+- Workflow status is visually unambiguous: **green ✓ = done**, **yellow ● = open/ongoing**, **red ✕ = blocker or late**. The same semantics are used in the guided workflow and route/process flow.
+- Planning swimlanes now show the calendar/date scale **once in a single header row** rather than repeating dates in every lane.
+- Potential pipeline projects now carry an estimated project cost alongside probability and capacity impact.
+- Completed/closed prototype projects are automatically archived and remain easy to find under **Prototype Requests → Archived**.
+- Prototype Requests now supports search/filter by product, project, date, owner and submitter, with direct **Build report** and **Route traveller** actions.
+- Dashboard was redesigned as a visual, action-first control room with exception tiles, capacity bars, build-flow cards and future-project value.
+- Characterisation and Build Report failures caused by the missing `characterisationChart()` implementation are fixed. Large result/report views are also rendered more compactly.
+- Product BOM now supports **Component** or **Consumable** lines with unit cost and waste %. Consumables can be enabled per build and supplemented with one-off build consumables; the feature remains optional.
+- Cost roll-up separates materials, process/test charges and consumables, and includes BOM/build consumables only when enabled.
+- Browser legacy-cache cleanup runs once per app revision instead of on every launch.
+
 ## REV 1.0.20 — planning clarity, synchronized KPIs and live blocker state
 
 This revision builds on REV 1.0.18 and adds:
