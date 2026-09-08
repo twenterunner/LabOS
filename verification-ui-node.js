@@ -32,7 +32,7 @@ checks.push(['modal close is bound explicitly inside modal root',/querySelectorA
 checks.push(['guided checklist replaces horizontal workspace navigation',/guided-workspace/.test(appSource)&&/renderGuidedChecklist/.test(appSource)&&!/workspace-tabs\">\$\{tabs/.test(appSource)]);
 checks.push(['guided checklist rows expose owner and next action',/guide-owner/.test(appSource)&&/guide-next/.test(appSource)]);
 checks.push(['Control Plan offers direct independent-approver switch',/data-switch-role=\"approver\"/.test(appSource)&&/Approve independently/.test(appSource)]);
-checks.push(['visible revision badge is populated',els['#versionBadge'].textContent==='REV 1.0.24']);
+checks.push(['visible revision badge is populated',els['#versionBadge'].textContent==='REV 1.0.25']);
 checks.push(['workspace is streamlined to ten top-level guided controls',['Define the engineering need','Material source & feasibility','Process route & test-method assessment','Resource plan & committed timing','Build readiness','Build samples & capture process evidence','Characterise, evaluate & disposition exceptions','Formal release approval','Deliver, retain records & feed learning'].every(x=>appSource.includes(x))]);
 checks.push(['lab triage shows timing feasibility and visual build swimlane',appSource.includes('LAB TRIAGE / TIMING')&&appSource.includes('BUILD SWIMLANE')&&appSource.includes('Original commitment')&&appSource.includes('Latest forecast')&&appSource.includes('Commit forecast')]);
 checks.push(['material allocation is requirement driven and exact revision matched',appSource.includes('Reserve exact lab-supplied material')&&appSource.includes('m.partNumber!==req.partNumber||m.revision!==req.revision')&&appSource.includes('requirementId:req.id')]);

@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.24-poc';
-  ProtoLab.SCHEMA_VERSION = 10;
+  ProtoLab.VERSION = '1.0.25-poc';
+  ProtoLab.SCHEMA_VERSION = 11;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -55,6 +55,30 @@
     return 'neutral';
   };
   ProtoLab.status = s => `<span class="status ${ProtoLab.statusClass(s)}">${ProtoLab.escape(s)}</span>`;
+  ProtoLab.buildReportApprover = r => {
+    const profile=ProtoLab.ensureAssuranceProfile(r);
+    return profile.formalLevel>=2
+      ? {role:'quality',roleLabel:'Quality Engineer'}
+      : {role:'engineering_lead',roleLabel:'Engineering Project Lead'};
+  };
+  ProtoLab.ensureBuildReportApproval = (state,r) => {
+    state.approvals=state.approvals||[];
+    const spec=ProtoLab.buildReportApprover(r);
+    let a=state.approvals.find(x=>x.requestId===r.id&&x.type==='Build Report Approval');
+    const assigned=(state.users||[]).find(u=>u.role===spec.role)?.name||spec.roleLabel;
+    if(!a){
+      a={id:ProtoLab.uid('APR'),requestId:r.id,type:'Build Report Approval',role:spec.roleLabel,roleId:spec.role,person:assigned,status:'Draft',timestamp:null,stage:'report',comment:'Build report becomes FINAL only after controlled approval.'};
+      state.approvals.push(a);
+    }else{
+      a.roleId=a.roleId||spec.role;
+      a.role=a.role||spec.roleLabel;
+      a.person=a.person||assigned;
+      a.stage='report';
+      a.status=a.status||'Draft';
+    }
+    r.buildReportRevision=r.buildReportRevision||'A';
+    return a;
+  };
   ProtoLab.audit = (state, action, objectType, objectId, previousState, newState, reason='') => {
     state.auditTrail.unshift({id:ProtoLab.uid('AUD'),timestamp:ProtoLab.now(),user:state.identity.name,role:state.identity.role,action,objectType,objectId,previousState,newState,reason});
   };
@@ -222,8 +246,10 @@
     state.planningEvents=state.planningEvents||[];
     state.settings.capacity=state.settings.capacity||{productiveStaffHoursPerWeek:32,equipmentHoursPerWeek:60};
     state.improvementProposals=state.improvementProposals||[];
+    state.dailyOperationsReviews=Array.isArray(state.dailyOperationsReviews)?state.dailyOperationsReviews:[];
+    state.settings.lastOperationsReviewDate=state.settings.lastOperationsReviewDate||null;
     (state.products||[]).forEach((p,pi)=>{p.bom=p.bom||[];(p.bom||[]).forEach((b,bi)=>{b.kind=b.kind||'component';b.unitCost=Number(b.unitCost??0);b.wastePct=Number(b.wastePct??0);});});
-    (state.requests||[]).forEach(r=>{r.archived=r.archived===true||r.status==='CLOSED';if(r.archived&&!r.archivedAt)r.archivedAt=r.closedAt||r.updatedAt||r.requiredDate||ProtoLab.todayISO();r.consumablesEnabled=!!r.consumablesEnabled;r.buildConsumables=Array.isArray(r.buildConsumables)?r.buildConsumables:[];r.costingEnabled=r.costingEnabled!==false;r.originalRequestedDate=r.originalRequestedDate||r.requiredDate||null;r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];if(r.originalCommitmentDate&&!r.currentCommitmentDate)r.currentCommitmentDate=r.originalCommitmentDate;});
+    (state.requests||[]).forEach(r=>{r.archived=r.archived===true||r.status==='CLOSED';if(r.archived&&!r.archivedAt)r.archivedAt=r.closedAt||r.updatedAt||r.requiredDate||ProtoLab.todayISO();r.consumablesEnabled=!!r.consumablesEnabled;r.buildConsumables=Array.isArray(r.buildConsumables)?r.buildConsumables:[];r.costingEnabled=r.costingEnabled!==false;r.originalRequestedDate=r.originalRequestedDate||r.requiredDate||null;r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];if(r.originalCommitmentDate&&!r.currentCommitmentDate)r.currentCommitmentDate=r.originalCommitmentDate;ProtoLab.ensureBuildReportApproval(state,r);});
     (state.competencies||[]).forEach((c,i)=>{c.status=c.status||'Released';c.requiredCertificate=c.requiredCertificate||`${c.id}-CERT`;c.validMonths=Number(c.validMonths||24);c.trainingDurationHours=Number(c.trainingDurationHours||4);c.owner=c.owner||'Lab Manager';});
     const today=new Date();
     (state.staff||[]).forEach((person,pi)=>{

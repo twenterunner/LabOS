@@ -5,7 +5,7 @@ const P=ctx.ProtoLab; let pass=0,fail=0; const rows=[];
 function test(name,fn){try{fn();rows.push(['PASS',name]);pass++;}catch(e){rows.push(['FAIL',name,e.message]);fail++;}}
 function assert(x,msg='assertion failed'){if(!x)throw new Error(msg)}
 let state=P.createDemoState();
-test('Demo state contains 15 prototype requests',()=>assert(state.requests.length===15));
+test('Demo state contains 18 prototype requests',()=>assert(state.requests.length===18));
 test('Demo state contains 25+ process definitions',()=>assert(state.processes.length>=25));
 test('Demo state contains 40+ serialized units',()=>assert(state.serials.length>=40,`got ${state.serials.length}`));
 test('Serial numbers are unique',()=>assert(new Set(state.serials.map(s=>s.serial)).size===state.serials.length));

@@ -1,5 +1,13 @@
 # ProtoLab OS — Prototype Build Management
 
+## REV 1.0.25 — controlled reports, archived examples & proposal-first planning
+
+- Added three completed/archived demonstration projects with retained traceability and approved final build reports.
+- Build Report no longer contains cost and cannot become FINAL until the relevant controlled approver signs it.
+- Added a substantially upgraded Test & Characterisation Report with raw measurement data, specifications, automatic mean/stdev/Cpk, measurement FPY, build yield, yield loss, rework, scrap and hold indicators.
+- AUTO-PLAN and portfolio optimization now preview all proposed date/resource changes and require explicit Accept or Reject before the live schedule is modified.
+- Added an automatic once-per-day Operations Improvement Review and a visual dashboard summary with direct links into the Action Centre.
+
 ## REV 1.0.24 — editable competencies
 - Competency master records can now be edited directly from **Lab Standards & Resources → Skill Catalogue**.
 - The competency ID remains immutable so process standards, bookings, certificates and audit history keep their references.

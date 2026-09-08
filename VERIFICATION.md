@@ -1,6 +1,6 @@
-# ProtoLab OS REV 1.0.24 Verification
+# ProtoLab OS REV 1.0.25 Verification
 
-REV 1.0.24 was verified against the current application contract before packaging.
+REV 1.0.25 was verified against the current application contract before packaging.
 
 ## Current regression suites
 
@@ -36,3 +36,11 @@ REV 1.0.23 coverage includes:
 - BOM editor exposes component/consumable type, unit cost and waste;
 - exact BOM material/revision readiness rules remain intact;
 - no external runtime dependencies and relative GitHub Pages-safe assets.
+
+
+REV 1.0.25 coverage additionally includes:
+- completed/archived demo builds with approved controlled reports;
+- build-report approval-to-final control and exclusion of cost from Build Report;
+- test-report measurement/specification/Cpk/yield-loss analytics;
+- proposal-first AUTO-PLAN / portfolio optimization with Accept / Reject;
+- once-per-day operational improvement review.

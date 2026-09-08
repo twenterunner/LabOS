@@ -1,4 +1,12 @@
-# ProtoLab OS — Quick Start — REV 1.0.24
+# ProtoLab OS — Quick Start — REV 1.0.25
+
+## What changed in REV 1.0.25
+
+- Three completed demo projects are included in **Prototype Requests → Archived**, with retained route, measurement, quality and final-report history.
+- The **Build Report** is a controlled document and deliberately excludes cost. It remains DRAFT until the configured Engineering Project Lead or Quality Engineer approves it; only then is it FINAL.
+- The **Test Report** now calculates measurement/specification summaries, mean, sample standard deviation, Cpk (where statistically applicable), first-pass yield, build yield, yield loss, rework, scrap, hold and raw sample/serial traceability.
+- **AUTO-PLAN / Optimize Portfolio** now works as a proposal: the current live plan is not changed until the user reviews the before/after dates and resource assignments and explicitly accepts. Reject leaves the live schedule untouched.
+- A **Daily Operations Check** runs once per day on application start, using current capacity, qualifications, calibration/maintenance, process-time performance and recurring issues to surface actionable improvement opportunities.
 
 ## What changed in REV 1.0.24
 

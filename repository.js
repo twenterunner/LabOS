@@ -68,6 +68,20 @@ class MigrationService{
     });
     s.dataVersion='2026.09-demo-13';s.schemaVersion=10;continue;
    }
+   if(s.schemaVersion===10){
+    const wasDemo=String(s.dataVersion||'').startsWith('2026.09-demo');
+    P.ensureEnterpriseModel(s);
+    // Upgrade existing POC/demo browsers with the new archived examples without polluting imported/non-demo datasets.
+    if(wasDemo&&P.createDemoState){
+      const seed=P.createDemoState(),closedIds=new Set(seed.requests.filter(r=>r.status==='CLOSED').map(r=>r.id));
+      const merge=(key,match)=>{s[key]=Array.isArray(s[key])?s[key]:[];for(const x of seed[key]||[]){if(!match(x))continue;if(!s[key].some(y=>y.id===x.id))s[key].push(P.deepClone(x));}};
+      merge('requests',x=>closedIds.has(x.id));merge('routes',x=>closedIds.has(x.requestId));merge('serials',x=>closedIds.has(x.requestId));merge('measurements',x=>closedIds.has(x.requestId));merge('deviations',x=>closedIds.has(x.requestId));merge('approvals',x=>closedIds.has(x.requestId));merge('documents',x=>closedIds.has(x.requestId));merge('allocations',x=>closedIds.has(x.requestId));
+    }
+    s.dailyOperationsReviews=Array.isArray(s.dailyOperationsReviews)?s.dailyOperationsReviews:[];
+    s.settings=s.settings||{};s.settings.lastOperationsReviewDate=s.settings.lastOperationsReviewDate||null;
+    (s.requests||[]).forEach(r=>P.ensureBuildReportApproval(s,r));
+    s.dataVersion='2026.09-demo-14';s.schemaVersion=11;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
