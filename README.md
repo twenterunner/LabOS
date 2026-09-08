@@ -2,9 +2,9 @@
 
 ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototype-build operations. It supports engineering requests, material/process feasibility, realistic resource planning, controlled process/test definitions, PFMEA-linked risk, Control Plans, readiness, guided build execution execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting, audit history and learning from previous builds.
 
-## Revision 1.0.13 — current packaged build
+## Revision 1.0.14 — current packaged build
 
-REV 1.0.13 is the focused usability/traceability update requested after REV 1.0.12. It adds bulk exact-BOM reservation, selection of released end-characterisation tests, editable process-risk items, traceable manual/CSV characterisation, certificate-backed calibration validity with append-only certificate history, actionable quality views, grouped serial history, detailed build reports and printable route travellers, customer creation, an explicit E0/E1/V/P control matrix, calibration/maintenance reporting, and mobile containment fixes.
+REV 1.0.15 is the focused usability/traceability update requested after REV 1.0.12. It adds bulk exact-BOM reservation, selection of released end-characterisation tests, editable process-risk items, traceable manual/CSV characterisation, certificate-backed calibration validity with append-only certificate history, actionable quality views, grouped serial history, detailed build reports and printable route travellers, customer creation, an explicit E0/E1/V/P control matrix, calibration/maintenance reporting, and mobile containment fixes.
 
 For formal builds, the former **Identify units & execute the build** wording is replaced by **Execute build & capture unit traceability**. The execution record is retained for V/P because it preserves objective evidence of what was actually built, by whom, with which process/equipment/revision. E0 remains deliberately lean and may use build-level evidence without serialisation. New quality UI uses **Nonconformance** instead of the unexplained NCR acronym.
 
@@ -189,3 +189,11 @@ Build routes can be created from a blank canvas, copied from the product standar
 - **Equipment & Calibration → + Add certificate** records calibration certificate number, issuer, calibration date, next due date, traceability/reference standard, result and evidence/file reference. A passing certificate updates equipment readiness.
 - **Lab Standards & Resources → + Add staff / Edit person** maintains lab planning resources, roles, teams and availability. Skills remain certificate-gated and must be issued through the existing training-certificate workflow.
 - Request-specific build routes remain editable step-by-step with Edit / move / remove / insert controls.
+
+
+## REV 1.0.15
+- Direct **Edit request** action in every request workspace for Engineering Requester, Engineering Project Lead and Administrator.
+- Missing objective can be corrected without recreating the request.
+- Material/timing/scope changes are audit-recorded and reopen affected feasibility and AUTO-PLAN timing.
+- E0/E1/V/P now explicitly states what is required, conditional and not required.
+- Includes all REV 1.0.14 corrections (characterisation, calibration evidence, quality workflow, serial grouping, KPI visuals and mobile request cards).

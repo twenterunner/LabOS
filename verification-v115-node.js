@@ -1,0 +1,33 @@
+const fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert');
+const root=__dirname;
+function fakeEl(){return {innerHTML:'',textContent:'',value:'',checked:false,files:[],style:{},dataset:{},className:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},appendChild(){},remove(){},click(){},focus(){},setAttribute(){},addEventListener(){},querySelector(){return null},querySelectorAll(){return []},scrollIntoView(){}}}
+const els={};for(const k of ['#page','#mainNav','#actionCount','#roleSelect','#menuButton','#globalSearch','#searchResults','#sidebar','#toastRoot','#modalRoot','#versionBadge','.brand'])els[k]=fakeEl();
+let domReady=null;const document={querySelector:s=>els[s]||fakeEl(),querySelectorAll:s=>[],createElement:()=>fakeEl(),addEventListener(){},body:fakeEl()};
+const ctx={console,Date,Math,Intl,setTimeout:(fn)=>fn(),clearTimeout,Blob:class{},URL:{createObjectURL(){return'blob:x'},revokeObjectURL(){}},confirm(){return true},prompt(){return'1'},innerWidth:390,window:null,document,navigator:{},location:{protocol:'http:'},scrollTo(){}};ctx.window=ctx;ctx.window.addEventListener=(ev,cb)=>{if(ev==='DOMContentLoaded')domReady=cb};vm.createContext(ctx);
+for(const f of ['core.js','demo-data.js','services.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
+ctx.ProtoLab.IndexedDBStorageRepository=class{async init(){return true}async load(){return ctx.ProtoLab.createDemoState()}async save(){return true}};
+ctx.ProtoLab.BrowserDocumentStore=class{};ctx.ProtoLab.DemoIdentityProvider=class{constructor(s){this.state=s}switchRole(role){const u=this.state.users.find(x=>x.role===role)||this.state.users[0];this.state.identity={userId:u.id,name:u.name,role};return this.state.identity}};ctx.ProtoLab.MigrationService=class{static migrate(s){return s}};
+let src=fs.readFileSync(path.join(root,'app.js'),'utf8');src=src.replace("window.addEventListener('DOMContentLoaded',init);","window.__v115={App,renderWorkspace,workspaceConfig,renderAdmin,requestTable,buildGuidedSteps,assuranceControlMatrix,canEditRequest};window.addEventListener('DOMContentLoaded',init);");vm.runInContext(src,ctx,{filename:'app.js'});
+const css=fs.readFileSync(path.join(root,'styles.css'),'utf8'),index=fs.readFileSync(path.join(root,'index.html'),'utf8');let p=0,f=0;function test(n,fn){try{fn();console.log('PASS | '+n);p++}catch(e){console.error('FAIL | '+n+' | '+e.message);f++}}
+(async()=>{await domReady();const T=ctx.__v115,A=T.App;A.identity.switchRole('engineering_requester');
+ test('REV 1.0.15 active',()=>{assert.equal(ctx.ProtoLab.VERSION,'1.0.15-poc');assert(index.includes('REV 1.0.15'));});
+ test('REV 1.0.14 functionality retained: E1 serial IDs optional',()=>assert.equal(ctx.ProtoLab.ASSURANCE_PROFILES.controlled.requires.serialisation,false));
+ test('REV 1.0.14 functionality retained: V/P serial IDs required',()=>{assert(ctx.ProtoLab.ASSURANCE_PROFILES.validation.requires.serialisation);assert(ctx.ProtoLab.ASSURANCE_PROFILES.production.requires.serialisation)});
+ test('Bulk BOM reservation retained',()=>assert(src.includes('Reserve all BOM material')));
+ test('End test selection retained',()=>assert(src.includes('Select end-characterisation tests')));
+ test('Characterisation manual/CSV retained',()=>{assert(src.includes('+ Manual result'));assert(src.includes('Import CSV'));assert(src.includes('CSV template'))});
+ test('Certificate-backed calibration retained',()=>{assert(src.includes('A passing calibration is only valid when the certificate file is uploaded.'));assert(src.includes('calibrationCertificates.push(cert)'))});
+ test('Edit request action exists',()=>{assert(src.includes('function editRequestModal'));assert(src.includes('data-edit-request'));assert(src.includes('Save request changes'))});
+ const r=A.state.requests[0];r.objective='';A.workspaceId=r.id;A.currentView='workspace';
+ test('Missing-objective request renders edit action instead of dead-end',()=>{const h=T.renderWorkspace();assert(h.includes('Edit request'));assert(h.includes('Complete objective'));});
+ test('Request edit explicitly validates objective',()=>assert(src.includes("toast('Title, engineering objective, quantity and required date are required.'")));
+ test('Request scope edit reopens stale timing',()=>{assert(src.includes('Request changed — reassess feasibility and timing'));assert(src.includes('r.triage=null'));assert(src.includes('r.forecastDate=null'))});
+ test('Request changes are auditable',()=>{assert(src.includes("P.audit(App.state,'Prototype request edited'"));assert(src.includes("type:'Engineering request update'"))});
+ test('Quantity edits recalculate exact material required quantities',()=>assert(src.includes('q.requiredQty=Number(q.qtyPerUnit||1)*Number(r.quantity||1)')));
+ test('Explicit E0/E1/V/P matrix lists inclusion and exclusions',()=>{const h=T.assuranceControlMatrix();for(const x of ['Released build process','Control Plan','Unit IDs / serial numbers','Full material → process → result genealogy','Formal release approval'])assert(h.includes(x),x);assert(h.includes('Optional'));assert(h.includes('Not required'));assert(h.includes('Required'))});
+ test('Configuration page shows E0/E1/V/P matrix',()=>{const h=T.workspaceConfig(r);assert(h.includes('WHAT EACH LEVEL INCLUDES'));assert(h.includes('E0 · Rapid Engineering'));assert(h.includes('P · Production Intent'))});
+ A.identity.switchRole('administrator');test('Admin page shows explicit included/excluded matrix',()=>{const h=T.renderAdmin();assert(h.includes('what is included and excluded'));assert(h.includes('Conditional / lean'))});
+ test('Mobile request portfolio uses cards',()=>{const h=T.requestTable(A.state.requests.slice(0,2));assert(h.includes('request-mobile-card'));assert(css.includes('.request-desktop-table{display:none!important}'))});
+ test('Mobile workspace formatting collapses summary and forms',()=>{assert(css.includes('.workspace-summary{grid-template-columns:1fr 1fr!important}'));assert(css.includes('.form-grid{grid-template-columns:1fr!important}'))});
+ console.log(`\nRESULT: ${p} passed, ${f} failed`);process.exitCode=f?1:0;
+})().catch(e=>{console.error(e);process.exitCode=1});
