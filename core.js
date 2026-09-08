@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.12-poc';
+  ProtoLab.VERSION = '1.0.13-poc';
   ProtoLab.SCHEMA_VERSION = 6;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -194,6 +194,7 @@
     (state.processes||[]).forEach((x,i)=>{x.workInstruction=x.workInstruction||{id:`WI-${x.id}`,revision:x.revision||'A',title:`Work instruction · ${x.name}`,status:x.status==='Released'?'Released':'Draft',steps:[`Verify material/configuration for ${x.name}`,`Perform ${x.name} using controlled parameters`,`Record required evidence in the guided build execution`]};x.fixedCharge=Number(x.fixedCharge??(8+(i%5)*4));x.consumableCost=Number(x.consumableCost??(3+(i%4)*2));});
     (state.standardTests||[]).forEach((x,i)=>{x.fixedCharge=Number(x.fixedCharge??(18+(i%4)*6));x.consumableCost=Number(x.consumableCost??(4+(i%3)*3));x.workInstruction=x.workInstruction||{id:`WI-${x.id}`,revision:x.revision||'A',title:`Test instruction · ${x.name}`,status:'Released',steps:[`Prepare ${x.name} setup`,`Execute controlled method`,`Retain raw results and disposition`]};});
     (state.materials||[]).forEach((m,i)=>{m.unitCost=Number(m.unitCost??(6+(i%7)*4));});
+    (state.calibrationCertificates||[]).forEach(c=>{if(!c.fileData&&String(c.evidence||'').startsWith('Demo calibration certificate')){c.fileName=c.fileName||`${c.certificateNo||c.id}-demo.txt`;c.fileType='text/plain';c.fileData='data:text/plain;base64,REVNTyBDQUxJQlJBVElPTiBDRVJUSUZJQ0FURSAtIFBST1RPTEFCIE9T';c.documentUploaded=true;}});
     (state.equipment||[]).forEach((e,i)=>{
       e.hourlyCost=Number(e.hourlyCost||55);
       e.lastMaintenance=e.lastMaintenance||new Date(today.getTime()-(30+(i%5)*14)*86400000).toISOString().slice(0,10);
@@ -204,8 +205,9 @@
       e.maintenanceDurationHours=Number(e.maintenanceDurationHours||4);
       if(e.calibrationRequired!==false && !state.calibrationCertificates.some(c=>c.equipmentId===e.id)){
         const due=new Date(`${e.calibrationDue||ProtoLab.todayISO()}T12:00:00`);const completed=new Date(due.getTime()-180*86400000);
-        state.calibrationCertificates.push({id:`CALCERT-${e.id}-SEED`,equipmentId:e.id,certificateNo:`CAL-${e.id}-2026`,issuer:'Accredited Calibration Lab (Demo)',referenceStandard:'Traceable reference standard',completedAt:completed.toISOString().slice(0,10),nextDue:e.calibrationDue,result:'Pass',status:'Valid',evidence:`Demo calibration certificate ${e.id}`,person:'Daan Mulder'});
+        state.calibrationCertificates.push({id:`CALCERT-${e.id}-SEED`,equipmentId:e.id,certificateNo:`CAL-${e.id}-2026`,issuer:'Accredited Calibration Lab (Demo)',referenceStandard:'Traceable reference standard',completedAt:completed.toISOString().slice(0,10),nextDue:e.calibrationDue,result:'Pass',status:'Valid',evidence:`Demo calibration certificate ${e.id}`,person:'Daan Mulder',fileName:`CAL-${e.id}-2026-demo.txt`,fileType:'text/plain',fileData:'data:text/plain;base64,REVNTyBDQUxJQlJBVElPTiBDRVJUSUZJQ0FURSAtIFBST1RPTEFCIE9T',documentUploaded:true});
       }
+      e.calibrationCertificateValid=!!state.calibrationCertificates.find(c=>c.equipmentId===e.id&&c.result==='Pass'&&c.status==='Valid'&&c.completedAt<=ProtoLab.todayISO()&&c.nextDue>=ProtoLab.todayISO());
     });
     (state.buildHistory||[]).forEach((h,i)=>{
       const q=Math.max(1,Number(h.quantity||1)), base=900+q*185+(i%6)*65;
@@ -229,10 +231,19 @@
     const cert=(state.trainingCertificates||[]).find(c=>c.staffId===staff.id&&c.skillId===skillId&&c.status==='Valid'&&(!c.expiresAt||c.expiresAt>=onDate));
     return {valid:!!cert,certificate:cert,reason:cert?`Certificate ${cert.certificateNo} valid to ${cert.expiresAt}`:`No valid training certificate for ${skillId}`};
   };
-  ProtoLab.equipmentReady = (e,onDate=ProtoLab.todayISO()) => !!e && e.calibrationStatus==='Valid' && (!e.calibrationDue||e.calibrationDue>=onDate) && e.maintenanceStatus!=='Overdue' && (!e.maintenanceDue||e.maintenanceDue>=onDate);
+  ProtoLab.validCalibrationCertificate = (state,equipmentId,onDate=ProtoLab.todayISO()) => {
+    const certs=(state?.calibrationCertificates||[]).filter(c=>c.equipmentId===equipmentId&&c.result==='Pass'&&c.status==='Valid'&&(c.fileData||c.documentUploaded===true)&&c.completedAt&&c.completedAt<=onDate&&c.nextDue&&c.nextDue>=onDate);
+    certs.sort((a,b)=>String(b.completedAt).localeCompare(String(a.completedAt)));
+    return certs[0]||null;
+  };
+  ProtoLab.equipmentReady = (e,onDate=ProtoLab.todayISO(),state=null) => {
+    if(!e)return false;
+    const certOk=state?!!ProtoLab.validCalibrationCertificate(state,e.id,onDate):e.calibrationCertificateValid===true;
+    return certOk && e.calibrationStatus==='Valid' && (!e.calibrationDue||e.calibrationDue>=onDate) && e.maintenanceStatus!=='Overdue' && (!e.maintenanceDue||e.maintenanceDue>=onDate);
+  };
 
   ProtoLab.projectedEquipmentReady = (state,e,onDate=ProtoLab.todayISO()) => {
-    if(!e)return false; if(ProtoLab.equipmentReady(e,onDate))return true;
+    if(!e)return false; if(ProtoLab.equipmentReady(e,onDate,state))return true;
     const t=new Date(onDate); const care=(state.resourceCareBookings||[]).filter(x=>x.status==='Scheduled'&&x.equipmentId===e.id);
     const calOk=e.calibrationStatus==='Valid'&&(!e.calibrationDue||e.calibrationDue>=onDate) || care.some(x=>x.type==='Calibration'&&new Date(x.start)<=t&&(!x.projectedNextDue||x.projectedNextDue>=onDate));
     const mntOk=e.maintenanceStatus!=='Overdue'&&(!e.maintenanceDue||e.maintenanceDue>=onDate) || care.some(x=>x.type==='Maintenance'&&new Date(x.start)<=t&&(!x.projectedNextDue||x.projectedNextDue>=onDate));

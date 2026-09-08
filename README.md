@@ -2,6 +2,13 @@
 
 ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototype-build operations. It supports engineering requests, material/process feasibility, realistic resource planning, controlled process/test definitions, PFMEA-linked risk, Control Plans, readiness, guided build execution execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting, audit history and learning from previous builds.
 
+## Revision 1.0.13 — current packaged build
+
+REV 1.0.13 is the focused usability/traceability update requested after REV 1.0.12. It adds bulk exact-BOM reservation, selection of released end-characterisation tests, editable process-risk items, traceable manual/CSV characterisation, certificate-backed calibration validity with append-only certificate history, actionable quality views, grouped serial history, detailed build reports and printable route travellers, customer creation, an explicit E0/E1/V/P control matrix, calibration/maintenance reporting, and mobile containment fixes.
+
+For formal builds, the former **Identify units & execute the build** wording is replaced by **Execute build & capture unit traceability**. The execution record is retained for V/P because it preserves objective evidence of what was actually built, by whom, with which process/equipment/revision. E0 remains deliberately lean and may use build-level evidence without serialisation. New quality UI uses **Nonconformance** instead of the unexplained NCR acronym.
+
+
 ## Revision 1.0.12 — purpose-based prototype control and editable build routes
 
 The visible application header always shows the running revision: **REV 1.0.12**.

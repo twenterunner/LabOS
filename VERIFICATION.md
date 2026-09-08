@@ -1,6 +1,6 @@
 # ProtoLab OS — Verification Report
 
-**Application version:** 1.0.12-poc  
+**Application version:** 1.0.13-poc  
 **Schema version:** 6  
 **Target:** static GitHub Pages / Chrome / Edge / Android browser
 
@@ -65,3 +65,17 @@ Focused checks were added for the three requested changes and executed after imp
 - Static HTTP serving returned 200 for all 9 principal GitHub Pages files.
 
 Focused REV 1.0.12 test result: **9/9 passed**.
+
+
+## REV 1.0.13 focused package verification
+
+The user requested packaging before a broad historical regression cycle was completed, so this release reports only focused checks actually run.
+
+- JavaScript syntax checks passed for `app.js`, `core.js` and `services.js`.
+- REV 1.0.11 purpose/workflow UI suite: **11/11 passed**.
+- REV 1.0.11 purpose/domain suite: **27 substantive checks passed**; 2 obsolete version-string assertions failed because the app is now REV 1.0.13.
+- REV 1.0.12 focused suite: **7 substantive checks passed**; 2 obsolete REV 1.0.12/version wording assertions were not counted for REV 1.0.13.
+- Source-level focused checks confirm bindings/implementations for bulk material reservation, released end-test selection, editable process risks, manual/CSV characterisation, calibration certificate upload/history, customer creation, route traveller, calibration/maintenance reports, grouped serial history and guided quality actions.
+- The package is flat with `index.html` at ZIP root and cache-busted `?v=1.0.13` assets.
+
+This report does **not** claim a fresh full end-to-end real-browser automation run for every legacy feature. Android/Chrome deployment remains the real-browser acceptance check.
