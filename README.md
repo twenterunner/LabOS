@@ -1,6 +1,6 @@
 # ProtoLab OS — Prototype Build Management
 
-## REV 1.0.19 — planning clarity, synchronized KPIs and live blocker state
+## REV 1.0.20 — planning clarity, synchronized KPIs and live blocker state
 
 This revision builds on REV 1.0.18 and adds:
 
@@ -16,7 +16,7 @@ The app remains a static GitHub Pages POC using IndexedDB behind repository/serv
 ## Prior REV 1.0.18 baseline
 
 
-REV 1.0.19 makes the build-execution model explicit:
+REV 1.0.20 makes the build-execution model explicit:
 
 **requested quantity → sample register → process execution per sample/batch → in-process Control Plan results → end characterisation → sample genealogy.**
 
@@ -212,7 +212,7 @@ Build routes can be created from a blank canvas, copied from the product standar
 - Request-specific build routes remain editable step-by-step with Edit / move / remove / insert controls.
 
 
-## REV 1.0.19 — guided blocker resolution
+## REV 1.0.20 — guided blocker resolution
 
 - **Action Centre → Resolve** now opens a blocker-specific guided workflow instead of jumping directly into a workspace section.
 - Every guided blocker shows **what is wrong, why it matters, owner/role, due date, impact, resolution path, current step, evidence required and the condition that clears the blocker**.
@@ -226,7 +226,11 @@ Build routes can be created from a blank canvas, copied from the product standar
 - REV 1.0.15 request editing and explicit E0/E1/V/P included/conditional/not-required controls are retained.
 
 
-## REV 1.0.19
+## REV 1.0.20
 - Dashboard redesigned as an operational control room for last/current week execution, resource use, blockers, decisions and 14-day delivery watch.
 - Management KPI page reduced to six core KPIs plus trends, bottlenecks, capacity outlook and pipeline.
 - Request workspace summary is no longer sticky, preventing detail text from rendering underneath the top tiles.
+
+## REV 1.0.20 — Operational horizon dashboard
+
+The lab dashboard is now the near-term operating control room. It defaults to last/current/next week and can switch to previous/current/next month. Product and project filters change build demand while calibration, maintenance and training remain visible because they consume shared resources. People and equipment workload are shown against available capacity for every displayed period. Ongoing builds, upcoming/overdue deliverables with owners, and unresolved operational decisions are presented alongside the same horizon. Management KPIs remain the complementary trend, process-health and future-outlook layer.

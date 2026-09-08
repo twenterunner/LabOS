@@ -1,6 +1,6 @@
-# ProtoLab OS — Quick Start — REV 1.0.19
+# ProtoLab OS — Quick Start — REV 1.0.20
 
-## What changed in REV 1.0.19
+## What changed in REV 1.0.20
 
 - Planning swimlanes show every day explicitly.
 - Resolved blockers disappear once the underlying condition is genuinely satisfied.
@@ -173,7 +173,7 @@ For the build route choose **Start from scratch**, **Use product standard route*
 - Edit a request-specific build route from the request workflow using each route card's **Edit / ↑ / ↓ / Remove** controls.
 
 
-## 8. Sample identity and execution in REV 1.0.19
+## 8. Sample identity and execution in REV 1.0.20
 
 When a build reaches execution, create the sample register to exactly match the requested quantity. You no longer choose an arbitrary number of IDs.
 

@@ -1,20 +1,24 @@
-# ProtoLab OS REV 1.0.19 — Verification
+# ProtoLab OS REV 1.0.20 Verification
 
-REV 1.0.19 focuses on planning readability, live blocker synchronization, synchronized KPI time axes and future-project scenario analysis.
+Focused verification for the operational-dashboard redesign.
 
-## Focused automated verification
+## Automated checks
 
-The REV 1.0.19 focused runtime suite verifies:
+`verification-v120-node.js`: **10/10 passed**
 
-1. revision 1.0.19 is active;
-2. swimlane planning uses explicit day-scale headers;
-3. the workspace summary no longer repeats the assurance level;
-4. E0/E1/V/P details are contained in a foldout where the level is chosen;
-5. resolved feasibility actions are suppressed dynamically;
-6. the KPI page uses one timing control and synchronized axis charts;
-7. a single-week KPI view produces seven daily buckets;
-8. potential projects can be inspected individually for resource/capacity impact.
+- REV 1.0.20 is active.
+- Week horizon returns last/current/next week.
+- Month horizon returns previous/current/next month.
+- Scheduled calibration/maintenance/training bookings are part of the operational data model.
+- Dashboard exposes horizon, product and project filters.
+- People workload versus available capacity renders for all three periods.
+- Equipment workload versus available capacity renders for all three periods.
+- Ongoing builds, deliverables/owners and intervention queue render.
+- Product/project filtering changes build demand while shared readiness downtime remains visible.
+- Dashboard links explicitly to the complementary Management KPI trend/outlook view.
 
-JavaScript syntax is checked with Node. Static/deployment checks validate the flat GitHub Pages structure, relative versioned assets, mobile containment, repository/identity boundaries, planner/master-data controls and certificate controls.
+JavaScript syntax checks passed for `app.js` and `core.js`.
 
-No claim is made for exhaustive Android/Chrome browser automation in this environment; phone/browser acceptance remains the final real-device check.
+## Scope note
+
+This was a focused dashboard release. It does not claim a new exhaustive real-Android/browser automation pass of every historical feature. Existing data schema is unchanged from REV 1.0.19, so a demo-data reset is not required.

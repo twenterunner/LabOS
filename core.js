@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.19-poc';
+  ProtoLab.VERSION = '1.0.20-poc';
   ProtoLab.SCHEMA_VERSION = 8;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
