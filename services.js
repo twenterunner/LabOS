@@ -148,7 +148,7 @@ class SerialService{
   for(let i=1;i<=Number(count||0);i++){
    const n=existing.length+i,labId=`${r.id}-S${String(n).padStart(3,'0')}`,sampleNo=String(n).padStart(2,'0'),formal=profile.requires.serialisation?`${r.id}-${String(n).padStart(3,'0')}`:'';
    if(this.state.serials.some(s=>s.serial===labId))throw new Error(`Duplicate lab sample ID ${labId}`);
-   const obj={id:P.uid('SAMPLE'),serial:labId,sampleId:labId,sampleNumber:sampleNo,serialNumber:formal,requestId:r.id,productId:r.productId,configuration:r.configuration,status:'Active',materials:P.deepClone(lots),processHistory:[],releaseState:'Not released',delivery:null};
+   const obj={id:P.uid('SAMPLE'),serial:labId,sampleId:labId,sampleNumber:sampleNo,serialNumber:formal,requestId:r.id,productId:r.productId,configuration:r.configuration,status:'Active',materials:P.deepClone(lots),processHistory:[],description:'',dataFields:[],evidencePhotos:[],includeDescriptionInBuildReport:true,releaseState:'Not released',delivery:null};
    this.state.serials.push(obj);out.push(obj);
   }
   if(out.length)P.audit(this.state,'Sample register allocated','Request',requestId,existing.length,existing.length+out.length,`${out.length} lab sample record(s); formal serials ${profile.requires.serialisation?'allocated':'not required'}`);
@@ -178,6 +178,7 @@ class ReportService{
  }
  build(requestId){
    const r=this.state.requests.find(x=>x.id===requestId),serials=this.state.serials.filter(s=>s.requestId===requestId),meas=this.state.measurements.filter(m=>m.requestId===requestId),dev=this.state.deviations.filter(d=>d.requestId===requestId),approval=P.ensureBuildReportApproval(this.state,r);
+   serials.forEach(s=>P.ensureSampleEvidence(s));
    return {r,serials,meas,dev,approval,approved:approval.status==='Approved',generatedAt:P.now(),approver:approval.status==='Approved'?approval.person:null,testAnalytics:this.testAnalytics(requestId)};
  }
 }

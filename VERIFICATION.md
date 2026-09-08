@@ -44,3 +44,11 @@ REV 1.0.25 coverage additionally includes:
 - test-report measurement/specification/Cpk/yield-loss analytics;
 - proposal-first AUTO-PLAN / portfolio optimization with Accept / Reject;
 - once-per-day operational improvement review.
+
+## REV 1.0.26 addendum
+
+- Sample evidence model supports per-sample description, structured data and multiple locally stored/compressed photos.
+- Build Report includes only evidence explicitly selected for report inclusion.
+- FINAL Build Report approval is invalidated and the report revision advances when sample evidence or sample/serial labels change.
+- Schema 11 → 12 migration initializes sample evidence fields without changing permanent Lab Sample IDs.
+- Dedicated REV 1.0.26 regression suite: 10/10 passed; combined current regression set: 143/143 passed, plus JavaScript syntax checks.

@@ -1,0 +1,163 @@
+ProtoLab OS REV 1.0.26 verification
+UTC 2026-09-08 21:29:19
+
+PASS JavaScript syntax checks
+PASS | Demo state contains 18 prototype requests
+PASS | Demo state contains 25+ process definitions
+PASS | Demo state contains 40+ serialized units
+PASS | Serial numbers are unique
+PASS | Initial seeded state passes implemented invariants
+PASS | Request creation remains Draft and adds audit
+PASS | Request submission requires mandatory evidence fields
+PASS | AUTO-PLAN assigns equipment and staff and preserves route order
+PASS | Readiness identifies seeded blocker scenario
+PASS | Controlled override rejects unauthorised role
+PASS | Control Plan approved revision cannot be silently revised in place
+PASS | Serial generation creates unique traceable serials
+PASS | Quality release is blocked by unresolved release hold
+PASS | Deviation cannot close while mandatory action remains open
+PASS | Measurement limit evaluation detects fail
+PASS | Process fit assessment distinguishes released vs adaptation
+PASS | Planner never assigns equipment with invalid calibration
+PASS | Planner substitutes available qualified staff where preferred person is unavailable
+PASS | Process development cannot release with incomplete gates
+PASS | Completed process development releases reusable process revision
+PASS | Control Plan separation of duties prevents self-approval
+PASS | Independent Control Plan approval records person and timestamp
+PASS | Approver / Reviewer has explicit Control Plan approval permission
+PASS | Control Plan service rejects a role without approval authority
+PASS | Rework seed preserves original process history and explicit loop
+PASS | Failed objective measurement exists with quality hold linkage
+PASS | Delivered serial retains delivery reference
+PASS | Report service assembles serial, measurement and deviation evidence
+PASS | Auditor has view permission but no execution permission
+PASS | Administrator wildcard permission allows configuration actions
+PASS | Demo reset seed is a fresh deep copy
+PASS | Seeded approved Control Plans use independent approver evidence
+PASS | New request receives exact BOM material requirements and a proposed standard route
+PASS | Arbitrary material allocation cannot satisfy an exact BOM requirement
+PASS | Exact part/revision allocations satisfy material readiness
+PASS | AUTO-PLAN creates visible step bookings and a timing triage result
+PASS | AUTO-PLAN respects locked bookings on the same request
+PASS | Limit-only special characteristic can pass Control Plan definition
+PASS | Product-safety request automatically gets a concrete pending approval record
+PASS | Only Engineering supplied and Lab supplied material routes are supported
+PASS | Lab supplied material must be exact-reserved before AUTO-PLAN eligibility
+PASS | Engineering supplied material uses promised arrival as planning input but not Build Readiness
+PASS | AUTO-PLAN can create a provisional best-feasible preview before route/test definition is complete
+PASS | Standard tests and competency master data are present and used by planning
+PASS | Historical same-product builds refine estimates
+PASS | Closing a build captures learning record once
+
+RESULT: 46 passed, 0 failed
+PASS | IndexedDB adapter initializes
+PASS | IndexedDB adapter saves and reloads state across repository calls
+PASS | JSON export includes schema metadata
+PASS | JSON import persists compatible state
+PASS | Reset restores seeded demo data
+PASS | Schema 1 data migrates to exact BOM, approvals and proposed route model
+
+RESULT: 6 passed, 0 failed
+PASS | application ready flag
+PASS | dashboard markup rendered
+PASS | navigation markup rendered
+PASS | role selector populated
+PASS | action count populated
+PASS | modal form interaction does not close modal
+PASS | backdrop tap does not close modal on mobile
+PASS | modal backdrop is not marked as a close control
+PASS | modal close is bound explicitly inside modal root
+PASS | guided checklist replaces horizontal workspace navigation
+PASS | guided checklist rows expose owner and next action
+PASS | Control Plan offers direct independent-approver switch
+PASS | visible revision badge is populated
+PASS | workspace is streamlined to ten top-level guided controls
+PASS | lab triage shows timing feasibility and visual build swimlane
+PASS | material allocation is requirement driven and exact revision matched
+PASS | wizard offers only Engineering supplied and Lab supplied material sources
+PASS | AUTO-PLAN provides best-feasible preview while keeping material/process definition as commitment prerequisites
+PASS | standard tests and lab skills are exposed as planning master data
+PASS | planning shows historical learning basis and estimate basis
+PASS | digital traveller records start/complete actual duration
+PASS | Control Plan accepts target or limits as objective specification
+PASS | product safety approval has concrete direct-action workflow
+
+RESULT: 23 passed, 0 failed
+PASS | Required delivery files present
+PASS | All index asset references are relative
+PASS | All referenced local index assets exist
+PASS | Responsive mobile breakpoints present
+PASS | Touch target baseline is at least 44px
+PASS | Mobile hamburger is explicitly preserved at narrow widths
+PASS | Repository boundary present
+PASS | Role identity abstraction present
+PASS | Global search covers core record types
+PASS | No external runtime JavaScript/CSS dependencies
+PASS | Versioned asset URLs bypass stale browser cache
+PASS | Legacy service worker cache is self-clearing
+PASS | Modal backdrop cannot globally close forms
+PASS | Guided workspace replaces horizontal tabs and gate stepper
+PASS | Independent Approver role can approve Control Plans
+PASS | Visible revision number is present in the application header
+PASS | Purpose-based guided workflow is present
+PASS | AUTO-PLAN keeps material/process definition as commitment prerequisites but can preview best-feasible timing
+PASS | Only Engineering supplied and Lab supplied are selectable in the request wizard
+PASS | Lab supplied material requires exact reservation before planning
+PASS | Engineering supplied material captures expected arrival before planning
+PASS | Standard process/test and competence master data drive planning
+PASS | Planner uses confirmed route and qualified/calibrated resources
+PASS | Planning estimates combine lab standards with same-product history
+PASS | Closed builds feed future learning
+PASS | Control Plan special characteristics accept target OR limits
+PASS | Product safety approval records are generated
+PASS | Page-level horizontal overflow is prevented while tables remain scrollable
+PASS | Decision-focused KPI outlook is present
+PASS | Calibration certificate fields are controlled
+PASS | Optimized readiness plan coordinates calibration maintenance and training
+
+RESULT: 31 passed, 0 failed
+PASS | Current revision retains prior planning/competency controls
+PASS | Initial commitment is immutable and recorded
+PASS | Replan requires reason
+PASS | Reasoned replan preserves original and calculates movement
+PASS | Planning event UI and planner constraints are present
+PASS | Commitment metrics distinguish actual delivery from both promises
+PASS | Management KPI path includes replan root-cause and commitment performance
+PASS | Lab-wide planning situation pushes AUTO-PLAN outside the blocked interval
+
+8 passed, 0 failed
+PASS Current revision retains prior planning/competency controls
+PASS Competency catalogue exposes edit controls
+PASS Competency ID is protected while master fields are editable
+PASS Staff competency management supports renew and revoke
+PASS Certificate expiry follows competency validity rule
+PASS Planner qualification remains certificate gated
+
+6 passed, 0 failed
+PASS Current revision retains REV 1.0.25 features
+PASS Demo includes at least three completed archived projects
+PASS Archived demo projects retain final approved build reports
+PASS Test analytics includes specification capability and yield loss
+PASS Build report deliberately omits cost section
+PASS Build report finality requires controlled approval
+PASS Release ignores separate report-approval state
+PASS AUTO-PLAN and portfolio optimizer are proposal-first
+PASS Planning situation records constraint then reviews proposal
+PASS Daily operations review runs once per day and can be forced
+PASS Dashboard exposes daily operations improvement check
+PASS Schema 10 demo migration upgrades to current schema and injects archived examples
+PASS Schema 10 non-demo migration does not inject demo projects
+
+13 passed, 0 failed
+PASS REV 1.0.26 and schema 12 are active
+PASS Every demo sample has sample evidence model
+PASS New sample generation initializes description data and photos
+PASS Schema 11 migration initializes sample evidence without losing serial identity
+PASS Build report service exposes retained sample evidence
+PASS Changing sample evidence invalidates FINAL report and advances revision
+PASS Sample evidence UI supports camera photo, structured data and report inclusion
+PASS Build Report renders a sample-specific evidence section
+PASS Photo evidence is locally compressed before persistence
+PASS Report approval creates a new document after a superseded revision
+
+10 passed, 0 failed

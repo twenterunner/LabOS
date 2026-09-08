@@ -1,5 +1,15 @@
 # ProtoLab OS — Prototype Build Management
 
+## REV 1.0.26 — sample-specific data, photos & controlled report evidence
+
+- Each physical sample can now retain a free-text description, arbitrary structured data fields and multiple photo records under **Sample Register → Data / photos**.
+- Photos can be taken directly from a phone camera or selected from the device. Images are resized to a maximum 1600 px and compressed before IndexedDB storage to keep the static POC responsive.
+- Every description, data field and photo remains anchored to the permanent Lab Sample ID / formal serial traceability chain.
+- Each description/data/photo item has an **Include in Build Report** control, allowing internal evidence to be retained without forcing it into the released document.
+- The Prototype Build Report now contains a dedicated **Sample-specific evidence** section with per-sample description, structured data and selected photos/captions.
+- Sample History also displays the retained description, data and photo evidence.
+- If sample evidence changes after a Build Report is FINAL, the report approval is invalidated, the report revision advances and controlled re-approval is required. A superseded document record is retained in document history.
+
 ## REV 1.0.25 — controlled reports, archived examples & proposal-first planning
 
 - Added three completed/archived demonstration projects with retained traceability and approved final build reports.

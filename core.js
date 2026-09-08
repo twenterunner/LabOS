@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.25-poc';
-  ProtoLab.SCHEMA_VERSION = 11;
+  ProtoLab.VERSION = '1.0.26-poc';
+  ProtoLab.SCHEMA_VERSION = 12;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -81,6 +81,31 @@
   };
   ProtoLab.audit = (state, action, objectType, objectId, previousState, newState, reason='') => {
     state.auditTrail.unshift({id:ProtoLab.uid('AUD'),timestamp:ProtoLab.now(),user:state.identity.name,role:state.identity.role,action,objectType,objectId,previousState,newState,reason});
+  };
+  ProtoLab.ensureSampleEvidence = sample => {
+    if(!sample) return sample;
+    sample.description = sample.description || '';
+    sample.dataFields = Array.isArray(sample.dataFields) ? sample.dataFields : [];
+    sample.evidencePhotos = Array.isArray(sample.evidencePhotos) ? sample.evidencePhotos : [];
+    sample.includeDescriptionInBuildReport = sample.includeDescriptionInBuildReport !== false;
+    sample.dataFields.forEach(x=>{x.id=x.id||ProtoLab.uid('SDATA');x.label=x.label||'';x.value=x.value??'';x.unit=x.unit||'';x.description=x.description||'';x.includeInBuildReport=x.includeInBuildReport!==false;});
+    sample.evidencePhotos.forEach(x=>{x.id=x.id||ProtoLab.uid('PHOTO');x.caption=x.caption||x.fileName||'Sample photo';x.description=x.description||'';x.includeInBuildReport=x.includeInBuildReport!==false;x.capturedAt=x.capturedAt||ProtoLab.now();x.capturedBy=x.capturedBy||'';});
+    return sample;
+  };
+  ProtoLab.nextReportRevision = rev => {
+    const src=String(rev||'A').toUpperCase().replace(/[^A-Z]/g,'')||'A';let n=0;for(const ch of src)n=n*26+(ch.charCodeAt(0)-64);n++;let out='';while(n){n--;out=String.fromCharCode(65+n%26)+out;n=Math.floor(n/26);}return out;
+  };
+  ProtoLab.invalidateBuildReport = (state,r,reason='Controlled report content changed') => {
+    if(!state||!r)return false;const a=ProtoLab.ensureBuildReportApproval(state,r),prev=a.status;
+    if(!['Approved','Pending'].includes(prev))return false;
+    if(prev==='Approved'){
+      const oldRev=r.buildReportRevision||'A',next=ProtoLab.nextReportRevision(oldRev);r.buildReportRevision=next;
+      state.documents=state.documents||[];const doc=state.documents.find(d=>d.requestId===r.id&&d.type==='Prototype Build Report'&&d.status==='Approved'&&String(d.revision||'A')===String(oldRev));
+      if(doc){doc.status='Superseded';doc.supersededBy=next;doc.supersededAt=ProtoLab.now();}
+    }
+    a.status='Draft';a.timestamp=null;a.approvedAt=null;a.requestedAt=null;a.requestedBy=null;a.comment=`Re-approval required: ${reason}`;
+    r.buildReportApprovedAt=null;r.buildReportApprovedBy=null;
+    ProtoLab.audit(state,'Build report approval invalidated','Request',r.id,prev,'Draft',`${reason}; current report revision ${r.buildReportRevision||'A'}`);return true;
   };
 
   ProtoLab.DEFAULT_BOMS = {

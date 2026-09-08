@@ -216,3 +216,6 @@ For a unit-based route operation, execute the operation against one sample at a 
 If the Control Plan defines a measurement at that route step, record it during execution against the sample. Once all samples complete the route, move to **End characterisation**, where the selected tests appear as a sample × test matrix.
 
 **Forecast delivery** is the predicted handover date from AUTO-PLAN, not the engineering requested date. It includes the best-feasible resource schedule plus final lab handling and remains provisional until the Lab Planner commits it.
+
+## Sample evidence and photos (REV 1.0.26)
+Open a build → **Samples** → **Data / photos** on the relevant sample. Add a description, structured data fields, and/or a photo from the phone camera/gallery. Use **Include in Build Report** per item. The permanent Lab Sample ID remains the traceability key.

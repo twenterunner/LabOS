@@ -1,7 +1,7 @@
 const assert=require('assert'),fs=require('fs'),vm=require('vm');
 let pass=0,fail=0;function test(name,fn){try{fn();console.log('PASS',name);pass++}catch(e){console.error('FAIL',name,'-',e.message);fail++}}
 const ctx={console,crypto:{randomUUID:()=> 'uuid'},structuredClone:o=>JSON.parse(JSON.stringify(o)),setTimeout,clearTimeout};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync('core.js','utf8'),ctx);const P=ctx.ProtoLab;
-test('REV 1.0.24 and schema 10 are active',()=>{assert.equal(P.VERSION,'1.0.24-poc');assert.equal(P.SCHEMA_VERSION,10)});
+test('Current revision retains prior planning/competency controls',()=>{assert.equal(P.VERSION,'1.0.26-poc');assert.equal(P.SCHEMA_VERSION,12)});
 test('Competency catalogue exposes edit controls',()=>{const a=fs.readFileSync('app.js','utf8');assert(a.includes('Edit competency'));assert(a.includes('data-edit-skill'));assert(a.includes("newSkillWizard(el.dataset.editSkill)"))});
 test('Competency ID is protected while master fields are editable',()=>{const a=fs.readFileSync('app.js','utf8');assert(a.includes('Competency ID'));assert(a.includes('disabled'));assert(a.includes("P.audit(App.state,'Competency updated'"));assert(a.includes('requiredCertificate:d.requiredCertificate'));assert(a.includes('trainingDurationHours:Number(d.trainingDurationHours||4)'))});
 test('Staff competency management supports renew and revoke',()=>{const a=fs.readFileSync('app.js','utf8');assert(a.includes('Manage competencies'));assert(a.includes('data-revoke-staff-cert'));assert(a.includes("c.status='Revoked'"));assert(a.includes("c.status='Superseded'"));assert(a.includes('Issue / renew competency'))});

@@ -82,9 +82,14 @@ class MigrationService{
     (s.requests||[]).forEach(r=>P.ensureBuildReportApproval(s,r));
     s.dataVersion='2026.09-demo-14';s.schemaVersion=11;continue;
    }
+   if(s.schemaVersion===11){
+    (s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));
+    s.dataVersion=String(s.dataVersion||'').startsWith('2026.09-demo')?'2026.09-demo-15':(s.dataVersion||'migrated');
+    s.schemaVersion=12;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
 class BrowserDocumentStore{download(name,text,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);} readFile(file){return file.text();}}
