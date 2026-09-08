@@ -1,4 +1,4 @@
-# ProtoLab OS — Quick Start — REV 1.0.7
+# ProtoLab OS — Quick Start — REV 1.0.9
 
 ## 1. Pick a role
 
@@ -30,7 +30,7 @@ Each request uses one tappable checklist. Follow it top to bottom:
 9. Release approval
 10. Deliver, retain records & feed learning
 
-The important change in REV 1.0.7 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
+The important change in REV 1.0.9 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
 
 ## 3. Create a request and choose material source
 
@@ -54,13 +54,13 @@ As **Process Engineer**, open **Process route & test-method assessment**.
 - Requested characterisation is matched against the **Standard Test Library**.
 - An unmatched requested test requires a controlled development estimate, provisional execution time, equipment capability and skill before planning.
 
-Only when this assessment is planning-complete does AUTO-PLAN become meaningful.
+AUTO-PLAN may be run before this assessment is complete to obtain a **provisional best-feasible preview**. The app clearly identifies assumptions. Formal timing commitment still waits for material and process/test feasibility to be defined.
 
 ## 5. Run AUTO-PLAN
 
 Switch to **Prototype Lab Coordinator / Planner** and open **Lab feasibility, resource plan & committed timing**.
 
-AUTO-PLAN now uses:
+AUTO-PLAN now searches for the earliest best-feasible schedule using:
 
 - confirmed process/test definitions;
 - exact material availability/arrival;
@@ -72,6 +72,11 @@ AUTO-PLAN now uses:
 - explicit development effort where a method is not yet released.
 
 Each booking shows its **estimate basis**, equipment and qualified person. Review the requested-vs-forecast date and then explicitly **Commit forecast**.
+
+
+### Visual planning
+
+Open **Visual Resource Planning** and switch between **Overall**, **Per build**, **Per equipment** and **Per person** swimlanes. Choose a 4, 8 or 13 week horizon and toggle **Show potential projects** to add probability-weighted scenario bars without turning them into committed bookings. Use **OPTIMIZE PORTFOLIO** to re-plan active work in priority / due-date order. Routine conflicts move or substitute resources; only a genuine absence of the required lab equipment capability or required skill becomes a structural blocker.
 
 ## 6. Inspect what the planner is learning from
 
@@ -124,3 +129,11 @@ Open **Equipment & Calibration**. Record calibration and preventive maintenance 
 ## 10. Use management KPIs and continuous improvement
 
 As **Lab Manager**, open **Management KPIs**. Filter by product and historical period, then review delivery/yield/rework/scrap, cost variance/COPQ, process-step actuals, current bottlenecks and probability-weighted future equipment/skill demand. The **Action Centre** can be grouped by severity, build, person or function and keeps continuous-improvement proposals separate from mandatory build actions.
+
+## Product master — REV 1.0.9
+
+Use **Menu → Products & BOM**. Engineering Project Lead or Administrator can create/edit the product definition, exact BOM and default process-route proposal. New requests inherit this controlled master data.
+
+## Capacity KPIs
+
+Management workload KPIs show demand, currently available capacity and utilization %. Invalid equipment and unavailable/uncertified people do not count as available capacity.

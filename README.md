@@ -2,9 +2,9 @@
 
 ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototype-build operations. It supports engineering requests, material/process feasibility, realistic resource planning, controlled process/test definitions, PFMEA-linked risk, Control Plans, readiness, digital traveller execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting, audit history and learning from previous builds.
 
-## Revision 1.0.7 — weekly capacity forecasting and optimized readiness planning
+## Revision 1.0.9 — controlled Product Master and capacity-normalized KPIs
 
-The visible application header always shows the running revision: **REV 1.0.7**.
+The visible application header always shows the running revision: **REV 1.0.9**.
 
 The guided request flow is deliberately ordered so that a forecast is not invented before the lab knows what must actually be built:
 
@@ -19,7 +19,15 @@ The guided request flow is deliberately ordered so that a forecast is not invent
 9. **Release approval**
 10. **Deliver, retain records & feed learning**
 
-AUTO-PLAN is intentionally unavailable until the material and process/test inputs needed for a credible schedule are defined.
+AUTO-PLAN can now run at any point after submission as a **best-feasible preview**. Material and process/test definition are still required before the forecast can be formally committed, but incomplete inputs no longer create a dead end. The planner uses explicit provisional assumptions and identifies what must still be resolved.
+
+### Product master
+
+REV 1.0.9 adds **Products & BOM** as a first-class menu area. Engineering Project Lead / Administrator can create and edit product family, part number, product revision, hardware/software revision, product-safety default, exact controlled BOM and default released-process route. New requests inherit the current product master; existing controlled requests are not silently rewritten.
+
+### Capacity-normalized KPIs
+
+Management workload KPIs are shown as **demand / current available capacity / utilization %**. Current equipment capacity counts only calibration/maintenance-valid equipment. Current staffing capacity counts only available people with a valid training certificate for the required skill. Scheduled calibration, maintenance and training consume capacity. Weekly, quarterly and process-step views all retain this capacity denominator. Quality and finance outcome KPIs show the current equipment/skill loading context rather than being presented in isolation.
 
 ### Material source
 
@@ -32,7 +40,7 @@ Material cannot be made ready by assigning an arbitrary lot.
 
 ### Planning basis
 
-Resource bookings are created only from a **confirmed process route and defined requested tests**. Each booking is based on controlled master data:
+For a committed schedule, resource bookings are based on a **confirmed process route and defined requested tests**. Before that point AUTO-PLAN can create a clearly labelled provisional preview. Each defined booking uses controlled master data:
 
 - standard process setup time, cycle time and unit/batch basis;
 - standard test setup/cycle time;
@@ -45,6 +53,23 @@ Resource bookings are created only from a **confirmed process route and defined 
 - existing locked bookings and resource conflicts.
 
 The **Lab Manager / Administrator** can maintain the process/test planning standards and staff competency matrix in **Lab standards, tests & skills**.
+
+
+### Resilient AUTO-PLAN and swimlane views
+
+REV 1.0.9 removes routine planner dead ends. For each task the optimizer searches all capable equipment, all people associated with the required skill, current and scheduled calibration/maintenance/training readiness, existing bookings and later working-time slots. It returns the earliest best-feasible schedule it can construct, even when that forecast misses the requested date.
+
+AUTO-PLAN only raises a structural lab-capability blocker when **no equipment anywhere in the lab has the required capability** or **no person anywhere in the lab is associated with a required skill**. Expired calibration, overdue maintenance, expired qualification, temporary staff unavailability, busy equipment, unreleased process definitions and normal booking conflicts are treated as recoverable planning constraints rather than JavaScript errors. Where appropriate the planner inserts readiness work or uses controlled provisional assumptions.
+
+Planning is primarily visual. **Visual Resource Planning** provides swimlanes for:
+
+- the overall build portfolio;
+- one selected build;
+- each equipment resource;
+- each person / qualification resource;
+- optional probability-weighted potential-project overlays.
+
+The detailed booking table remains available behind progressive disclosure for audit/detail use, but it is no longer the main planning experience.
 
 ### Learning from previous builds
 
