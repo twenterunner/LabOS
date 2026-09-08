@@ -1,0 +1,23 @@
+const fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert');
+const root=__dirname;
+function fakeEl(){return {innerHTML:'',textContent:'',value:'',checked:false,files:[],style:{},dataset:{},className:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},appendChild(){},remove(){},click(){},focus(){},setAttribute(){},addEventListener(){},querySelector(){return null},querySelectorAll(){return []},scrollIntoView(){}}}
+const els={};for(const k of ['#page','#mainNav','#actionCount','#roleSelect','#menuButton','#globalSearch','#searchResults','#sidebar','#toastRoot','#modalRoot','#versionBadge','.brand'])els[k]=fakeEl();
+let domReady=null;const document={querySelector:s=>els[s]||fakeEl(),querySelectorAll:s=>[],createElement:()=>fakeEl(),addEventListener(){},body:fakeEl()};
+const ctx={console,Date,Math,Intl,setTimeout:(fn)=>fn(),clearTimeout,Blob:class{},URL:{createObjectURL(){return'blob:x'},revokeObjectURL(){}},confirm(){return true},prompt(){return'1'},innerWidth:1280,window:null,document,navigator:{},location:{protocol:'http:'},scrollTo(){}};ctx.window=ctx;ctx.window.addEventListener=(ev,cb)=>{if(ev==='DOMContentLoaded')domReady=cb};vm.createContext(ctx);
+for(const f of ['core.js','demo-data.js','services.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
+ctx.ProtoLab.IndexedDBStorageRepository=class{async init(){return true}async load(){return ctx.ProtoLab.createDemoState()}async save(){return true}};
+ctx.ProtoLab.BrowserDocumentStore=class{};ctx.ProtoLab.DemoIdentityProvider=class{constructor(s){this.state=s}switchRole(role){const u=this.state.users.find(x=>x.role===role)||this.state.users[0];this.state.identity={userId:u.id,name:u.name,role};return this.state.identity}};ctx.ProtoLab.MigrationService=class{static migrate(s){return s}};
+let src=fs.readFileSync(path.join(root,'app.js'),'utf8');src=src.replace("window.addEventListener('DOMContentLoaded',init);","window.__v117={App,renderDashboard,renderManagement,operationalDashboard,operationalRows,weekBounds};window.addEventListener('DOMContentLoaded',init);");vm.runInContext(src,ctx,{filename:'app.js'});
+const css=fs.readFileSync(path.join(root,'styles.css'),'utf8'),index=fs.readFileSync(path.join(root,'index.html'),'utf8');let p=0,f=0;function test(n,fn){try{fn();console.log('PASS | '+n);p++}catch(e){console.error('FAIL | '+n+' | '+e.stack);f++}}
+(async()=>{await domReady();const T=ctx.__v117,A=T.App;A.identity.switchRole('administrator');
+ test('REV 1.0.17 active',()=>{assert.equal(ctx.ProtoLab.VERSION,'1.0.17-poc');assert(index.includes('REV 1.0.17'));});
+ test('Operational dashboard renders control-room sections',()=>{const h=T.renderDashboard();for(const x of ['Lab operational control room','Last week → this week','Operational schedule','Where this week','ONGOING / NEXT 48 HOURS','DELIVERY WATCH'])assert(h.includes(x),x);});
+ test('Dashboard uses calculated operational rows rather than hard-coded health bars',()=>{const h=T.renderDashboard();assert(!h.includes('Build flow health'));assert(T.operationalRows().length>0);});
+ test('Operational dashboard exposes blockers with guided Resolve actions',()=>{const h=T.renderDashboard();assert(h.includes('data-resolve-action'));assert(h.includes('What needs intervention now'));});
+ test('Management KPI page is decision-focused',()=>{const h=T.renderManagement();for(const x of ['On-time delivery','First-pass yield','Cost / prototype','Current capacity load','Projected bottlenecks','13-week capacity heatmap','Potential project pipeline'])assert(h.includes(x),x);});
+ test('Management KPI page removed old wall-of-tables sections',()=>{const h=T.renderManagement();for(const x of ['Process-step performance & capacity','Finance performance','Current equipment load / capacity','Current certified-skill load / capacity'])assert(!h.includes(x),x);});
+ test('KPI contains visual trends and forward capacity graph',()=>{const h=T.renderManagement();assert(h.includes('kpi-line-chart'));assert(h.includes('Peak utilization by week'));assert(h.includes('Top issue themes'));});
+ test('Workspace header is non-sticky to prevent content overlap',()=>{assert(css.includes('.workspace-header{position:static!important'));assert(css.includes('grid-template-columns:repeat(auto-fit,minmax(145px,1fr))'));});
+ test('Operational dashboard responsive styles exist',()=>{assert(css.includes('.ops-week-board'));assert(css.includes('.ops-load-bars'));assert(css.includes('@media(max-width:820px)'));});
+ console.log(`\nRESULT: ${p} passed, ${f} failed`);process.exitCode=f?1:0;
+})().catch(e=>{console.error(e);process.exitCode=1});

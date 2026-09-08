@@ -4,7 +4,7 @@ ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototy
 
 ## Revision 1.0.14 — current packaged build
 
-REV 1.0.15 is the focused usability/traceability update requested after REV 1.0.12. It adds bulk exact-BOM reservation, selection of released end-characterisation tests, editable process-risk items, traceable manual/CSV characterisation, certificate-backed calibration validity with append-only certificate history, actionable quality views, grouped serial history, detailed build reports and printable route travellers, customer creation, an explicit E0/E1/V/P control matrix, calibration/maintenance reporting, and mobile containment fixes.
+REV 1.0.17 is the focused usability/traceability update requested after REV 1.0.12. It adds bulk exact-BOM reservation, selection of released end-characterisation tests, editable process-risk items, traceable manual/CSV characterisation, certificate-backed calibration validity with append-only certificate history, actionable quality views, grouped serial history, detailed build reports and printable route travellers, customer creation, an explicit E0/E1/V/P control matrix, calibration/maintenance reporting, and mobile containment fixes.
 
 For formal builds, the former **Identify units & execute the build** wording is replaced by **Execute build & capture unit traceability**. The execution record is retained for V/P because it preserves objective evidence of what was actually built, by whom, with which process/equipment/revision. E0 remains deliberately lean and may use build-level evidence without serialisation. New quality UI uses **Nonconformance** instead of the unexplained NCR acronym.
 
@@ -149,7 +149,7 @@ Seed data includes approximately:
 
 ## POC data
 
-IndexedDB is the primary persistence mechanism. Use **Configuration & data** as Administrator to export JSON, import JSON or reset the demo. Current schema version is **5** and migration logic upgrades earlier local POC data without requiring a reset.
+IndexedDB is the primary persistence mechanism. Use **Configuration & data** as Administrator to export JSON, import JSON or reset the demo. Current schema version is **7** and migration logic upgrades earlier local POC data without requiring a reset.
 
 ## Main files
 
@@ -191,9 +191,21 @@ Build routes can be created from a blank canvas, copied from the product standar
 - Request-specific build routes remain editable step-by-step with Edit / move / remove / insert controls.
 
 
-## REV 1.0.15
-- Direct **Edit request** action in every request workspace for Engineering Requester, Engineering Project Lead and Administrator.
-- Missing objective can be corrected without recreating the request.
-- Material/timing/scope changes are audit-recorded and reopen affected feasibility and AUTO-PLAN timing.
-- E0/E1/V/P now explicitly states what is required, conditional and not required.
-- Includes all REV 1.0.14 corrections (characterisation, calibration evidence, quality workflow, serial grouping, KPI visuals and mobile request cards).
+## REV 1.0.17 — guided blocker resolution
+
+- **Action Centre → Resolve** now opens a blocker-specific guided workflow instead of jumping directly into a workspace section.
+- Every guided blocker shows **what is wrong, why it matters, owner/role, due date, impact, resolution path, current step, evidence required and the condition that clears the blocker**.
+- The seeded **Laser weld geometry outside released process envelope** example opens the linked process-development workflow and highlights the actual next incomplete gate. In the demo this is **Risk review**, after Need / Plan / Trial / Parameters are already complete.
+- Process-development resolution walks through **Need → Plan → Trial → Parameters → Risk → Measurement → Capability → Control Plan → Work instruction → Approval → Release**.
+- Each development step requires an evidence/reference note plus confirmation of the stated completion criterion; the evidence is audit-recorded.
+- The resolver offers direct links to relevant controlled records such as process risks, characterisation, Control Plan and work instruction context.
+- Releasing the developed process clears the originating Action Centre blocker.
+- Guided resolver models are also provided for material, Control Plan, quality decision, product-safety/approval, calibration and engineering-clarification actions.
+- The same guided resolver is used from the request workspace **Next action** card, so Action Centre and workspace behaviour are consistent.
+- REV 1.0.15 request editing and explicit E0/E1/V/P included/conditional/not-required controls are retained.
+
+
+## REV 1.0.17
+- Dashboard redesigned as an operational control room for last/current week execution, resource use, blockers, decisions and 14-day delivery watch.
+- Management KPI page reduced to six core KPIs plus trends, bottlenecks, capacity outlook and pipeline.
+- Request workspace summary is no longer sticky, preventing detail text from rendering underneath the top tiles.
