@@ -1,4 +1,4 @@
-# ProtoLab OS — Quick Start — REV 1.0.10
+# ProtoLab OS — Quick Start — REV 1.0.12
 
 ## 1. Pick a role
 
@@ -10,7 +10,7 @@ Useful roles:
 - **Prototype Lab Coordinator / Planner** — material feasibility, AUTO-PLAN and timing commitment.
 - **Process Engineer** — confirm the build route, standard/new-process decision and requested test method.
 - **Lab Manager** — maintain lab planning standards/skills and review capacity.
-- **Prototype Technician** — execute the digital traveller.
+- **Prototype Technician** — execute the guided build execution.
 - **Quality Engineer** — Control Plan and deviations.
 - **Product Safety Representative** — perform an applicable safety sign-off.
 - **Approver / Reviewer** — independent controlled approval.
@@ -25,12 +25,12 @@ Each request uses one tappable checklist. Follow it top to bottom:
 4. Lab feasibility, resource plan & committed timing
 5. Control Plan, risk controls & special approvals
 6. Build readiness
-7. Serialise & execute digital traveller
+7. Identify units where required & execute the guided build
 8. Characterise, evaluate & disposition exceptions
 9. Release approval
 10. Deliver, retain records & feed learning
 
-The important change in REV 1.0.10 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
+The important change in REV 1.0.12 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
 
 ## 3. Create a request and choose material source
 
@@ -86,7 +86,7 @@ The Lab Manager can edit standard process/test times and the competency matrix f
 
 ## 7. Build and close the learning loop
 
-The technician starts and completes each traveller step separately. The actual wall-clock duration is retained. After delivery, closing the request adds a history record containing actual process durations, yield, scrap, rework, issues and lessons. Future same-product planning uses that accumulated evidence.
+The technician starts and completes each build step separately. The actual wall-clock duration is retained. After delivery, closing the request adds a history record containing actual process durations, yield, scrap, rework, issues and lessons. Future same-product planning uses that accumulated evidence.
 
 ## 8. Useful seeded scenarios
 
@@ -110,7 +110,7 @@ As **Administrator → Configuration & data**:
 - Import JSON
 - Reset Demo Data
 
-Existing earlier local data is migrated to schema 5; a reset is not normally required.
+Existing earlier local data is migrated to schema 6; a reset is not normally required.
 
 
 ## 8. Configure the lab operating model
@@ -124,16 +124,42 @@ As **Lab Manager** or **Administrator**, open **Lab Standards & Resources**.
 
 ## 9. Maintain equipment readiness
 
-Open **Equipment & Calibration**. Record calibration and preventive maintenance with certificate/work-order evidence and a next-due date. AUTO-PLAN and traveller execution reject equipment that is no longer ready for the relevant date.
+Open **Equipment & Calibration**. Record calibration and preventive maintenance with certificate/work-order evidence and a next-due date. AUTO-PLAN and guided build execution reject equipment that is no longer ready for the relevant date.
 
 ## 10. Use management KPIs and continuous improvement
 
 As **Lab Manager**, open **Management KPIs**. Filter by product and historical period, then review delivery/yield/rework/scrap, cost variance/COPQ, process-step actuals, current bottlenecks and probability-weighted future equipment/skill demand. The **Action Centre** can be grouped by severity, build, person or function and keeps continuous-improvement proposals separate from mandatory build actions.
 
-## Product master — REV 1.0.10
+## Product master — REV 1.0.12
 
 Use **Menu → Products & BOM**. Engineering Project Lead or Administrator can create/edit the product definition, exact BOM and default process-route proposal. New requests inherit this controlled master data.
 
 ## Capacity KPIs
 
 Management workload KPIs show demand, currently available capacity and utilization %. Invalid equipment and unavailable/uncertified people do not count as available capacity.
+
+
+### Choose the right build purpose
+Use **E0 Rapid Engineering** for quick engineering experiments, **E1 Controlled Engineering** for repeatable engineering prototypes, **V Validation / Customer** for formal DV/PV/customer evidence, and **P Production Intent** for production-representative parts. The application hides unnecessary controls at the lower levels.
+
+In a request, open **Process route & test-method assessment → Choose / replace route** to start blank, use the product standard, or copy a previous build.
+
+
+## REV 1.0.12 — purpose-based build control
+
+Choose the lowest assurance level that still provides the evidence required for the build:
+
+- **E0 Rapid Engineering** — quick experiments, troubleshooting and learning. No formal Control Plan/PFMEA/release sign-off by default; unit IDs are optional; test-only work may have no build route.
+- **E1 Controlled Engineering** — repeatable engineering prototypes with useful traceability, but without customer/production release formalities.
+- **V Validation / Customer** — DV/PV or customer-facing samples using released methods, controlled risk/Control Plan evidence and formal release.
+- **P Production Intent** — strongest prototype governance for production-representative/PPAP-supporting work.
+
+For the build route choose **Start from scratch**, **Use product standard route**, or **Copy a previous build**. The selected route is copied into the request and can then be edited, reordered, extended or shortened without changing the source record.
+
+
+## REV 1.0.12 quick changes
+
+- Edit a created standard build process under **Lab Standards & Resources → Edit process**.
+- Add an equipment calibration certificate under **Equipment & Calibration → + Add certificate** or open **Certificates** and choose **+ Add certificate**.
+- Add/edit people under **Lab Standards & Resources → Lab Staff**. Then issue controlled skill certificates separately; editing a staff record never grants competence.
+- Edit a request-specific build route from the request workflow using each route card's **Edit / ↑ / ↓ / Remove** controls.

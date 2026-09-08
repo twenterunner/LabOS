@@ -1,10 +1,10 @@
 # ProtoLab OS — Automotive Prototype Build Management POC
 
-ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototype-build operations. It supports engineering requests, material/process feasibility, realistic resource planning, controlled process/test definitions, PFMEA-linked risk, Control Plans, readiness, digital traveller execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting, audit history and learning from previous builds.
+ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototype-build operations. It supports engineering requests, material/process feasibility, realistic resource planning, controlled process/test definitions, PFMEA-linked risk, Control Plans, readiness, guided build execution execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting, audit history and learning from previous builds.
 
-## Revision 1.0.10 — controlled Product Master and capacity-normalized KPIs
+## Revision 1.0.12 — purpose-based prototype control and editable build routes
 
-The visible application header always shows the running revision: **REV 1.0.10**.
+The visible application header always shows the running revision: **REV 1.0.12**.
 
 The guided request flow is deliberately ordered so that a forecast is not invented before the lab knows what must actually be built:
 
@@ -14,7 +14,7 @@ The guided request flow is deliberately ordered so that a forecast is not invent
 4. **Lab feasibility, resource plan & committed timing**
 5. **Control Plan, risk controls & special approvals**
 6. **Build readiness**
-7. **Serialise & execute digital traveller**
+7. **Identify units where required & execute the guided build**
 8. **Characterise, evaluate & disposition exceptions**
 9. **Release approval**
 10. **Deliver, retain records & feed learning**
@@ -23,7 +23,7 @@ AUTO-PLAN can now run at any point after submission as a **best-feasible preview
 
 ### Product master
 
-REV 1.0.10 adds **Products & BOM** as a first-class menu area. Engineering Project Lead / Administrator can create and edit product family, part number, product revision, hardware/software revision, product-safety default, exact controlled BOM and default released-process route. New requests inherit the current product master; existing controlled requests are not silently rewritten.
+REV 1.0.12 adds **Products & BOM** as a first-class menu area. Engineering Project Lead / Administrator can create and edit product family, part number, product revision, hardware/software revision, product-safety default, exact controlled BOM and default released-process route. New requests inherit the current product master; existing controlled requests are not silently rewritten.
 
 ### Capacity-normalized KPIs
 
@@ -57,7 +57,7 @@ The **Lab Manager / Administrator** can maintain the process/test planning stand
 
 ### Resilient AUTO-PLAN and swimlane views
 
-REV 1.0.10 removes routine planner dead ends. For each task the optimizer searches all capable equipment, all people associated with the required skill, current and scheduled calibration/maintenance/training readiness, existing bookings and later working-time slots. It returns the earliest best-feasible schedule it can construct, even when that forecast misses the requested date.
+REV 1.0.12 removes routine planner dead ends. For each task the optimizer searches all capable equipment, all people associated with the required skill, current and scheduled calibration/maintenance/training readiness, existing bookings and later working-time slots. It returns the earliest best-feasible schedule it can construct, even when that forecast misses the requested date.
 
 AUTO-PLAN only raises a structural lab-capability blocker when **no equipment anywhere in the lab has the required capability** or **no person anywhere in the lab is associated with a required skill**. Expired calibration, overdue maintenance, expired qualification, temporary staff unavailability, busy equipment, unreleased process definitions and normal booking conflicts are treated as recoverable planning constraints rather than JavaScript errors. Where appropriate the planner inserts readiness work or uses controlled provisional assumptions.
 
@@ -162,3 +162,23 @@ IndexedDB is the primary persistence mechanism. Use **Configuration & data** as 
 ## Deliberate POC limits
 
 This static POC does **not** provide server-enforced security, corporate authentication, server-side signatures, multi-user concurrency, authoritative ERP/PLM/MES/HR/calibration integration, enterprise document storage, central backup or validated e-signature infrastructure. Those concerns belong in the later authenticated enterprise implementation.
+
+
+## Purpose-based workflow (REV 1.0.12)
+
+Each request selects an assurance profile: E0 Rapid Engineering, E1 Controlled Engineering, V Validation / Customer, or P Production Intent. The guided checklist only shows controls required by that purpose. Routes can start blank, from the product standard, or as a copy of a previous build; the copied route is always editable inside the request. Control Plans have a direct editor; editing an approved plan creates a new Draft revision. Guided Build Execution / Unit Identification explains exactly why the execution record exists: it captures what was actually done, by whom, with which equipment/process revision, evidence and actual duration. Rapid Engineering can use a build-level record without individual unit IDs.
+
+
+### REV 1.0.12 workflow scaling
+
+Prototype governance is now purpose-based rather than one-size-fits-all. E0 Rapid Engineering removes formal customer/production controls unless safety or the selected purpose requires them; E1 Controlled Engineering retains repeatability/traceability; Validation and Production Intent progressively add released methods, risk/Control Plan controls, independent approval, genealogy and formal release. Product Safety always forces at least Validation.
+
+Build routes can be created from a blank canvas, copied from the product standard, or copied from a previous build. Reuse never silently edits the source: the request receives its own editable route copy. Approved Control Plans remain immutable; selecting Edit creates a new Draft revision linked to the superseded approved revision. Guided Build Execution replaces the ambiguous traveller terminology and records what was actually done, by whom, using which process revision/equipment, with evidence and actual duration.
+
+
+## Revision 1.0.12 — editable process definitions, calibration certificates and lab staff
+
+- **Lab Standards & Resources → Edit process** now edits the complete created process definition, including scope, planning standard, required equipment capability, certified skill, cost basis, work instruction and evidence. Editing a Released process creates a new Under-review revision instead of silently changing the released revision.
+- **Equipment & Calibration → + Add certificate** records calibration certificate number, issuer, calibration date, next due date, traceability/reference standard, result and evidence/file reference. A passing certificate updates equipment readiness.
+- **Lab Standards & Resources → + Add staff / Edit person** maintains lab planning resources, roles, teams and availability. Skills remain certificate-gated and must be issued through the existing training-certificate workflow.
+- Request-specific build routes remain editable step-by-step with Edit / move / remove / insert controls.
