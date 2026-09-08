@@ -4,7 +4,7 @@ for(const f of ['core.js','demo-data.js','services.js']) vm.runInContext(fs.read
 const P=ctx.ProtoLab,app=fs.readFileSync(path.join(root,'app.js'),'utf8'),css=fs.readFileSync(path.join(root,'styles.css'),'utf8');let pass=0,fail=0;const rows=[];
 function assert(v,m='assertion failed'){if(!v)throw new Error(m)}function test(n,fn){try{fn();rows.push(['PASS',n]);pass++;}catch(e){rows.push(['FAIL',n,e.message]);fail++;}}
 
-test('REV 1.0.9 retains schema 5',()=>{const s=P.createDemoState();assert(P.VERSION==='1.0.9-poc');assert(s.schemaVersion===5)});
+test('REV 1.0.10 retains schema 5',()=>{const s=P.createDemoState();assert(P.VERSION==='1.0.10-poc');assert(s.schemaVersion===5)});
 test('Calibration certificates are seeded for calibration-controlled equipment',()=>{const s=P.createDemoState();const ids=s.equipment.filter(e=>e.calibrationRequired!==false).map(e=>e.id);assert(ids.every(id=>s.calibrationCertificates.some(c=>c.equipmentId===id&&c.certificateNo&&c.issuer&&c.evidence)))});
 test('Forward demand is calculated week by week',()=>{const s=P.createDemoState(),f=new P.ForwardDemandService().build(s,{weeks:26});assert(f.weeks.length===26);const eq=Object.values(f.equipment);assert(eq.length>0);assert(eq.some(x=>x.pipeline.some(v=>v>0)));assert(eq.every(x=>x.committed.length===26&&x.pipeline.length===26))});
 test('Forward staffing demand uses certified skill capacity',()=>{const s=P.createDemoState(),f=new P.ForwardDemandService().build(s,{weeks:26});const skills=Object.values(f.skills);assert(skills.length>0);assert(skills.some(x=>x.capacity>0));assert(skills.every(x=>x.label))});

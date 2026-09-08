@@ -2,9 +2,9 @@
 
 ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototype-build operations. It supports engineering requests, material/process feasibility, realistic resource planning, controlled process/test definitions, PFMEA-linked risk, Control Plans, readiness, digital traveller execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting, audit history and learning from previous builds.
 
-## Revision 1.0.9 — controlled Product Master and capacity-normalized KPIs
+## Revision 1.0.10 — controlled Product Master and capacity-normalized KPIs
 
-The visible application header always shows the running revision: **REV 1.0.9**.
+The visible application header always shows the running revision: **REV 1.0.10**.
 
 The guided request flow is deliberately ordered so that a forecast is not invented before the lab knows what must actually be built:
 
@@ -23,7 +23,7 @@ AUTO-PLAN can now run at any point after submission as a **best-feasible preview
 
 ### Product master
 
-REV 1.0.9 adds **Products & BOM** as a first-class menu area. Engineering Project Lead / Administrator can create and edit product family, part number, product revision, hardware/software revision, product-safety default, exact controlled BOM and default released-process route. New requests inherit the current product master; existing controlled requests are not silently rewritten.
+REV 1.0.10 adds **Products & BOM** as a first-class menu area. Engineering Project Lead / Administrator can create and edit product family, part number, product revision, hardware/software revision, product-safety default, exact controlled BOM and default released-process route. New requests inherit the current product master; existing controlled requests are not silently rewritten.
 
 ### Capacity-normalized KPIs
 
@@ -57,7 +57,7 @@ The **Lab Manager / Administrator** can maintain the process/test planning stand
 
 ### Resilient AUTO-PLAN and swimlane views
 
-REV 1.0.9 removes routine planner dead ends. For each task the optimizer searches all capable equipment, all people associated with the required skill, current and scheduled calibration/maintenance/training readiness, existing bookings and later working-time slots. It returns the earliest best-feasible schedule it can construct, even when that forecast misses the requested date.
+REV 1.0.10 removes routine planner dead ends. For each task the optimizer searches all capable equipment, all people associated with the required skill, current and scheduled calibration/maintenance/training readiness, existing bookings and later working-time slots. It returns the earliest best-feasible schedule it can construct, even when that forecast misses the requested date.
 
 AUTO-PLAN only raises a structural lab-capability blocker when **no equipment anywhere in the lab has the required capability** or **no person anywhere in the lab is associated with a required skill**. Expired calibration, overdue maintenance, expired qualification, temporary staff unavailability, busy equipment, unreleased process definitions and normal booking conflicts are treated as recoverable planning constraints rather than JavaScript errors. Where appropriate the planner inserts readiness work or uses controlled provisional assumptions.
 

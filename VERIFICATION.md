@@ -1,13 +1,13 @@
 # ProtoLab OS — Verification Report
 
-**Application version:** 1.0.9-poc  
+**Application version:** 1.0.10-poc  
 **Schema version:** 5  
 **Verification date:** 2026-09-08  
 **Target:** static GitHub Pages proof-of-concept
 
 ## Summary
 
-REV 1.0.9 was checked with deterministic domain/service tests, an IndexedDB repository harness, a lightweight DOM interaction harness, static/mobile deployment checks, JavaScript syntax checks and local HTTP serving.
+REV 1.0.10 was checked with deterministic domain/service tests, an IndexedDB repository harness, a lightweight DOM interaction harness, static/mobile deployment checks, JavaScript syntax checks and local HTTP serving.
 
 Automated results:
 
@@ -17,26 +17,28 @@ Automated results:
 - **21 / 21** REV 1.0.6 enterprise-operation regression checks passed.
 - **21 / 21** forward-capacity/readiness/mobile regression checks passed.
 - **17 / 17** resilient-planner/swimlane regression checks passed.
-- **13 / 13** REV 1.0.9 Product Master / capacity-normalization checks passed.
+- **13 / 13** Product Master / capacity-normalization regression checks passed.
+- **9 / 9** REV 1.0.10 live KPI-render regression checks passed, including 13/26/52-week horizons and product filters.
 - **31 / 31** static/deployment/mobile-source checks passed.
 - **9 / 9** principal deployable files returned HTTP 200 from a local static server.
 - JavaScript syntax checks passed.
 
-This is **178 deterministic checks passed, 0 failed**, plus the separate HTTP serving checks.
+This is **187 deterministic checks passed, 0 failed**, plus the separate HTTP serving checks.
 
 ## Browser automation limitation
 
 The available container Chromium binary has previously hung even on trivial local HTML. This report therefore does **not** claim successful real Chrome/Android automation. Android/Chrome deployment testing remains the real-browser acceptance check; deterministic DOM and source/runtime tests are used before delivery.
 
-## REV 1.0.9 focus
+## REV 1.0.10 focus
 
 | Requirement | Result | Implemented behaviour |
 |---|---|---|
-| Revision visible | PASS | Header and cache-busted assets identify `REV 1.0.9` |
+| Revision visible | PASS | Header and cache-busted assets identify `REV 1.0.10` |
 | Product Master | PASS | `Products & BOM` supports guided create/edit of product definition, exact BOM and default released-process route |
 | Product inheritance | PASS | New requests use the product-controlled BOM and default route; existing request history is not silently rewritten |
 | Current capacity definition | PASS | Invalid equipment and unavailable/uncertified staff are excluded from current available capacity |
 | KPI normalization | PASS | Workload KPIs show demand, available capacity and utilization; weekly/quarterly/process views retain the denominator |
+| KPI runtime rendering | PASS | Management KPI rendering is executed in the regression harness; the `currentBookings` scope defect that prevented the tab from loading is fixed |
 | Readiness capacity | PASS | Scheduled calibration, maintenance and training consume the same capacity baseline |
 | AUTO-PLAN technical crash | PASS | Missing/unreleased process definitions use controlled provisional estimates instead of dereferencing a missing `setupTime` object |
 | Best-feasible planning | PASS | All seeded open builds produce a forecast without technical exceptions |
@@ -119,7 +121,7 @@ The repository harness verifies IndexedDB initialization, save/reload, JSON expo
 
 ## Static / mobile deployment
 
-Checks verify relative assets, no npm/build/runtime external dependency, cache-busted REV 1.0.9 files, responsive breakpoints, 44 px touch-target baseline, preserved mobile hamburger navigation, page-width containment and internal scrolling for intentionally wide tables.
+Checks verify relative assets, no npm/build/runtime external dependency, cache-busted REV 1.0.10 files, responsive breakpoints, 44 px touch-target baseline, preserved mobile hamburger navigation, page-width containment and internal scrolling for intentionally wide tables.
 
 The local static-server check covers:
 

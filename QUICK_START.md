@@ -1,4 +1,4 @@
-# ProtoLab OS — Quick Start — REV 1.0.9
+# ProtoLab OS — Quick Start — REV 1.0.10
 
 ## 1. Pick a role
 
@@ -30,7 +30,7 @@ Each request uses one tappable checklist. Follow it top to bottom:
 9. Release approval
 10. Deliver, retain records & feed learning
 
-The important change in REV 1.0.9 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
+The important change in REV 1.0.10 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
 
 ## 3. Create a request and choose material source
 
@@ -130,7 +130,7 @@ Open **Equipment & Calibration**. Record calibration and preventive maintenance 
 
 As **Lab Manager**, open **Management KPIs**. Filter by product and historical period, then review delivery/yield/rework/scrap, cost variance/COPQ, process-step actuals, current bottlenecks and probability-weighted future equipment/skill demand. The **Action Centre** can be grouped by severity, build, person or function and keeps continuous-improvement proposals separate from mandatory build actions.
 
-## Product master — REV 1.0.9
+## Product master — REV 1.0.10
 
 Use **Menu → Products & BOM**. Engineering Project Lead or Administrator can create/edit the product definition, exact BOM and default process-route proposal. New requests inherit this controlled master data.
 

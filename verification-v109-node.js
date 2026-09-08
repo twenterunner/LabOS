@@ -4,7 +4,7 @@ for(const f of ['core.js','demo-data.js','services.js']) vm.runInContext(fs.read
 const P=ctx.ProtoLab,app=fs.readFileSync(path.join(root,'app.js'),'utf8'),svc=fs.readFileSync(path.join(root,'services.js'),'utf8'),css=fs.readFileSync(path.join(root,'styles.css'),'utf8');
 let pass=0,fail=0;function assert(v,m='assertion failed'){if(!v)throw new Error(m)}function test(n,fn){try{fn();console.log('PASS | '+n);pass++;}catch(e){console.log('FAIL | '+n+' | '+e.message);fail++;}}
 
-test('REV 1.0.9 is visible',()=>assert(P.VERSION==='1.0.9-poc'&&fs.readFileSync(path.join(root,'index.html'),'utf8').includes('REV 1.0.9')));
+test('REV 1.0.10 is visible',()=>assert(P.VERSION==='1.0.10-poc'&&fs.readFileSync(path.join(root,'index.html'),'utf8').includes('REV 1.0.10')));
 test('Product master is a first-class navigation area',()=>assert(app.includes("['products','Products & BOM']")&&app.includes("case'products':html=renderProducts()")));
 test('Engineering lead can govern products',()=>assert(P.can('engineering_lead','product:manage')));
 test('Product master supports create and edit workflows',()=>assert(app.includes('data-new-product')&&app.includes('data-edit-product')&&app.includes('CONTROLLED BOM')&&app.includes('DEFAULT PROCESS ROUTE')));
