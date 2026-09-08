@@ -107,6 +107,12 @@ class MigrationService{
     }
     s.dataVersion=wasDemo?'2026.09-demo-16':(s.dataVersion||'migrated');s.schemaVersion=13;continue;
    }
+   if(s.schemaVersion===13){
+    const wasDemo=P.isDemoDataset(s);
+    if(wasDemo){s.settings=s.settings||{};s.settings.demoDataset=true;P.ensureDemoArchivedExamples(s);}
+    P.repairDuplicateSamples(s);
+    s.dataVersion=wasDemo?'2026.09-demo-17':(s.dataVersion||'migrated');s.schemaVersion=14;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

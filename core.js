@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.27-poc';
-  ProtoLab.SCHEMA_VERSION = 13;
+  ProtoLab.VERSION = '1.0.28-poc';
+  ProtoLab.SCHEMA_VERSION = 14;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -222,6 +222,35 @@
     if(String(state?.dataVersion||'').startsWith('2026.09-demo'))return true;
     const reqIds=new Set((state?.requests||[]).map(r=>r.id)),prodIds=new Set((state?.products||[]).map(p=>p.id));
     return ['P26-0042','P26-0043','P26-0055'].every(id=>reqIds.has(id)) && ['PRD-001','PRD-002','PRD-003'].every(id=>prodIds.has(id));
+  };
+  ProtoLab.ensureDemoArchivedExamples = state => {
+    if(!state||!ProtoLab.createDemoState||!ProtoLab.isDemoDataset(state))return {changed:false,added:0,normalized:0,archived:0};
+    state.settings=state.settings||{};state.settings.demoDataset=true;
+    const seed=ProtoLab.createDemoState(),closed=(seed.requests||[]).filter(r=>r.status==='CLOSED'),closedIds=new Set(closed.map(r=>r.id));
+    let added=0,normalized=0;
+    state.requests=Array.isArray(state.requests)?state.requests:[];
+    const sameTitle=(a,b)=>String(a?.title||'').trim().toLowerCase()===String(b?.title||'').trim().toLowerCase();
+    for(const src of closed){
+      let dst=state.requests.find(r=>sameTitle(r,src))||state.requests.find(r=>r.id===src.id);
+      if(!dst){state.requests.push(ProtoLab.deepClone(src));added++;continue;}
+      const before=[dst.status,dst.archived,dst.closedAt,dst.actualDeliveryDate].join('|');
+      dst.status='CLOSED';dst.currentGate='CLOSED';dst.archived=true;dst.closedAt=dst.closedAt||src.closedAt||src.actualDeliveryDate||ProtoLab.now();dst.archivedAt=dst.archivedAt||src.archivedAt||dst.closedAt;dst.actualDeliveryDate=dst.actualDeliveryDate||src.actualDeliveryDate;dst.originalCommitmentDate=dst.originalCommitmentDate||src.originalCommitmentDate;dst.currentCommitmentDate=dst.currentCommitmentDate||src.currentCommitmentDate;dst.commitmentHistory=(dst.commitmentHistory&&dst.commitmentHistory.length)?dst.commitmentHistory:ProtoLab.deepClone(src.commitmentHistory||[]);
+      if(before!==[dst.status,dst.archived,dst.closedAt,dst.actualDeliveryDate].join('|'))normalized++;
+    }
+    const addRows=(key,filter,natural)=>{state[key]=Array.isArray(state[key])?state[key]:[];for(const src of seed[key]||[]){if(!filter(src))continue;if(!state[key].some(dst=>natural(dst,src)))state[key].push(ProtoLab.deepClone(src));}};
+    addRows('routes',x=>closedIds.has(x.requestId),(a,b)=>a.id===b.id||a.requestId===b.requestId);
+    addRows('serials',x=>closedIds.has(x.requestId),(a,b)=>String(a.serial||a.sampleId||'')===String(b.serial||b.sampleId||''));
+    addRows('measurements',x=>closedIds.has(x.requestId),(a,b)=>a.id===b.id);
+    addRows('deviations',x=>closedIds.has(x.requestId),(a,b)=>a.id===b.id);
+    addRows('approvals',x=>closedIds.has(x.requestId),(a,b)=>a.requestId===b.requestId&&a.type===b.type&&String(a.stage||'')===String(b.stage||''));
+    addRows('documents',x=>closedIds.has(x.requestId),(a,b)=>a.requestId===b.requestId&&a.type===b.type&&String(a.revision||'A')===String(b.revision||'A'));
+    addRows('allocations',x=>closedIds.has(x.requestId),(a,b)=>a.requestId===b.requestId&&a.requirementId===b.requirementId&&a.lot===b.lot&&a.status===b.status);
+    addRows('auditTrail',x=>closedIds.has(x.objectId),(a,b)=>a.id===b.id);
+    ProtoLab.repairDuplicateSamples(state);
+    (state.requests||[]).filter(r=>r.status==='CLOSED').forEach(r=>{r.archived=true;r.archivedAt=r.archivedAt||r.closedAt||r.actualDeliveryDate||ProtoLab.now();ProtoLab.ensureBuildReportApproval(state,r);});
+    const archived=(state.requests||[]).filter(r=>r.status==='CLOSED'&&r.archived).length;
+    if((added||normalized)&&state.auditTrail)ProtoLab.audit(state,'Archived demo examples installed/repaired','Demo data','Prototype Requests',`${added} added / ${normalized} normalized`,`${archived} archived build(s)`,'REV 1.0.28 archive migration');
+    return {changed:!!(added||normalized),added,normalized,archived};
   };
   ProtoLab.repairDuplicateSamples = state => {
     state.serials=Array.isArray(state.serials)?state.serials:[];

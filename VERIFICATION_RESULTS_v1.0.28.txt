@@ -1,0 +1,26 @@
+ProtoLab OS REV 1.0.28 verification
+
+Purpose
+-------
+Repair persisted browser states that reached schema 13 without the three completed archived demonstration builds.
+
+Specific archive migration verification
+---------------------------------------
+PASS | REV 1.0.28 / schema 14 active
+PASS | Fresh demo contains exactly three archived examples
+PASS | Persisted schema-13 state with 19 active / 0 archived migrates to 19 active / 3 archived / 22 total
+PASS | Migration preserves all 19 active projects
+PASS | Archive installation is idempotent
+PASS | Existing archive example titles with incorrect active status are normalized rather than duplicated
+PASS | Prototype Requests provides manual fallback installer when recognized demo shows zero archived
+PASS | Post-migration invariants report zero errors
+
+Regression verification
+-----------------------
+156 checks passed, 0 failed across archive-specific, core domain, repository, commitment/planning, competencies, controlled reports/test analytics, sample evidence, previous archive repair, UI and static/package suites.
+
+Additional checks
+-----------------
+PASS | JavaScript syntax checks
+PASS | Versioned asset URLs use v1.0.28
+PASS | Service-worker cache reset remains self-clearing

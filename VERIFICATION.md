@@ -1,3 +1,7 @@
+## REV 1.0.28 — persisted-browser archive repair
+
+Schema 14 re-runs archived-demo installation for already-upgraded browser data. Existing active work is preserved; three completed demo builds are added/normalized under Prototype Requests → Archived. A visible fallback button is shown when a recognized demo still has zero archived builds.
+
 # ProtoLab OS REV 1.0.25 Verification
 
 REV 1.0.25 was verified against the current application contract before packaging.
