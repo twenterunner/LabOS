@@ -90,6 +90,17 @@ const auditTrail=[]; requests.forEach((r,i)=>{ auditTrail.push({id:`AUD-${i}-1`,
 auditTrail.unshift({id:'AUD-CP-1',timestamp:dt(-2),user:'Sofia Bakker',role:'quality',action:'Control Plan approved',objectType:'Control Plan',objectId:'CP-001',previousState:'Review requested',newState:'Approved',reason:'Review complete'});
 const lessons=[{id:'LL-001',requestId:requests[13].id,title:'Confirm programming fixture at triage',category:'Planning',observation:'Late fixture confirmation caused avoidable handoff delay.',recommendation:'Add fixture availability check to feasibility gate.',owner:'Mila Jansen',status:'Accepted'}];
 P.createDemoState=function(){
- return P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-2',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations,serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false}});
+ const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-4',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false}});
+ P.ensureMaterialModel(state);
+ state.requests.forEach((r,i)=>{
+   P.ensureApprovalRecords(state,r);
+   (r.materialRequirements||[]).forEach((req,j)=>{
+     if(i===3&&j===2)return; // dedicated missing-material scenario
+     const mat=state.materials.find(m=>m.partNumber===req.partNumber&&m.revision===req.revision&&m.status==='Available');
+     if(mat)state.allocations.push({id:`ALLOC-${i+1}-${j+1}`,requestId:r.id,requirementId:req.id,materialId:mat.id,lot:mat.lot,qty:req.requiredQty,status:'Issued'});
+   });
+ });
+ state.serials.forEach(ser=>{ser.materials=state.allocations.filter(a=>a.requestId===ser.requestId&&a.status==='Issued').map(a=>a.lot)});
+ return state;
 };
 })();

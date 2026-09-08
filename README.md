@@ -3,9 +3,11 @@
 ProtoLab OS is a completely new browser-only proof-of-concept for controlled automotive prototype build operations. It supports guided engineering requests, lab triage, process selection/development, process-risk linkage, first-class Control Plans, readiness gates, digital traveller execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting and audit history.
 
 
-## v1.0.3 guided-workflow update
+## v1.0.4 control-flow and planning update
 
-Request workspaces use a single vertical guided checklist rather than a horizontal tab strip and separate gate stepper. The checklist names the owner, next action and state for every major prototype-build step. Control Plan separation of duties is also explicit: the Quality owner completes the draft controls, then an independent **Approver / Reviewer** can approve the revision. The demo includes a direct role-switch shortcut for that independent approval.
+Request workspaces now use **10 top-level guided controls** instead of the earlier 18-item list. Detailed compliance/readiness checks remain inside those controls so the top-level operating flow stays understandable on a phone. The header always shows the application revision.
+
+v1.0.4 also makes material readiness requirement-driven (exact part number/revision/quantity), makes AUTO-PLAN create visible step-level equipment/person bookings plus a forecast and schedule margin, treats a Control Plan target **or** objective limits as a valid specification basis, and auto-creates applicable Product Safety and customer approval records.
 
 ## Important compliance statement
 
@@ -88,7 +90,7 @@ The export includes a schema version and the application contains a migration ho
 - `repository.js` — storage, migration, document-store and identity abstractions
 - `services.js` — domain/service layer and business guard rails
 - `app.js` — UI rendering and guided interactions
-- `service-worker.js` — optional offline cache after first load
+- `service-worker.js` — legacy cache-cleanup worker for reliable POC updates
 - `QUICK_START.md` — demo walkthrough
 - `USER_MANUAL.html` — standalone task-based guide
 - `VERIFICATION.md` — verification evidence and limitations

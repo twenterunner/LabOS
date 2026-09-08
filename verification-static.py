@@ -23,11 +23,18 @@ checks.append(('Repository boundary present','class StorageRepository' in repo a
 checks.append(('Role identity abstraction present','DemoIdentityProvider' in repo))
 checks.append(('Global search covers core record types',all(x in app for x in ['App.state.requests.forEach','App.state.serials.forEach','App.state.processes.forEach','App.state.materials.forEach','App.state.deviations.forEach'])))
 checks.append(('No external runtime JavaScript/CSS dependencies',not any(r.startswith(('http:','https:')) for r in p.refs)))
-checks.append(('Versioned asset URLs bypass stale browser cache',all('?v=1.0.3' in r for r in p.refs if r.endswith('.js') or '.js?v=' in r or r.endswith('.css') or '.css?v=' in r)))
+checks.append(('Versioned asset URLs bypass stale browser cache',all('?v=1.0.4' in r for r in p.refs if r.endswith('.js') or '.js?v=' in r or r.endswith('.css') or '.css?v=' in r)))
 checks.append(('Legacy service worker cache is self-clearing',"registration.unregister()" in (root/'service-worker.js').read_text() and "addEventListener('fetch'" not in (root/'service-worker.js').read_text()))
 checks.append(('Modal backdrop cannot globally close forms','modal-backdrop\" data-modal-close' not in app and 'clickedBackdrop' not in app))
 checks.append(('Guided workspace replaces horizontal tabs and gate stepper','guided-workspace' in app and 'renderGuidedChecklist' in app and 'workspace-tabs' not in app.split('function renderWorkspace(){',1)[1].split('function workspaceReadiness',1)[0]))
 checks.append(('Independent Approver role can approve Control Plans',"approver:['request:view','approval:perform','controlplan:approve'" in core))
+checks.append(('Visible revision number is present in the application header','id="versionBadge"' in text and '>REV 1.0.4<' in text))
+checks.append(('Ten-step guided workflow is present',all(x in app for x in ['Request definition & submission','Lab triage, feasibility & committed timing','BOM & exact material readiness','Process route, process release & risk','Control Plan & special approvals','Build readiness','Serialise & execute digital traveller','Characterise, evaluate & disposition exceptions','Release approval','Deliver, retain records & close'])))
+checks.append(('Lab triage explicitly includes timing and visible resource bookings','LAB TRIAGE / TIMING' in app and 'Resource bookings' in app and 'Schedule margin' in app))
+checks.append(('Material issuance is constrained to exact part number and revision','m.partNumber===req.partNumber&&m.revision===req.revision' in app and 'requirementId:req.id' in app))
+checks.append(('Control Plan special characteristics accept target OR limits','hasSpec=!!target||lsl!==null||usl!==null' in app))
+checks.append(('Product safety approval records are generated','ensureApprovalRecords' in core and "type:'Product Safety'" in core))
+
 fail=0
 for name,ok in checks:
     print(('PASS' if ok else 'FAIL')+' | '+name)

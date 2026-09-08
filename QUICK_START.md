@@ -40,7 +40,20 @@ Every request now uses **one vertical, tappable checklist** instead of a horizon
 - the exact next action
 - a tap target that opens the controlled detail for that step
 
-The checklist walks through request definition → triage → materials → process route/development → PFMEA/risk → Control Plan → equipment/competency → readiness → execution → characterisation → quality → release → delivery → records/lessons.
+The streamlined top-level checklist has 10 controls:
+
+1. Request definition & submission
+2. Lab triage, feasibility & committed timing
+3. BOM & exact material readiness
+4. Process route, process release & risk
+5. Control Plan & special approvals
+6. Build readiness
+7. Serialise & execute digital traveller
+8. Characterise, evaluate & disposition exceptions
+9. Release approval
+10. Deliver, retain records & close
+
+Underlying checks such as calibration, competence, PFMEA linkage, customer-specific gates and traceability are retained inside the relevant control rather than exposed as separate top-level steps.
 
 For the demo, when the next action belongs to another role, the detail view can offer a **Demo: switch to …** shortcut.
 
@@ -57,7 +70,7 @@ Open `P26-0049`, then tap **Create & independently approve Control Plan** in the
 
 ## 5. Test AUTO-PLAN
 
-As **Prototype Lab Coordinator / Planner**, open a request, tap the relevant **Lab triage, feasibility & forecast** or **Define visual process route** checklist item, then choose **AUTO-PLAN**. The local planner assigns valid equipment and qualified available staff and updates the forecast.
+As **Prototype Lab Coordinator / Planner**, open **Lab triage, feasibility & committed timing** and choose **AUTO-PLAN**. The result now creates visible step-level bookings showing start, duration, capable/calibrated equipment and a qualified available person. It also calculates the forecast date and schedule margin. Review the result, then **Commit forecast & continue**.
 
 ## 6. Test controlled execution
 

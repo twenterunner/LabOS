@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=__dirname;
 function fakeEl(){return {innerHTML:'',textContent:'',value:'',checked:false,style:{},dataset:{},className:'',classList:{add(){},remove(){},toggle(){},contains(){return false}},appendChild(){},remove(){},click(){},focus(){},setAttribute(){},addEventListener(){},querySelector(){return null},querySelectorAll(){return []}}}
-const els={}; for(const k of ['#page','#mainNav','#actionCount','#roleSelect','#menuButton','#globalSearch','#searchResults','#sidebar','#toastRoot','#modalRoot','.brand']) els[k]=fakeEl();
+const els={}; for(const k of ['#page','#mainNav','#actionCount','#roleSelect','#menuButton','#globalSearch','#searchResults','#sidebar','#toastRoot','#modalRoot','#versionBadge','.brand']) els[k]=fakeEl();
 let domReady=null; const listeners={};
 const document={querySelector:s=>els[s]||fakeEl(),querySelectorAll:s=>[],createElement:tag=>fakeEl(),addEventListener:(ev,cb)=>{(listeners[ev]||(listeners[ev]=[])).push(cb)},body:fakeEl()};
 const ctx={console,Date,Math,Intl,setTimeout,clearTimeout,Blob:class{},URL:{createObjectURL(){return'blob:x'},revokeObjectURL(){}},confirm(){return true},prompt(){return'1'},innerWidth:1200,window:null,document,navigator:{},location:{protocol:'http:'},scrollTo(){}};ctx.window=ctx;ctx.window.addEventListener=(ev,cb)=>{if(ev==='DOMContentLoaded')domReady=cb};vm.createContext(ctx);
@@ -32,4 +32,10 @@ checks.push(['modal close is bound explicitly inside modal root',/querySelectorA
 checks.push(['guided checklist replaces horizontal workspace navigation',/guided-workspace/.test(appSource)&&/renderGuidedChecklist/.test(appSource)&&!/workspace-tabs\">\$\{tabs/.test(appSource)]);
 checks.push(['guided checklist rows expose owner and next action',/guide-owner/.test(appSource)&&/guide-next/.test(appSource)]);
 checks.push(['Control Plan offers direct independent-approver switch',/data-switch-role=\"approver\"/.test(appSource)&&/Approve independently/.test(appSource)]);
+checks.push(['visible revision badge is populated',els['#versionBadge'].textContent==='REV 1.0.4']);
+checks.push(['workspace is streamlined to ten top-level guided controls',['Request definition & submission','Lab triage, feasibility & committed timing','BOM & exact material readiness','Process route, process release & risk','Control Plan & special approvals','Build readiness','Serialise & execute digital traveller','Characterise, evaluate & disposition exceptions','Release approval','Deliver, retain records & close'].every(x=>appSource.includes(x))]);
+checks.push(['lab triage shows timing feasibility and resource bookings',appSource.includes('LAB TRIAGE / TIMING')&&appSource.includes('Resource bookings')&&appSource.includes('Schedule margin')&&appSource.includes('Commit forecast')]);
+checks.push(['material allocation is requirement driven and exact revision matched',appSource.includes('Issue exact required material')&&appSource.includes('m.partNumber===req.partNumber&&m.revision===req.revision')&&appSource.includes('requirementId:req.id')]);
+checks.push(['Control Plan accepts target or limits as objective specification',appSource.includes('a target is optional when lower and/or upper limits already define the specification')&&appSource.includes('hasSpec=!!target||lsl!==null||usl!==null')]);
+checks.push(['product safety approval has concrete direct-action workflow',appSource.includes('SPECIAL / SAFETY APPROVALS')&&appSource.includes('data-approve-record')]);
 let fail=0;for(const [n,v] of checks){console.log((v?'PASS':'FAIL')+' | '+n);if(!v)fail++}console.log(`\nRESULT: ${checks.length-fail} passed, ${fail} failed`);process.exitCode=fail?1:0})().catch(e=>{console.error(e);process.exitCode=1});
