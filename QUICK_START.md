@@ -1,4 +1,12 @@
-# ProtoLab OS — Quick Start — REV 1.0.23
+# ProtoLab OS — Quick Start — REV 1.0.24
+
+## What changed in REV 1.0.24
+
+- Open **Lab Standards & Resources → Skill Catalogue** and use **Edit competency** to update the controlled competency definition.
+- Competency IDs are protected; names, scope, owner, certificate rule, validity, renewal hours and evidence requirements are editable.
+- Under **Lab Staff**, use **Manage competencies** to issue/renew or revoke a person's qualification certificate.
+- AUTO-PLAN only treats the person as qualified while an in-date certificate is Valid.
+
 
 ## What changed in REV 1.0.23
 

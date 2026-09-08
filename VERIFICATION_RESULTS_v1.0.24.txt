@@ -1,0 +1,22 @@
+ProtoLab OS REV 1.0.24 Verification Results
+===========================================
+
+General domain regression:               46 passed, 0 failed
+Repository / IndexedDB regression:         6 passed, 0 failed
+UI regression:                            23 passed, 0 failed
+Static / GitHub Pages regression:          31 passed, 0 failed
+REV 1.0.22 feature regression:             14 passed, 0 failed
+REV 1.0.23 planning/commitment regression:  8 passed, 0 failed
+REV 1.0.24 competency regression:           6 passed, 0 failed
+
+TOTAL:                                    134 passed, 0 failed
+
+REV 1.0.24 specific verification
+- Competency cards expose Edit competency for authorized skill managers.
+- Competency IDs stay immutable while definition/training-rule fields can be updated.
+- Updates are audit logged and do not rewrite existing issued certificates.
+- Staff competency management supports issue/renew/revoke.
+- Renewing supersedes the prior valid certificate while retaining history.
+- Certificate default expiry follows the competency validity setting.
+- AUTO-PLAN qualification remains gated by Valid, in-date certificates.
+- Application remains schema 10; no data-reset migration is required from REV 1.0.23.

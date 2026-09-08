@@ -1,6 +1,6 @@
-# ProtoLab OS REV 1.0.23 Verification
+# ProtoLab OS REV 1.0.24 Verification
 
-REV 1.0.23 was verified against the current application contract before packaging.
+REV 1.0.24 was verified against the current application contract before packaging.
 
 ## Current regression suites
 
@@ -12,6 +12,12 @@ REV 1.0.23 was verified against the current application contract before packagin
 - `node verification-v123-node.js` — **8/8 passed**
 
 **Total: 128 passed, 0 failed.**
+
+REV 1.0.24 coverage additionally includes:
+- competency catalogue edit controls and skills-manage permission gating;
+- immutable competency IDs while editable qualification rules are persisted and audited;
+- staff competency issue/renew/revoke lifecycle;
+- certificate validity derived from the edited competency rule without retroactively rewriting historical certificates.
 
 REV 1.0.23 coverage includes:
 - hard planning constraints for vacation, staff absence, equipment outage/shutdown and lab-wide closure;

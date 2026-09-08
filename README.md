@@ -1,5 +1,13 @@
 # ProtoLab OS — Prototype Build Management
 
+## REV 1.0.24 — editable competencies
+- Competency master records can now be edited directly from **Lab Standards & Resources → Skill Catalogue**.
+- The competency ID remains immutable so process standards, bookings, certificates and audit history keep their references.
+- Editable fields include competency name, owner, scope/description, required certificate type, certificate validity, renewal-training duration and training/evidence requirement.
+- Staff rows now use **Manage competencies** to issue/renew or revoke qualification certificates. AUTO-PLAN remains certificate-gated.
+- Renewing a competency supersedes the prior valid certificate for that person/skill while retaining it as historical evidence.
+- Certificate expiry defaults from the competency's configured validity; changes to the master do not rewrite certificates already issued.
+
 ## REV 1.0.23 — planning situations & delivery commitment control
 - Planning now accepts explicit capacity situations such as vacations, staff absence, equipment outage/shutdown and lab closure.
 - Situations are hard constraints for AUTO-PLAN and appear as red ✕ bars on the shared planning timeline.
