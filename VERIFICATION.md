@@ -1,175 +1,165 @@
 # ProtoLab OS — Verification Report
 
-**Application version:** 1.0.4-poc  
-**Schema version:** 2  
+**Application version:** 1.0.5-poc  
+**Schema version:** 3  
 **Verification date:** 2026-09-08  
 **Target:** static GitHub Pages proof-of-concept
 
 ## Summary
 
-The delivered package was checked with deterministic service/domain tests, an IndexedDB-adapter test harness, a lightweight UI-startup/runtime harness, static/deployment checks, JavaScript syntax checks and an HTTP serving check.
+The REV 1.0.5 package was checked with deterministic service/domain tests, an IndexedDB-adapter harness, a lightweight DOM startup/interaction harness, static/deployment checks, JavaScript syntax checks and local HTTP serving.
 
 Final automated results:
 
-- **39 / 39** domain, workflow, guard-rail and data-integrity tests passed.
-- **6 / 6** persistence / JSON import-export / reset/migration tests passed.
-- **18 / 18** UI startup/rendering/interaction smoke tests passed in a deterministic DOM harness, including modal-touch regression checks, the visible revision badge, ten-step guided workflow, timing/resource-plan UI, exact-material allocation, Control Plan limit-only specification handling and Product Safety approval path.
-- **20 / 20** static/deployment/mobile-source checks passed, including v1.0.4 cache-busting, visible revision number, ten-step guided flow, explicit timing/resource plan, exact part/revision material controls, Product Safety approval creation, modal isolation and independent Control Plan approval permission.
-- Required GitHub Pages assets returned **HTTP 200** from a local static server.
-- All shipped JavaScript files passed `node --check` syntax validation.
+- **46 / 46** domain, workflow, planning, guard-rail and data-integrity tests passed.
+- **6 / 6** persistence / JSON import-export / reset / migration tests passed.
+- **23 / 23** UI startup/rendering/interaction smoke tests passed in the deterministic DOM harness.
+- **27 / 27** static/deployment/mobile-source checks passed.
+- **9 / 9** key deployable files returned HTTP 200 from a local static server.
+- JavaScript syntax checks passed for the runtime and verification scripts.
 
-No failed automated test remains in the packaged version.
+The four deterministic suites therefore contain **102 passing checks and 0 failures**. The HTTP checks are reported separately because they verify serving rather than domain behaviour.
 
-## Important browser-automation limitation
+## Important automation limitation
 
-A real headless-Chromium run was attempted. The Chromium binary available in the execution environment hung even when asked to render a trivial one-line local HTML file, with environment-level DBus/Chromium process errors. Therefore this report **does not claim successful real-browser automation** of Chrome/Edge/Android.
+A prior attempt to use the available container Chromium binary hung even on a trivial local HTML page. Therefore this report does **not** claim successful full Chrome/Android browser automation. UI verification consists of deterministic DOM/runtime tests, source-level responsive checks and local HTTP serving. The user is also performing real Android/Chrome acceptance testing after GitHub Pages deployment.
 
-Instead, browser-facing verification consists of:
+## REV 1.0.5 verification focus
 
-- deterministic UI startup/rendering execution using a DOM harness,
-- source-level responsive/mobile checks,
-- relative-path and asset-existence checks,
-- local HTTP 200 checks,
-- and deterministic service/domain verification of the workflows behind the UI.
-
-A deploying organisation should still perform normal acceptance testing on its intended Chrome/Edge/Android versions after publishing to GitHub Pages.
-
-## Verification matrix
-
-| Area requested | Result | Evidence / scope |
+| Requirement | Result | Evidence / behaviour |
 |---|---|---|
-| Application startup | PASS | UI runtime harness sets application ready flag and renders dashboard/navigation |
-| Navigation structure | PASS | UI runtime/static checks; actual Chromium click automation not claimed |
-| Guided request workspace | PASS | Horizontal workspace tabs and separate gate stepper remain removed; the workflow is consolidated from 18 to 10 top-level tappable controls while detailed readiness/evidence checks remain inside the relevant control |
-| Guided owner handoff | PASS | Checklist/detail source checks include demo role handoff; Control Plan explicitly routes Quality owner → independent Approver / Reviewer |
-| Modal/form interaction | PASS | Regression harness verifies taps/clicks inside modal inputs and on the surrounding backdrop do not close the modal; only explicit Cancel/Close controls close it |
-| Mobile layout/source checks | PASS | Responsive breakpoints at 820 px and 560 px; 44 px touch target baseline |
-| IndexedDB persistence | PASS (adapter harness) | `IndexedDBStorageRepository` save/load tested against deterministic IndexedDB-compatible mock |
-| Refresh persistence | PASS (adapter equivalent) | Save then reload through a new repository read path preserves state |
-| JSON export/import | PASS | Schema metadata, export and compatible import tested |
-| Schema 1 → 2 migration | PASS | Existing local requests gain exact material requirements, approval records and a proposed default route when missing; existing controlled data is preserved |
-| Reset demo data | PASS | Restores 15 seeded requests |
-| New request | PASS | `RequestService.create` tested; UI six-step wizard implemented |
-| Request submission | PASS | Mandatory field guard tested; submission creates audit/action state |
-| Triage/lifecycle progression | PASS | Lab triage now requires a timing assessment: AUTO-PLAN creates a resource-based forecast, schedule margin and visible bookings; planner explicitly commits the forecast before progression |
-| Route building | PASS (logic/source) | Insert released/modified/new process flow implemented |
-| Drag/reorder | PASS (source/runtime path) | Drag/drop handler updates order and writes audit event; real browser drag automation not claimed |
-| Parallel split/merge | PASS (source/data) | Parallel group model plus split/stacked branches/merge visual rendering implemented |
-| Rework loop | PASS | Seeded rework route and history verified |
-| Standard process selection | PASS | 25+ processes; fit assessment tested |
-| New process development | PASS | Incomplete development cannot release |
-| Process release | PASS | Completed development creates reusable Released process Rev A |
-| PFMEA linkage | PASS | Seeded route-linked risk items; add-risk workflow implemented |
-| Control Plan creation | PASS (source/UI) | New draft Control Plan can be created from a request |
-| Control Plan definition completion | PASS | A special characteristic may be objectively specified by target and/or lower/upper limits; method/gauge, reaction plan and evidence remain mandatory before approval |
-| Control Plan approval | PASS | Independent approval records approver/time; Approver / Reviewer has explicit permission |
-| Separation of duties | PASS | Self-approval rejected; Quality owner is guided to independent Approver / Reviewer |
-| Product Safety approval creation | PASS | Product-safety-relevant requests automatically receive a concrete pending Product Safety Representative approval record and direct approval/role-handoff action |
-| Revision control | PASS | Approved plan is superseded; new Draft revision is created rather than edited in place |
-| Build readiness gate | PASS | Seeded blocker scenario detected; exact blocker guidance generated |
-| Guard-rail behaviour | PASS | Release hold, incomplete development, invalid conditions and evidence checks covered |
-| Override behaviour | PASS | Unauthorised override rejected; authorised path requires reason/risk and audit history |
-| Serial generation | PASS | Unique serial generation tested |
-| Genealogy | PASS | Delivered/reworked serials retain materials/process history; delivery reference verified |
-| Material allocation | PASS | Each request carries exact BOM part/revision/required quantity. Issuance only offers matching lots; unmatched/legacy allocations are retained for history but cannot satisfy readiness |
-| Planning | PASS | AUTO-PLAN creates visible step-level bookings, capable/calibrated equipment, qualified available people, forecast date, controlled effort and schedule margin |
-| Resource conflict recovery | PASS | Planner filters invalid calibration, searches alternative qualified/capable resources and respects locked bookings |
-| Technician substitution | PASS | Planner assigns available staff rather than unavailable seeded resource |
-| Build execution | PASS (source/UI guard paths) | Digital traveller records serial/process revision/operator/equipment/evidence |
-| Mandatory evidence | PASS (source/UI guard path) | Step completion rejects missing evidence |
-| Characterisation manual entry | PASS (source/UI) | Raw values and traceability metadata retained |
-| Characterisation CSV import | PASS (source/UI) | CSV import implemented; example CSV included |
-| Pass/fail calculation | PASS | Objective limit evaluation tested |
-| Quality hold | PASS | Failed seeded measurement is linked to release hold |
-| New deviation | PASS (source/UI) | Issue workflow creates release hold and audit history |
-| Deviation closure | PASS | Mandatory open action prevents closure |
-| Rework | PASS | Original history plus explicit rework loop retained |
-| Release | PASS | Unresolved release hold blocks release |
-| Delivery | PASS | Delivered serials retain recipient/date/reference; acknowledgement flow implemented |
-| Audit history | PASS | Request/process/CP/measurement/deviation/release changes append audit events |
-| Role permissions | PASS | Auditor view/no execution and Administrator wildcard tested |
-| Report generation | PASS | Report service assembles request, serial, measurement and deviation evidence |
-| GitHub Pages relative paths | PASS | All entry-page assets are relative and exist |
-| External runtime dependency check | PASS | No external JS/CSS dependency required |
-| Static HTTP serving | PASS | index/CSS/JS/manifest/manual returned HTTP 200 |
+| Revision visible | PASS | Header contains `REV 1.0.5`; assets use `?v=1.0.5` cache-busting |
+| Mobile navigation remains accessible | PASS | Narrow-width CSS explicitly preserves a 44 px hamburger button and reduces competing header width |
+| Only two material routes | PASS | Request wizard exposes only **Engineering supplied** and **Lab supplied** |
+| Engineering-supplied planning input | PASS | Supply owner and expected lab-arrival date are mandatory planning inputs; physical receipt/issue is still required for Build Readiness |
+| Lab-supplied material feasibility | PASS | Exact part/revision/quantity must be reserved before AUTO-PLAN eligibility; arbitrary material cannot satisfy the requirement |
+| Feasibility before schedule | PASS | AUTO-PLAN rejects requests until material feasibility and confirmed process/test planning inputs exist |
+| Confirmed route required | PASS | Proposed default route is explicitly non-authoritative until Process Engineering confirms it |
+| Standard process planning data | PASS | Setup time, cycle time, batch/unit basis, equipment capability and required competency are used |
+| Standard Test Library | PASS | Released standard tests have setup/cycle time, capability and competency and are mapped from requested characterisation |
+| New/modified process planning | PASS | Process Engineer must define development effort before the planner can schedule the provisional work |
+| New test-method planning | PASS | Unmatched test requires development hours, provisional execution time, equipment capability and competency |
+| Lab-owned standards/skills | PASS | Lab Manager/Administrator can edit process/test planning standards and lab staff competency assignments |
+| Equipment readiness | PASS | Planner selects equipment by required capability and valid calibration |
+| Staff readiness | PASS | Planner selects available staff with the required competency and supports substitution |
+| Resource conflicts | PASS | Planner searches later slots/alternative resources and respects locked bookings |
+| Booking explanation | PASS | Every booking retains `estimateBasis`, equipment, staff/skill, duration and start/end |
+| Historical duration learning | PASS | Same-product historical median is combined with standard setup/cycle baseline; booking displays the evidence basis |
+| Historical operational learning | PASS | Seed includes prior-build FPY, scrap, rework, issues and lessons; schedule view displays these insights |
+| Closed build feedback | PASS | Closure captures actual process durations, FPY, scrap, rework, issues and lessons exactly once for future planning |
+| Actual process duration | PASS | Traveller has separate Start/Complete actions and retains actual elapsed duration |
+| Control Plan objective definition | PASS | Special characteristic accepts a target **or** objective lower/upper limits, while still requiring method/gauge, reaction plan and evidence |
+| Separation of duties | PASS | Control Plan owner cannot self-approve where configured; independent Approver / Reviewer can approve |
+| Product Safety action | PASS | Applicable request receives a concrete Product Safety approval record/direct action |
+| Guided workflow | PASS | One 10-step vertical checklist replaces separate horizontal workspace/gate navigation |
 
-## Data integrity invariants checked
+## Practical workflow verified
 
-The deterministic suite checks or exercises these rules:
+The top-level request workflow is:
 
+1. Request definition & submission
+2. Material source & feasibility
+3. Process route & test-method assessment
+4. Lab feasibility, resource plan & committed timing
+5. Control Plan, risk controls & special approvals
+6. Build readiness
+7. Serialise & execute digital traveller
+8. Characterise, evaluate & disposition exceptions
+9. Release approval
+10. Deliver, retain records & feed learning
+
+This ordering ensures a booking/forecast is not created merely because a request was submitted. The planner needs a credible material date/reservation and a confirmed process/test planning basis first.
+
+## Core regression coverage
+
+The automated domain suite additionally verifies:
+
+- 15 seeded prototype requests, 25+ processes and 40+ unique serialized units;
+- initial state invariants;
+- request creation/submission guard rails;
+- serial uniqueness and genealogy;
+- process fit assessment and controlled process development/release;
+- Control Plan revision control and independent approval;
+- build-readiness blocker detection;
+- unauthorised override rejection;
+- failed measurement / quality-hold linkage;
+- deviation mandatory-action closure guard;
+- release blocked by unresolved holds;
+- rework history retention;
+- report assembly;
+- auditor/admin permission behaviour;
+- product-safety approval generation;
+- demo reset deep-copy integrity.
+
+## Persistence / migration coverage
+
+The repository harness verifies:
+
+- IndexedDB adapter initialization;
+- save/reload persistence;
+- JSON export metadata;
+- compatible JSON import;
+- demo reset;
+- migration of earlier schema-1 data through to schema 3, adding current planning/material/approval model data without requiring the user to discard local requests.
+
+## UI/runtime regression coverage
+
+The deterministic DOM harness verifies:
+
+- application ready flag, dashboard/navigation rendering, role selector and Action count;
+- modal form interaction no longer closes the modal;
+- backdrop touch/click does not close the modal;
+- explicit modal close handling;
+- guided vertical checklist, owners and next actions;
+- visible REV badge;
+- material source choices and exact allocation UI;
+- planning prerequisite explanation, timing and resource bookings;
+- Standard Test / competency planning UI;
+- historical learning/estimate basis;
+- technician Start/Complete execution;
+- Control Plan independent approval handoff;
+- Product Safety direct approval workflow.
+
+## Static/deployment checks
+
+Static checks verify:
+
+- all required delivery files are present;
+- all `index.html` assets are relative and exist;
+- no external runtime JS/CSS dependency is required;
+- responsive 820 px and 560 px breakpoints exist;
+- 44 px touch target baseline and narrow-phone hamburger preservation;
+- repository and identity abstractions remain present;
+- service worker only clears old caches rather than serving stale app assets;
+- guided workspace hides the legacy horizontal tabs/gate stepper;
+- planning, materials, master-data and learning implementations are present in runtime source.
+
+Local HTTP serving returned **200** for:
+
+`index.html`, `styles.css`, `core.js`, `demo-data.js`, `repository.js`, `services.js`, `app.js`, `manifest.webmanifest`, `USER_MANUAL.html`.
+
+## Data-integrity principles retained
+
+The application continues to enforce or explicitly model these important invariants:
+
+- approved controlled revisions are not silently edited;
 - serial numbers are unique;
-- released builds cannot pass release with an unresolved release hold;
-- a closed deviation cannot retain a mandatory open action;
-- an approved Control Plan is revised by creating a new revision, not silently edited;
-- separation of duties can prevent self-approval;
-- process development cannot release with incomplete gates;
-- planner does not allocate equipment with invalid calibration;
-- planner substitutes available staff where feasible;
-- measurement objective limits produce deterministic pass/fail;
-- delivered serial genealogy retains delivery evidence;
-- rework preserves original process history.
-- demo reset creates a fresh deep copy rather than reusing mutated seed arrays;
-- seeded approved Control Plans carry independent approver evidence;
-- arbitrary/unmatched material cannot satisfy an exact BOM requirement;
-- exact part/revision/quantity allocations can satisfy material readiness;
-- AUTO-PLAN creates persistent visible bookings and timing-triage evidence;
-- locked bookings are respected during replanning;
-- target-less special characteristics with valid objective limits can pass the Control Plan definition rule;
-- product-safety-relevant requests receive an actionable Product Safety approval record.
+- process execution retains the process revision used;
+- unresolved release holds prevent release;
+- required objective results require result/disposition;
+- invalid calibration cannot be presented as compliant measurement equipment;
+- mandatory gates require controlled override where bypass is allowed;
+- a closed deviation cannot retain mandatory open actions;
+- rework preserves original history;
+- exact BOM allocations drive material genealogy;
+- approved Control Plans preserve independent approval evidence.
 
-The application also evaluates additional invariants on startup through `ProtoLab.validateInvariants()`.
+## Acceptance perspective
 
-## Verification scripts included
-
-These scripts are optional evidence; they are **not required to run the application**:
-
-- `verification-node.js` — domain/workflow/guard-rail tests
-- `verification-repository-node.js` — IndexedDB repository adapter, export/import/reset tests
-- `verification-ui-node.js` — deterministic UI startup/render/interaction smoke harness, including modal tap regression
-- `verification-static.py` — static asset, relative path and responsive-source checks
-
-The production POC itself requires no Node, npm or Python.
-
-## Final acceptance review
-
-### Engineering requester
-
-**Yes for the POC.** A six-step wizard captures need, purpose, date/priority, configuration, characterisation and review. The workspace exposes requested date, forecast, readiness, risk, owner and next action.
-
-### Lab planner
-
-**Yes for the POC.** The planner gets a dedicated timing/feasibility step with visible AUTO-PLAN bookings, requested-vs-forecast dates, schedule margin, exact material readiness and explicit forecast commitment.
-
-### Process engineer
-
-**Yes for the POC.** Released process reuse, fit assessment, modified/new-process decision, trials and controlled release are represented.
-
-### Technician
-
-**Yes for the POC.** The digital traveller presents the current step, controlled revision, serial/equipment and mandatory evidence in one context.
-
-### Quality
-
-**Yes for the POC.** Process risk, special characteristics, Control Plan, measurement traceability, deviations, release holds and approvals are linked.
-
-### Manager
-
-**Yes for the POC.** Demand, development load, quality holds, cost, delivery and bottleneck-style KPI views are provided.
-
-### Auditor
-
-**Yes for the POC.** Request, serial genealogy, process revision, equipment, measurements, deviations, approvals and append-only audit events can be reconstructed from the seeded evidence model.
-
-## POC limitations that remain intentionally enterprise-side
-
-The static proof-of-concept is not a substitute for:
-
-- server-enforced identity/security;
-- central multi-user concurrency;
-- authoritative e-signatures;
-- enterprise record retention/backup;
-- controlled corporate document storage;
-- live ERP/PLM/MES/HR/calibration integrations;
-- formal software validation for a regulated/controlled production environment.
-
-See `docs/FUTURE_ENTERPRISE_ARCHITECTURE.md` for the migration approach.
+**Engineering requester:** can define need/date/configuration and choose a meaningful Engineering/Lab material route without pretending to know the lab schedule.  
+**Lab planner:** cannot schedule prematurely; receives material/process/test inputs, explainable duration estimates, resource constraints and historical same-product evidence before committing timing.  
+**Process engineer:** controls whether requested operations/tests are existing, modified or new and owns planning allowances for development work.  
+**Technician:** executes a controlled traveller and records actual duration/evidence.  
+**Quality:** retains linked risk, Control Plan, measurement, deviation and release evidence.  
+**Manager:** owns lab planning standards/skills and can see historical yield/rework/issue learning.  
+**Auditor:** can reconstruct the basis for both build execution and the planning estimate rather than seeing unexplained booked hours.

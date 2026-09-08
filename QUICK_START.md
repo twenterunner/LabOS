@@ -1,97 +1,108 @@
-# ProtoLab OS — Quick Start
+# ProtoLab OS — Quick Start — REV 1.0.5
 
-## 1. Start with the role switcher
+## 1. Pick a role
 
-Use **Demo role** in the top-right corner. Try these roles first:
+Use **Demo role** in the fixed header. On a phone the **☰ menu remains visible** at the far right.
 
-- **Engineering Requester** — create a simple prototype request.
-- **Prototype Lab Coordinator / Planner** — triage, plan and resolve readiness issues.
-- **Process Engineer** — inspect process fit and development workflows.
+Useful roles:
+
+- **Engineering Requester** — create and submit prototype demand.
+- **Prototype Lab Coordinator / Planner** — material feasibility, AUTO-PLAN and timing commitment.
+- **Process Engineer** — confirm the build route, standard/new-process decision and requested test method.
+- **Lab Manager** — maintain lab planning standards/skills and review capacity.
 - **Prototype Technician** — execute the digital traveller.
-- **Quality Engineer** — review Control Plans and deviations.
-- **Lab Manager** — review management KPIs and controlled overrides.
-- **Auditor / Read-only** — navigate evidence without operational actions.
+- **Quality Engineer** — Control Plan and deviations.
+- **Product Safety Representative** — perform an applicable safety sign-off.
+- **Approver / Reviewer** — independent controlled approval.
 
-## 2. Open seeded request scenarios
+## 2. Understand the practical order
 
-Go to **Prototype Requests**. Useful demo cases include:
-
-- `P26-0042` — straightforward build using released processes.
-- `P26-0043` — laser-weld geometry needing process development.
-- `P26-0044` — process adaptation / Control Plan revision.
-- `P26-0045` — missing material delaying the build.
-- `P26-0046` — equipment conflict scenario.
-- `P26-0047` — technician substitution scenario.
-- `P26-0048` — calibration conflict.
-- `P26-0049` — special characteristic missing a suitable control.
-- `P26-0050` — characterisation failure / quality hold.
-- `P26-0051` — controlled deviation accepted.
-- `P26-0052` — rework followed by reinspection.
-- `P26-0053` — product-safety approval pending.
-- `P26-0054` — engineering configuration change after submission.
-- `P26-0055` — delivered and traceable build.
-
-## 3. Follow the guided request checklist
-
-Every request now uses **one vertical, tappable checklist** instead of a horizontal module menu. Follow it from top to bottom. Each row shows:
-
-- completion / action-required state
-- responsible owner and role
-- the exact next action
-- a tap target that opens the controlled detail for that step
-
-The streamlined top-level checklist has 10 controls:
+Each request uses one tappable checklist. Follow it top to bottom:
 
 1. Request definition & submission
-2. Lab triage, feasibility & committed timing
-3. BOM & exact material readiness
-4. Process route, process release & risk
-5. Control Plan & special approvals
+2. Material source & feasibility
+3. Process route & test-method assessment
+4. Lab feasibility, resource plan & committed timing
+5. Control Plan, risk controls & special approvals
 6. Build readiness
 7. Serialise & execute digital traveller
 8. Characterise, evaluate & disposition exceptions
 9. Release approval
-10. Deliver, retain records & close
+10. Deliver, retain records & feed learning
 
-Underlying checks such as calibration, competence, PFMEA linkage, customer-specific gates and traceability are retained inside the relevant control rather than exposed as separate top-level steps.
+The important change in REV 1.0.5 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
 
-For the demo, when the next action belongs to another role, the detail view can offer a **Demo: switch to …** shortcut.
+## 3. Create a request and choose material source
 
-## 4. Test a blocker
+Only two source routes are offered:
 
-Open `P26-0049`, then tap **Create & independently approve Control Plan** in the guided checklist. The readiness review explains:
+### Engineering supplied
 
-- what is missing
-- why it matters
-- who owns resolution
-- action required
-- evidence required
-- what happens next
+Engineering supplies the exact BOM material. Enter the supply owner and expected lab-arrival date. The expected date constrains the forecast. Later, the lab must receive the actual exact lot before Build Readiness can pass.
 
-## 5. Test AUTO-PLAN
+### Lab supplied
 
-As **Prototype Lab Coordinator / Planner**, open **Lab triage, feasibility & committed timing** and choose **AUTO-PLAN**. The result now creates visible step-level bookings showing start, duration, capable/calibrated equipment and a qualified available person. It also calculates the forecast date and schedule margin. Review the result, then **Commit forecast & continue**.
+The lab must reserve exact matching stock — **part number + revision + sufficient quantity**. Available but unreserved stock does not make the request planning-ready. The reserved lot must later be issued to the build.
 
-## 6. Test controlled execution
+## 4. Assess process and test methods before planning
 
-Switch to **Prototype Technician**, open a build in progress and tap **Serialise & execute digital traveller**. Mandatory evidence is required. New/modified unreleased processes and invalid calibrated equipment are guarded.
+As **Process Engineer**, open **Process route & test-method assessment**.
 
-## 7. Test quality disposition
+- Confirm or change the proposed route.
+- Every standard operation must point to a released process revision with setup/cycle time, equipment capability and required competency.
+- A new/modified process gets a controlled process-development workflow and an explicit development-hours estimate.
+- Requested characterisation is matched against the **Standard Test Library**.
+- An unmatched requested test requires a controlled development estimate, provisional execution time, equipment capability and skill before planning.
 
-Switch to **Quality Engineer**, open `P26-0050` and tap **Disposition exceptions & complete quality review**. Open the disposition workflow. A release hold cannot be cleared until mandatory verification is complete.
+Only when this assessment is planning-complete does AUTO-PLAN become meaningful.
 
-## 8. Generate a report
+## 5. Run AUTO-PLAN
 
-Open a mature request → **Documents** → **Generate build report**, or use the global **Reports** page. Draft reports are clearly marked:
+Switch to **Prototype Lab Coordinator / Planner** and open **Lab feasibility, resource plan & committed timing**.
 
-`AUTO-GENERATED · NOT APPROVED`
+AUTO-PLAN now uses:
 
-Use the browser print dialog to save a PDF if desired.
+- confirmed process/test definitions;
+- exact material availability/arrival;
+- standard process and test setup/cycle times;
+- equipment capability and calibration;
+- staff competency and availability;
+- resource conflicts and locked bookings;
+- same-product historical actual durations;
+- explicit development effort where a method is not yet released.
 
-## 9. Export/import/reset data
+Each booking shows its **estimate basis**, equipment and qualified person. Review the requested-vs-forecast date and then explicitly **Commit forecast**.
 
-Switch to **Administrator** → **Configuration & data**.
+## 6. Inspect what the planner is learning from
 
-- Export JSON for a local backup.
-- Import a compatible export.
-- Reset Demo Data to restore the seeded demonstration state.
+The schedule view includes a **Learning basis** card: prior same-product builds, first-pass yield, scrap, rework, recurring issues and recent lessons. A booking may say, for example, `Same-product history median n=4 + standard` rather than hiding where the hours came from.
+
+The Lab Manager can edit standard process/test times and the competency matrix from **Lab standards, tests & skills**.
+
+## 7. Build and close the learning loop
+
+The technician starts and completes each traveller step separately. The actual wall-clock duration is retained. After delivery, closing the request adds a history record containing actual process durations, yield, scrap, rework, issues and lessons. Future same-product planning uses that accumulated evidence.
+
+## 8. Useful seeded scenarios
+
+- `P26-0042` — straightforward released-process build
+- `P26-0043` — new/modified process work
+- `P26-0045` — material blocker
+- `P26-0046` — resource conflict
+- `P26-0047` — technician substitution
+- `P26-0048` — calibration conflict
+- `P26-0049` — missing special-characteristic control
+- `P26-0050` — characterisation failure / quality hold
+- `P26-0052` — rework / reinspection
+- `P26-0053` — product-safety sign-off
+- `P26-0055` — delivered traceability example
+
+## 9. Backup or reset
+
+As **Administrator → Configuration & data**:
+
+- Export JSON
+- Import JSON
+- Reset Demo Data
+
+Existing v1.0.4 local data is migrated to schema 3; a reset is not normally required.

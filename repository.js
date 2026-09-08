@@ -29,9 +29,17 @@ class MigrationService{
     });
     s.dataVersion=s.dataVersion||'migrated';s.schemaVersion=2;continue;
    }
+   if(s.schemaVersion===2){
+    const seed=P.createDemoState?P.createDemoState():null;
+    if(!(s.standardTests||[]).length&&seed)s.standardTests=P.deepClone(seed.standardTests||[]);if(!(s.competencies||[]).length&&seed)s.competencies=P.deepClone(seed.competencies||[]);if(!(s.buildHistory||[]).length&&seed)s.buildHistory=P.deepClone(seed.buildHistory||[]);
+    P.ensurePlanningModel(s);
+    (s.requests||[]).forEach(r=>{r.materialOwnership=P.normaliseMaterialSource(r.materialOwnership);if(r.materialOwnership==='Engineering supplied'){r.materialSupply=r.materialSupply||{owner:r.requester||'Engineering Requester',expectedDate:r.requiredDate||P.todayISO(),reference:'Migrated supply plan'};}P.ensureTestRequirements(s,r);const route=(s.routes||[]).find(x=>x.requestId===r.id);if(route&&route.confirmed===undefined){route.confirmed=P.GATES.indexOf(r.status)>=P.GATES.indexOf('PROCESS DEFINITION');route.proposed=!route.confirmed;}});
+    (s.processDevelopments||[]).forEach(d=>{if(!Number(d.planningEstimateHours))d.planningEstimateHours=d.status==='RELEASED'?0:8;});
+    s.dataVersion='2026.09-demo-5';s.schemaVersion=3;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  P.ensureMaterialModel(s);P.ensurePlanningModel(s);(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
 class BrowserDocumentStore{download(name,text,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);} readFile(file){return file.text();}}

@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.4-poc';
-  ProtoLab.SCHEMA_VERSION = 2;
+  ProtoLab.VERSION = '1.0.5-poc';
+  ProtoLab.SCHEMA_VERSION = 3;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -14,15 +14,15 @@
   ProtoLab.clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
   ProtoLab.currency=n=>new Intl.NumberFormat(undefined,{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Number(n||0));
 
-  ProtoLab.GATES = ['DRAFT REQUEST','SUBMITTED','LAB TRIAGE','FEASIBILITY','PROCESS DEFINITION','BUILD READINESS REVIEW','READY TO BUILD','BUILD IN PROGRESS','CHARACTERISATION','QUALITY REVIEW','ENGINEERING REVIEW','RELEASE APPROVAL','RELEASED','DELIVERED','CLOSED'];
+  ProtoLab.GATES = ['DRAFT REQUEST','SUBMITTED','FEASIBILITY','PROCESS DEFINITION','LAB TRIAGE','BUILD READINESS REVIEW','READY TO BUILD','BUILD IN PROGRESS','CHARACTERISATION','QUALITY REVIEW','ENGINEERING REVIEW','RELEASE APPROVAL','RELEASED','DELIVERED','CLOSED'];
   ProtoLab.ROLES = [
     ['engineering_requester','Engineering Requester'],['engineering_lead','Engineering Project Lead'],['lab_planner','Prototype Lab Coordinator / Planner'],['process_engineer','Process Engineer'],['technician','Prototype Technician'],['quality','Quality Engineer'],['metrology','Metrology / Measurement Owner'],['product_safety','Product Safety Representative'],['lab_manager','Lab Manager'],['approver','Approver / Reviewer'],['auditor','Auditor / Read-only'],['administrator','Administrator']
   ].map(([id,label])=>({id,label}));
   ProtoLab.PERMISSIONS = {
     engineering_requester:['request:create','request:view','delivery:ack','report:view'], engineering_lead:['request:view','request:clarify','request:approve','approval:perform','report:view'],
-    lab_planner:['request:view','triage','plan','route:edit','materials:allocate','report:view'], process_engineer:['request:view','route:edit','process:develop','process:release','pfmea:edit','workinstruction:edit','report:view'],
+    lab_planner:['request:view','triage','plan','route:edit','materials:allocate','materials:receive','report:view'], process_engineer:['request:view','route:edit','process:develop','process:release','pfmea:edit','workinstruction:edit','report:view'],
     technician:['request:view','execution:run','evidence:add','measurement:add','report:view'], quality:['request:view','controlplan:edit','controlplan:approve','quality:disposition','release:review','approval:perform','report:approve'],
-    metrology:['request:view','equipment:manage','measurement:review'], product_safety:['request:view','productsafety:approve','approval:perform'], lab_manager:['request:view','plan','priority:change','override:approve','release:approve','approval:perform','dashboard:management'],
+    metrology:['request:view','equipment:manage','measurement:review'], product_safety:['request:view','productsafety:approve','approval:perform'], lab_manager:['request:view','plan','planning:standards','priority:change','override:approve','release:approve','approval:perform','dashboard:management'],
     approver:['request:view','approval:perform','controlplan:approve','report:view'], auditor:['request:view','audit:view','report:view'], administrator:['*']
   };
   ProtoLab.can = (role,perm) => { const p=ProtoLab.PERMISSIONS[role]||[]; return p.includes('*')||p.includes(perm); };
@@ -86,10 +86,45 @@
     const hasSpec=(c.target!==null&&c.target!==undefined&&String(c.target).trim()!==''&&String(c.target).trim()!=='Define target') || c.lsl!==null&&c.lsl!==undefined || c.usl!==null&&c.usl!==undefined;
     return !c.classification || (hasSpec&&!!String(c.method||'').trim()&&!!String(c.reactionPlan||'').trim()&&!!String(c.equipment||'').trim()&&!!String(c.evidence||'').trim());
   };
+  ProtoLab.normaliseMaterialSource = value => value==='Lab stock'?'Lab supplied':value==='External supplier'?'Engineering supplied':(value||'Engineering supplied');
+  ProtoLab.median = values => { const a=(values||[]).filter(Number.isFinite).sort((x,y)=>x-y); if(!a.length)return null; const m=Math.floor(a.length/2); return a.length%2?a[m]:(a[m-1]+a[m])/2; };
+  ProtoLab.ensurePlanningModel = state => {
+    state.standardTests=state.standardTests||[]; state.buildHistory=state.buildHistory||[]; state.competencies=state.competencies||[];
+    (state.requests||[]).forEach(r=>{r.materialOwnership=ProtoLab.normaliseMaterialSource(r.materialOwnership);ProtoLab.ensureMaterialRequirements(state,r);ProtoLab.ensureTestRequirements(state,r);});
+    return state;
+  };
+  ProtoLab.matchStandardTest = (state,name) => {
+    const q=String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); if(!q)return null;
+    return (state.standardTests||[]).find(t=>{const terms=[t.name,...(t.aliases||[])].map(x=>String(x).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim());return terms.some(x=>x===q||x.includes(q)||q.includes(x));})||null;
+  };
+  ProtoLab.ensureTestRequirements = (state,r) => {
+    const existing=new Map((r.testRequirements||[]).map(x=>[String(x.name||'').toLowerCase(),x]));
+    r.testRequirements=(r.characterisation||[]).map((name,i)=>{const old=existing.get(String(name).toLowerCase()),test=ProtoLab.matchStandardTest(state,name);return Object.assign({id:`TESTREQ-${r.id}-${i+1}`,name,standardTestId:test?.id||null,status:test?'Standard test':'Development required',developmentEstimateHours:null,owner:test?.owner||(state.users||[]).find(u=>u.role==='process_engineer')?.name||'Process Engineer'},old||{},test?{standardTestId:test.id,status:'Standard test'}:{});});
+    return r.testRequirements;
+  };
+  ProtoLab.materialPlanningAssessment = (state,r) => {
+    ProtoLab.ensureMaterialRequirements(state,r); r.materialOwnership=ProtoLab.normaliseMaterialSource(r.materialOwnership);
+    const reqs=r.materialRequirements||[],alloc=(state.allocations||[]).filter(a=>a.requestId===r.id),today=ProtoLab.todayISO();
+    const issuedReady=reqs.every(req=>alloc.filter(a=>a.requirementId===req.id&&a.status==='Issued').reduce((n,a)=>n+Number(a.qty||0),0)>=Number(req.requiredQty||0));
+    if(r.materialOwnership==='Engineering supplied'){
+      const supply=r.materialSupply||{}; const planningReady=!!(supply.expectedDate&&supply.owner);
+      return {source:r.materialOwnership,planningReady,buildReady:issuedReady,earliestDate:supply.expectedDate||null,owner:supply.owner||r.requester,summary:planningReady?`Engineering supply promised for ${supply.expectedDate}`:'Engineering supply date/owner not yet defined',issues:planningReady?[]:['Record who supplies the BOM material and its expected lab arrival date.']};
+    }
+    const lines=reqs.map(req=>{const reserved=alloc.filter(a=>a.requirementId===req.id&&['Reserved','Issued'].includes(a.status)).reduce((n,a)=>n+Number(a.qty||0),0),available=(state.materials||[]).filter(m=>m.status==='Available'&&m.partNumber===req.partNumber&&m.revision===req.revision).reduce((n,m)=>n+Number(m.quantity||0),0);return {req,reserved,available,ok:reserved+available>=Number(req.requiredQty||0)};});
+    const reservedReady=lines.every(x=>x.reserved>=Number(x.req.requiredQty||0));return {source:'Lab supplied',planningReady:reservedReady,buildReady:issuedReady,earliestDate:today,owner:(state.users||[]).find(u=>u.role==='lab_planner')?.name||'Lab Planner',summary:reservedReady?'Exact BOM material is reserved from lab stock':lines.every(x=>x.ok)?'Exact BOM material is available but must be reserved before planning':'One or more exact BOM items are not available in sufficient quantity',issues:reservedReady?[]:lines.filter(x=>x.reserved<Number(x.req.requiredQty||0)).map(x=>`${x.req.partNumber} Rev ${x.req.revision}: reserve ${x.req.requiredQty}; currently reserved/issued ${x.reserved}, unreserved stock ${x.available}`),lines};
+  };
+  ProtoLab.processPlanningAssessment = (state,r) => {
+    const route=(state.routes||[]).find(x=>x.requestId===r.id); ProtoLab.ensureTestRequirements(state,r); const issues=[];
+    if(!route?.steps?.length)issues.push('Define the process route.'); else if(route.confirmed!==true)issues.push('Process Engineer must confirm the proposed route.');
+    (route?.steps||[]).forEach(s=>{const proc=(state.processes||[]).find(p=>p.id===s.processId);if(s.type==='standard'){if(!proc||proc.status!=='Released')issues.push(`${s.name}: released process revision required.`);else{if(!Number.isFinite(Number(proc.setupTime))||!Number.isFinite(Number(proc.cycleTime)))issues.push(`${s.name}: standard setup/cycle time missing.`);if(!proc.equipmentCapability)issues.push(`${s.name}: equipment capability not defined.`);if(!proc.competency)issues.push(`${s.name}: required competency not defined.`);}}else{const dev=(state.processDevelopments||[]).find(d=>d.requestId===r.id&&(d.libraryCandidate===s.processId||String(d.name).includes(s.name)));if(!dev||!Number(dev.planningEstimateHours))issues.push(`${s.name}: Process Engineer must define development effort before planning.`);}});
+    (r.testRequirements||[]).forEach(tr=>{if(tr.standardTestId){const test=(state.standardTests||[]).find(x=>x.id===tr.standardTestId);if(!test||test.status!=='Released')issues.push(`${tr.name}: released standard test required.`);else if(!test.equipmentCapability||!test.competency||!Number.isFinite(Number(test.setupTime))||!Number.isFinite(Number(test.cycleTime)))issues.push(`${tr.name}: standard test planning data incomplete.`);}else if(!Number(tr.developmentEstimateHours)||!Number(tr.executionEstimateHours)||!tr.equipmentCapability||!tr.competency)issues.push(`${tr.name}: no standard test matched; define development effort, provisional execution time, equipment capability and skill.`);});
+    return {ready:issues.length===0,issues,route,testRequirements:r.testRequirements||[]};
+  };
   ProtoLab.validateInvariants = state => {
     const errors=[];
     const serials=(state.serials||[]).map(s=>s.serial); if(new Set(serials).size!==serials.length) errors.push('Serial numbers are not unique.');
     (state.requests||[]).forEach(r=>{
+      if(!['Engineering supplied','Lab supplied'].includes(ProtoLab.normaliseMaterialSource(r.materialOwnership))) errors.push(`${r.id} has unsupported material source.`);
       if(['RELEASED','DELIVERED','CLOSED'].includes(r.status)){
         const holds=(state.deviations||[]).filter(d=>d.requestId===r.id && d.releaseHold && d.status!=='CLOSED'); if(holds.length) errors.push(`${r.id} released with unresolved release hold.`);
       }
