@@ -121,7 +121,7 @@ products.forEach((product,pi)=>{
  }
 });
 P.createDemoState=function(){
- const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-6',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,competencies,standardTests,buildHistory,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false}});
+ const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-7',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,competencies,standardTests,buildHistory,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false}});
  P.ensureMaterialModel(state);P.ensurePlanningModel(state);P.ensureEnterpriseModel(state);
  state.requests.forEach((r,i)=>{
    r.materialOwnership=P.normaliseMaterialSource(r.materialOwnership);

@@ -1,4 +1,4 @@
-# ProtoLab OS — Quick Start — REV 1.0.6
+# ProtoLab OS — Quick Start — REV 1.0.7
 
 ## 1. Pick a role
 
@@ -30,7 +30,7 @@ Each request uses one tappable checklist. Follow it top to bottom:
 9. Release approval
 10. Deliver, retain records & feed learning
 
-The important change in REV 1.0.6 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
+The important change in REV 1.0.7 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
 
 ## 3. Create a request and choose material source
 
@@ -105,7 +105,7 @@ As **Administrator → Configuration & data**:
 - Import JSON
 - Reset Demo Data
 
-Existing v1.0.4 local data is migrated to schema 4; a reset is not normally required.
+Existing earlier local data is migrated to schema 5; a reset is not normally required.
 
 
 ## 8. Configure the lab operating model

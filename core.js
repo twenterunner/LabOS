@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.6-poc';
-  ProtoLab.SCHEMA_VERSION = 4;
+  ProtoLab.VERSION = '1.0.7-poc';
+  ProtoLab.SCHEMA_VERSION = 5;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -147,15 +147,18 @@
     };
     state.trainingCertificates=state.trainingCertificates||[];
     state.maintenanceRecords=state.maintenanceRecords||[];
+    state.calibrationCertificates=state.calibrationCertificates||[];
+    state.resourceCareBookings=state.resourceCareBookings||[];
     state.pipelineProjects=state.pipelineProjects||[];
+    state.settings.capacity=state.settings.capacity||{productiveStaffHoursPerWeek:32,equipmentHoursPerWeek:60};
     state.improvementProposals=state.improvementProposals||[];
-    (state.competencies||[]).forEach((c,i)=>{c.status=c.status||'Released';c.requiredCertificate=c.requiredCertificate||`${c.id}-CERT`;c.validMonths=Number(c.validMonths||24);c.owner=c.owner||'Lab Manager';});
+    (state.competencies||[]).forEach((c,i)=>{c.status=c.status||'Released';c.requiredCertificate=c.requiredCertificate||`${c.id}-CERT`;c.validMonths=Number(c.validMonths||24);c.trainingDurationHours=Number(c.trainingDurationHours||4);c.owner=c.owner||'Lab Manager';});
     const today=new Date();
     (state.staff||[]).forEach((person,pi)=>{
       person.trainingCertificates=person.trainingCertificates||[];
       (person.competencies||[]).forEach((skillId,si)=>{
         if(!state.trainingCertificates.some(x=>x.staffId===person.id&&x.skillId===skillId)){
-          const cert={id:`CERT-${person.id}-${skillId}`,staffId:person.id,skillId,certificateNo:`TR-${person.id}-${skillId}-${String(si+1).padStart(2,'0')}`,issuer:(state.competencies||[]).find(c=>c.id===skillId)?.owner||'Lab Manager',issuedAt:new Date(today.getTime()-(90+pi*8)*86400000).toISOString().slice(0,10),expiresAt:new Date(today.getTime()+(420+si*45)*86400000).toISOString().slice(0,10),status:'Valid',evidence:`Training certificate ${skillId}`};
+          const cert={id:`CERT-${person.id}-${skillId}`,staffId:person.id,skillId,certificateNo:`TR-${person.id}-${skillId}-${String(si+1).padStart(2,'0')}`,issuer:(state.competencies||[]).find(c=>c.id===skillId)?.owner||'Lab Manager',issuedAt:new Date(today.getTime()-(90+pi*8)*86400000).toISOString().slice(0,10),expiresAt:new Date(today.getTime()+(75+pi*28+si*35)*86400000).toISOString().slice(0,10),status:'Valid',evidence:`Training certificate ${skillId}`};
           state.trainingCertificates.push(cert); person.trainingCertificates.push(cert.id);
         }
       });
@@ -169,6 +172,12 @@
       e.maintenanceDue=e.maintenanceDue||new Date(today.getTime()+(20+(i%5)*25)*86400000).toISOString().slice(0,10);
       e.maintenanceStatus=e.maintenanceStatus||'Valid';
       e.calibrationStatus=e.calibrationStatus||'Valid';
+      e.calibrationDurationHours=Number(e.calibrationDurationHours||4);
+      e.maintenanceDurationHours=Number(e.maintenanceDurationHours||4);
+      if(e.calibrationRequired!==false && !state.calibrationCertificates.some(c=>c.equipmentId===e.id)){
+        const due=new Date(`${e.calibrationDue||ProtoLab.todayISO()}T12:00:00`);const completed=new Date(due.getTime()-180*86400000);
+        state.calibrationCertificates.push({id:`CALCERT-${e.id}-SEED`,equipmentId:e.id,certificateNo:`CAL-${e.id}-2026`,issuer:'Accredited Calibration Lab (Demo)',referenceStandard:'Traceable reference standard',completedAt:completed.toISOString().slice(0,10),nextDue:e.calibrationDue,result:'Pass',status:'Valid',evidence:`Demo calibration certificate ${e.id}`,person:'Daan Mulder'});
+      }
     });
     (state.buildHistory||[]).forEach((h,i)=>{
       const q=Math.max(1,Number(h.quantity||1)), base=900+q*185+(i%6)*65;
@@ -193,5 +202,18 @@
     return {valid:!!cert,certificate:cert,reason:cert?`Certificate ${cert.certificateNo} valid to ${cert.expiresAt}`:`No valid training certificate for ${skillId}`};
   };
   ProtoLab.equipmentReady = (e,onDate=ProtoLab.todayISO()) => !!e && e.calibrationStatus==='Valid' && (!e.calibrationDue||e.calibrationDue>=onDate) && e.maintenanceStatus!=='Overdue' && (!e.maintenanceDue||e.maintenanceDue>=onDate);
+
+  ProtoLab.projectedEquipmentReady = (state,e,onDate=ProtoLab.todayISO()) => {
+    if(!e)return false; if(ProtoLab.equipmentReady(e,onDate))return true;
+    const t=new Date(onDate); const care=(state.resourceCareBookings||[]).filter(x=>x.status==='Scheduled'&&x.equipmentId===e.id);
+    const calOk=e.calibrationStatus==='Valid'&&(!e.calibrationDue||e.calibrationDue>=onDate) || care.some(x=>x.type==='Calibration'&&new Date(x.start)<=t&&(!x.projectedNextDue||x.projectedNextDue>=onDate));
+    const mntOk=e.maintenanceStatus!=='Overdue'&&(!e.maintenanceDue||e.maintenanceDue>=onDate) || care.some(x=>x.type==='Maintenance'&&new Date(x.start)<=t&&(!x.projectedNextDue||x.projectedNextDue>=onDate));
+    return calOk&&mntOk;
+  };
+  ProtoLab.projectedStaffQualification = (state,staff,skillId,onDate=ProtoLab.todayISO()) => {
+    const q=ProtoLab.staffQualification(state,staff,skillId,onDate); if(q.valid)return q;
+    const b=(state.resourceCareBookings||[]).find(x=>x.status==='Scheduled'&&x.type==='Training'&&x.staffId===staff?.id&&x.skillId===skillId&&x.start<=`${onDate}T23:59:59`&&(!x.projectedNextDue||x.projectedNextDue>=onDate));
+    return {valid:!!b,planned:b||null,reason:b?`Renewal training scheduled ${b.start.slice(0,10)}; projected valid to ${b.projectedNextDue}`:`No valid or scheduled qualification for ${skillId}`};
+  };
 
 })();

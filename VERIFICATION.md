@@ -1,174 +1,120 @@
 # ProtoLab OS — Verification Report
 
-**Application version:** 1.0.6-poc  
-**Schema version:** 4  
+**Application version:** 1.0.7-poc  
+**Schema version:** 5  
 **Verification date:** 2026-09-08  
 **Target:** static GitHub Pages proof-of-concept
 
 ## Summary
 
-The REV 1.0.6 package was checked with deterministic service/domain tests, an IndexedDB-adapter harness, a lightweight DOM startup/interaction harness, static/deployment checks, JavaScript syntax checks and local HTTP serving.
+REV 1.0.7 was checked with deterministic domain/service tests, an IndexedDB repository harness, a lightweight DOM interaction harness, static/mobile deployment checks, JavaScript syntax checks and local HTTP serving.
 
-Final automated results:
+Automated results:
 
-- **46 / 46** domain, workflow, planning, guard-rail and data-integrity tests passed.
-- **6 / 6** persistence / JSON import-export / reset / migration tests passed.
-- **23 / 23** UI startup/rendering/interaction smoke tests passed in the deterministic DOM harness.
-- **27 / 27** static/deployment/mobile-source checks passed.
-- **21 / 21** REV 1.0.6 enterprise-operation checks passed (finance, work instructions, certificate-gated skills, maintenance/calibration, advanced KPIs and improvement engine).
-- **9 / 9** key deployable files returned HTTP 200 from a local static server.
-- JavaScript syntax checks passed for the runtime and verification scripts.
+- **46 / 46** core domain, workflow, planning, guard-rail and data-integrity checks passed.
+- **6 / 6** persistence / JSON import-export / reset / migration checks passed.
+- **23 / 23** deterministic UI startup and interaction checks passed.
+- **21 / 21** REV 1.0.6 enterprise-operation regression checks passed.
+- **21 / 21** REV 1.0.7 forward-capacity/readiness/mobile checks passed.
+- **31 / 31** static/deployment/mobile-source checks passed.
+- **9 / 9** principal deployable files returned HTTP 200 from a local static server.
+- JavaScript syntax checks passed.
 
-The five deterministic suites therefore contain **123 passing checks and 0 failures**. The HTTP checks are reported separately because they verify serving rather than domain behaviour.
+This is **148 deterministic checks passed, 0 failed**, plus the separate HTTP serving checks.
 
-## Important automation limitation
+## Browser automation limitation
 
-A prior attempt to use the available container Chromium binary hung even on a trivial local HTML page. Therefore this report does **not** claim successful full Chrome/Android browser automation. UI verification consists of deterministic DOM/runtime tests, source-level responsive checks and local HTTP serving. The user is also performing real Android/Chrome acceptance testing after GitHub Pages deployment.
+The available container Chromium binary has previously hung even on trivial local HTML. This report therefore does **not** claim successful real Chrome/Android automation. Android/Chrome deployment testing remains the real-browser acceptance check; deterministic DOM and source/runtime tests are used before delivery.
 
-## REV 1.0.6 verification focus
+## REV 1.0.7 focus
 
-| Requirement | Result | Evidence / behaviour |
+| Requirement | Result | Implemented behaviour |
 |---|---|---|
-| Revision visible | PASS | Header contains `REV 1.0.6`; assets use `?v=1.0.6` cache-busting |
-| Mobile navigation remains accessible | PASS | Narrow-width CSS explicitly preserves a 44 px hamburger button and reduces competing header width |
-| Only two material routes | PASS | Request wizard exposes only **Engineering supplied** and **Lab supplied** |
-| Engineering-supplied planning input | PASS | Supply owner and expected lab-arrival date are mandatory planning inputs; physical receipt/issue is still required for Build Readiness |
-| Lab-supplied material feasibility | PASS | Exact part/revision/quantity must be reserved before AUTO-PLAN eligibility; arbitrary material cannot satisfy the requirement |
-| Feasibility before schedule | PASS | AUTO-PLAN rejects requests until material feasibility and confirmed process/test planning inputs exist |
-| Confirmed route required | PASS | Proposed default route is explicitly non-authoritative until Process Engineering confirms it |
-| Standard process planning data | PASS | Setup time, cycle time, batch/unit basis, equipment capability and required competency are used |
-| Standard Test Library | PASS | Released standard tests have setup/cycle time, capability and competency and are mapped from requested characterisation |
-| New/modified process planning | PASS | Process Engineer must define development effort before the planner can schedule the provisional work |
-| New test-method planning | PASS | Unmatched test requires development hours, provisional execution time, equipment capability and competency |
-| Lab-owned standards/skills | PASS | Lab Manager/Administrator can edit process/test planning standards and lab staff competency assignments |
-| Equipment readiness | PASS | Planner selects equipment by required capability and valid calibration |
-| Staff readiness | PASS | Planner selects available staff with the required competency and supports substitution |
-| Resource conflicts | PASS | Planner searches later slots/alternative resources and respects locked bookings |
-| Booking explanation | PASS | Every booking retains `estimateBasis`, equipment, staff/skill, duration and start/end |
-| Historical duration learning | PASS | Same-product historical median is combined with standard setup/cycle baseline; booking displays the evidence basis |
-| Historical operational learning | PASS | Seed includes prior-build FPY, scrap, rework, issues and lessons; schedule view displays these insights |
-| Closed build feedback | PASS | Closure captures actual process durations, FPY, scrap, rework, issues and lessons exactly once for future planning |
-| Actual process duration | PASS | Traveller has separate Start/Complete actions and retains actual elapsed duration |
-| Control Plan objective definition | PASS | Special characteristic accepts a target **or** objective lower/upper limits, while still requiring method/gauge, reaction plan and evidence |
-| Separation of duties | PASS | Control Plan owner cannot self-approve where configured; independent Approver / Reviewer can approve |
-| Product Safety action | PASS | Applicable request receives a concrete Product Safety approval record/direct action |
-| Finance master data | PASS | Labour role rates, equipment hourly rates, process/test fixed and consumable cost, material unit cost and contingency drive calculated estimates |
-| Finance KPI learning | PASS | Historical build records retain estimate, actual, €/unit and cost of poor quality; Management supports product/time filters |
-| Work instructions | PASS | Every released process requires a released work instruction; guided new process creates WI before review/release |
-| Skill governance | PASS | Defined skills specify certificate rules; AUTO-PLAN requires a valid person-specific certificate with evidence/expiry |
-| Certificate expiry | PASS | Expired/invalid certificate removes planning eligibility and is never silently regenerated |
-| Maintenance engine | PASS | Equipment readiness requires valid calibration and maintenance; evidence/next-due dates are controlled records |
-| Forward capacity | PASS | Probability-weighted pipeline projects produce future equipment-capability and skill-demand views without committed bookings |
-| Improvement engine | PASS | Cross-training, load balancing, capacity, calibration/maintenance and recurring-issue proposals can become tracked actions |
-| Guided workflow | PASS | One 10-step vertical checklist replaces separate horizontal workspace/gate navigation |
+| Revision visible | PASS | Header and cache-busted assets identify `REV 1.0.7` |
+| Mobile page containment | PASS | Page-level horizontal overflow is suppressed; cards/grids are constrained to viewport; wide tables scroll inside their own container |
+| Floating-number formatting | PASS | KPI/bar values are rounded and shown with units rather than raw JavaScript decimals |
+| Weekly forward demand | PASS | Equipment capability and certified-skill demand is calculated for each week |
+| Future-project probability | PASS | Committed work counts 100%; potential-project load is multiplied by project probability |
+| Capacity interpretation | PASS | Charts explicitly use expected **resource-hours/week**, not machine/person counts |
+| Quarterly view | PASS | Weekly demand is aggregated into quarter summaries with total and peak-week load |
+| 13/26/52 week horizons | PASS | Management can switch between roughly one quarter, six months and one year |
+| Calibration certificates | PASS | Calibration records retain certificate number, issuer/lab, traceability/reference standard, evidence, date, next due, result and person |
+| Calibration history | PASS | Per-equipment certificate history is viewable |
+| Maintenance due overview | PASS | Maintenance and calibration due items appear in the combined readiness plan |
+| Training due overview | PASS | Person-specific skill certificates approaching expiry appear in the same plan |
+| Optimized readiness slots | PASS | Optimizer searches actual working-time slots before due date and excludes exact-resource conflicts |
+| Build-impact minimization | PASS | Free slots are scored using exact committed resource load plus probability-weighted future demand |
+| Planner integration | PASS | Accepted calibration, maintenance and training slots become real resource constraints used by AUTO-PLAN |
+| Future calibration readiness | PASS | A scheduled calibration/maintenance can support future planning only after its scheduled completion and through projected validity |
+| Future qualification readiness | PASS | Scheduled renewal training can support future planning only after the training slot and through projected certificate validity |
+| Schedule collision recheck | PASS | Scheduling refuses a recommended slot if another controlled booking has since created a conflict |
+| Execution guard | PASS | Digital traveller only offers equipment whose calibration **and** maintenance are currently valid |
+| Certificate-gated skills | PASS | Planner uses valid person-specific training certificates, not unchecked skill flags |
 
-## Practical workflow verified
+## Meaning of forward-demand values
 
-The top-level request workflow is:
+The management forecast uses **expected resource-hours per week**:
 
-1. Request definition & submission
-2. Material source & feasibility
-3. Process route & test-method assessment
-4. Lab feasibility, resource plan & committed timing
-5. Control Plan, risk controls & special approvals
-6. Build readiness
-7. Serialise & execute digital traveller
-8. Characterise, evaluate & disposition exceptions
-9. Release approval
-10. Deliver, retain records & feed learning
+- committed build/resource bookings = 100% of their planned hours;
+- potential-project work = estimated process hours × project probability;
+- equipment capacity = capable equipment count × configured productive equipment hours/week;
+- skill capacity = currently certified staff count × configured productive staff hours/week.
 
-This ordering ensures a booking/forecast is not created merely because a request was submitted. The planner needs a credible material date/reservation and a confirmed process/test planning basis first.
+The charts therefore show *when* a capability or skill becomes constrained, rather than only a single accumulated total. Quarterly tables summarize the same weekly model.
 
-## Core regression coverage
+## Optimized calibration / maintenance / training planning
 
-The automated domain suite additionally verifies:
+For each item due inside the selected horizon the readiness engine:
 
-- 15 seeded prototype requests, 25+ processes and 40+ unique serialized units;
-- initial state invariants;
-- request creation/submission guard rails;
-- serial uniqueness and genealogy;
-- process fit assessment and controlled process development/release;
-- Control Plan revision control and independent approval;
-- build-readiness blocker detection;
-- unauthorised override rejection;
-- failed measurement / quality-hold linkage;
-- deviation mandatory-action closure guard;
-- release blocked by unresolved holds;
-- rework history retention;
-- report assembly;
-- auditor/admin permission behaviour;
-- product-safety approval generation;
-- demo reset deep-copy integrity.
+1. identifies the actual equipment or person/skill whose readiness expires;
+2. searches weekdays in the pre-due planning window;
+3. rejects slots overlapping an existing build or accepted readiness booking for that exact resource;
+4. scores remaining slots against that resource's committed weekly load plus its share of probability-weighted pipeline demand;
+5. slightly favors later valid slots when build impact is otherwise similar, avoiding unnecessarily early renewal;
+6. exposes a conflict/escalation if no free slot exists before the due date;
+7. converts an accepted proposal into a controlled non-build booking;
+8. makes AUTO-PLAN work around that booking.
 
-## Persistence / migration coverage
+This keeps calibration, preventive maintenance and qualification renewal in the same capacity model as prototype builds.
 
-The repository harness verifies:
+## Core workflow regression retained
 
-- IndexedDB adapter initialization;
-- save/reload persistence;
-- JSON export metadata;
-- compatible JSON import;
-- demo reset;
-- migration of earlier schema-1 data through to schema 4, adding current planning/material/approval model data without requiring the user to discard local requests.
+The earlier application controls remain covered, including:
 
-## UI/runtime regression coverage
+- 15 seeded prototype requests, 25+ process definitions and 40+ unique serialized units;
+- exact BOM material readiness and genealogy;
+- Engineering-supplied versus Lab-supplied material paths;
+- material and process/test feasibility before AUTO-PLAN;
+- standard-process/test setup and cycle-time planning;
+- same-product historical duration learning;
+- qualified staff and capable equipment selection;
+- resource-conflict recovery;
+- controlled process development and released work instructions;
+- PFMEA / Control Plan linkages and independent approval;
+- Product Safety approval records;
+- serial generation, traveller execution and actual-duration capture;
+- objective measurement pass/fail and quality holds;
+- deviation/rework/release controls;
+- finance rates, estimate/actual/COPQ learning;
+- Action Centre and improvement proposals;
+- audit and report evidence.
 
-The deterministic DOM harness verifies:
+## Persistence / migration
 
-- application ready flag, dashboard/navigation rendering, role selector and Action count;
-- modal form interaction no longer closes the modal;
-- backdrop touch/click does not close the modal;
-- explicit modal close handling;
-- guided vertical checklist, owners and next actions;
-- visible REV badge;
-- material source choices and exact allocation UI;
-- planning prerequisite explanation, timing and resource bookings;
-- Standard Test / competency planning UI;
-- historical learning/estimate basis;
-- technician Start/Complete execution;
-- Control Plan independent approval handoff;
-- Product Safety direct approval workflow.
+The repository harness verifies IndexedDB initialization, save/reload, JSON export/import, reset and migration of earlier local data to **schema 5**. New schema-5 structures include calibration-certificate history, resource-care bookings and forward-capacity settings. Existing user-created records are preserved rather than requiring a demo reset.
 
-## Static/deployment checks
+## Static / mobile deployment
 
-Static checks verify:
+Checks verify relative assets, no npm/build/runtime external dependency, cache-busted REV 1.0.7 files, responsive breakpoints, 44 px touch-target baseline, preserved mobile hamburger navigation, page-width containment and internal scrolling for intentionally wide tables.
 
-- all required delivery files are present;
-- all `index.html` assets are relative and exist;
-- no external runtime JS/CSS dependency is required;
-- responsive 820 px and 560 px breakpoints exist;
-- 44 px touch target baseline and narrow-phone hamburger preservation;
-- repository and identity abstractions remain present;
-- service worker only clears old caches rather than serving stale app assets;
-- guided workspace hides the legacy horizontal tabs/gate stepper;
-- planning, materials, master-data and learning implementations are present in runtime source.
-
-Local HTTP serving returned **200** for:
+The local static-server check covers:
 
 `index.html`, `styles.css`, `core.js`, `demo-data.js`, `repository.js`, `services.js`, `app.js`, `manifest.webmanifest`, `USER_MANUAL.html`.
 
-## Data-integrity principles retained
+## Acceptance interpretation
 
-The application continues to enforce or explicitly model these important invariants:
-
-- approved controlled revisions are not silently edited;
-- serial numbers are unique;
-- process execution retains the process revision used;
-- unresolved release holds prevent release;
-- required objective results require result/disposition;
-- invalid calibration cannot be presented as compliant measurement equipment;
-- mandatory gates require controlled override where bypass is allowed;
-- a closed deviation cannot retain mandatory open actions;
-- rework preserves original history;
-- exact BOM allocations drive material genealogy;
-- approved Control Plans preserve independent approval evidence.
-
-## Acceptance perspective
-
-**Engineering requester:** can define need/date/configuration and choose a meaningful Engineering/Lab material route without pretending to know the lab schedule.  
-**Lab planner:** cannot schedule prematurely; receives material/process/test inputs, explainable duration estimates, resource constraints and historical same-product evidence before committing timing.  
-**Process engineer:** controls whether requested operations/tests are existing, modified or new and owns planning allowances for development work.  
-**Technician:** executes a controlled traveller and records actual duration/evidence.  
-**Quality:** retains linked risk, Control Plan, measurement, deviation and release evidence.  
-**Manager:** owns lab standards, certified skills, costing and equipment readiness; can filter sophisticated operational/finance KPIs and view current/future bottlenecks plus actionable improvement proposals.  
-**Auditor:** can reconstruct the basis for both build execution and the planning estimate rather than seeing unexplained booked hours.
+**Lab Manager:** can see weekly and quarterly future capability/skill demand and plan calibration, maintenance and training around build demand.  
+**Metrology:** has controlled calibration certificates, maintenance history and an optimized due plan.  
+**Planner:** accepted non-build readiness work is visible and consumes real capacity, preventing AUTO-PLAN from silently double-booking it.  
+**Technician:** cannot execute with equipment whose current calibration or preventive maintenance is invalid.  
+**Management:** forward need is presented as explainable hours/week with committed versus probability-weighted pipeline demand and capacity, rather than unexplained raw numbers.
