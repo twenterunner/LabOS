@@ -52,3 +52,12 @@ REV 1.0.25 coverage additionally includes:
 - FINAL Build Report approval is invalidated and the report revision advances when sample evidence or sample/serial labels change.
 - Schema 11 → 12 migration initializes sample evidence fields without changing permanent Lab Sample IDs.
 - Dedicated REV 1.0.26 regression suite: 10/10 passed; combined current regression set: 143/143 passed, plus JavaScript syntax checks.
+
+## REV 1.0.27 addendum
+
+- Schema 12 → 13 migration repairs duplicate permanent Lab Sample IDs and preserves linked evidence.
+- Archive-demo injection uses natural traceability keys and cannot create a duplicate Lab Sample ID when an equivalent sample already exists under a different internal row ID.
+- Existing demo recognition no longer depends only on the historical `dataVersion` string.
+- Actual v1.0.24 demo snapshot migration verified to produce exactly three archived examples, unique Lab Sample IDs, unique nonblank formal serials and zero invariant errors.
+- Current selected regression set: **150 passed / 0 failed**, plus JavaScript syntax checks and ZIP integrity.
+

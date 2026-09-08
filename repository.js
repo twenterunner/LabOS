@@ -87,9 +87,29 @@ class MigrationService{
     s.dataVersion=String(s.dataVersion||'').startsWith('2026.09-demo')?'2026.09-demo-15':(s.dataVersion||'migrated');
     s.schemaVersion=12;continue;
    }
+   if(s.schemaVersion===12){
+    const wasDemo=P.isDemoDataset(s);s.settings=s.settings||{};if(wasDemo)s.settings.demoDataset=true;
+    // Repair any duplicate permanent Lab Sample IDs created by older archive/demo merges before adding anything new.
+    P.repairDuplicateSamples(s);
+    // Ensure the three completed archive examples exist in every recognised POC demo, even if an older dataVersion marker was lost.
+    if(wasDemo&&P.createDemoState){
+      const seed=P.createDemoState(),closed=seed.requests.filter(r=>r.status==='CLOSED'),closedIds=new Set(closed.map(r=>r.id));
+      const add=(key,x,natural)=>{s[key]=Array.isArray(s[key])?s[key]:[];if(!s[key].some(y=>natural(y,x)))s[key].push(P.deepClone(x));};
+      for(const r of closed){const existing=(s.requests||[]).find(x=>x.id===r.id);if(!existing)s.requests.push(P.deepClone(r));else if(String(existing.title||'').toLowerCase()===String(r.title||'').toLowerCase()){existing.status='CLOSED';existing.currentGate='CLOSED';existing.archived=true;existing.archivedAt=existing.archivedAt||r.archivedAt||r.closedAt;existing.closedAt=existing.closedAt||r.closedAt;existing.actualDeliveryDate=existing.actualDeliveryDate||r.actualDeliveryDate;}}
+      for(const x of seed.routes||[])if(closedIds.has(x.requestId))add('routes',x,(a,b)=>a.id===b.id||a.requestId===b.requestId);
+      for(const x of seed.serials||[])if(closedIds.has(x.requestId))add('serials',x,(a,b)=>String(a.serial||a.sampleId)===String(b.serial||b.sampleId));
+      for(const x of seed.measurements||[])if(closedIds.has(x.requestId))add('measurements',x,(a,b)=>a.id===b.id);
+      for(const x of seed.deviations||[])if(closedIds.has(x.requestId))add('deviations',x,(a,b)=>a.id===b.id);
+      for(const x of seed.approvals||[])if(closedIds.has(x.requestId))add('approvals',x,(a,b)=>a.requestId===b.requestId&&a.type===b.type&&String(a.stage||'')===String(b.stage||''));
+      for(const x of seed.documents||[])if(closedIds.has(x.requestId))add('documents',x,(a,b)=>a.requestId===b.requestId&&a.type===b.type&&String(a.revision||'A')===String(b.revision||'A'));
+      for(const x of seed.allocations||[])if(closedIds.has(x.requestId))add('allocations',x,(a,b)=>a.requestId===b.requestId&&a.requirementId===b.requirementId&&a.lot===b.lot&&a.status===b.status);
+      P.repairDuplicateSamples(s);
+    }
+    s.dataVersion=wasDemo?'2026.09-demo-16':(s.dataVersion||'migrated');s.schemaVersion=13;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
 class BrowserDocumentStore{download(name,text,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);} readFile(file){return file.text();}}

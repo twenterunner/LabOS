@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.26-poc';
-  ProtoLab.SCHEMA_VERSION = 12;
+  ProtoLab.VERSION = '1.0.27-poc';
+  ProtoLab.SCHEMA_VERSION = 13;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -217,9 +217,44 @@
     (r.testRequirements||[]).forEach(tr=>{if(tr.standardTestId){const test=(state.standardTests||[]).find(x=>x.id===tr.standardTestId);if(!test)issues.push(`${tr.name}: standard test definition is missing.`);else{if(profile.requires.testRelease&&test.status!=='Released')issues.push(`${tr.name}: ${profile.label} requires a released standard test.`);if(!test.equipmentCapability||!test.competency||!Number.isFinite(Number(test.setupTime))||!Number.isFinite(Number(test.cycleTime)))issues.push(`${tr.name}: standard test planning data incomplete.`);}}else if(!Number(tr.developmentEstimateHours)||!Number(tr.executionEstimateHours)||!tr.equipmentCapability||!tr.competency)issues.push(`${tr.name}: define provisional development/execution time, equipment capability and skill.`);});
     return {ready:issues.length===0,issues,route,testRequirements:r.testRequirements||[],profile};
   };
+  ProtoLab.isDemoDataset = state => {
+    if(state?.settings?.demoDataset===true)return true;
+    if(String(state?.dataVersion||'').startsWith('2026.09-demo'))return true;
+    const reqIds=new Set((state?.requests||[]).map(r=>r.id)),prodIds=new Set((state?.products||[]).map(p=>p.id));
+    return ['P26-0042','P26-0043','P26-0055'].every(id=>reqIds.has(id)) && ['PRD-001','PRD-002','PRD-003'].every(id=>prodIds.has(id));
+  };
+  ProtoLab.repairDuplicateSamples = state => {
+    state.serials=Array.isArray(state.serials)?state.serials:[];
+    const groups=new Map();for(const sample of state.serials){const key=String(sample.serial||sample.sampleId||'').trim();if(!key)continue;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(sample);}
+    let merged=0,renamed=0;const remove=new Set(),used=new Set(state.serials.map(s=>String(s.serial||'')).filter(Boolean));
+    const uniq=(arr,keyFn)=>{const out=[],seen=new Set();for(const x of arr||[]){const k=keyFn(x);if(seen.has(k))continue;seen.add(k);out.push(x)}return out};
+    const mergeInto=(keep,dup)=>{
+      ProtoLab.ensureSampleEvidence?.(keep);ProtoLab.ensureSampleEvidence?.(dup);
+      keep.sampleId=keep.sampleId||keep.serial;keep.sampleNumber=keep.sampleNumber||dup.sampleNumber;keep.serialNumber=keep.serialNumber||dup.serialNumber;keep.description=(String(dup.description||'').length>String(keep.description||'').length)?dup.description:keep.description;
+      keep.materials=uniq([...(keep.materials||[]),...(dup.materials||[])],x=>String(x));
+      keep.processHistory=uniq([...(keep.processHistory||[]),...(dup.processHistory||[])],x=>[x.stepId,x.processId,x.date,x.operator,x.equipment].join('|'));
+      keep.dataFields=uniq([...(keep.dataFields||[]),...(dup.dataFields||[])],x=>x.id||[x.label,x.value,x.unit,x.description].join('|'));
+      keep.evidencePhotos=uniq([...(keep.evidencePhotos||[]),...(dup.evidencePhotos||[])],x=>x.id||[x.caption,x.dataUrl].join('|'));
+      if(!keep.delivery&&dup.delivery)keep.delivery=ProtoLab.deepClone(dup.delivery);
+      const rank={Scrapped:6,Hold:5,Reworked:4,Delivered:3,Released:2,Active:1};if((rank[dup.status]||0)>(rank[keep.status]||0))keep.status=dup.status;if((rank[dup.releaseState]||0)>(rank[keep.releaseState]||0))keep.releaseState=dup.releaseState;
+    };
+    const updateRefs=(requestId,oldRef,newRef)=>{
+      for(const key of ['measurements','deviations','actions'])for(const row of state[key]||[])if(row.requestId===requestId&&row.serial===oldRef)row.serial=newRef;
+      for(const route of state.routes||[])if(route.requestId===requestId)for(const step of route.steps||[])for(const run of step.executionRuns||[])if(Array.isArray(run.sampleIds))run.sampleIds=run.sampleIds.map(x=>x===oldRef?newRef:x);
+    };
+    for(const [key,list] of groups){if(list.length<2)continue;const byRequest=new Map();for(const x of list){if(!byRequest.has(x.requestId))byRequest.set(x.requestId,[]);byRequest.get(x.requestId).push(x)}
+      for(const same of byRequest.values())if(same.length>1){const keep=same.slice().sort((a,b)=>((b.dataFields||[]).length+(b.evidencePhotos||[]).length+(b.processHistory||[]).length)-((a.dataFields||[]).length+(a.evidencePhotos||[]).length+(a.processHistory||[]).length))[0];for(const dup of same){if(dup===keep)continue;mergeInto(keep,dup);remove.add(dup);merged++;}}
+      const survivors=list.filter(x=>!remove.has(x));if(survivors.length>1){const keep=survivors[0];for(const sample of survivors.slice(1)){let base=`${sample.requestId||'SAMPLE'}-S${String(sample.sampleNumber||'001').padStart(3,'0')}`,candidate=base,n=1;while(used.has(candidate))candidate=`${base}-${++n}`;const old=sample.serial;used.add(candidate);sample.serial=candidate;sample.sampleId=candidate;updateRefs(sample.requestId,old,candidate);renamed++;}}
+    }
+    if(remove.size)state.serials=state.serials.filter(x=>!remove.has(x));
+    if((merged||renamed)&&state.auditTrail)ProtoLab.audit(state,'Duplicate sample trace IDs repaired','Data integrity','Sample register',`${merged+renamed} conflict(s)`,'Unique permanent Lab Sample IDs',`${merged} duplicate row(s) merged; ${renamed} cross-request conflict(s) reassigned with references preserved`);
+    return {merged,renamed};
+  };
+
   ProtoLab.validateInvariants = state => {
     const errors=[];
-    const serials=(state.serials||[]).map(s=>s.serial); if(new Set(serials).size!==serials.length) errors.push('Serial numbers are not unique.');
+    const labIds=(state.serials||[]).map(s=>String(s.serial||'')).filter(Boolean); if(new Set(labIds).size!==labIds.length) errors.push('Lab Sample IDs are not unique.');
+    const formal=(state.serials||[]).map(s=>String(s.serialNumber||'').trim()).filter(Boolean); if(new Set(formal).size!==formal.length) errors.push('Formal serial numbers are not unique.');
     (state.requests||[]).forEach(r=>{
       if(!['Engineering supplied','Lab supplied'].includes(ProtoLab.normaliseMaterialSource(r.materialOwnership))) errors.push(`${r.id} has unsupported material source.`);
       if(['RELEASED','DELIVERED','CLOSED'].includes(r.status)){

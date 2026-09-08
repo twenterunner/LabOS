@@ -219,3 +219,10 @@ If the Control Plan defines a measurement at that route step, record it during e
 
 ## Sample evidence and photos (REV 1.0.26)
 Open a build → **Samples** → **Data / photos** on the relevant sample. Add a description, structured data fields, and/or a photo from the phone camera/gallery. Use **Include in Build Report** per item. The permanent Lab Sample ID remains the traceability key.
+
+## Data repair and archived examples (REV 1.0.27)
+
+When an existing v1.0.26 or older POC demo is opened, schema 13 automatically repairs duplicate permanent Lab Sample IDs caused by older demo/archive merges. Equivalent duplicate sample rows are merged without deleting measurement, process, material, description, structured-data or photo evidence.
+
+The same upgrade verifies that the three completed examples are available under **Prototype Requests → Archived**. The dashboard also provides **Archived builds (n)** as a direct shortcut. This upgrade does not require **Reset Demo Data**, so existing POC work remains in place.
+

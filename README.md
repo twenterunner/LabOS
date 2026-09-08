@@ -1,4 +1,13 @@
-# ProtoLab OS — Prototype Build Management
+# ProtoLab OS — Prototype Build Management POC
+
+## REV 1.0.27 — sample-ID repair & guaranteed archived demo examples
+
+- Repairs duplicate permanent Lab Sample IDs created by older archive/demo merges while retaining sample evidence, process history, material lots and linked measurement/deviation references.
+- Validates permanent Lab Sample IDs separately from optional formal serial numbers.
+- Recognises an existing POC demo by stable dataset fingerprints even if its historical `dataVersion` marker was lost.
+- Guarantees the three completed demo projects are present under **Prototype Requests → Archived** without requiring Reset Demo Data.
+- Archived demo migration now merges by natural traceability keys (request ID, Lab Sample ID, approval/report identity) rather than volatile internal row IDs.
+- Dashboard includes a direct **Archived builds (n)** shortcut.
 
 ## REV 1.0.26 — sample-specific data, photos & controlled report evidence
 
@@ -216,7 +225,7 @@ Seed data includes approximately:
 
 ## POC data
 
-IndexedDB is the primary persistence mechanism. Use **Configuration & data** as Administrator to export JSON, import JSON or reset the demo. Current schema version is **7** and migration logic upgrades earlier local POC data without requiring a reset.
+IndexedDB is the primary persistence mechanism. Use **Configuration & data** as Administrator to export JSON, import JSON or reset the demo. Current schema version is **13** and migration logic upgrades earlier local POC data without requiring a reset.
 
 ## Main files
 

@@ -1,0 +1,35 @@
+ProtoLab OS REV 1.0.27 verification
+===================================
+
+Current selected regression suites
+----------------------------------
+verification-node.js                 46 passed / 0 failed
+verification-repository-node.js       6 passed / 0 failed
+verification-ui-node.js              23 passed / 0 failed
+verification-v123-node.js             8 passed / 0 failed
+verification-v124-node.js             6 passed / 0 failed
+verification-v125-node.js            13 passed / 0 failed
+verification-v126-node.js            10 passed / 0 failed
+verification-v127-node.js             7 passed / 0 failed
+verification-static.py               31 passed / 0 failed
+
+TOTAL                                150 passed / 0 failed
+
+REV 1.0.27 specific migration verification
+------------------------------------------
+PASS  Fresh demo contains exactly three CLOSED + archived demo projects.
+PASS  Permanent Lab Sample IDs are unique.
+PASS  Nonblank formal serial numbers are unique.
+PASS  Schema 12 duplicate sample rows are merged while retaining evidence.
+PASS  Recognised demo receives missing archived examples even when the old dataVersion marker is absent.
+PASS  Archive merge uses the permanent Lab Sample ID as the natural sample key.
+PASS  Dashboard exposes direct Archived builds shortcut.
+PASS  Actual v1.0.24 demo snapshot + injected legacy duplicate migrates to schema 13 with 18 requests, 3 archived projects and zero invariant errors.
+
+JavaScript syntax
+-----------------
+core.js        PASS
+repository.js  PASS
+demo-data.js   PASS
+services.js    PASS
+app.js         PASS
