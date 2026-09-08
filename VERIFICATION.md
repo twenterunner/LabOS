@@ -1,13 +1,13 @@
 # ProtoLab OS — Verification Report
 
-**Application version:** 1.0.5-poc  
-**Schema version:** 3  
+**Application version:** 1.0.6-poc  
+**Schema version:** 4  
 **Verification date:** 2026-09-08  
 **Target:** static GitHub Pages proof-of-concept
 
 ## Summary
 
-The REV 1.0.5 package was checked with deterministic service/domain tests, an IndexedDB-adapter harness, a lightweight DOM startup/interaction harness, static/deployment checks, JavaScript syntax checks and local HTTP serving.
+The REV 1.0.6 package was checked with deterministic service/domain tests, an IndexedDB-adapter harness, a lightweight DOM startup/interaction harness, static/deployment checks, JavaScript syntax checks and local HTTP serving.
 
 Final automated results:
 
@@ -15,20 +15,21 @@ Final automated results:
 - **6 / 6** persistence / JSON import-export / reset / migration tests passed.
 - **23 / 23** UI startup/rendering/interaction smoke tests passed in the deterministic DOM harness.
 - **27 / 27** static/deployment/mobile-source checks passed.
+- **21 / 21** REV 1.0.6 enterprise-operation checks passed (finance, work instructions, certificate-gated skills, maintenance/calibration, advanced KPIs and improvement engine).
 - **9 / 9** key deployable files returned HTTP 200 from a local static server.
 - JavaScript syntax checks passed for the runtime and verification scripts.
 
-The four deterministic suites therefore contain **102 passing checks and 0 failures**. The HTTP checks are reported separately because they verify serving rather than domain behaviour.
+The five deterministic suites therefore contain **123 passing checks and 0 failures**. The HTTP checks are reported separately because they verify serving rather than domain behaviour.
 
 ## Important automation limitation
 
 A prior attempt to use the available container Chromium binary hung even on a trivial local HTML page. Therefore this report does **not** claim successful full Chrome/Android browser automation. UI verification consists of deterministic DOM/runtime tests, source-level responsive checks and local HTTP serving. The user is also performing real Android/Chrome acceptance testing after GitHub Pages deployment.
 
-## REV 1.0.5 verification focus
+## REV 1.0.6 verification focus
 
 | Requirement | Result | Evidence / behaviour |
 |---|---|---|
-| Revision visible | PASS | Header contains `REV 1.0.5`; assets use `?v=1.0.5` cache-busting |
+| Revision visible | PASS | Header contains `REV 1.0.6`; assets use `?v=1.0.6` cache-busting |
 | Mobile navigation remains accessible | PASS | Narrow-width CSS explicitly preserves a 44 px hamburger button and reduces competing header width |
 | Only two material routes | PASS | Request wizard exposes only **Engineering supplied** and **Lab supplied** |
 | Engineering-supplied planning input | PASS | Supply owner and expected lab-arrival date are mandatory planning inputs; physical receipt/issue is still required for Build Readiness |
@@ -51,6 +52,14 @@ A prior attempt to use the available container Chromium binary hung even on a tr
 | Control Plan objective definition | PASS | Special characteristic accepts a target **or** objective lower/upper limits, while still requiring method/gauge, reaction plan and evidence |
 | Separation of duties | PASS | Control Plan owner cannot self-approve where configured; independent Approver / Reviewer can approve |
 | Product Safety action | PASS | Applicable request receives a concrete Product Safety approval record/direct action |
+| Finance master data | PASS | Labour role rates, equipment hourly rates, process/test fixed and consumable cost, material unit cost and contingency drive calculated estimates |
+| Finance KPI learning | PASS | Historical build records retain estimate, actual, €/unit and cost of poor quality; Management supports product/time filters |
+| Work instructions | PASS | Every released process requires a released work instruction; guided new process creates WI before review/release |
+| Skill governance | PASS | Defined skills specify certificate rules; AUTO-PLAN requires a valid person-specific certificate with evidence/expiry |
+| Certificate expiry | PASS | Expired/invalid certificate removes planning eligibility and is never silently regenerated |
+| Maintenance engine | PASS | Equipment readiness requires valid calibration and maintenance; evidence/next-due dates are controlled records |
+| Forward capacity | PASS | Probability-weighted pipeline projects produce future equipment-capability and skill-demand views without committed bookings |
+| Improvement engine | PASS | Cross-training, load balancing, capacity, calibration/maintenance and recurring-issue proposals can become tracked actions |
 | Guided workflow | PASS | One 10-step vertical checklist replaces separate horizontal workspace/gate navigation |
 
 ## Practical workflow verified
@@ -100,7 +109,7 @@ The repository harness verifies:
 - JSON export metadata;
 - compatible JSON import;
 - demo reset;
-- migration of earlier schema-1 data through to schema 3, adding current planning/material/approval model data without requiring the user to discard local requests.
+- migration of earlier schema-1 data through to schema 4, adding current planning/material/approval model data without requiring the user to discard local requests.
 
 ## UI/runtime regression coverage
 
@@ -161,5 +170,5 @@ The application continues to enforce or explicitly model these important invaria
 **Process engineer:** controls whether requested operations/tests are existing, modified or new and owns planning allowances for development work.  
 **Technician:** executes a controlled traveller and records actual duration/evidence.  
 **Quality:** retains linked risk, Control Plan, measurement, deviation and release evidence.  
-**Manager:** owns lab planning standards/skills and can see historical yield/rework/issue learning.  
+**Manager:** owns lab standards, certified skills, costing and equipment readiness; can filter sophisticated operational/finance KPIs and view current/future bottlenecks plus actionable improvement proposals.  
 **Auditor:** can reconstruct the basis for both build execution and the planning estimate rather than seeing unexplained booked hours.

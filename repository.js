@@ -37,9 +37,10 @@ class MigrationService{
     (s.processDevelopments||[]).forEach(d=>{if(!Number(d.planningEstimateHours))d.planningEstimateHours=d.status==='RELEASED'?0:8;});
     s.dataVersion='2026.09-demo-5';s.schemaVersion=3;continue;
    }
+   if(s.schemaVersion===3){P.ensureEnterpriseModel(s);s.dataVersion='2026.09-demo-6';s.schemaVersion=4;continue;}
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);P.ensurePlanningModel(s);(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
 class BrowserDocumentStore{download(name,text,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);} readFile(file){return file.text();}}

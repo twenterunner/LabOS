@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.5-poc';
-  ProtoLab.SCHEMA_VERSION = 3;
+  ProtoLab.VERSION = '1.0.6-poc';
+  ProtoLab.SCHEMA_VERSION = 4;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -20,9 +20,9 @@
   ].map(([id,label])=>({id,label}));
   ProtoLab.PERMISSIONS = {
     engineering_requester:['request:create','request:view','delivery:ack','report:view'], engineering_lead:['request:view','request:clarify','request:approve','approval:perform','report:view'],
-    lab_planner:['request:view','triage','plan','route:edit','materials:allocate','materials:receive','report:view'], process_engineer:['request:view','route:edit','process:develop','process:release','pfmea:edit','workinstruction:edit','report:view'],
+    lab_planner:['request:view','triage','plan','route:edit','materials:allocate','materials:receive','report:view','improvement:review'], process_engineer:['request:view','route:edit','process:develop','process:release','pfmea:edit','workinstruction:edit','report:view'],
     technician:['request:view','execution:run','evidence:add','measurement:add','report:view'], quality:['request:view','controlplan:edit','controlplan:approve','quality:disposition','release:review','approval:perform','report:approve'],
-    metrology:['request:view','equipment:manage','measurement:review'], product_safety:['request:view','productsafety:approve','approval:perform'], lab_manager:['request:view','plan','planning:standards','priority:change','override:approve','release:approve','approval:perform','dashboard:management'],
+    metrology:['request:view','equipment:manage','measurement:review','calibration:manage','maintenance:manage'], product_safety:['request:view','productsafety:approve','approval:perform'], lab_manager:['request:view','plan','process:develop','planning:standards','finance:manage','skills:manage','equipment:manage','calibration:manage','maintenance:manage','improvement:review','priority:change','override:approve','release:approve','approval:perform','dashboard:management'],
     approver:['request:view','approval:perform','controlplan:approve','report:view'], auditor:['request:view','audit:view','report:view'], administrator:['*']
   };
   ProtoLab.can = (role,perm) => { const p=ProtoLab.PERMISSIONS[role]||[]; return p.includes('*')||p.includes(perm); };
@@ -131,9 +131,67 @@
       const reqs=r.materialRequirements||[]; const alloc=(state.allocations||[]).filter(a=>a.requestId===r.id&&a.status==='Issued');
       alloc.forEach(a=>{if(a.requirementId&&!reqs.some(q=>q.id===a.requirementId))errors.push(`${r.id} has material allocation to an unknown requirement.`);});
     });
+    (state.processes||[]).filter(p=>p.status==='Released').forEach(p=>{if(!p.workInstruction||p.workInstruction.status!=='Released'||!(p.workInstruction.steps||[]).length)errors.push(`${p.id} released without a released work instruction.`);});
     (state.controlPlans||[]).filter(c=>c.status==='Approved').forEach(c=>{ if(!c.revision) errors.push(`${c.id} approved without revision.`); });
     (state.measurements||[]).filter(m=>m.calibrationRequired).forEach(m=>{ if(m.equipmentCalibrationStatus==='Invalid' && m.compliant===true) errors.push(`${m.id} claims compliant measurement with invalid calibration.`); });
     (state.deviations||[]).filter(d=>d.status==='CLOSED').forEach(d=>{if((d.actions||[]).some(a=>a.mandatory&&!a.closed)) errors.push(`${d.id} closed with mandatory open action.`)});
     return errors;
   };
+
+  ProtoLab.ensureEnterpriseModel = state => {
+    state.settings=state.settings||{};
+    state.settings.finance=state.settings.finance||{
+      currency:'EUR', contingencyPct:8,
+      roleRates:{lab_planner:68,process_engineer:92,technician:58,quality:82,metrology:84,product_safety:95,lab_manager:105,approver:95},
+      defaultExternalService:0
+    };
+    state.trainingCertificates=state.trainingCertificates||[];
+    state.maintenanceRecords=state.maintenanceRecords||[];
+    state.pipelineProjects=state.pipelineProjects||[];
+    state.improvementProposals=state.improvementProposals||[];
+    (state.competencies||[]).forEach((c,i)=>{c.status=c.status||'Released';c.requiredCertificate=c.requiredCertificate||`${c.id}-CERT`;c.validMonths=Number(c.validMonths||24);c.owner=c.owner||'Lab Manager';});
+    const today=new Date();
+    (state.staff||[]).forEach((person,pi)=>{
+      person.trainingCertificates=person.trainingCertificates||[];
+      (person.competencies||[]).forEach((skillId,si)=>{
+        if(!state.trainingCertificates.some(x=>x.staffId===person.id&&x.skillId===skillId)){
+          const cert={id:`CERT-${person.id}-${skillId}`,staffId:person.id,skillId,certificateNo:`TR-${person.id}-${skillId}-${String(si+1).padStart(2,'0')}`,issuer:(state.competencies||[]).find(c=>c.id===skillId)?.owner||'Lab Manager',issuedAt:new Date(today.getTime()-(90+pi*8)*86400000).toISOString().slice(0,10),expiresAt:new Date(today.getTime()+(420+si*45)*86400000).toISOString().slice(0,10),status:'Valid',evidence:`Training certificate ${skillId}`};
+          state.trainingCertificates.push(cert); person.trainingCertificates.push(cert.id);
+        }
+      });
+    });
+    (state.processes||[]).forEach((x,i)=>{x.workInstruction=x.workInstruction||{id:`WI-${x.id}`,revision:x.revision||'A',title:`Work instruction · ${x.name}`,status:x.status==='Released'?'Released':'Draft',steps:[`Verify material/configuration for ${x.name}`,`Perform ${x.name} using controlled parameters`,`Record required evidence in the digital traveller`]};x.fixedCharge=Number(x.fixedCharge??(8+(i%5)*4));x.consumableCost=Number(x.consumableCost??(3+(i%4)*2));});
+    (state.standardTests||[]).forEach((x,i)=>{x.fixedCharge=Number(x.fixedCharge??(18+(i%4)*6));x.consumableCost=Number(x.consumableCost??(4+(i%3)*3));x.workInstruction=x.workInstruction||{id:`WI-${x.id}`,revision:x.revision||'A',title:`Test instruction · ${x.name}`,status:'Released',steps:[`Prepare ${x.name} setup`,`Execute controlled method`,`Retain raw results and disposition`]};});
+    (state.materials||[]).forEach((m,i)=>{m.unitCost=Number(m.unitCost??(6+(i%7)*4));});
+    (state.equipment||[]).forEach((e,i)=>{
+      e.hourlyCost=Number(e.hourlyCost||55);
+      e.lastMaintenance=e.lastMaintenance||new Date(today.getTime()-(30+(i%5)*14)*86400000).toISOString().slice(0,10);
+      e.maintenanceDue=e.maintenanceDue||new Date(today.getTime()+(20+(i%5)*25)*86400000).toISOString().slice(0,10);
+      e.maintenanceStatus=e.maintenanceStatus||'Valid';
+      e.calibrationStatus=e.calibrationStatus||'Valid';
+    });
+    (state.buildHistory||[]).forEach((h,i)=>{
+      const q=Math.max(1,Number(h.quantity||1)), base=900+q*185+(i%6)*65;
+      h.estimatedCost=Number(h.estimatedCost??base);
+      h.actualCost=Number(h.actualCost??(h.estimatedCost*(0.93+(i%7)*0.025)));
+      h.costOfPoorQuality=Number(h.costOfPoorQuality??(Number(h.reworkHours||0)*Number(state.settings.finance.roleRates.technician||58)+Number(h.scrapRate||0)*q*150));
+      h.costPerUnit=Number(h.costPerUnit??(h.actualCost/q));
+    });
+    if(!state.pipelineProjects.length){
+      const ids=(state.products||[]).map(p=>p.id); state.pipelineProjects=[
+        {id:'PIPE-001',name:'Next-gen brake sensor DV',productId:ids[0],probability:0.85,startDate:new Date(today.getTime()+45*86400000).toISOString().slice(0,10),quantity:30,programme:'Platform X refresh'},
+        {id:'PIPE-002',name:'48V current sensing concept',productId:ids[1],probability:0.60,startDate:new Date(today.getTime()+80*86400000).toISOString().slice(0,10),quantity:24,programme:'Electrification study'},
+        {id:'PIPE-003',name:'Hydrogen sensing customer trial',productId:ids[4],probability:0.45,startDate:new Date(today.getTime()+110*86400000).toISOString().slice(0,10),quantity:18,programme:'H2 demonstrator'},
+        {id:'PIPE-004',name:'Steering torque sample refresh',productId:ids[6],probability:0.70,startDate:new Date(today.getTime()+65*86400000).toISOString().slice(0,10),quantity:20,programme:'Chassis update'}
+      ];
+    }
+    return state;
+  };
+  ProtoLab.staffQualification = (state,staff,skillId,onDate=ProtoLab.todayISO()) => {
+    if(!staff||!skillId)return {valid:!!staff,reason:staff?'No skill required':'No staff'};
+    const cert=(state.trainingCertificates||[]).find(c=>c.staffId===staff.id&&c.skillId===skillId&&c.status==='Valid'&&(!c.expiresAt||c.expiresAt>=onDate));
+    return {valid:!!cert,certificate:cert,reason:cert?`Certificate ${cert.certificateNo} valid to ${cert.expiresAt}`:`No valid training certificate for ${skillId}`};
+  };
+  ProtoLab.equipmentReady = (e,onDate=ProtoLab.todayISO()) => !!e && e.calibrationStatus==='Valid' && (!e.calibrationDue||e.calibrationDue>=onDate) && e.maintenanceStatus!=='Overdue' && (!e.maintenanceDue||e.maintenanceDue>=onDate);
+
 })();

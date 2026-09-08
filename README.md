@@ -2,9 +2,9 @@
 
 ProtoLab OS is a browser-only proof-of-concept for controlled automotive prototype-build operations. It supports engineering requests, material/process feasibility, realistic resource planning, controlled process/test definitions, PFMEA-linked risk, Control Plans, readiness, digital traveller execution, serial genealogy, characterisation, deviations/rework, approvals, release, delivery, cost, reporting, audit history and learning from previous builds.
 
-## Revision 1.0.5 — practical feasibility-first planning
+## Revision 1.0.6 — governed lab resources, costing and continuous improvement
 
-The visible application header always shows the running revision: **REV 1.0.5**.
+The visible application header always shows the running revision: **REV 1.0.6**.
 
 The guided request flow is deliberately ordered so that a forecast is not invented before the lab knows what must actually be built:
 
@@ -51,6 +51,23 @@ The **Lab Manager / Administrator** can maintain the process/test planning stand
 The planner does not treat standard times as permanently perfect. Seed data contains historical completed builds for every demo product. For the same product family, duration estimates blend the controlled lab standard with the median actual duration from previous builds. The booking UI exposes the estimate basis so the planner can see whether a duration came from a standard alone or from historical evidence.
 
 When a delivered request is closed, the learning record retains actual process durations together with first-pass yield, scrap, rework, recurring issues and lessons learned. These records become the basis for future same-product estimates and management insight rather than disappearing into a closed project.
+
+
+### Lab standards, qualifications and work instructions
+
+**Lab Standards & Resources** is the controlled master-data area for the Lab Manager / Administrator. It contains released process standards, standard tests, the skill catalogue, person-specific training certificates and finance/cost inputs. A skill is not planning-valid merely because a person is selected: AUTO-PLAN requires a non-expired certificate with objective evidence. Every released process has a released work instruction, and the guided **+ New process** flow creates the process definition, planning assumptions and work instruction before controlled release.
+
+### Finance and cost learning
+
+Cost estimates are calculated from the actual plan: labour role rates, equipment hourly rates, exact BOM material costs, fixed process/test charges, consumables, development/external services and contingency. Closed builds retain estimated cost, actual cost, cost per prototype and cost of poor quality so management KPIs can compare plan versus actual by product and time period.
+
+### Equipment maintenance and calibration
+
+The **Equipment & Calibration** area records calibration and preventive-maintenance evidence and next-due dates. Planning and execution require equipment to remain calibration- and maintenance-valid for the relevant date. Upcoming service obligations also feed the improvement/action engine.
+
+### Management KPIs and improvement engine
+
+Management can filter KPIs by product and historical time window, inspect process-step performance, current equipment/skill bottlenecks, financial variance, yield/rework/scrap and probability-weighted future project demand. Potential projects do not create committed bookings; their probability is used to estimate future equipment-capability and certified-skill demand. The Action Centre separately surfaces mandatory work and evidence-based improvement proposals such as cross-training, staff load balancing, preventive maintenance/calibration, capacity review and recurring-quality-issue review.
 
 ## Important compliance statement
 
@@ -100,7 +117,7 @@ Seed data includes approximately:
 
 ## POC data
 
-IndexedDB is the primary persistence mechanism. Use **Configuration & data** as Administrator to export JSON, import JSON or reset the demo. Current schema version is **3** and migration logic upgrades earlier local POC data without requiring a reset.
+IndexedDB is the primary persistence mechanism. Use **Configuration & data** as Administrator to export JSON, import JSON or reset the demo. Current schema version is **4** and migration logic upgrades earlier local POC data without requiring a reset.
 
 ## Main files
 

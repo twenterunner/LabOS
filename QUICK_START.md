@@ -1,4 +1,4 @@
-# ProtoLab OS — Quick Start — REV 1.0.5
+# ProtoLab OS — Quick Start — REV 1.0.6
 
 ## 1. Pick a role
 
@@ -30,7 +30,7 @@ Each request uses one tappable checklist. Follow it top to bottom:
 9. Release approval
 10. Deliver, retain records & feed learning
 
-The important change in REV 1.0.5 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
+The important change in REV 1.0.6 is that **planning is step 4, not step 2**. The app first establishes what material and process/test work is really required.
 
 ## 3. Create a request and choose material source
 
@@ -105,4 +105,22 @@ As **Administrator → Configuration & data**:
 - Import JSON
 - Reset Demo Data
 
-Existing v1.0.4 local data is migrated to schema 3; a reset is not normally required.
+Existing v1.0.4 local data is migrated to schema 4; a reset is not normally required.
+
+
+## 8. Configure the lab operating model
+
+As **Lab Manager** or **Administrator**, open **Lab Standards & Resources**.
+
+- Use **+ New process** for the guided process definition → planning standard → work instruction → review/release flow.
+- Maintain standard process/test setup and cycle times, equipment capability, required competency, fixed charges and consumables.
+- Define new competencies in the **Skill Catalogue**. A person becomes planning-qualified only after a certificate number, issuer, issue/expiry dates and evidence are recorded.
+- Maintain labour rates, equipment rates and material standard costs in **Finance & Costing**.
+
+## 9. Maintain equipment readiness
+
+Open **Equipment & Calibration**. Record calibration and preventive maintenance with certificate/work-order evidence and a next-due date. AUTO-PLAN and traveller execution reject equipment that is no longer ready for the relevant date.
+
+## 10. Use management KPIs and continuous improvement
+
+As **Lab Manager**, open **Management KPIs**. Filter by product and historical period, then review delivery/yield/rework/scrap, cost variance/COPQ, process-step actuals, current bottlenecks and probability-weighted future equipment/skill demand. The **Action Centre** can be grouped by severity, build, person or function and keeps continuous-improvement proposals separate from mandatory build actions.
