@@ -1,4 +1,12 @@
-# ProtoLab OS — Quick Start — REV 1.0.12
+# ProtoLab OS — Quick Start — REV 1.0.19
+
+## What changed in REV 1.0.19
+
+- Planning swimlanes show every day explicitly.
+- Resolved blockers disappear once the underlying condition is genuinely satisfied.
+- Management KPIs share one selected timing basis: weekly, monthly, quarterly, single week or single month.
+- Add potential projects from Planning or Management KPIs, assign probability/timing, and inspect each project's individual capacity impact.
+- E0/E1/V/P detail is shown only where the control level is selected/changed.
 
 ## 1. Pick a role
 
@@ -25,7 +33,7 @@ Each request uses one tappable checklist. Follow it top to bottom:
 4. Lab feasibility, resource plan & committed timing
 5. Control Plan, risk controls & special approvals
 6. Build readiness
-7. Identify units where required & execute the guided build
+7. Build samples & capture process evidence
 8. Characterise, evaluate & disposition exceptions
 9. Release approval
 10. Deliver, retain records & feed learning
@@ -163,3 +171,20 @@ For the build route choose **Start from scratch**, **Use product standard route*
 - Add an equipment calibration certificate under **Equipment & Calibration → + Add certificate** or open **Certificates** and choose **+ Add certificate**.
 - Add/edit people under **Lab Standards & Resources → Lab Staff**. Then issue controlled skill certificates separately; editing a staff record never grants competence.
 - Edit a request-specific build route from the request workflow using each route card's **Edit / ↑ / ↓ / Remove** controls.
+
+
+## 8. Sample identity and execution in REV 1.0.19
+
+When a build reaches execution, create the sample register to exactly match the requested quantity. You no longer choose an arbitrary number of IDs.
+
+For each physical sample:
+
+- **Lab Sample ID** is generated automatically and remains the permanent database link.
+- **Sample number** is the label operators see and may be changed.
+- **Formal serial number** is separate; V/P requires it, E0/E1 does not.
+
+For a unit-based route operation, execute the operation against one sample at a time. For a batch operation, one execution can cover all pending samples. Equipment is selected for the operation and must match the process capability; it is not permanently linked to the sample.
+
+If the Control Plan defines a measurement at that route step, record it during execution against the sample. Once all samples complete the route, move to **End characterisation**, where the selected tests appear as a sample × test matrix.
+
+**Forecast delivery** is the predicted handover date from AUTO-PLAN, not the engineering requested date. It includes the best-feasible resource schedule plus final lab handling and remains provisional until the Lab Planner commits it.
