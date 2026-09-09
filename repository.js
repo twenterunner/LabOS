@@ -195,6 +195,17 @@ class MigrationService{
     P.audit(s,'Process execution model upgraded','System','Build execution','Generic step forms / ambiguous CP linkage','Released-process data + explicit CP sampling matrix','REV 1.0.48 execution migration');
     s.dataVersion=wasDemo?'2026.09-demo-26':(s.dataVersion||'migrated');s.schemaVersion=23;continue;
    }
+   if(s.schemaVersion===23){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    // REV 1.0.49: actionable recommendations must be executable end-to-end. Withdraw
+    // legacy accepted/guided improvements that could leave the user in manual replanning.
+    const unresolved=new Set((s.actions||[]).filter(a=>a.improvementProposalId&&a.implementation?.status!=='Implemented & verified'&&a.implementation?.status!=='Verified').map(a=>a.improvementProposalId));
+    s.actions=(s.actions||[]).filter(a=>!a.improvementProposalId||!unresolved.has(a.improvementProposalId));
+    (s.improvementDecisions||[]).forEach(d=>{if(d.decision==='Accepted'&&unresolved.has(d.proposalId)){d.decision='Withdrawn';d.withdrawnAt=P.now();d.withdrawnReason='REV 1.0.49 executable-only proposal contract: legacy proposal could not guarantee end-to-end implementation.';}});
+    s.dailyOperationsReviews=[];s.settings=s.settings||{};s.settings.lastOperationsReviewDate='';
+    P.audit(s,'Executable-only guided-workflow contract enabled','System','Operations','Advisory proposals could be accepted before full resolution was guaranteed','Only prevalidated proposals can be accepted; accepted proposals apply atomically or are withdrawn','REV 1.0.49 workflow migration');
+    s.dataVersion=wasDemo?'2026.09-demo-27':(s.dataVersion||'migrated');s.schemaVersion=24;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

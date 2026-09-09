@@ -1,38 +1,28 @@
-# LabOS — Prototype Build Management POC · REV 1.0.48
+# LabOS — Prototype Build Management POC · REV 1.0.49
 
-LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects request intake, customers, product/BOM definition, governed process routes, sample execution, Control Plan evidence, equipment/staff readiness, quality disposition, reporting, audit readiness and closed-loop improvement.
+LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
-## What changed in REV 1.0.48
+## Operating contract in REV 1.0.49
 
-REV 1.0.48 rebuilds the **Use or adapt engineering route & methods** and **Build samples & capture process evidence** workflows around one governing model:
+**No dead ends. No fake completion. No accepted recommendation that leaves the user to work out the next step.**
 
-**confirmed route + released process revision + approved Control Plan → execution group → required setup/recipe → required sample evidence → completion**
+An actionable recommendation is shown only when LabOS has already found a complete feasible implementation. Accepting it revalidates and applies the controlled changes. Capacity situations are also transactional: the constraint and complete portfolio replan are accepted together or neither is saved. Structural blockers route into guided competency/equipment/staff resolution and automatically retry the pending solution after the blocker is resolved.
 
-- Each route operation shows its released method, governed process controls and applicable Control Plan characteristics in one concise list.
-- Released-process revisions are resolved from the revision captured on the build route; a later library revision does not silently redefine an older route step.
-- Process standards can define controlled execution fields: recipe/program, machine/setup values, sample measurements and observations.
-- Build-specific fields extend the released process definition rather than replacing it.
-- Control Plan characteristics are linked to the actual process/route step. Only an **Approved** Control Plan drives formal execution measurements.
-- Sampling rules are executable: `100% / each unit`, fixed sample counts, percentages, first+last and 1-per-N plans create the required sample subset for the active execution group.
-- A 100% CP characteristic blocks route-step completion until every applicable sample has a current execution-run measurement.
-- If a released process sample field duplicates a CP characteristic, the CP measurement is authoritative and appears only once.
-- Recipe/setup data can be prepared before execution; sample results become editable only after the actual execution group is started.
-- Every step has the same sample matrix plus CSV template/upload flow.
-- Starting an operation records the actual execution group, operator, time and equipment. It no longer acts like a decorative timer or fabricates evidence.
-- `[object Object]` work-instruction rendering is removed; the actual released instruction steps are shown.
-- Method-development actions now capture real planning, trial, parameters, external-risk reference, measurement/capability, CP impact, work instruction and approval evidence. Release materialises those records into a real released process definition.
-- Generic demo “Primary setpoint / Tolerance” placeholders have been replaced with process-appropriate examples and migrate automatically for the demo dataset.
+## Key REV 1.0.49 changes
 
-REV 1.0.47 audit/resource improvements remain included: guided Major/Minor findings, customer configuration, maintenance/calibration/training scheduling and evidence links, printable readiness schedules, sorting/filtering and progressive disclosure.
+- Large build quantities no longer create permanently expanded sample lists. Sample registers and execution-group selection collapse into searchable foldouts; all pending samples remain selected by default and can be changed when needed.
+- **Sample & Serial History** has full-text search and collapsible groups with clean sample/Lab ID/formal-serial/build metadata.
+- The former **Characterisation** navigation item is now **Results & Capability**: a review/analytics workspace only. Governed measurement entry remains at the actual route step or end-test workflow, avoiding duplicate data-entry paths.
+- **Lab Setup Wizard** guides a new lab through scope, customers/internal use, products/BOM, people/competencies, equipment/readiness durations, calibration-maintenance-training evidence, released processes/methods and go-live integrity checks. A lab with no historical readiness evidence can explicitly choose a clean start, after which LabOS schedules required readiness work before first governed use.
+- **LIMS migration** supports controlled CSV import of equipment, calibration certificates, maintenance records, staff, competencies, training certificates, products and customers. Imports are applied to a clone, validated, and committed only if the resulting state is valid. Evidence/certificate URLs are retained as clickable references.
+- Calibration, maintenance and training duration are part of the scheduling transaction. If a selected readiness slot affects planned work, LabOS automatically replans the affected builds and commits only when no controlled collision remains.
+- Improvement Scan exposes only prevalidated, end-to-end executable staffing/equipment load-balancing proposals. Acceptance changes the actual bookings/assignments and verifies the result atomically.
+- The v1.0.48 governed build-execution model remains: confirmed route + released process revision + approved Control Plan → real execution group → recipe/setup → sampling-rule-driven process/CP evidence → completion.
 
-## Run on GitHub Pages
+## GitHub Pages
 
 Upload the ZIP contents to the repository root. `index.html` must remain at root. No npm, backend, login or API key is required for this POC.
 
-## Important POC boundary
+## Production boundary
 
-This prototype supports IATF/ISO-style controlled workflows but is not itself a certified QMS/LIMS. Production use still needs authenticated identity/SSO, server-side authorization, durable shared storage, concurrency controls, validated e-signatures where required, immutable audit logging/retention, backups, cybersecurity hardening and enterprise integrations.
-
-## Main files
-
-`index.html`, `styles.css`, `core.js`, `demo-data.js`, `repository.js`, `services.js`, `app.js`, `service-worker.js`, `USER_MANUAL.html`, `QUICK_START.md`, and verification scripts/results.
+This prototype supports controlled automotive-quality workflows but is not itself a production QMS/LIMS. Production deployment still requires authenticated identity/SSO, server-side authorization, shared transactional persistence, concurrency controls, validated electronic signatures where applicable, immutable audit/retention storage, backup/disaster recovery, cybersecurity hardening and governed enterprise integrations.

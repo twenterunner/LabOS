@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.48-poc';
-  ProtoLab.SCHEMA_VERSION = 23;
+  ProtoLab.VERSION = '1.0.49-poc';
+  ProtoLab.SCHEMA_VERSION = 24;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -468,6 +468,7 @@
     state.maintenanceRecords=state.maintenanceRecords||[];
     state.calibrationCertificates=state.calibrationCertificates||[];
     state.resourceCareBookings=state.resourceCareBookings||[];
+    state.capacityAcquisitions=state.capacityAcquisitions||[];
     state.pipelineProjects=state.pipelineProjects||[];
     state.planningEvents=state.planningEvents||[];
     state.settings.capacity=state.settings.capacity||{productiveStaffHoursPerWeek:32,equipmentHoursPerWeek:60};

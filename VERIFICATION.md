@@ -1,38 +1,38 @@
-# LabOS REV 1.0.48 Verification
+# LabOS REV 1.0.49 Verification
 
-REV 1.0.48 uses **schema 23** and focuses on governed route-step execution, executable Control Plan sampling, controlled process-data definitions and removal of artificial method-development progression.
+REV 1.0.49 uses **schema 24**. The release was tested against the executable-only workflow contract, governed build execution, large-batch UX, serial search, setup/migration and atomic planning/resource-resolution behavior.
 
 ## Current acceptance results
 
-All current-revision suites pass:
+- `verification-node.js` — **46 / 46** core domain/planning checks
+- `verification-repository-node.js` — **6 / 6** persistence/migration checks
+- `verification-ui-v149-node.js` — **23 / 23** base UI/source regression checks
+- `verification-v149-node.js` — **18 / 18** governed execution/Control Plan behavior checks
+- `verification-v149-ux-node.js` — **15 / 15** REV 1.0.49 UX, migration and no-dead-end behavior checks
+- `scenarios-v149.js` — **10 / 10** realistic disruption/planning scenarios
+- `ui-stress-v149.js` — **1,783 / 1,783** role/build/workspace render combinations
+- `verification-static-v149.py` — **31 / 31** responsive/static/package checks
 
-- `verification-node.js` — **46 / 46** core domain and planning checks.
-- `verification-repository-node.js` — **6 / 6** persistence/migration checks.
-- `verification-ui-v148-node.js` — **23 / 23** base UI/source regression checks.
-- `verification-v148-node.js` — **18 / 18** REV 1.0.48 execution/governance behavior checks.
-- `scenarios-v147.js` — **10 / 10** realistic disruption/planning scenarios (unchanged scenario harness).
-- `ui-stress-v147.js` — **1,783 / 1,783** role/build/workspace render combinations (unchanged stress harness).
-- `verification-static-v148.py` — **31 / 31** packaging/responsive/static checks.
+**Acceptance total: 1,932 passed / 0 failed.**
 
-**Current acceptance total: 1,917 passed / 0 failed.**
+## Explicitly verified in this revision
 
-## REV 1.0.48 items explicitly verified
-
-- Material Receipt and other demo operations no longer inherit meaningless generic setpoint/tolerance fields.
-- The route captures the released process revision used by execution.
-- Work instructions render real executable strings and never `[object Object]`.
-- CP characteristics link to the correct process operation.
-- 100% CP sampling selects every sample; fixed-count/reduced plans select a deterministic applicable subset.
-- Only an Approved CP drives the execution matrix.
-- Build-specific data fields extend rather than replace released-process controls.
-- The route/method page has real configuration actions and no decorative method-development gate stepper.
-- Sample result entry is unavailable before an actual execution group exists; recipe/setup preparation remains possible.
-- Process-standard editor supports governed recipe/machine/setup/sample fields.
-- Schema-22 demo data migrates generic process placeholders and legacy CP linkage to the REV 1.0.48 model.
-- A duplicate process sample field/CP characteristic is represented once, with the CP as the authoritative formal result.
-- 100% CP evidence is a real completion gate for the current execution run.
-- Completed method-development evidence materialises into the released process parameters and work instruction.
+- Large sample registers are collapsed/searchable instead of creating impractical long pages.
+- Large execution groups are collapsed/searchable while preserving functional per-sample selection.
+- Serial History has search, foldout groups and structured, non-concatenated sample metadata.
+- Results & Capability is analytics/review only and does not duplicate governed measurement-entry controls.
+- Lab Setup Wizard covers lab scope, customers/internal use, products, people/skills, equipment, readiness evidence, standards and go-live integrity.
+- LIMS import supports equipment, calibration, maintenance, staff, competencies, training certificates, products and customers.
+- Imported calibration/maintenance/training evidence URLs are retained; equipment/service durations survive import.
+- LIMS import is transactional and validated before live-state replacement.
+- Improvement Scan suppresses non-executable load-balancing observations.
+- A prevalidated staffing load-balance proposal changes the actual booking assignments and verifies the result on acceptance.
+- Resource-care duration is editable in the scheduling transaction and updates the master duration.
+- Planning-situation preview does not mutate the live capacity state before acceptance.
+- Blocked portfolio changes route to the exact guided resolver, and the pending complete solution is retried automatically after resolution.
+- Planner blocker results preserve task/skill/capability/staff details needed by the guided resolver.
+- v1.0.48 governed process/Control Plan sampling and real execution-group completion gates remain green.
 
 ## Environment limitation
 
-A full physical-device Chromium end-to-end visual pass cannot be claimed in this execution environment because local browser navigation is restricted. DOM rendering, state transitions, responsive CSS/static checks and 1,783 role/build/workspace combinations were exercised successfully. Final production acceptance should still include Android/iOS/desktop exploratory testing, accessibility testing and real printer/PDF-output checks.
+A genuine physical-device browser exploratory pass cannot be claimed from this execution environment. DOM/state stress, mobile-responsive/static checks and 1,783 role/build/workspace render combinations passed. Before production release, run exploratory Android/iOS/desktop testing, accessibility testing and real printer/PDF-output checks.
