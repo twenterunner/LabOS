@@ -1,3 +1,7 @@
+## REV 1.0.40 · Process-step navigation, process data & build-data exports
+
+Build Execution now makes the current route operation explicit and lets users move directly to the previous/next process step or any step on the route rail. Every process step can capture structured data at batch level or per physical sample, using the released process parameters as the initial data structure. The same data can be downloaded/imported through a process-step CSV worksheet. Administrators can export individual underlying build datasets and linked photos independently from the Build Report. Structured process-step data is included in the Build Report and changes invalidate the approved evidence set.
+
 ## REV 1.0.38 — Reliable request opening & transparent learned timing
 
 - Active request cards now open through a lifecycle-safe workspace path. The explicit **Open** button starts at the stable Build Definition view; lifecycle/current-step navigation remains available once inside. Incomplete advanced planning state can no longer make a request appear unopenable.
@@ -382,3 +386,9 @@ The Quality / Deviations status page is replaced by an actionable Quality Workbe
 - Adding or correcting measured evidence increments the evidence set. If the Build Report was FINAL/APPROVED, that approved revision is retained as **Superseded**, the report advances to the next revision, and the approval cycle returns to Draft.
 - Direct measurement edits, batch characterisation edits and CSV round-trip corrections all use the same document-control path. Re-importing or saving unchanged data does not create a needless report revision.
 - The report visibly shows current revision, evidence set, last evidence change and revision history.
+
+## REV 1.0.40 · Process-step navigation, process data & build data exports
+- Build execution now has explicit Previous/Next route-step navigation and a horizontal process-step rail.
+- Each process step supports batch-level or per-sample structured data, CSV template export/import, and optional build-specific data fields.
+- Administrator can download individual build datasets (sample register, sample data, process execution, process data, Control Plan, characterisation, material genealogy, quality, commitments, audit) plus individual process-step CSVs and linked photos.
+- Structured process-step data is included in the controlled Build Report and changing it invalidates the current approved evidence set.

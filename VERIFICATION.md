@@ -1,3 +1,7 @@
+# LabOS REV 1.0.40 Verification
+
+REV 1.0.40 adds explicit process-step navigation, structured batch/per-sample process data, process-step CSV round-trip, Administrator build-data exports and Build Report inclusion/invalidation for process data. Schema remains 21; no data reset is required.
+
 # LabOS REV 1.0.38 Verification
 
 REV 1.0.38 focuses on reliable lifecycle-safe request opening and transparent, quantity-correct process timing. Schema remains 21; no data reset is required.

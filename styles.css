@@ -617,3 +617,43 @@ html{scroll-padding-top:calc(68px + var(--workspace-cockpit-height,126px) + 14px
 @media print{
  .workspace-cockpit-spacer{display:none!important}
 }
+
+/* REV 1.0.39 · actionable Build Readiness step + reliable workflow taps */
+.guided-mobile-step,.guide-row{touch-action:manipulation;cursor:pointer;pointer-events:auto}
+.guided-mobile-step{z-index:1}
+.readiness-work-list{display:grid;gap:8px;margin:14px 0}
+.readiness-work-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+.readiness-work-row.ready{background:#f3faf6;border-color:#c6e3d2}
+.readiness-work-row.open{background:#fff9e9;border-color:#ead188}
+.readiness-work-icon{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:17px}
+.readiness-work-icon.complete{background:#eaf5ee;color:var(--good);border:2px solid #b7dec6}
+.readiness-work-icon.current{background:#fff2c7;color:#8a5b00;border:2px solid #e4bf57}
+.readiness-work-copy strong,.readiness-work-copy span,.readiness-work-copy small{display:block}
+.readiness-work-copy span{margin-top:2px;font-size:12px}.readiness-work-copy small{margin-top:3px;color:var(--muted);font-size:10px}
+@media(max-width:700px){.readiness-work-row{grid-template-columns:34px minmax(0,1fr)}.readiness-work-action{grid-column:2}.readiness-work-action .button{width:100%}}
+
+/* REV 1.0.40 · route-step navigator, process data worksheet and build-data exports */
+.process-step-navigator{position:relative;overflow:hidden}
+.process-step-nav-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.process-step-nav-head .route-toolbar{flex-wrap:wrap;justify-content:flex-end}
+.process-step-rail{display:flex;gap:7px;overflow-x:auto;padding:10px 1px 2px;scrollbar-width:none}
+.process-step-rail::-webkit-scrollbar{display:none}
+.process-step-chip{flex:0 0 118px;min-width:118px;border:1px solid var(--line);border-radius:11px;background:#f5f8f8;padding:8px;text-align:left;display:grid;grid-template-columns:22px 22px minmax(0,1fr);align-items:center;gap:4px;cursor:pointer;touch-action:manipulation}
+.process-step-chip span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:900}
+.process-step-chip b{font-size:11px}.process-step-chip small{font-size:9px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.process-step-chip.complete{background:#eef8f2;border-color:#c1dfcd;color:var(--good)}
+.process-step-chip.current{background:#fff7dc;border-color:#e5cc79;color:#7b5a00}
+.process-step-chip.pending{background:#f2f5f6;color:#748488}
+.process-step-chip.selected{outline:2px solid var(--teal);outline-offset:1px;box-shadow:0 0 0 3px rgba(13,110,121,.08)}
+.process-data-panel .route-toolbar{flex-wrap:wrap}
+.process-data-batch-row{padding:8px 0;border-bottom:1px solid var(--line)}
+.process-data-batch-row:last-child{border-bottom:0}
+.process-data-table input{min-width:105px}
+.process-data-table th:first-child{position:sticky;left:0;z-index:2;background:#f7fbfb;min-width:145px}
+.build-file-list .score-row{min-height:44px}
+@media(max-width:700px){
+ .process-step-nav-head{display:block}.process-step-nav-head .route-toolbar{margin-top:9px;display:grid;grid-template-columns:1fr 1fr}.process-step-nav-head .button{width:100%}
+ .process-step-chip{flex-basis:96px;min-width:96px;grid-template-columns:20px 18px minmax(0,1fr);padding:7px 6px}
+ .process-step-chip small{font-size:8px}
+ .process-data-panel .route-toolbar{display:grid;grid-template-columns:1fr 1fr;width:100%}.process-data-panel .button{width:100%}
+}

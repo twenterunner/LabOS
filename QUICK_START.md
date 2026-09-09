@@ -1,3 +1,7 @@
+## REV 1.0.40 · Process execution navigation & data
+
+Inside **Build Execution**, use the process-step rail or **Previous / Next** buttons to review any route step. Use **Data worksheet** for batch-level or per-sample process data, **CSV template** to work externally, and **Import CSV** to round-trip updates. Administrators can use **Data files** from a request/closeout to download underlying build datasets separately from the Build Report.
+
 ## REV 1.0.35 — Reuse first
 
 For a repeat product/revision, LabOS first uses the approved/released route, work instructions, Control Plan, PFMEA controls and standard tests already available. If the inherited definition fits, proceed without rebuilding those documents. Use **Change for this build** only when the current build differs; LabOS creates a controlled build-specific delta and routes it to the relevant departments while keeping the approved master intact.
