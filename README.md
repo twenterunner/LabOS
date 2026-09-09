@@ -1,18 +1,33 @@
-## REV 1.0.45 · Governed execution, matrix data capture & closed-loop improvements
+## REV 1.0.46 · Closed-loop improvements, guided blockers & unified build-step execution
 
-This revision hardens the v1.0.44 acceptance baseline. Release and lifecycle rules are now service-enforced; Control Plan approval requires an explicit review request; JSON import is invariant-validated before persistence; request/route IDs are collision-safe; missing Administrator and Closeout workspaces are restored. Build execution supports multi-sample execution groups and a clear setup-vs-sample data matrix with bulk fill. Readiness blockers open a contextual resolver. Critical-characteristic distributions use a fitted normal curve with a 50-bin histogram for larger datasets or individual sample scatter for smaller prototype datasets, plus an Anderson–Darling normality p-value. Accepting an improvement starts a controlled implementation workflow and does not mark it complete until effectiveness is verified.
+REV 1.0.46 turns several previously advisory LabOS workflows into controlled executable workflows.
 
-## REV 1.0.44 · Batch-first capture, capability reporting & Audit Readiness
+### Accepted improvements now mean implementation
+- **Staff load balancing:** LabOS reassigns eligible unlocked future bookings to qualified, conflict-free people, updates route ownership, recalculates load and writes the audit trail.
+- **Equipment load balancing:** LabOS moves eligible bookings to ready equivalent equipment and updates the route/equipment records.
+- **Calibration / maintenance opportunities:** LabOS schedules the accepted service action into the lowest-impact feasible Resource Assurance slot when it can do so safely.
+- **Capacity / new-equipment proposals:** where a physical purchase or installation is required, acceptance starts a guided workflow: confirm capacity need → approve solution/business case → order/arrange → receive/register → commission/qualify → replan and verify.
+- **Skills / process / quality improvements:** acceptance starts the corresponding controlled workflow and stays open until implementation and effectiveness evidence are complete.
 
-- Process setup/common parameters default to batch-level capture; per-sample values remain available only where needed.
-- Build Report typography is hardened for mobile and print; Control Plan tables scroll on screen and fit print/PDF.
-- Critical/safety capability plots use histogram + fitted normal curve + LSL/USL/target/mean + Cpk/Cpu/Cpl + anomaly rug.
-- PFMEA remains in LabOS as underlying process-risk evidence, but no longer dominates the Guided Build Workflow or main Build Report.
-- New Audit Readiness view evaluates current evidence against IATF 16949-oriented or ISO/IEC 17025-oriented readiness rules, highlights potential major/minor gaps, computes a readiness score and generates a laboratory scope from equipment metadata.
+### Blockers are contextual
+Readiness blocker actions no longer route to a generic dashboard or show healthy resources. The resolver displays only the booking/condition that fails, the exact reason, and the immediate corrective action. Where possible it offers a one-tap valid equipment/person reassignment; otherwise it opens the exact calibration, maintenance, qualification or replan action needed.
 
-This is a static demonstration and an audit-preparation aid, not certification software or an auditor judgement.
+### One consistent cockpit for every build-process step
+Every route step now exposes the same operating pattern:
+1. Select one, several or all pending samples.
+2. Start execution to capture the real start timestamp for those samples.
+3. Capture common machine/setup values once and sample-specific values in a sample × field matrix.
+4. Download or upload the same matrix as CSV.
+5. Complete execution to record finish time/duration and mark the selected samples complete.
 
+Control Plan characteristics linked to the route step flow directly into the same sample matrix. Saving those columns creates the formal CP measurement records with limits, method, reaction-plan context and traceability; there is no duplicate CP-entry workflow.
 
-### REV 1.0.44 operational decision controls
-- Daily Operations Check signals can be Accepted, Rejected or Deferred directly from Dashboard. Every decision records actor, timestamp, rationale, owner and target/review date in audit history. Accepted improvements become tracked actions; rejected/deferred items are suppressed until their configured review date.
-- Guided Control Plan blockers now expose a direct **Complete Control Plan definition** resolver for incomplete special/safety characteristics, so a build cannot dead-end behind a generic "action required" label.
+### Data and analysis
+- Every sample-level field supports **Same value for all samples** bulk fill while allowing individual exceptions.
+- Machine/setup settings are separated from sample measurements/characteristics.
+- Critical-characteristic plots use a 50-bin histogram for larger datasets or individual-value scatter/rug presentation for smaller prototype datasets, fitted normal distribution, and Anderson–Darling normality p-value.
+
+### Governance hardening retained
+Release/lifecycle/quality/Control Plan rules are enforced in the domain layer, JSON imports are invariant-validated before persistence, IDs are collision-safe, and the Administrator/Closeout/Verify workspaces have current render coverage.
+
+This remains a static GitHub Pages proof-of-concept. Enterprise deployment still requires production identity, backend/database, security, concurrency, validated e-signatures, backups and organisation-specific governance.

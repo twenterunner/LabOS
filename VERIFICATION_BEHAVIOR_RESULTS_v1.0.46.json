@@ -1,0 +1,42 @@
+{
+  "passed": 7,
+  "failed": 0,
+  "total": 7,
+  "rows": [
+    {
+      "name": "Accepted staffing load-balance changes live bookings and route ownership",
+      "pass": true,
+      "detail": "2 booking(s) reassigned and audited"
+    },
+    {
+      "name": "Accepted capacity opportunity auto-rebalances when a ready equivalent exists",
+      "pass": true,
+      "detail": "2 equipment booking(s) moved to ready equivalent capacity"
+    },
+    {
+      "name": "Accepted capacity opportunity becomes guided addition when no alternative exists",
+      "pass": true,
+      "detail": "capacity procurement/commissioning workflow required"
+    },
+    {
+      "name": "Accepted equipment-care proposal creates a controlled service booking when schedulable",
+      "pass": true,
+      "detail": "Maintenance scheduled automatically"
+    },
+    {
+      "name": "Control Plan characteristics are mapped into the process-step matrix implementation",
+      "pass": true,
+      "detail": "CP fields share matrix and persist as formal measurements"
+    },
+    {
+      "name": "Every execution step exposes matrix and CSV round-trip controls",
+      "pass": true,
+      "detail": "matrix + download + upload are present in unified step cockpit"
+    },
+    {
+      "name": "Blocker resolver offers contextual direct fixes rather than generic dashboard navigation",
+      "pass": true,
+      "detail": "equipment/person blockers expose direct corrective actions"
+    }
+  ]
+}

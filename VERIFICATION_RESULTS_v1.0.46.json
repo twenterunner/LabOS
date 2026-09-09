@@ -1,0 +1,56 @@
+{
+  "revision": "1.0.46",
+  "schema": 21,
+  "generated_at": "2026-09-09T21:55:00+02:00",
+  "suites": [
+    {
+      "name": "verification-node.js",
+      "passed": 46,
+      "failed": 0
+    },
+    {
+      "name": "verification-repository-node.js",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "name": "verification-ui-node.js",
+      "passed": 23,
+      "failed": 0
+    },
+    {
+      "name": "verification-static.py",
+      "passed": 31,
+      "failed": 0
+    },
+    {
+      "name": "verification-v146-node.js",
+      "passed": 62,
+      "failed": 0
+    },
+    {
+      "name": "verification-v146-behavior-node.js",
+      "passed": 7,
+      "failed": 0
+    },
+    {
+      "name": "scenarios-v146.js",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "name": "ui-stress-v146.js",
+      "passed": 1783,
+      "failed": 0
+    }
+  ],
+  "total": {
+    "passed": 1968,
+    "failed": 0,
+    "checks": 1968
+  },
+  "notes": [
+    "True local Chromium/device pixel-level interaction is not available in this execution environment; DOM/state/render stress and responsive/static checks were used.",
+    "Verify workspace renderer was additionally repaired after stress testing exposed a missing workspaceCharacterisation function."
+  ]
+}
