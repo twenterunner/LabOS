@@ -514,3 +514,106 @@ html,body,#app,.app-shell,.main,#page{max-width:100%;overflow-x:hidden}
  .workspace-context-strip{grid-template-columns:minmax(0,1fr) 88px}.guided-mobile-title span{font-size:6.8px}.guided-mobile-step{flex-basis:31px;width:31px;height:31px}.guided-mobile-icon{font-size:13px}.workflow-dock-button{font-size:8.3px!important}.workflow-command-current small{max-width:100%}
 }
 @media print{.workspace-fixed-cockpit,.guided-nav{display:none!important}.fixed-guided-workspace{display:block!important}.fixed-guided-workspace .guided-detail{width:100%!important}}
+
+/* REV 1.0.37 · responsive workspace shell, fixed cockpit and reliable planning taps */
+:root{--workspace-cockpit-height:126px}
+html{scroll-padding-top:calc(68px + var(--workspace-cockpit-height,126px) + 14px)}
+
+/* The cockpit is fixed to the application chrome, not merely sticky inside a scrolled region. */
+.workspace-fixed-cockpit{
+ position:fixed!important;
+ top:68px!important;
+ left:calc(var(--sidebar) + 24px);
+ right:24px;
+ z-index:46!important;
+ margin:0!important;
+ padding:8px 0 10px!important;
+ background:rgba(244,247,248,.985)!important;
+ box-shadow:0 5px 14px rgba(18,38,43,.08);
+ border-bottom:1px solid var(--line);
+}
+.workspace-cockpit-spacer{height:calc(var(--workspace-cockpit-height,126px) + 12px);width:100%;pointer-events:none}
+.fixed-guided-workspace .guided-nav{
+ top:calc(68px + var(--workspace-cockpit-height,126px) + 12px)!important;
+ max-height:calc(100vh - 68px - var(--workspace-cockpit-height,126px) - 24px)!important;
+}
+.fixed-guided-workspace .guided-detail{scroll-margin-top:calc(68px + var(--workspace-cockpit-height,126px) + 14px)!important}
+
+/* Stable command tiles: same geometry, readable labels, no clipped button text. */
+.workflow-command-slot,.workflow-command-current{min-height:62px;overflow:hidden}
+.workflow-command-current strong{
+ white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;
+ display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+ overflow-wrap:break-word;word-break:normal;
+}
+.workflow-command-current small{
+ white-space:normal!important;overflow:hidden!important;text-overflow:clip!important;
+ display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+ overflow-wrap:break-word;word-break:normal;
+}
+.workflow-dock-button{
+ height:auto!important;min-height:40px!important;white-space:normal!important;
+ overflow:visible!important;text-overflow:clip!important;line-height:1.15!important;
+ display:flex;align-items:center;justify-content:center;text-align:center;
+}
+.workflow-dock-clear{min-height:40px;height:auto!important;padding:6px 8px;text-align:center}
+
+/* Reused master-data tiles adapt to the actual work-panel width rather than forcing 3 narrow columns. */
+.reuse-asset-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))!important}
+.reuse-asset{min-width:0;align-items:center}
+.reuse-asset>div{min-width:0}
+.reuse-asset strong,.reuse-asset span{overflow-wrap:break-word;word-break:normal;hyphens:none}
+.reuse-asset strong{font-size:13px;line-height:1.25}
+
+/* Planning bars and lane labels are real tap targets for their build plan. */
+.swim-bar.interactive,.swim-label.interactive{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:rgba(12,88,98,.16)}
+.swim-bar.interactive:hover,.swim-label.interactive:hover{filter:brightness(.97);box-shadow:inset 0 0 0 2px rgba(12,88,98,.28)}
+.swim-bar.interactive:focus-visible,.swim-label.interactive:focus-visible{outline:3px solid rgba(17,114,126,.35);outline-offset:2px}
+
+/* Small laptops/tablets/landscape phones get the full content width instead of a squeezed sidebar + 2-column workspace. */
+@media(max-width:1120px){
+ .mobile-only{display:inline-flex}
+ .sidebar{transform:translateX(-100%);transition:transform .2s;z-index:55}
+ .sidebar.open{transform:translateX(0)}
+ .main{margin-left:0;padding-left:16px;padding-right:16px}
+ .brand{min-width:auto}
+ .workspace-fixed-cockpit{left:16px;right:16px}
+ .fixed-guided-workspace{display:block!important}
+ .fixed-guided-workspace .guided-nav{display:none!important}
+ .guided-mobile-rail{
+   display:grid!important;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;
+   background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin-bottom:6px;
+ }
+ .guided-mobile-title{display:grid;line-height:1.05}.guided-mobile-title span{font-size:7.5px;color:var(--teal);font-weight:900;letter-spacing:.06em;white-space:nowrap}.guided-mobile-title strong{font-size:10px;margin-top:2px}
+ .guided-mobile-steps{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;padding:1px}.guided-mobile-steps::-webkit-scrollbar{display:none}
+ .guided-mobile-step{position:relative;flex:0 0 35px;width:35px;height:35px;border:1px solid #d2dcde;border-radius:9px;background:#f4f7f8;padding:0;color:#748488}
+ .guided-mobile-step.selected{outline:2px solid var(--teal);outline-offset:1px}.guided-mobile-step.complete{background:#eaf5ee;color:var(--good);border-color:#b7dec6}.guided-mobile-step.current{background:#fff2c7;color:#8a5b00;border-color:#e4bf57}.guided-mobile-step.blocked{background:#fdeaea;color:var(--bad);border-color:#e7abab}.guided-mobile-step.pending{background:#eef2f3;color:#78878b}
+ .guided-mobile-icon{display:block;font-size:14px;font-weight:900;margin-top:2px}.guided-mobile-step small{position:absolute;right:3px;bottom:1px;font-size:7px;font-weight:900;color:inherit}
+ .fixed-guided-workspace .guided-detail{width:100%;min-width:0}
+ .reuse-asset-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))!important}
+}
+
+/* Phone portrait: compact cockpit remains fixed but tiles stack predictably. */
+@media(max-width:820px){
+ .workspace-fixed-cockpit{left:10px;right:10px;padding:6px 0 7px!important}
+ .workspace-context-strip{grid-template-columns:minmax(0,1fr) 108px!important}
+ .workspace-context-strip>div:nth-child(n+3){display:none!important}
+ .workflow-command-bar{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px}
+ .workflow-command-current{grid-column:1/-1;grid-row:1;min-height:54px;padding:6px 8px}
+ .workflow-command-slot{min-height:54px;padding:5px}
+ .workflow-dock-button,.workflow-dock-clear{min-height:36px!important;font-size:9px!important}
+ .reuse-asset-grid{grid-template-columns:1fr!important}
+}
+
+@media(max-width:480px){
+ .main{padding-left:10px;padding-right:10px}
+ .workspace-fixed-cockpit{left:8px;right:8px}
+ .workspace-context-strip{grid-template-columns:minmax(0,1fr) 86px!important}
+ .guided-mobile-title span{font-size:6.8px}
+ .guided-mobile-step{flex-basis:31px;width:31px;height:31px}
+ .workflow-command-current small{-webkit-line-clamp:1}
+}
+
+@media print{
+ .workspace-cockpit-spacer{display:none!important}
+}

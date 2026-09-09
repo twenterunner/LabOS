@@ -1,3 +1,10 @@
+## REV 1.0.37 — Responsive fixed workflow shell & reliable build-plan navigation
+
+- The Guided Build cockpit is fixed beneath the LabOS header and uses a measured spacer, so it remains in the same place while the work area scrolls.
+- Small laptops/tablets/landscape phones release the permanent sidebar and use the compact Guided Workflow rail, preventing squeezed work tiles.
+- Reused route / Control Plan / PFMEA tiles auto-fit the available panel width and no longer break words into narrow columns.
+- Planning swimlane bars and build lane labels are direct tap targets that open the selected build schedule. Opening a build clears stale modal overlays, and workflow-step navigation is handled by one permanent delegated click handler.
+
 ## REV 1.0.36 — Fixed Guided Build Workflow cockpit
 
 The request workspace now uses a stable, role-aware operating shell. The Guided Build Workflow remains visible while users work through a build: full sticky checklist on desktop/tablet and a compact sticky step rail on mobile. Build identity, current step/owner, Edit, Approval and Next Step controls stay in fixed positions while only the working content below changes. Status semantics are normalized everywhere in the guided workflow: green ✓ = done, yellow ● = ongoing, red ✕ = blocked/late, grey ● = future/open. Automatic mobile scroll-to-section behavior was removed so changing steps no longer jumps the user up and down the page.

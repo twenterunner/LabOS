@@ -1,10 +1,18 @@
+# LabOS REV 1.0.37 Verification
+
+REV 1.0.37 focuses on responsive phone/laptop layout, a genuinely fixed Guided Build cockpit, and reliable plan/workflow navigation. Schema remains 21; no user data reset is required.
+
+Verification includes fixed-cockpit geometry, measured spacer logic, 1120 px compact layout, auto-fit reuse tiles, delegated workflow navigation, modal cleanup before build opening, and tappable planning swimlane bars/lane labels.
+
+---
+
 # LabOS REV 1.0.36 Verification
 
-REV 1.0.36 focuses on a stable Guided Build Workflow operating shell while retaining the v1.0.35 reuse-first controls and navigation reliability.
+Historical REV 1.0.36 introduced the stable Guided Build Workflow operating shell; REV 1.0.37 strengthens its responsive/fixed behavior and navigation reliability.
 
 Specific verification proves that:
 
-- the current release is REV 1.0.36 on schema 21;
+- historical REV 1.0.36 used schema 21; REV 1.0.37 remains on schema 21;
 - the Guided Build Workflow has a sticky desktop checklist and compact sticky mobile rail;
 - status semantics are green ✓ done, yellow ● ongoing, red ✕ blocked/late and grey ● future/open;
 - Build identity, Edit, Approval and Next Step controls render in fixed cockpit slots;
