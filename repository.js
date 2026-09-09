@@ -129,7 +129,7 @@ class MigrationService{
         replaceReqRows('routes');replaceReqRows('pfmea');replaceReqRows('measurements');replaceReqRows('deviations');replaceReqRows('approvals');replaceReqRows('documents');
         s.controlPlans=(s.controlPlans||[]).filter(x=>x.id!=='CP-ARCH-001');const cp=(seed.controlPlans||[]).find(x=>x.id==='CP-ARCH-001');if(cp)s.controlPlans.push(P.deepClone(cp));
         s.serials=Array.isArray(s.serials)?s.serials:[];for(const ss of (seed.serials||[]).filter(x=>x.requestId===src.id)){let ds=s.serials.find(x=>x.requestId===dst.id&&(x.serial===ss.serial||x.sampleNumber===ss.sampleNumber));if(!ds){s.serials.push(P.deepClone(ss));continue}for(const k of ['sampleId','sampleNumber','serialNumber','status','releaseState','description','dataFields','evidencePhotos','delivery','materials','processHistory'])ds[k]=P.deepClone(ss[k]);}
-        P.syncRequestFlowdown(s,dst);P.ensureApprovalRecords(s,dst);P.repairDuplicateSamples(s);P.audit(s,'Comprehensive archived report example installed','Demo data','Prototype Build Report',dst.id,'Basic archived report','Full process / Control Plan / PFMEA / critical-characteristic dossier','REV 1.0.30 report migration');
+        P.syncRequestFlowdown(s,dst);P.ensureApprovalRecords(s,dst);P.repairDuplicateSamples(s);P.audit(s,'Comprehensive archived report example installed','Demo data','Prototype Build Report',dst.id,'Basic archived report','Full process / Control Plan / critical-characteristic dossier','REV 1.0.30 report migration');
       }
     }
     s.dataVersion=wasDemo?'2026.09-demo-19':(s.dataVersion||'migrated');s.schemaVersion=16;continue;
@@ -144,7 +144,7 @@ class MigrationService{
    }
    if(s.schemaVersion===17){
     const wasDemo=P.isDemoDataset(s);(s.deviations||[]).forEach(d=>P.ensureQualityCase(d));
-    P.audit(s,'Quality Workbench case model enabled','Quality','Portfolio','Legacy guided quality cards','Controlled action / Control Plan / PFMEA / trend workbench','REV 1.0.32 quality-workbench migration');
+    P.audit(s,'Quality Workbench case model enabled','Quality','Portfolio','Legacy guided quality cards','Controlled action / Control Plan / trend workbench','REV 1.0.32 quality-workbench migration');
     s.dataVersion=wasDemo?'2026.09-demo-21':(s.dataVersion||'migrated');s.schemaVersion=18;continue;
    }
    if(s.schemaVersion===18){
@@ -152,7 +152,7 @@ class MigrationService{
     // REV 1.0.33: keep customer data untouched, but enrich the controlled archived demo dossier with the unified report's end-characterisation evidence.
     if(wasDemo&&P.createDemoState){
       s.settings=s.settings||{};s.settings.demoDataset=true;const seed=P.createDemoState(),src=seed.requests.find(r=>r.title==='Archived pressure DV batch'),dst=(s.requests||[]).find(r=>r.id===src?.id)||s.requests.find(r=>r.title===src?.title);
-      if(src&&dst){dst.characterisation=P.deepClone(src.characterisation||[]);dst.testRequirements=P.deepClone(src.testRequirements||[]);dst.specialCharacteristics=P.deepClone(src.specialCharacteristics||[]);const sourceEnd=(seed.measurements||[]).filter(m=>m.requestId===src.id&&m.measurementType==='end-characterisation');s.measurements=(s.measurements||[]).filter(m=>!(m.requestId===dst.id&&m.measurementType==='end-characterisation'));s.measurements.push(...P.deepClone(sourceEnd));P.syncRequestFlowdown(s,dst);P.invalidateBuildReport(s,dst,'Unified Build Report end-characterisation evidence installed for demo exemplar');const ba=P.ensureBuildReportApproval(s,dst);ba.status='Approved';ba.person='Sofia Bakker';ba.role='Quality Engineer';ba.roleId='quality';ba.timestamp=dst.closedAt||P.now();ba.comment='Unified Build Report example reviewed including end-characterisation, critical distributions/Cpk, Control Plan, PFMEA and photographic evidence.';dst.buildReportApprovedAt=ba.timestamp;dst.buildReportApprovedBy=ba.person;P.audit(s,'Unified Build Report exemplar enriched','Demo data','Prototype Build Report',dst.id,'Control Plan-only critical data','Critical data + complete specified end-characterisation','REV 1.0.33 report/CSV migration');}
+      if(src&&dst){dst.characterisation=P.deepClone(src.characterisation||[]);dst.testRequirements=P.deepClone(src.testRequirements||[]);dst.specialCharacteristics=P.deepClone(src.specialCharacteristics||[]);const sourceEnd=(seed.measurements||[]).filter(m=>m.requestId===src.id&&m.measurementType==='end-characterisation');s.measurements=(s.measurements||[]).filter(m=>!(m.requestId===dst.id&&m.measurementType==='end-characterisation'));s.measurements.push(...P.deepClone(sourceEnd));P.syncRequestFlowdown(s,dst);P.invalidateBuildReport(s,dst,'Unified Build Report end-characterisation evidence installed for demo exemplar');const ba=P.ensureBuildReportApproval(s,dst);ba.status='Approved';ba.person='Sofia Bakker';ba.role='Quality Engineer';ba.roleId='quality';ba.timestamp=dst.closedAt||P.now();ba.comment='Unified Build Report example reviewed including end-characterisation, critical distributions/Cpk, Control Plan and photographic evidence.';dst.buildReportApprovedAt=ba.timestamp;dst.buildReportApprovedBy=ba.person;P.audit(s,'Unified Build Report exemplar enriched','Demo data','Prototype Build Report',dst.id,'Control Plan-only critical data','Critical data + complete specified end-characterisation','REV 1.0.33 report/CSV migration');}
     }
     s.dataVersion=wasDemo?'2026.09-demo-22':(s.dataVersion||'migrated');s.schemaVersion=19;continue;
    }
@@ -172,8 +172,16 @@ class MigrationService{
    if(s.schemaVersion===20){
     const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
     (s.requests||[]).forEach(r=>{P.ensureReusePackage(r);const route=(s.routes||[]).find(x=>x.requestId===r.id),cp=(s.controlPlans||[]).find(x=>x.id===r.controlPlanId),risks=(s.pfmea||[]).filter(x=>x.requestId===r.id);if(route?.confirmed&&P.routeStandardReady(s,route)&&r.reusePackage.route.mode==='none')r.reusePackage.route={mode:'reused',source:'Existing released route',revision:route.revision||'A'};if(cp?.status==='Approved'&&!cp.buildSpecific&&r.reusePackage.controlPlan.mode==='none')r.reusePackage.controlPlan={mode:'reused',baselineId:cp.id,revision:cp.revision,source:cp.name};if(risks.length&&risks.every(x=>x.status!=='Open high risk')&&r.reusePackage.pfmea.mode==='none')r.reusePackage.pfmea={mode:'reused',sourceRequestId:r.id,count:risks.length};});
-    P.audit(s,'Reuse-first workflow enabled','System','Controlled information','Repeat setup per build','Approved route / Control Plan / PFMEA inheritance with delta reviews','REV 1.0.35 reuse-first migration');
+    P.audit(s,'Reuse-first workflow enabled','System','Controlled information','Repeat setup per build','Approved route / Control Plan inheritance with delta reviews','REV 1.0.35 reuse-first migration');
     s.dataVersion=wasDemo?'2026.09-demo-24':(s.dataVersion||'migrated');s.schemaVersion=21;continue;
+   }
+   if(s.schemaVersion===21){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    s.settings=s.settings||{};s.settings.auditProfile=s.settings.auditProfile||{organisation:'',site:'',scopeStatement:'',auditOwner:'',exclusions:'',controlledReference:'',recordsRetentionReference:'',internalAuditReference:''};
+    // REV 1.0.47: PFMEA is no longer an owned LabOS workflow. Keep legacy records for historical compatibility only.
+    (s.trainingCertificates||[]).forEach(c=>{c.documentUploaded=!!(c.documentUploaded||c.fileData);});
+    P.audit(s,'Audit UX and resource scheduling model upgraded','System','Governance','Duplicated risk-analysis workflow / partial audit exports','Control Plan + external risk-reference model / guided audit findings / printable resource schedules','REV 1.0.47 migration');
+    s.dataVersion=wasDemo?'2026.09-demo-25':(s.dataVersion||'migrated');s.schemaVersion=22;continue;
    }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }

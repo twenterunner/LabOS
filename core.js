@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.46-poc';
-  ProtoLab.SCHEMA_VERSION = 21;
+  ProtoLab.VERSION = '1.0.47-poc';
+  ProtoLab.SCHEMA_VERSION = 22;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -16,10 +16,10 @@
 
   ProtoLab.GATES = ['DRAFT REQUEST','SUBMITTED','FEASIBILITY','PROCESS DEFINITION','LAB TRIAGE','BUILD READINESS REVIEW','READY TO BUILD','BUILD IN PROGRESS','CHARACTERISATION','QUALITY REVIEW','ENGINEERING REVIEW','RELEASE APPROVAL','RELEASED','DELIVERED','CLOSED'];
   ProtoLab.ASSURANCE_PROFILES = {
-    rapid:{id:'rapid',code:'E0',label:'Rapid Engineering',tagline:'Fast learning with essential safety and traceability only',description:'For quick engineering experiments, troubleshooting, failure analysis and early process learning. Allows provisional methods and simplified records. Not customer-releasable and not production representative.',formalLevel:0,requires:{processRelease:false,testRelease:false,pfmea:false,controlPlan:false,independentControlPlanApproval:false,formalReadiness:false,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
-    controlled:{id:'controlled',code:'E1',label:'Controlled Engineering',tagline:'Lean but repeatable engineering build',description:'For design learning, correlation and engineering prototypes where repeatability and useful traceability matter. Released standards are preferred; provisional engineering methods may be used with explicit owner/evidence.',formalLevel:1,requires:{processRelease:false,testRelease:false,pfmea:'high-risk',controlPlan:'special-only',independentControlPlanApproval:false,formalReadiness:true,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
-    validation:{id:'validation',code:'V',label:'Validation / Customer',tagline:'Controlled evidence for DV/PV or customer-facing samples',description:'For design validation, customer samples and formal engineering verification. Requires released methods, controlled risks, approved Control Plan where applicable, traceable measurements and formal quality/release review.',formalLevel:2,requires:{processRelease:true,testRelease:true,pfmea:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}},
-    production:{id:'production',code:'P',label:'Production Intent',tagline:'Maximum prototype governance for production-representative parts',description:'For production-intent, PPAP-supporting, safe-launch or equivalent production-representative builds. Applies the strongest available prototype controls, customer-specific gates, full genealogy, approved methods and formal release.',formalLevel:3,requires:{processRelease:true,testRelease:true,pfmea:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}}
+    rapid:{id:'rapid',code:'E0',label:'Rapid Engineering',tagline:'Fast learning with essential safety and traceability only',description:'For quick engineering experiments, troubleshooting, failure analysis and early process learning. Allows provisional methods and simplified records. Not customer-releasable and not production representative.',formalLevel:0,requires:{processRelease:false,testRelease:false,controlPlan:false,independentControlPlanApproval:false,formalReadiness:false,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
+    controlled:{id:'controlled',code:'E1',label:'Controlled Engineering',tagline:'Lean but repeatable engineering build',description:'For design learning, correlation and engineering prototypes where repeatability and useful traceability matter. Released standards are preferred; provisional engineering methods may be used with explicit owner/evidence.',formalLevel:1,requires:{processRelease:false,testRelease:false,controlPlan:'special-only',independentControlPlanApproval:false,formalReadiness:true,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
+    validation:{id:'validation',code:'V',label:'Validation / Customer',tagline:'Controlled evidence for DV/PV or customer-facing samples',description:'For design validation, customer samples and formal engineering verification. Requires released methods, controlled risks, approved Control Plan where applicable, traceable measurements and formal quality/release review.',formalLevel:2,requires:{processRelease:true,testRelease:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}},
+    production:{id:'production',code:'P',label:'Production Intent',tagline:'Maximum prototype governance for production-representative parts',description:'For production-intent, PPAP-supporting, safe-launch or equivalent production-representative builds. Applies the strongest available prototype controls, customer-specific gates, full genealogy, approved methods and formal release.',formalLevel:3,requires:{processRelease:true,testRelease:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}}
   };
   ProtoLab.profile = r => ProtoLab.ASSURANCE_PROFILES[r?.assuranceProfile]||ProtoLab.ASSURANCE_PROFILES.controlled;
   ProtoLab.recommendAssuranceProfile = data => {
@@ -40,7 +40,7 @@
   ].map(([id,label])=>({id,label}));
   ProtoLab.PERMISSIONS = {
     engineering_requester:['request:create','request:view','product:view','delivery:ack','report:view'], engineering_lead:['request:view','request:clarify','request:approve','approval:perform','product:view','product:manage','report:view'],
-    lab_planner:['request:view','triage','plan','route:edit','materials:allocate','materials:receive','product:view','report:view','improvement:review'], process_engineer:['request:view','route:edit','process:develop','process:release','pfmea:edit','workinstruction:edit','product:view','report:view'],
+    lab_planner:['request:view','triage','plan','route:edit','materials:allocate','materials:receive','product:view','report:view','improvement:review'], process_engineer:['request:view','route:edit','process:develop','process:release','workinstruction:edit','product:view','report:view'],
     technician:['request:view','execution:run','evidence:add','measurement:add','report:view'], quality:['request:view','controlplan:edit','controlplan:approve','quality:disposition','release:review','approval:perform','report:approve','audit:view'],
     metrology:['request:view','equipment:manage','measurement:review','calibration:manage','maintenance:manage'], product_safety:['request:view','productsafety:approve','approval:perform'], lab_manager:['request:view','plan','process:develop','product:view','planning:standards','finance:manage','skills:manage','equipment:manage','calibration:manage','maintenance:manage','improvement:review','priority:change','override:approve','release:approve','approval:perform','dashboard:management','audit:view'],
     approver:['request:view','approval:perform','controlplan:approve','report:view'], auditor:['request:view','audit:view','report:view'], administrator:['*']
@@ -472,6 +472,7 @@
     state.planningEvents=state.planningEvents||[];
     state.settings.capacity=state.settings.capacity||{productiveStaffHoursPerWeek:32,equipmentHoursPerWeek:60};
     state.settings.resourceAssurance=state.settings.resourceAssurance||{proposalFirst:true,defaultHorizonWeeks:26,warningDays:{Calibration:30,Maintenance:45,Training:60}};
+    state.settings.auditProfile=state.settings.auditProfile||{organisation:'',site:'',scopeStatement:'',auditOwner:'',exclusions:'',controlledReference:'',recordsRetentionReference:'',internalAuditReference:''};
     state.improvementProposals=state.improvementProposals||[];
     state.dailyOperationsReviews=Array.isArray(state.dailyOperationsReviews)?state.dailyOperationsReviews:[];
     state.settings.lastOperationsReviewDate=state.settings.lastOperationsReviewDate||null;
@@ -484,7 +485,7 @@
       (person.competencies||[]).forEach((skillId,si)=>{
         if(!state.trainingCertificates.some(x=>x.staffId===person.id&&x.skillId===skillId)){
           const cert={id:`CERT-${person.id}-${skillId}`,staffId:person.id,skillId,certificateNo:`TR-${person.id}-${skillId}-${String(si+1).padStart(2,'0')}`,issuer:(state.competencies||[]).find(c=>c.id===skillId)?.owner||'Lab Manager',issuedAt:new Date(today.getTime()-(90+pi*8)*86400000).toISOString().slice(0,10),expiresAt:new Date(today.getTime()+(75+pi*28+si*35)*86400000).toISOString().slice(0,10),status:'Valid',evidence:`Training certificate ${skillId}`};
-          state.trainingCertificates.push(cert); person.trainingCertificates.push(cert.id);
+          cert.fileName=cert.fileName||`${cert.certificateNo}-demo.txt`;cert.fileType=cert.fileType||'text/plain';cert.fileData=cert.fileData||'data:text/plain;base64,REVNTyBUUkFJTklORyBDRVJUSUZJQ0FURSAtIExhYk9T';cert.documentUploaded=!!cert.fileData;state.trainingCertificates.push(cert); person.trainingCertificates.push(cert.id);
         }
       });
     });

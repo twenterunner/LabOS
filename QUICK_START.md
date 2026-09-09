@@ -1,17 +1,12 @@
-## LabOS REV 1.0.46 · Quick Start
+# LabOS REV 1.0.47 · Quick Start
 
-### Resolve a blocker
-Open the red/yellow readiness item. LabOS shows **only the condition that is actually failing** and the next corrective action. Use the proposed valid alternative, schedule the exact calibration/maintenance/qualification item, or replan the affected build. Readiness recalculates from the controlled record after the action.
+1. **Customers** — Administrator → Configuration & data → Customers & requirements → Add customer.
+2. **Requests** — Prototype Requests → New request. Use Sort to order by submitted/required date, product, customer or priority.
+3. **Build route** — Open a request and follow the guided workflow. Each route step uses the same sample-selection, execution and data-matrix pattern.
+4. **Control Plan** — Formal characteristics linked to a route step appear in that step's sample matrix and save as controlled CP measurements.
+5. **Resource Assurance** — Directly schedule calibration, maintenance or training, or select automatically forecast due items. Set calibration/maintenance duration from Equipment status & timing; set training duration in the competency definition.
+6. **Evidence** — Calibration, maintenance and training completion records can store document files/controlled references. Reports provide links to stored evidence.
+7. **Audit Readiness** — Define organisation, site/lab and scope first. Every Major/Minor finding has Resolve → with affected records and a direct corrective path. Generate the Audit evidence pack only after scope is defined.
+8. **Improvement Scan** — Accepting an automatically implementable proposal changes the controlled plan/master data. Physical/procurement changes remain open in a guided implementation workflow until effectiveness is verified.
 
-### Execute a build-process step
-1. Open **Build → Build samples & capture process evidence**.
-2. Choose the route step from **BUILD PROCESS**.
-3. Select one, several or all pending samples.
-4. Press **Start execution**. This only records the real start timestamp; it does not create measurement values.
-5. Open **Data matrix**. Enter common machine/setup values once. Enter sample measurements/characteristics by row, or use **Same value for all samples** and then edit exceptions.
-6. Use **Download CSV template / Upload completed CSV** for larger batches.
-7. CP characteristics assigned to this step appear in the same matrix and save as formal Control Plan measurement records.
-8. Press **Complete execution** to record finish time/duration and complete the selected samples for that step.
-
-### Accept an improvement
-**Accept & implement** means LabOS now acts on the proposal. Safe deterministic changes are applied immediately. Physical/governed work opens a guided implementation workflow and remains in the Action Centre until effectiveness is verified.
+Use foldouts for secondary evidence and explanatory detail; the primary action remains on the main screen.

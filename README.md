@@ -1,33 +1,29 @@
-## REV 1.0.46 · Closed-loop improvements, guided blockers & unified build-step execution
+# LabOS — Prototype Build Management POC · REV 1.0.47
 
-REV 1.0.46 turns several previously advisory LabOS workflows into controlled executable workflows.
+LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects request intake, customers, product/BOM definition, process-route planning, sample execution, Control Plan evidence, equipment/staff readiness, quality disposition, reporting, audit readiness and closed-loop improvement.
 
-### Accepted improvements now mean implementation
-- **Staff load balancing:** LabOS reassigns eligible unlocked future bookings to qualified, conflict-free people, updates route ownership, recalculates load and writes the audit trail.
-- **Equipment load balancing:** LabOS moves eligible bookings to ready equivalent equipment and updates the route/equipment records.
-- **Calibration / maintenance opportunities:** LabOS schedules the accepted service action into the lowest-impact feasible Resource Assurance slot when it can do so safely.
-- **Capacity / new-equipment proposals:** where a physical purchase or installation is required, acceptance starts a guided workflow: confirm capacity need → approve solution/business case → order/arrange → receive/register → commission/qualify → replan and verify.
-- **Skills / process / quality improvements:** acceptance starts the corresponding controlled workflow and stays open until implementation and effectiveness evidence are complete.
+## What changed in REV 1.0.47
 
-### Blockers are contextual
-Readiness blocker actions no longer route to a generic dashboard or show healthy resources. The resolver displays only the booking/condition that fails, the exact reason, and the immediate corrective action. Where possible it offers a one-tap valid equipment/person reassignment; otherwise it opens the exact calibration, maintenance, qualification or replan action needed.
+- Audit scope is mandatory before an audit evidence pack can be generated; controlled records-retention and internal-audit references can be maintained alongside it.
+- Every automated Major/Minor audit finding has a guided **Resolve → evidence → recheck** path, with the affected records identified.
+- Audit evidence pack now indexes scope, capability/uncertainty, calibration, maintenance, competence/training, methods, Control Plans, sample traceability, quality/CAPA, approved build dossiers, change/audit trail and readiness schedule.
+- Customer master data is again visible under **Configuration & data → Customers & requirements**.
+- The duplicate risk-analysis module has been removed. External controlled risk analysis remains the source of truth; applicable special characteristics and controls flow into the LabOS Control Plan.
+- Calibration and maintenance durations are configurable per equipment item; training duration is configurable per competency.
+- Calibration, maintenance and training can each be scheduled directly, even when the user is not starting from an automatically generated due item. Accepted slots reserve resource capacity and conflicts flag affected builds for replan.
+- Printable combined and activity-specific readiness schedules are available.
+- Calibration, maintenance and training reports include certificate/evidence links when a document or controlled URL is stored.
+- Prototype Requests can be sorted by submission date, required date, product, customer or priority, and filtered by customer.
+- High-information screens use progressive disclosure/foldouts so primary actions stay visible.
 
-### One consistent cockpit for every build-process step
-Every route step now exposes the same operating pattern:
-1. Select one, several or all pending samples.
-2. Start execution to capture the real start timestamp for those samples.
-3. Capture common machine/setup values once and sample-specific values in a sample × field matrix.
-4. Download or upload the same matrix as CSV.
-5. Complete execution to record finish time/duration and mark the selected samples complete.
+## Run on GitHub Pages
 
-Control Plan characteristics linked to the route step flow directly into the same sample matrix. Saving those columns creates the formal CP measurement records with limits, method, reaction-plan context and traceability; there is no duplicate CP-entry workflow.
+Upload the ZIP contents to the repository root. `index.html` must remain at root. No npm, backend, login or API key is required for this POC.
 
-### Data and analysis
-- Every sample-level field supports **Same value for all samples** bulk fill while allowing individual exceptions.
-- Machine/setup settings are separated from sample measurements/characteristics.
-- Critical-characteristic plots use a 50-bin histogram for larger datasets or individual-value scatter/rug presentation for smaller prototype datasets, fitted normal distribution, and Anderson–Darling normality p-value.
+## Important POC boundary
 
-### Governance hardening retained
-Release/lifecycle/quality/Control Plan rules are enforced in the domain layer, JSON imports are invariant-validated before persistence, IDs are collision-safe, and the Administrator/Closeout/Verify workspaces have current render coverage.
+This prototype supports IATF/ISO-style controlled workflows but is not itself a certified QMS/LIMS. Production use still needs authenticated identity/SSO, server-side authorization, durable shared storage, concurrency controls, validated e-signatures where required, immutable audit logging/retention, backups, cybersecurity hardening and enterprise integrations.
 
-This remains a static GitHub Pages proof-of-concept. Enterprise deployment still requires production identity, backend/database, security, concurrency, validated e-signatures, backups and organisation-specific governance.
+## Main files
+
+`index.html`, `styles.css`, `core.js`, `demo-data.js`, `repository.js`, `services.js`, `app.js`, `service-worker.js`, `USER_MANUAL.html`, `QUICK_START.md`, and verification scripts/results.
