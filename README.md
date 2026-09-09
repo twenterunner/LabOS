@@ -1,3 +1,7 @@
+## REV 1.0.45 · Governed execution, matrix data capture & closed-loop improvements
+
+This revision hardens the v1.0.44 acceptance baseline. Release and lifecycle rules are now service-enforced; Control Plan approval requires an explicit review request; JSON import is invariant-validated before persistence; request/route IDs are collision-safe; missing Administrator and Closeout workspaces are restored. Build execution supports multi-sample execution groups and a clear setup-vs-sample data matrix with bulk fill. Readiness blockers open a contextual resolver. Critical-characteristic distributions use a fitted normal curve with a 50-bin histogram for larger datasets or individual sample scatter for smaller prototype datasets, plus an Anderson–Darling normality p-value. Accepting an improvement starts a controlled implementation workflow and does not mark it complete until effectiveness is verified.
+
 ## REV 1.0.44 · Batch-first capture, capability reporting & Audit Readiness
 
 - Process setup/common parameters default to batch-level capture; per-sample values remain available only where needed.

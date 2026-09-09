@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.44-poc';
+  ProtoLab.VERSION = '1.0.45-poc';
   ProtoLab.SCHEMA_VERSION = 21;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -411,10 +411,17 @@
   };
 
   ProtoLab.validateInvariants = state => {
-    const errors=[];
-    const labIds=(state.serials||[]).map(s=>String(s.serial||'')).filter(Boolean); if(new Set(labIds).size!==labIds.length) errors.push('Lab Sample IDs are not unique.');
-    const formal=(state.serials||[]).map(s=>String(s.serialNumber||'').trim()).filter(Boolean); if(new Set(formal).size!==formal.length) errors.push('Formal serial numbers are not unique.');
+    const errors=[],duplicates=(rows,label)=>{const vals=(rows||[]).map(x=>String(x||'').trim()).filter(Boolean),seen=new Set(),dup=new Set();for(const v of vals){if(seen.has(v))dup.add(v);seen.add(v)}if(dup.size)errors.push(`${label} are not unique: ${[...dup].slice(0,5).join(', ')}${dup.size>5?' …':''}.`);};
+    duplicates((state.serials||[]).map(s=>s.serial),'Lab Sample IDs');
+    duplicates((state.serials||[]).map(s=>s.serialNumber),'Formal serial numbers');
+    duplicates((state.requests||[]).map(r=>r.id),'Request IDs');
+    duplicates((state.routes||[]).map(r=>r.id),'Route IDs');
+    const requestIds=new Set((state.requests||[]).map(r=>r.id));
+    (state.routes||[]).forEach(rt=>{if(rt.requestId&&!requestIds.has(rt.requestId))errors.push(`${rt.id} points to unknown request ${rt.requestId}.`)});
     (state.requests||[]).forEach(r=>{
+      if(r.status&&r.currentGate&&r.status!==r.currentGate)errors.push(`${r.id} lifecycle mismatch: status ${r.status} but currentGate ${r.currentGate}.`);
+      const qty=Number(r.quantity);if(!Number.isInteger(qty)||qty<=0)errors.push(`${r.id} has invalid quantity ${r.quantity}.`);
+      if(r.requiredDate&&Number.isNaN(new Date(`${r.requiredDate}T12:00:00`).getTime()))errors.push(`${r.id} has invalid required date ${r.requiredDate}.`);
       if(!['Engineering supplied','Lab supplied'].includes(ProtoLab.normaliseMaterialSource(r.materialOwnership))) errors.push(`${r.id} has unsupported material source.`);
       if(['RELEASED','DELIVERED','CLOSED'].includes(r.status)){
         const holds=(state.deviations||[]).filter(d=>d.requestId===r.id && d.releaseHold && d.status!=='CLOSED'); if(holds.length) errors.push(`${r.id} released with unresolved release hold.`);
@@ -426,7 +433,7 @@
     (state.controlPlans||[]).filter(c=>c.status==='Approved').forEach(c=>{ if(!c.revision) errors.push(`${c.id} approved without revision.`); });
     (state.measurements||[]).filter(m=>m.calibrationRequired).forEach(m=>{ if(m.equipmentCalibrationStatus==='Invalid' && m.compliant===true) errors.push(`${m.id} claims compliant measurement with invalid calibration.`); });
     (state.deviations||[]).filter(d=>d.status==='CLOSED').forEach(d=>{if((d.actions||[]).some(a=>a.mandatory&&!a.closed)) errors.push(`${d.id} closed with mandatory open action.`)});
-    return errors;
+    return [...new Set(errors)];
   };
 
 

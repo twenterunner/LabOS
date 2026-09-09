@@ -1,0 +1,256 @@
+{
+  "version": "1.0.45-poc",
+  "passed": 62,
+  "failed": 0,
+  "total": 62,
+  "rows": [
+    {
+      "name": "Version is REV 1.0.45 / schema 21",
+      "ok": true
+    },
+    {
+      "name": "Seed invariants clean",
+      "ok": true
+    },
+    {
+      "name": "Unknown product is rejected",
+      "ok": true
+    },
+    {
+      "name": "Negative quantity is rejected at create",
+      "ok": true
+    },
+    {
+      "name": "Zero quantity is rejected at create",
+      "ok": true
+    },
+    {
+      "name": "Fractional quantity is rejected at create",
+      "ok": true
+    },
+    {
+      "name": "Invalid required date is rejected at create",
+      "ok": true
+    },
+    {
+      "name": "Request ID stays unique after deletion",
+      "ok": true
+    },
+    {
+      "name": "Burst-created route IDs are collision-safe",
+      "ok": true
+    },
+    {
+      "name": "CLOSED request cannot be resubmitted",
+      "ok": true
+    },
+    {
+      "name": "Fresh DRAFT rapid build cannot be released",
+      "ok": true
+    },
+    {
+      "name": "Fresh DRAFT validation build cannot be released",
+      "ok": true
+    },
+    {
+      "name": "Technician cannot invoke release service",
+      "ok": true
+    },
+    {
+      "name": "Technician cannot close quality case service",
+      "ok": true
+    },
+    {
+      "name": "Failed measurement needs its specifically linked disposition",
+      "ok": true
+    },
+    {
+      "name": "Specifically linked closed disposition clears that failure check",
+      "ok": true
+    },
+    {
+      "name": "Requested sample population required for release",
+      "ok": true
+    },
+    {
+      "name": "Route execution required for release",
+      "ok": true
+    },
+    {
+      "name": "Lifecycle service is exported",
+      "ok": true
+    },
+    {
+      "name": "Lifecycle service blocks status/currentGate mismatch",
+      "ok": true
+    },
+    {
+      "name": "Lifecycle service enforces gate-specific role",
+      "ok": true
+    },
+    {
+      "name": "Lifecycle service blocks incomplete process execution",
+      "ok": true
+    },
+    {
+      "name": "Lifecycle service requires objective evidence",
+      "ok": true
+    },
+    {
+      "name": "Draft Control Plan cannot be approved before review request",
+      "ok": true
+    },
+    {
+      "name": "Control Plan Z revision rolls to AA",
+      "ok": true
+    },
+    {
+      "name": "Invariant checker detects duplicate request IDs",
+      "ok": true
+    },
+    {
+      "name": "Invariant checker detects duplicate route IDs",
+      "ok": true
+    },
+    {
+      "name": "Invariant checker detects gate/status mismatch",
+      "ok": true
+    },
+    {
+      "name": "Unexpected portfolio planner exception is not reported ok=true",
+      "ok": true
+    },
+    {
+      "name": "Administrator renderer exists",
+      "ok": true
+    },
+    {
+      "name": "Closeout document/audit/lesson renderers exist",
+      "ok": true
+    },
+    {
+      "name": "Guided disposition captures root cause and effectiveness verification evidence",
+      "ok": true
+    },
+    {
+      "name": "New quality case can link exact failed measurement",
+      "ok": true
+    },
+    {
+      "name": "Build quality issue modal can link exact failed measurement",
+      "ok": true
+    },
+    {
+      "name": "Control Plan UI has explicit submit-for-review action",
+      "ok": true
+    },
+    {
+      "name": "Lifecycle UI delegates gate change to domain LifecycleService",
+      "ok": true
+    },
+    {
+      "name": "JSON import validates invariants before save",
+      "ok": true
+    },
+    {
+      "name": "User manual and shell identify REV 1.0.45",
+      "ok": true
+    },
+    {
+      "name": "Equipment blocker no longer routes to obsolete resource-assurance/dashboard target",
+      "ok": true
+    },
+    {
+      "name": "Readiness blocker opens contextual resolver",
+      "ok": true
+    },
+    {
+      "name": "Equipment resolver shows capability, assigned equipment and calibration/maintenance evidence",
+      "ok": true
+    },
+    {
+      "name": "Execution chooser supports multiple samples",
+      "ok": true
+    },
+    {
+      "name": "Execution start uses all selected samples",
+      "ok": true
+    },
+    {
+      "name": "Process data has explicit setup + sample matrix flow",
+      "ok": true
+    },
+    {
+      "name": "Process data distinguishes machine/setup from sample measurement",
+      "ok": true
+    },
+    {
+      "name": "Matrix includes every active sample row",
+      "ok": true
+    },
+    {
+      "name": "Every sample field offers same-value bulk fill",
+      "ok": true
+    },
+    {
+      "name": "Matrix/bulk UI has responsive styling",
+      "ok": true
+    },
+    {
+      "name": "Capability plot uses 50 bins for larger samples",
+      "ok": true
+    },
+    {
+      "name": "Small prototype data uses individual sample scatter",
+      "ok": true
+    },
+    {
+      "name": "Fitted normal distribution curve is rendered",
+      "ok": true
+    },
+    {
+      "name": "Anderson-Darling normality test with p-value is included",
+      "ok": true
+    },
+    {
+      "name": "Accept starts implementation rather than silently closing action",
+      "ok": true
+    },
+    {
+      "name": "Improvement has four-step implementation rail",
+      "ok": true
+    },
+    {
+      "name": "Accepted improvements remain open until Verified",
+      "ok": true
+    },
+    {
+      "name": "Implementation requires evidence at each step",
+      "ok": true
+    },
+    {
+      "name": "Release service checks route execution and failed-result linkage",
+      "ok": true
+    },
+    {
+      "name": "Quality closure service enforces role + verification evidence",
+      "ok": true
+    },
+    {
+      "name": "Control Plan service requires Review requested",
+      "ok": true
+    },
+    {
+      "name": "Planner unexpected failures are marked Planning blocked",
+      "ok": true
+    },
+    {
+      "name": "Invalid JSON import is rejected before persistence",
+      "ok": true
+    },
+    {
+      "name": "Valid JSON import still persists",
+      "ok": true
+    }
+  ]
+}

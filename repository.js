@@ -12,7 +12,7 @@ class IndexedDBStorageRepository extends StorageRepository{
  async save(state){ if(!this.db){this.memoryFallback=P.deepClone(state);return true;} return new Promise((resolve,reject)=>{const tx=this.db.transaction(this.store,'readwrite');tx.objectStore(this.store).put(P.deepClone(state),this.key);tx.oncomplete=()=>resolve(true);tx.onerror=()=>reject(tx.error);}); }
  async reset(){const state=P.createDemoState();await this.save(state);return state;}
  async exportJSON(state){return JSON.stringify({schemaVersion:P.SCHEMA_VERSION,exportedAt:P.now(),appVersion:P.VERSION,state},null,2);}
- async importJSON(text){const parsed=JSON.parse(text);const state=parsed.state||parsed;if(!state.schemaVersion)throw new Error('Missing schemaVersion');const migrated=MigrationService.migrate(state);await this.save(migrated);return migrated;}
+ async importJSON(text){const parsed=JSON.parse(text);const state=parsed.state||parsed;if(!state.schemaVersion)throw new Error('Missing schemaVersion');const migrated=MigrationService.migrate(state),issues=P.validateInvariants(migrated);if(issues.length)throw new Error(`Import rejected: ${issues.slice(0,5).join(' | ')}${issues.length>5?' | …':''}`);await this.save(migrated);return migrated;}
 }
 class MigrationService{
  static migrate(state){

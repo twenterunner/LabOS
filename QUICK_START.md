@@ -1,3 +1,11 @@
+## REV 1.0.45 · Safe execution & guided resolution
+
+- Readiness blockers now open a specific Understand → Act → Recheck resolver instead of a generic dashboard route.
+- Build execution can process one, several or all pending samples in one execution group.
+- Process data uses a setup section plus sample-by-field matrix with one-click “same value for all samples”.
+- Improvement proposals remain open after acceptance and guide controlled implementation through verification.
+- Release, lifecycle, Control Plan, data-import and ID-integrity guardrails are enforced in the domain layer.
+
 ## REV 1.0.44 · Quick Start
 
 1. In Build Execution, use **Batch / sample worksheet**. Enter setup/common process parameters once under **Batch setup / common data**.
