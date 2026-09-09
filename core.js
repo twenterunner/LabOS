@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.31-poc';
-  ProtoLab.SCHEMA_VERSION = 17;
+  ProtoLab.VERSION = '1.0.32-poc';
+  ProtoLab.SCHEMA_VERSION = 18;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -91,6 +91,33 @@
     sample.dataFields.forEach(x=>{x.id=x.id||ProtoLab.uid('SDATA');x.label=x.label||'';x.value=x.value??'';x.unit=x.unit||'';x.description=x.description||'';x.includeInBuildReport=x.includeInBuildReport!==false;});
     sample.evidencePhotos.forEach(x=>{x.id=x.id||ProtoLab.uid('PHOTO');x.caption=x.caption||x.fileName||'Sample photo';x.description=x.description||'';x.includeInBuildReport=x.includeInBuildReport!==false;x.capturedAt=x.capturedAt||ProtoLab.now();x.capturedBy=x.capturedBy||'';});
     return sample;
+  };
+  ProtoLab.QUALITY_CAUSE_CATEGORIES=['Process parameter','Material / supplier','Equipment / tooling','Measurement system','Method / work instruction','Human / competency','Design / requirement','Environment','Unknown / investigating','Other'];
+  ProtoLab.ensureQualityCase = d => {
+    if(!d)return d;
+    d.detectedAt=d.detectedAt||ProtoLab.now();
+    d.owner=d.owner||d.approver||'Quality Engineer';
+    if(!d.dueDate){const x=new Date();x.setDate(x.getDate()+5);d.dueDate=x.toISOString().slice(0,10);}
+    d.causeCategory=d.causeCategory||'';
+    d.rootCause=d.rootCause||(((d.status==='CLOSED'||(d.disposition&&d.disposition!=='Pending'))&&d.investigation&&d.investigation!=='Pending')?d.investigation:'');
+    d.investigationEvidence=d.investigationEvidence||'';
+    d.verificationEvidence=d.verificationEvidence||'';
+    d.effectiveness=d.effectiveness||(d.status==='CLOSED'?'Verified':'Pending');
+    d.verifiedBy=d.verifiedBy||'';d.verifiedAt=d.verifiedAt||null;
+    d.relatedRiskIds=Array.isArray(d.relatedRiskIds)?d.relatedRiskIds:[];
+    d.actions=Array.isArray(d.actions)?d.actions:[];
+    d.actions.forEach((a,i)=>{a.id=a.id||`${d.id}-ACT-${i+1}`;a.owner=a.owner||d.owner||'Quality Engineer';if(!a.dueDate){const x=new Date(d.dueDate||Date.now());x.setDate(x.getDate()+2);a.dueDate=x.toISOString().slice(0,10);}a.closed=!!a.closed;a.closedAt=a.closed? (a.closedAt||d.verifiedAt||ProtoLab.now()):null;});
+    return d;
+  };
+  ProtoLab.qualityCaseStage = d => {
+    ProtoLab.ensureQualityCase(d);
+    if(d.status==='CLOSED')return 'Closed';
+    if(!d.containment||/pending/i.test(d.containment))return 'Contain';
+    if(!d.rootCause||d.investigation==='Pending')return 'Investigate';
+    if(!d.disposition||d.disposition==='Pending')return 'Disposition';
+    if((d.actions||[]).some(a=>a.mandatory&&!a.closed))return 'Action';
+    if(!d.verificationEvidence||d.effectiveness==='Pending')return 'Verify';
+    return 'Close';
   };
   ProtoLab.captureRequirementKey = value => String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||ProtoLab.uid('REQ').toLowerCase();
   ProtoLab.parseCaptureRequirementLines = (text,prefix='REQ') => String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((line,i)=>{

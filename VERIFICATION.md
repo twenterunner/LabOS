@@ -1,4 +1,4 @@
-# LabOS REV 1.0.31 Verification
+# LabOS REV 1.0.32 Verification
 
 Verified on the packaged source snapshot before ZIP creation.
 
@@ -10,7 +10,8 @@ Verified on the packaged source snapshot before ZIP creation.
 - 12/12 REV 1.0.30 comprehensive-report regressions
 - 13/13 instrumented comprehensive Build Report render checks
 - 11/11 REV 1.0.31 Resource Assurance checks
+- 8/8 REV 1.0.32 Quality Workbench checks
 
-**Total: 155 passed / 0 failed.**
+**Total: 163 passed / 0 failed.**
 
-REV 1.0.31-specific coverage includes proposal-first calibration/maintenance/training scheduling, grouping metadata, manual override, conflict acceptance, affected-build flagging, reschedule history, schema 16→17 migration, no AUTO-PLAN-created readiness bookings, and retention of the best-in-class archived Build Report with Control Plan, PFMEA, distributions, Cpk, anomaly markers and photos.
+REV 1.0.32-specific coverage includes schema 17→18 quality-case migration, case normalization, controlled stage progression, closure requiring effectiveness evidence, actionable Quality Workbench views, Control Plan/PFMEA/approval actions, root-cause Pareto and continuous-improvement integration. Existing comprehensive Build Report and Resource Assurance regressions remain green.

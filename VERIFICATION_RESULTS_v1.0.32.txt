@@ -1,0 +1,181 @@
+PASS | Demo state contains 18 prototype requests
+PASS | Demo state contains 25+ process definitions
+PASS | Demo state contains 40+ serialized units
+PASS | Serial numbers are unique
+PASS | Initial seeded state passes implemented invariants
+PASS | Request creation remains Draft and adds audit
+PASS | Request submission requires mandatory evidence fields
+PASS | AUTO-PLAN assigns equipment and staff and preserves route order
+PASS | Readiness identifies seeded blocker scenario
+PASS | Controlled override rejects unauthorised role
+PASS | Control Plan approved revision cannot be silently revised in place
+PASS | Serial generation creates unique traceable serials
+PASS | Quality release is blocked by unresolved release hold
+PASS | Deviation cannot close while mandatory action remains open
+PASS | Measurement limit evaluation detects fail
+PASS | Process fit assessment distinguishes released vs adaptation
+PASS | Planner never assigns equipment with invalid calibration
+PASS | Planner substitutes available qualified staff where preferred person is unavailable
+PASS | Process development cannot release with incomplete gates
+PASS | Completed process development releases reusable process revision
+PASS | Control Plan separation of duties prevents self-approval
+PASS | Independent Control Plan approval records person and timestamp
+PASS | Approver / Reviewer has explicit Control Plan approval permission
+PASS | Control Plan service rejects a role without approval authority
+PASS | Rework seed preserves original process history and explicit loop
+PASS | Failed objective measurement exists with quality hold linkage
+PASS | Delivered serial retains delivery reference
+PASS | Report service assembles serial, measurement and deviation evidence
+PASS | Auditor has view permission but no execution permission
+PASS | Administrator wildcard permission allows configuration actions
+PASS | Demo reset seed is a fresh deep copy
+PASS | Seeded approved Control Plans use independent approver evidence
+PASS | New request receives exact BOM material requirements and a proposed standard route
+PASS | Arbitrary material allocation cannot satisfy an exact BOM requirement
+PASS | Exact part/revision allocations satisfy material readiness
+PASS | AUTO-PLAN creates visible step bookings and a timing triage result
+PASS | AUTO-PLAN respects locked bookings on the same request
+PASS | Limit-only special characteristic can pass Control Plan definition
+PASS | Product-safety request automatically gets a concrete pending approval record
+PASS | Only Engineering supplied and Lab supplied material routes are supported
+PASS | Lab supplied material must be exact-reserved before AUTO-PLAN eligibility
+PASS | Engineering supplied material uses promised arrival as planning input but not Build Readiness
+PASS | AUTO-PLAN can create a provisional best-feasible preview before route/test definition is complete
+PASS | Standard tests and competency master data are present and used by planning
+PASS | Historical same-product builds refine estimates
+PASS | Closing a build captures learning record once
+
+RESULT: 46 passed, 0 failed
+PASS | IndexedDB adapter initializes
+PASS | IndexedDB adapter saves and reloads state across repository calls
+PASS | JSON export includes schema metadata
+PASS | JSON import persists compatible state
+PASS | Reset restores seeded demo data
+PASS | Schema 1 data migrates to exact BOM, approvals and proposed route model
+
+RESULT: 6 passed, 0 failed
+PASS | Required delivery files present
+PASS | All index asset references are relative
+PASS | All referenced local index assets exist
+PASS | Responsive mobile breakpoints present
+PASS | Touch target baseline is at least 44px
+PASS | Mobile hamburger is explicitly preserved at narrow widths
+PASS | Repository boundary present
+PASS | Role identity abstraction present
+PASS | Global search covers core record types
+PASS | No external runtime JavaScript/CSS dependencies
+PASS | Versioned asset URLs bypass stale browser cache
+PASS | Legacy service worker cache is self-clearing
+PASS | Modal backdrop cannot globally close forms
+PASS | Guided workspace replaces horizontal tabs and gate stepper
+PASS | Independent Approver role can approve Control Plans
+PASS | Visible revision number is present in the application header
+PASS | Purpose-based guided workflow is present
+PASS | AUTO-PLAN keeps material/process definition as commitment prerequisites but can preview best-feasible timing
+PASS | Only Engineering supplied and Lab supplied are selectable in the request wizard
+PASS | Lab supplied material requires exact reservation before planning
+PASS | Engineering supplied material captures expected arrival before planning
+PASS | Standard process/test and competence master data drive planning
+PASS | Planner uses confirmed route and qualified/calibrated resources
+PASS | Planning estimates combine lab standards with same-product history
+PASS | Closed builds feed future learning
+PASS | Control Plan special characteristics accept target OR limits
+PASS | Product safety approval records are generated
+PASS | Page-level horizontal overflow is prevented while tables remain scrollable
+PASS | Decision-focused KPI outlook is present
+PASS | Calibration certificate fields are controlled
+PASS | Resource Assurance coordinates calibration maintenance and training with user-controlled scheduling
+
+RESULT: 31 passed, 0 failed
+PASS | application ready flag
+PASS | dashboard markup rendered
+PASS | navigation markup rendered
+PASS | role selector populated
+PASS | action count populated
+PASS | modal form interaction does not close modal
+PASS | backdrop tap does not close modal on mobile
+PASS | modal backdrop is not marked as a close control
+PASS | modal close is bound explicitly inside modal root
+PASS | guided checklist replaces horizontal workspace navigation
+PASS | guided checklist rows expose owner and next action
+PASS | Control Plan offers direct independent-approver switch
+PASS | visible revision badge is populated
+PASS | workspace is streamlined to ten top-level guided controls
+PASS | lab triage shows timing feasibility and visual build swimlane
+PASS | material allocation is requirement driven and exact revision matched
+PASS | wizard offers only Engineering supplied and Lab supplied material sources
+PASS | AUTO-PLAN provides best-feasible preview while keeping material/process definition as commitment prerequisites
+PASS | standard tests and lab skills are exposed as planning master data
+PASS | planning shows historical learning basis and estimate basis
+PASS | digital traveller records start/complete actual duration
+PASS | Control Plan accepts target or limits as objective specification
+PASS | product safety approval has concrete direct-action workflow
+
+RESULT: 23 passed, 0 failed
+PASS Current revision includes REV 1.0.29 flow-down capability
+PASS Fresh demo retains three archived examples and clean invariants
+PASS Demo requests contain controlled batch sample and photo definitions
+PASS Flow-down copies request context into route
+PASS Same sample requirement definitions are created on every sample
+PASS Schema 14 migration builds capture plan without losing archive
+PASS Schema 14 non-demo migration does not invent capture definitions
+PASS New request service preserves capture definitions
+PASS Batch and characterization UI entry points are present
+PASS Controlled sample fields are locked against per-sample relabeling
+PASS Full-batch characterization template includes traceability identifiers
+PASS LabOS identity assets and manifest icons are wired
+PASS Reports use LabOS branding and route traveller contains request flow-down
+
+RESULT: 13 passed, 0 failed
+PASS Current revision includes REV 1.0.30 comprehensive report capability
+PASS Fresh demo retains three archived builds and comprehensive report exemplar
+PASS Comprehensive exemplar has approved Control Plan with classified characteristics
+PASS Comprehensive exemplar carries PFMEA linkage across the route
+PASS Critical-characteristic demo has full-sample distributions and historical first-pass failure
+PASS Comprehensive exemplar retains rework, final acceptance and photo evidence
+PASS Comprehensive exemplar Build Report is final and independently approved
+PASS Schema 15 demo migration installs comprehensive archived dossier without breaking invariants
+PASS Non-demo schema 15 migration does not inject demo report exemplar
+PASS Build Report includes best-practice dossier sections
+PASS Critical characteristic report has distribution, anomaly and Cpk logic
+PASS Build Report does not add cost section
+
+RESULT: 12 passed, 0 failed
+PASS | Rendered report contains Executive build disposition
+PASS | Rendered report contains Process flow & actual execution
+PASS | Rendered report contains Control Plan
+PASS | Rendered report contains PFMEA / process-risk linkage
+PASS | Rendered report contains Critical & safety characteristics
+PASS | Rendered report contains Complete measurement evidence
+PASS | Rendered report contains Cpk
+PASS | Rendered report contains Statistical outlier
+PASS | Rendered report contains Historical first-pass nonconformance
+PASS | Rendered report has four critical-characteristic distributions
+PASS | Rendered report has four critical-characteristic cards
+PASS | Rendered report contains comprehensive sample photo evidence
+PASS | Rendered archived report is FINAL APPROVED
+
+RESULT: 13 passed, 0 failed
+PASS | REV 1.0.32 uses schema 18
+PASS | Resource Assurance forecasts calibration maintenance and training
+PASS | Forecast rows expose equipment type capability person and competency grouping metadata
+PASS | AUTO-PLAN no longer auto-books readiness work
+PASS | User can accept an optimizer suggestion
+PASS | User can override the suggested date
+PASS | Conflicting override requires explicit acceptance and flags affected build
+PASS | Rescheduling preserves history by superseding the prior reservation
+PASS | Schema 16 migration releases unapproved legacy AUTO readiness reservations
+PASS | Resource Assurance UI supports filters grouping selection and manual date review
+PASS | Comprehensive build dossier retains Control Plan PFMEA process flow distributions Cpk and photos
+
+RESULT: 11 passed, 0 failed
+PASS | REV 1.0.32 uses schema 18
+PASS | Quality cases are normalised with owner due cause action and verification fields
+PASS | Schema 17 migrates to quality workbench case model
+PASS | Quality stage engine drives contain investigate disposition action verify close
+PASS | Quality closure requires effectiveness evidence
+PASS | Quality Workbench exposes actionable operating views
+PASS | Quality Workbench can approve controls edit risks and manage approvals
+PASS | Quality Workbench contains root-cause Pareto and continuous improvement path
+
+RESULT: 8 passed, 0 failed

@@ -259,3 +259,15 @@ The same upgrade verifies that the three completed examples are available under 
 Open **Resource Assurance** from the main menu. Choose Calibration, Maintenance or Training, set the horizon, filter due/overdue work and group the list by the view that is useful to you (device/type/capability or person/competency). Select one or more items and choose **Review & schedule selected**.
 
 LabOS pre-fills a lowest-impact suggested slot. You can accept it or choose another date/time. If the preferred date overlaps controlled work, LabOS shows the conflict and requires explicit acceptance; affected builds are then flagged for planner review. Nothing is auto-booked by AUTO-PLAN.
+
+## Quality Workbench (REV 1.0.32)
+
+Open **Quality Workbench** as Quality Engineer. The page is now an operating workspace rather than a status-only dashboard:
+
+- **Action board** — filter open cases, release holds and overdue actions; create a new case; open the current controlled step; add actions; open the linked build.
+- **Control Plans** — review incomplete definitions and pending approvals, revise plans, and route independent approval when separation of duties applies.
+- **PFMEA & risks** — see the highest RPN / open risks first, special-characteristic risks, prevention/detection controls, and open the linked build or edit the risk.
+- **Trends & improvement** — root-cause Pareto, historical FPY/scrap, verified closure rate and evidence-based improvement proposals.
+- **Case history** — review closed cases with their disposition, actions and effectiveness evidence.
+
+A quality case now follows **Contain → Investigate → Disposition → Action → Verify → Close**. Closing requires containment, investigation/root cause, disposition justification, all mandatory actions complete and objective effectiveness-verification evidence.

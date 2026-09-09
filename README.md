@@ -1,4 +1,4 @@
-REV 1.0.31 — Best-in-class Build Report + Resource Assurance engine
+REV 1.0.32 — Quality Workbench + best-in-class Build Report + Resource Assurance engine
 
 This revision carries forward the REV 1.0.30 comprehensive controlled Build Report and adds a proposal-first calibration, preventive-maintenance and training engine.
 
@@ -342,3 +342,7 @@ Build routes can be created from a blank canvas, copied from the product standar
 ## REV 1.0.20 — Operational horizon dashboard
 
 The lab dashboard is now the near-term operating control room. It defaults to last/current/next week and can switch to previous/current/next month. Product and project filters change build demand while calibration, maintenance and training remain visible because they consume shared resources. People and equipment workload are shown against available capacity for every displayed period. Ongoing builds, upcoming/overdue deliverables with owners, and unresolved operational decisions are presented alongside the same horizon. Management KPIs remain the complementary trend, process-health and future-outlook layer.
+
+## REV 1.0.32 — Quality Workbench
+
+The Quality / Deviations status page is replaced by an actionable Quality Workbench. Quality can create controlled cases, manage release holds, capture containment/root cause/objective evidence, disposition parts, assign and close corrective/rework/retest actions with owner and due date, verify effectiveness and close. Separate views manage the Control Plan approval queue, PFMEA risk priorities, root-cause trends/continuous-improvement proposals and closed case history. The legacy workspace and Action Centre quality shortcuts now open the same complete controlled quality-case workflow.

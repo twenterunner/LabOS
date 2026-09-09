@@ -40,7 +40,7 @@ class MigrationService{
    if(s.schemaVersion===3){P.ensureEnterpriseModel(s);s.dataVersion='2026.09-demo-6';s.schemaVersion=4;continue;}
    if(s.schemaVersion===4){P.ensureEnterpriseModel(s);const demoCerts=(s.trainingCertificates||[]).filter(c=>String(c.id||'').startsWith('CERT-U')).slice(0,4);demoCerts.forEach((c,i)=>{const d=new Date();d.setDate(d.getDate()+[45,90,150,240][i]);c.expiresAt=d.toISOString().slice(0,10);});s.dataVersion='2026.09-demo-7';s.schemaVersion=5;continue;}
    if(s.schemaVersion===5){(s.requests||[]).forEach(r=>P.ensureAssuranceProfile(r));s.dataVersion='2026.09-demo-8';s.schemaVersion=6;continue;}
-   if(s.schemaVersion===6){(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.calibrationCertificates||[]).forEach(c=>{c.documentUploaded=!!(c.documentUploaded||c.fileData);});s.dataVersion='2026.09-demo-10';s.schemaVersion=7;continue;}
+   if(s.schemaVersion===6){(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.calibrationCertificates||[]).forEach(c=>{c.documentUploaded=!!(c.documentUploaded||c.fileData);});s.dataVersion='2026.09-demo-10';s.schemaVersion=7;continue;}
    if(s.schemaVersion===7){
     const byRequest={};(s.serials||[]).forEach(x=>(byRequest[x.requestId]||(byRequest[x.requestId]=[])).push(x));
     for(const [requestId,list] of Object.entries(byRequest)){const r=(s.requests||[]).find(x=>x.id===requestId),profile=r?P.ensureAssuranceProfile(r):null;list.forEach((sample,i)=>{sample.sampleId=sample.sampleId||sample.serial;sample.sampleNumber=sample.sampleNumber||String(i+1).padStart(2,'0');sample.serialNumber=sample.serialNumber??(profile?.requires?.serialisation?sample.serial:'');sample.processHistory=sample.processHistory||[];sample.status=sample.status||'Active';});}
@@ -142,9 +142,14 @@ class MigrationService{
     if(released)P.audit(s,'Legacy AUTO readiness reservations released','Resource assurance','Portfolio',`${released} AUTO-generated scheduled slot(s)`,'Proposal-first scheduling', 'REV 1.0.31 resource-assurance migration');
     s.dataVersion=wasDemo?'2026.09-demo-20':(s.dataVersion||'migrated');s.schemaVersion=17;continue;
    }
+   if(s.schemaVersion===17){
+    const wasDemo=P.isDemoDataset(s);(s.deviations||[]).forEach(d=>P.ensureQualityCase(d));
+    P.audit(s,'Quality Workbench case model enabled','Quality','Portfolio','Legacy guided quality cards','Controlled action / Control Plan / PFMEA / trend workbench','REV 1.0.32 quality-workbench migration');
+    s.dataVersion=wasDemo?'2026.09-demo-21':(s.dataVersion||'migrated');s.schemaVersion=18;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
 class BrowserDocumentStore{download(name,text,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);} readFile(file){return file.text();}}
