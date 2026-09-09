@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.29-poc';
-  ProtoLab.SCHEMA_VERSION = 15;
+  ProtoLab.VERSION = '1.0.31-poc';
+  ProtoLab.SCHEMA_VERSION = 17;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -362,6 +362,7 @@
     state.pipelineProjects=state.pipelineProjects||[];
     state.planningEvents=state.planningEvents||[];
     state.settings.capacity=state.settings.capacity||{productiveStaffHoursPerWeek:32,equipmentHoursPerWeek:60};
+    state.settings.resourceAssurance=state.settings.resourceAssurance||{proposalFirst:true,defaultHorizonWeeks:26,warningDays:{Calibration:30,Maintenance:45,Training:60}};
     state.improvementProposals=state.improvementProposals||[];
     state.dailyOperationsReviews=Array.isArray(state.dailyOperationsReviews)?state.dailyOperationsReviews:[];
     state.settings.lastOperationsReviewDate=state.settings.lastOperationsReviewDate||null;
@@ -383,6 +384,7 @@
     (state.materials||[]).forEach((m,i)=>{m.unitCost=Number(m.unitCost??(6+(i%7)*4));});
     (state.calibrationCertificates||[]).forEach(c=>{if(!c.fileData&&String(c.evidence||'').startsWith('Demo calibration certificate')){c.fileName=c.fileName||`${c.certificateNo||c.id}-demo.txt`;c.fileType='text/plain';c.fileData='data:text/plain;base64,REVNTyBDQUxJQlJBVElPTiBDRVJUSUZJQ0FURSAtIFBST1RPTEFCIE9T';c.documentUploaded=true;}});
     (state.equipment||[]).forEach((e,i)=>{
+      e.equipmentType=e.equipmentType||String(e.name||'Equipment').replace(/\s+(?:[A-Z]|\d+)$/,'').replace(/\s+\d+$/,'').trim();
       e.hourlyCost=Number(e.hourlyCost||55);
       e.lastMaintenance=e.lastMaintenance||new Date(today.getTime()-(30+(i%5)*14)*86400000).toISOString().slice(0,10);
       e.maintenanceDue=e.maintenanceDue||new Date(today.getTime()+(20+(i%5)*25)*86400000).toISOString().slice(0,10);

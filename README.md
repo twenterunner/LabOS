@@ -1,3 +1,39 @@
+REV 1.0.31 — Best-in-class Build Report + Resource Assurance engine
+
+This revision carries forward the REV 1.0.30 comprehensive controlled Build Report and adds a proposal-first calibration, preventive-maintenance and training engine.
+
+### Build Report / archived exemplar
+- Controlled dossier cover and executive disposition.
+- Process-flow visualization and actual execution.
+- Full Control Plan and PFMEA/process-risk sections.
+- New risk → Control Plan → evidence traceability matrix.
+- Critical / safety characteristic distributions with specification limits, target, Cpk and anomaly/flyer markers.
+- Historical first-pass nonconformance retained separately from final release data.
+- Genealogy, raw data, sample evidence/photos, deviations/rework/yield, calibration evidence and formal report approval.
+- Archived pressure DV batch remains the comprehensive FINAL · APPROVED example.
+
+### Resource Assurance
+- Replaces optimizer-only readiness booking with explicit user control.
+- Calibration, Maintenance and Training views with overdue/upcoming/scheduled status.
+- Group by individual, activity, equipment type, equipment capability, competency or person.
+- Multi-select items and Review & schedule selected.
+- LabOS suggests the lowest-impact free slot using committed bookings plus probability-weighted future demand.
+- User may accept the suggestion or override date/time and add scheduling rationale.
+- Conflicting overrides require explicit acceptance and flag affected build plans for review; no silent replanning.
+- AUTO-PLAN no longer auto-books calibration, maintenance or training. It flags readiness actions and treats accepted reservations as controlled constraints.
+- Existing legacy AUTO-generated readiness slots are released during schema 16 → 17 migration.
+- Separate calibration, maintenance and training readiness reports are available.
+
+REV 1.0.30 — Best-in-class controlled Build Report
+---------------------------------------------------
+- Rebuilt the Prototype Build Report as a controlled automotive build dossier with executive disposition, document metadata and independent final approval.
+- Full process-flow execution, Control Plan and PFMEA/process-risk tables are embedded in the report instead of only summarized.
+- Classified PS/SC/KC and request-defined critical characteristics receive automatic distribution plots, specification/target overlays, final-result Cpk, coverage, yield and anomaly/flyer highlighting.
+- Capability uses the latest release result per physical sample while historical first-pass failures remain visible as retained exceptions.
+- Report includes genealogy, batch/sample data, photographic evidence, deviations, rework, yield loss, calibration/equipment evidence, approvals and a complete raw-measurement appendix.
+- The archived **Archived pressure DV batch** is a comprehensive report example with 8 samples, 4 critical/safety characteristics, 100% final build yield, one controlled first-pass rework, statistical flyers, PFMEA linkage and 24 sample evidence images.
+- Build Report remains deliberately cost-free. Schema 16 upgrades existing demo browsers with the comprehensive archived report example without adding demo content to non-demo datasets.
+
 
 REV 1.0.29 — Controlled request flow-down & batch capture
 -----------------------------------------------------------

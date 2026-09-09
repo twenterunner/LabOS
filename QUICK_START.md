@@ -1,3 +1,13 @@
+REV 1.0.30 — Best-in-class controlled Build Report
+---------------------------------------------------
+- Rebuilt the Prototype Build Report as a controlled automotive build dossier with executive disposition, document metadata and independent final approval.
+- Full process-flow execution, Control Plan and PFMEA/process-risk tables are embedded in the report instead of only summarized.
+- Classified PS/SC/KC and request-defined critical characteristics receive automatic distribution plots, specification/target overlays, final-result Cpk, coverage, yield and anomaly/flyer highlighting.
+- Capability uses the latest release result per physical sample while historical first-pass failures remain visible as retained exceptions.
+- Report includes genealogy, batch/sample data, photographic evidence, deviations, rework, yield loss, calibration/equipment evidence, approvals and a complete raw-measurement appendix.
+- The archived **Archived pressure DV batch** is a comprehensive report example with 8 samples, 4 critical/safety characteristics, 100% final build yield, one controlled first-pass rework, statistical flyers, PFMEA linkage and 24 sample evidence images.
+- Build Report remains deliberately cost-free. Schema 16 upgrades existing demo browsers with the comprehensive archived report example without adding demo content to non-demo datasets.
+
 
 REV 1.0.29 — Controlled request flow-down & batch capture
 -----------------------------------------------------------
@@ -15,7 +25,7 @@ REV 1.0.29 — Controlled request flow-down & batch capture
 
 Schema 14 re-runs archived-demo installation for already-upgraded browser data. Existing active work is preserved; three completed demo builds are added/normalized under Prototype Requests → Archived. A visible fallback button is shown when a recognized demo still has zero archived builds.
 
-# ProtoLab OS — Quick Start — REV 1.0.29
+# ProtoLab OS — Quick Start — REV 1.0.30
 
 ## What changed in REV 1.0.25
 
@@ -243,3 +253,9 @@ When an existing v1.0.26 or older POC demo is opened, schema 13 automatically re
 
 The same upgrade verifies that the three completed examples are available under **Prototype Requests → Archived**. The dashboard also provides **Archived builds (n)** as a direct shortcut. This upgrade does not require **Reset Demo Data**, so existing POC work remains in place.
 
+
+## Resource Assurance (REV 1.0.31)
+
+Open **Resource Assurance** from the main menu. Choose Calibration, Maintenance or Training, set the horizon, filter due/overdue work and group the list by the view that is useful to you (device/type/capability or person/competency). Select one or more items and choose **Review & schedule selected**.
+
+LabOS pre-fills a lowest-impact suggested slot. You can accept it or choose another date/time. If the preferred date overlaps controlled work, LabOS shows the conflict and requires explicit acceptance; affected builds are then flagged for planner review. Nothing is auto-booked by AUTO-PLAN.

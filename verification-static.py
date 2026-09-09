@@ -25,12 +25,12 @@ checks.append(('Role identity abstraction present','DemoIdentityProvider' in rep
 checks.append(('Global search covers core record types',all(x in app for x in ['App.state.requests.forEach','App.state.serials.forEach','App.state.processes.forEach','App.state.materials.forEach','App.state.deviations.forEach'])))
 checks.append(('No external runtime JavaScript/CSS dependencies',not any(r.startswith(('http:','https:')) for r in p.refs)))
 versioned=[r for r in p.refs if r.split('?',1)[0].endswith(('.js','.css'))]
-checks.append(('Versioned asset URLs bypass stale browser cache',bool(versioned) and all('?v=1.0.29' in r for r in versioned)))
+checks.append(('Versioned asset URLs bypass stale browser cache',bool(versioned) and all('?v=1.0.31' in r for r in versioned)))
 checks.append(('Legacy service worker cache is self-clearing',"registration.unregister()" in (root/'service-worker.js').read_text(encoding='utf-8') and "addEventListener('fetch'" not in (root/'service-worker.js').read_text(encoding='utf-8')))
 checks.append(('Modal backdrop cannot globally close forms','modal-backdrop\" data-modal-close' not in app and 'clickedBackdrop' not in app))
 checks.append(('Guided workspace replaces horizontal tabs and gate stepper','guided-workspace' in app and 'renderGuidedChecklist' in app and '.workspace-tabs,.gate-stepper{display:none!important}' in css))
 checks.append(('Independent Approver role can approve Control Plans',"approver:['request:view','approval:perform','controlplan:approve'" in core))
-checks.append(('Visible revision number is present in the application header','id="versionBadge"' in text and '>REV 1.0.29<' in text))
+checks.append(('Visible revision number is present in the application header','id="versionBadge"' in text and '>REV 1.0.31<' in text))
 checks.append(('Purpose-based guided workflow is present','renderGuidedChecklist' in app and 'Define the engineering need' in app and 'Build samples & capture process evidence' in app and 'Characterise, evaluate & disposition exceptions' in app))
 checks.append(('AUTO-PLAN keeps material/process definition as commitment prerequisites but can preview best-feasible timing','Best-feasible preview is possible' in app and 'Material feasibility' in app and 'Process / test definition' in app and 'Best-available route/test assumptions' in services))
 checks.append(('Only Engineering supplied and Lab supplied are selectable in the request wizard','>Engineering supplied</option>' in app and '>Lab supplied</option>' in app and '<option>External supplier</option>' not in app))
@@ -45,7 +45,7 @@ checks.append(('Product safety approval records are generated','ensureApprovalRe
 checks.append(('Page-level horizontal overflow is prevented while tables remain scrollable','overflow-x:hidden' in css and '-webkit-overflow-scrolling:touch' in css))
 checks.append(('Decision-focused KPI outlook is present','Management KPIs & outlook' in app and 'Projected bottlenecks' in app and 'Potential project pipeline' in app and 'KPI timing' in app))
 checks.append(('Calibration certificate fields are controlled','Certificate number' in app and 'Traceability / reference standard' in app and 'calibrationCertificates' in core))
-checks.append(('Optimized readiness plan coordinates calibration maintenance and training','class ResourceCareService' in services and 'OPTIMIZED READINESS PLAN' in app and 'resourceCareBookings' in services))
+checks.append(('Resource Assurance coordinates calibration maintenance and training with user-controlled scheduling','class ResourceCareService' in services and 'Resource Assurance' in app and 'Review & schedule selected' in app and 'resourceCareBookings' in services and 'scheduleAt(state,item,startISO' in services))
 
 fail=0
 for name,ok in checks:
