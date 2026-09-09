@@ -657,3 +657,17 @@ html{scroll-padding-top:calc(68px + var(--workspace-cockpit-height,126px) + 14px
  .process-step-chip small{font-size:8px}
  .process-data-panel .route-toolbar{display:grid;grid-template-columns:1fr 1fr;width:100%}.process-data-panel .button{width:100%}
 }
+
+
+/* REV 1.0.41 — readiness hierarchy and unambiguous execution vs process data */
+.capture-purpose-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.capture-purpose-grid>div{border:1px solid var(--line);border-radius:11px;padding:10px;background:#f7fafb;min-width:0}
+.capture-purpose-grid>div.active{background:var(--teal-soft);border-color:#9fcfd4;box-shadow:inset 3px 0 0 var(--teal)}
+.capture-purpose-grid strong,.capture-purpose-grid span{display:block}.capture-purpose-grid strong{font-size:12px}.capture-purpose-grid span{font-size:10px;line-height:1.35;color:var(--muted);margin-top:3px}
+.field-required{display:inline-block;margin-left:6px;padding:2px 5px;border-radius:999px;background:#fff2c7;color:#815b00;font-size:8px;font-weight:800;text-transform:uppercase;vertical-align:middle}
+.process-data-actions{margin-top:12px;flex-wrap:wrap}.readiness-blocker-summary{margin-top:12px}.readiness-satisfied{margin-top:12px}.readiness-satisfied .readiness-work-list{margin:10px 0 0}
+.execution-record-panel .execution-explainer{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:760px){.capture-purpose-grid{grid-template-columns:1fr}.execution-record-panel .execution-explainer{grid-template-columns:1fr}.process-data-actions{display:grid!important;grid-template-columns:1fr 1fr}.process-data-actions .button{width:100%}}
+
+/* REV 1.0.42 · unified formal Control Plan approval */
+.formal-cp-approval{display:flex;justify-content:space-between;gap:16px;align-items:center;margin:14px 0;padding:15px;border:1px solid #ead188;border-radius:14px;background:#fff9e8}.formal-cp-approval.ready{border-color:#badfc9;background:#edf8f2}.formal-cp-approval h3{margin:4px 0}.formal-cp-approval p{margin:4px 0 6px;color:var(--muted)}@media(max-width:700px){.formal-cp-approval{align-items:flex-start;flex-direction:column}.formal-cp-approval .button{width:100%}}

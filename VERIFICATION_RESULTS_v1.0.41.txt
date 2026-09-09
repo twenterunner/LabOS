@@ -1,0 +1,26 @@
+LabOS REV 1.0.41 verification
+============================
+
+12 / 12 REV 1.0.41-specific checks passed
+46 / 46 domain/workflow checks passed
+6 / 6 repository/migration checks passed
+23 / 23 UI checks passed
+31 / 31 static/package checks passed
+
+TOTAL: 118 passed / 0 failed
+
+Additional checks:
+- app.js JavaScript syntax: PASS
+- core.js JavaScript syntax: PASS
+- Schema remains 21; no reset required
+
+Key REV 1.0.41 coverage:
+- Build Readiness displays open gate items first and collapses satisfied evidence
+- UI states that readiness verifies previous outputs rather than repeating setup
+- Process execution record is distinct from structured process data and Control Plan evidence
+- Start/Complete logs operator, resource, samples, timestamps and calculated actual duration
+- Run-level execution note is optional
+- Process-data fields support Batch / Per sample / Either capture level
+- Required process-data fields block execution completion until captured
+- Batch/per-sample worksheet respects the configured capture level
+- Control Plan remains a separate formal specification/reaction-plan evidence layer
