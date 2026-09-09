@@ -1,12 +1,12 @@
-# LabOS REV 1.0.47 · Quick Start
+# LabOS REV 1.0.48 · Quick Start
 
-1. **Customers** — Administrator → Configuration & data → Customers & requirements → Add customer.
-2. **Requests** — Prototype Requests → New request. Use Sort to order by submitted/required date, product, customer or priority.
-3. **Build route** — Open a request and follow the guided workflow. Each route step uses the same sample-selection, execution and data-matrix pattern.
-4. **Control Plan** — Formal characteristics linked to a route step appear in that step's sample matrix and save as controlled CP measurements.
-5. **Resource Assurance** — Directly schedule calibration, maintenance or training, or select automatically forecast due items. Set calibration/maintenance duration from Equipment status & timing; set training duration in the competency definition.
-6. **Evidence** — Calibration, maintenance and training completion records can store document files/controlled references. Reports provide links to stored evidence.
-7. **Audit Readiness** — Define organisation, site/lab and scope first. Every Major/Minor finding has Resolve → with affected records and a direct corrective path. Generate the Audit evidence pack only after scope is defined.
-8. **Improvement Scan** — Accepting an automatically implementable proposal changes the controlled plan/master data. Physical/procurement changes remain open in a guided implementation workflow until effectiveness is verified.
-
-Use foldouts for secondary evidence and explanatory detail; the primary action remains on the main screen.
+1. **Define the route** — Open a build → **Use or adapt engineering route & methods**. Choose/reuse the process sequence, configure only genuine method gaps, then confirm the route.
+2. **Define process data once** — Released process standards own recipes, machine/setup settings and normal sample-level evidence. Process Engineering can edit these under the process library using the controlled execution-data definition.
+3. **Approve the Control Plan** — CP characteristics are linked to the relevant process step and define method, limits, reaction plan and sampling. Draft CP data never becomes formal execution evidence.
+4. **Execute a route step** — Select the actual sample/execution group. Enter required recipe/setup values, then **Start operation**. Starting records operator/time/samples/equipment only.
+5. **Capture governed data** — Open the step **Data matrix**. It contains process-required sample data plus the applicable approved CP measurements. Use bulk-fill where values are genuinely common, or download/upload the step CSV.
+6. **Sampling is enforced** — 100% means every sample in the execution group. Reduced sampling plans identify the required subset; optional extra measurements remain possible.
+7. **Complete the operation** — Completion is enabled only after all required recipe/setup, process evidence and CP sampling evidence exists for the current execution run.
+8. **Develop a missing method** — Method gaps use guided actions that create real trial/parameter/capability/work-instruction/approval records. Releasing the method creates the actual controlled process used downstream.
+9. **Resolve blockers** — Major/Minor and readiness blockers show only the affected record and next corrective action; secondary rationale is in foldouts.
+10. **Resource assurance** — Calibration, maintenance and training are schedulable reservations and their reports link to certificate/evidence records.

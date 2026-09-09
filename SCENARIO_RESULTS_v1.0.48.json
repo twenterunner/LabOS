@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Nominal portfolio optimisation",
+    "pass": true,
+    "detail": "planned/assessed 14 open builds"
+  },
+  {
+    "name": "Locked booking survives replan",
+    "pass": true,
+    "detail": "locked booking retained"
+  },
+  {
+    "name": "Equipment outage is respected",
+    "pass": true,
+    "detail": "outage equipment not used during block"
+  },
+  {
+    "name": "Whole-lab shutdown is respected",
+    "pass": true,
+    "detail": "first booking after shutdown"
+  },
+  {
+    "name": "Material delay shifts planned start",
+    "pass": true,
+    "detail": "start 2026-10-15"
+  },
+  {
+    "name": "Zero equipment capability blocks explicitly",
+    "pass": true,
+    "detail": "ZERO_EQUIPMENT_CAPABILITY"
+  },
+  {
+    "name": "Zero skill association blocks explicitly",
+    "pass": true,
+    "detail": "ZERO_REQUIRED_SKILL"
+  },
+  {
+    "name": "Expired calibration becomes explicit readiness action",
+    "pass": true,
+    "detail": "readiness action flagged"
+  },
+  {
+    "name": "Commitment change requires reason",
+    "pass": true,
+    "detail": "reason enforced"
+  },
+  {
+    "name": "Readiness remains blocked by unreleased engineering-supplied material",
+    "pass": true,
+    "detail": "not build-ready on ETA alone"
+  }
+]

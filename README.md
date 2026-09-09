@@ -1,20 +1,29 @@
-# LabOS — Prototype Build Management POC · REV 1.0.47
+# LabOS — Prototype Build Management POC · REV 1.0.48
 
-LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects request intake, customers, product/BOM definition, process-route planning, sample execution, Control Plan evidence, equipment/staff readiness, quality disposition, reporting, audit readiness and closed-loop improvement.
+LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects request intake, customers, product/BOM definition, governed process routes, sample execution, Control Plan evidence, equipment/staff readiness, quality disposition, reporting, audit readiness and closed-loop improvement.
 
-## What changed in REV 1.0.47
+## What changed in REV 1.0.48
 
-- Audit scope is mandatory before an audit evidence pack can be generated; controlled records-retention and internal-audit references can be maintained alongside it.
-- Every automated Major/Minor audit finding has a guided **Resolve → evidence → recheck** path, with the affected records identified.
-- Audit evidence pack now indexes scope, capability/uncertainty, calibration, maintenance, competence/training, methods, Control Plans, sample traceability, quality/CAPA, approved build dossiers, change/audit trail and readiness schedule.
-- Customer master data is again visible under **Configuration & data → Customers & requirements**.
-- The duplicate risk-analysis module has been removed. External controlled risk analysis remains the source of truth; applicable special characteristics and controls flow into the LabOS Control Plan.
-- Calibration and maintenance durations are configurable per equipment item; training duration is configurable per competency.
-- Calibration, maintenance and training can each be scheduled directly, even when the user is not starting from an automatically generated due item. Accepted slots reserve resource capacity and conflicts flag affected builds for replan.
-- Printable combined and activity-specific readiness schedules are available.
-- Calibration, maintenance and training reports include certificate/evidence links when a document or controlled URL is stored.
-- Prototype Requests can be sorted by submission date, required date, product, customer or priority, and filtered by customer.
-- High-information screens use progressive disclosure/foldouts so primary actions stay visible.
+REV 1.0.48 rebuilds the **Use or adapt engineering route & methods** and **Build samples & capture process evidence** workflows around one governing model:
+
+**confirmed route + released process revision + approved Control Plan → execution group → required setup/recipe → required sample evidence → completion**
+
+- Each route operation shows its released method, governed process controls and applicable Control Plan characteristics in one concise list.
+- Released-process revisions are resolved from the revision captured on the build route; a later library revision does not silently redefine an older route step.
+- Process standards can define controlled execution fields: recipe/program, machine/setup values, sample measurements and observations.
+- Build-specific fields extend the released process definition rather than replacing it.
+- Control Plan characteristics are linked to the actual process/route step. Only an **Approved** Control Plan drives formal execution measurements.
+- Sampling rules are executable: `100% / each unit`, fixed sample counts, percentages, first+last and 1-per-N plans create the required sample subset for the active execution group.
+- A 100% CP characteristic blocks route-step completion until every applicable sample has a current execution-run measurement.
+- If a released process sample field duplicates a CP characteristic, the CP measurement is authoritative and appears only once.
+- Recipe/setup data can be prepared before execution; sample results become editable only after the actual execution group is started.
+- Every step has the same sample matrix plus CSV template/upload flow.
+- Starting an operation records the actual execution group, operator, time and equipment. It no longer acts like a decorative timer or fabricates evidence.
+- `[object Object]` work-instruction rendering is removed; the actual released instruction steps are shown.
+- Method-development actions now capture real planning, trial, parameters, external-risk reference, measurement/capability, CP impact, work instruction and approval evidence. Release materialises those records into a real released process definition.
+- Generic demo “Primary setpoint / Tolerance” placeholders have been replaced with process-appropriate examples and migrate automatically for the demo dataset.
+
+REV 1.0.47 audit/resource improvements remain included: guided Major/Minor findings, customer configuration, maintenance/calibration/training scheduling and evidence links, printable readiness schedules, sorting/filtering and progressive disclosure.
 
 ## Run on GitHub Pages
 

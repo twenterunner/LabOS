@@ -1,0 +1,97 @@
+{
+  "pass": 18,
+  "fail": 0,
+  "total": 18,
+  "checks": [
+    {
+      "name": "Version/schema are REV 1.0.48 / schema 23",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Material Receipt no longer has fake setpoint/tolerance fields",
+      "pass": true,
+      "detail": "Delivery / lot reference, Material status"
+    },
+    {
+      "name": "Released route revision is resolved for execution",
+      "pass": true,
+      "detail": "PROC-006 Rev B"
+    },
+    {
+      "name": "Work instruction renders executable text, never object string",
+      "pass": true,
+      "detail": "Verify inputs for Material Receipt"
+    },
+    {
+      "name": "CP linkage targets the actual Laser Welding process",
+      "pass": true,
+      "detail": "Weld integrity"
+    },
+    {
+      "name": "100% CP sampling requires every sample",
+      "pass": true,
+      "detail": "19/19"
+    },
+    {
+      "name": "Reduced CP sampling uses deterministic required subset",
+      "pass": true,
+      "detail": "S1,S6,S10,S15,S19"
+    },
+    {
+      "name": "Approved CP is the only CP that drives execution matrix",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Build-specific fields extend rather than replace released process controls",
+      "pass": true,
+      "detail": "4 total fields"
+    },
+    {
+      "name": "Route/method page is concise and has actual configuration actions",
+      "pass": true,
+      "detail": "14 route rows"
+    },
+    {
+      "name": "Execution page contains no [object Object] and separates governed data",
+      "pass": true,
+      "detail": "execution cockpit rendered"
+    },
+    {
+      "name": "Sample result entry is gated until an actual execution group exists",
+      "pass": true,
+      "detail": "pre-run setup only"
+    },
+    {
+      "name": "No legacy fake Complete: Capability / fitness button remains",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Process standard editor can define governed recipe/settings/sample fields",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Schema 22 demo data migrates generic fields to governed fields",
+      "pass": true,
+      "detail": "Delivery / lot reference, Material status"
+    },
+    {
+      "name": "Control Plan measurement replaces duplicate process-level sample field",
+      "pass": true,
+      "detail": "single CP-authoritative field"
+    },
+    {
+      "name": "100% CP evidence is a real completion gate for the execution group",
+      "pass": true,
+      "detail": "6/6 evidence items"
+    },
+    {
+      "name": "Method-development gates materialise real released process content",
+      "pass": true,
+      "detail": "PROC-MTULVMKK-HIDT"
+    }
+  ]
+}

@@ -183,6 +183,18 @@ class MigrationService{
     P.audit(s,'Audit UX and resource scheduling model upgraded','System','Governance','Duplicated risk-analysis workflow / partial audit exports','Control Plan + external risk-reference model / guided audit findings / printable resource schedules','REV 1.0.47 migration');
     s.dataVersion=wasDemo?'2026.09-demo-25':(s.dataVersion||'migrated');s.schemaVersion=22;continue;
    }
+   if(s.schemaVersion===22){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    // REV 1.0.48: execution evidence is governed by the released process plus the linked Control Plan.
+    // Repair only known demo placeholders; never overwrite customer-created controlled process fields.
+    if(wasDemo&&typeof P.createDemoState==='function'){
+      const seed=P.createDemoState(),seedProc=new Map((seed.processes||[]).map(x=>[x.id,x])),seedCp=new Map((seed.controlPlans||[]).map(x=>[x.id,x]));
+      (s.processes||[]).forEach(proc=>{const generic=(proc.params||[]).length===2&&String(proc.params[0]?.name||'')==='Primary setpoint'&&String(proc.params[1]?.name||'')==='Tolerance';if(generic&&seedProc.has(proc.id))proc.params=P.deepClone(seedProc.get(proc.id).params||[])});
+      (s.controlPlans||[]).forEach(cp=>{const scp=seedCp.get(cp.id);if(!scp)return;const byId=new Map((scp.characteristics||[]).map(x=>[x.id,x]));(cp.characteristics||[]).forEach(c=>{const src=byId.get(c.id);if(!src)return;if(!c.processStepId){c.processId=src.processId;c.processStepName=src.processStepName;c.processStep=src.processStep}if(/^(100%|1\s*\/\s*unit)$/i.test(String(c.sampleSize||''))){c.sampleSize=src.sampleSize;c.frequency=src.frequency}})});
+    }
+    P.audit(s,'Process execution model upgraded','System','Build execution','Generic step forms / ambiguous CP linkage','Released-process data + explicit CP sampling matrix','REV 1.0.48 execution migration');
+    s.dataVersion=wasDemo?'2026.09-demo-26':(s.dataVersion||'migrated');s.schemaVersion=23;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
