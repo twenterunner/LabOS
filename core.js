@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.37-poc';
+  ProtoLab.VERSION = '1.0.38-poc';
   ProtoLab.SCHEMA_VERSION = 21;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -286,6 +286,8 @@
   };
   ProtoLab.normaliseMaterialSource = value => value==='Lab stock'?'Lab supplied':value==='External supplier'?'Engineering supplied':(value||'Engineering supplied');
   ProtoLab.median = values => { const a=(values||[]).filter(Number.isFinite).sort((x,y)=>x-y); if(!a.length)return null; const m=Math.floor(a.length/2); return a.length%2?a[m]:(a[m-1]+a[m])/2; };
+  ProtoLab.planningStandardHours = (obj,quantity=1) => { const setup=Math.max(0,Number(obj?.setupTime||0))/60,cycle=Math.max(0,Number(obj?.cycleTime||0))/60,q=Math.max(1,Number(quantity||1)); return Math.max(.02,setup+cycle*(obj?.basis==='Batch'?1:q)); };
+  ProtoLab.historicalEquivalentHours = (obj,actualHours,historyQty,currentQty) => { const actual=Math.max(0,Number(actualHours||0)),setup=Math.max(0,Number(obj?.setupTime||0))/60,hq=Math.max(1,Number(historyQty||1)),cq=Math.max(1,Number(currentQty||1)); if(obj?.basis==='Batch')return actual; const inferredCycle=Math.max(0,actual-setup)/hq; return setup+inferredCycle*cq; };
   ProtoLab.ensurePlanningModel = state => {
     state.standardTests=state.standardTests||[]; state.buildHistory=state.buildHistory||[]; state.competencies=state.competencies||[]; state.planningEvents=state.planningEvents||[];
     (state.requests||[]).forEach(r=>{

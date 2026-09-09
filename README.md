@@ -1,3 +1,10 @@
+## REV 1.0.38 — Reliable request opening & transparent learned timing
+
+- Active request cards now open through a lifecycle-safe workspace path. The explicit **Open** button starts at the stable Build Definition view; lifecycle/current-step navigation remains available once inside. Incomplete advanced planning state can no longer make a request appear unopenable.
+- Process-performance timing is now apples-to-apples. Historical actuals come from timestamped Start → Complete process executions. Released standards use Lab Manager master data (setup + cycle × the actual quantity of each historical build, or one cycle for Batch basis). The old fixed two-unit comparison has been removed.
+- AUTO-PLAN history learning now quantity-normalizes actuals without incorrectly scaling the setup portion.
+- Management KPIs explain the timing source inline and let Lab Managers/Administrators edit the released standard directly.
+
 ## REV 1.0.37 — Responsive fixed workflow shell & reliable build-plan navigation
 
 - The Guided Build cockpit is fixed beneath the LabOS header and uses a measured spacer, so it remains in the same place while the work area scrolls.
