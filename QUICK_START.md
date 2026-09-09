@@ -1,5 +1,9 @@
+## REV 1.0.35 — Reuse first
 
-## REV 1.0.34 — Unified Build Report & editable characterisation
+For a repeat product/revision, LabOS first uses the approved/released route, work instructions, Control Plan, PFMEA controls and standard tests already available. If the inherited definition fits, proceed without rebuilding those documents. Use **Change for this build** only when the current build differs; LabOS creates a controlled build-specific delta and routes it to the relevant departments while keeping the approved master intact.
+
+
+## REV 1.0.35 — Unified Build Report & editable characterisation
 
 LabOS now produces **one controlled Build Report per prototype build**. The Build Report contains the requested tests/characterisation, process flow, Control Plan, PFMEA linkage, critical/safety-characteristic distribution plots, anomaly highlighting, Cpk where statistically valid, raw data, photos, genealogy, deviations/yield and approval. Characterisation results can be corrected through a controlled edit action and through a CSV round-trip worksheet. The former separate Test Report is retired; legacy links open the Build Report. The redundant duplicate Build Readiness summary card has been removed from the workspace, while the guided Build Readiness workflow remains the authoritative readiness control. Change-impact records now render as readable field-by-field changes rather than raw JSON.
 

@@ -1,0 +1,28 @@
+LabOS REV 1.0.35 verification
+=============================
+
+Selected regression suites
+- Core domain/regression: 46/46
+- Repository/storage/migration: 6/6
+- UI smoke/regression: 23/23
+- Static/GitHub Pages package: 31/31
+- Comprehensive Build Report logic: 12/12
+- Comprehensive archived report render: 13/13
+- Controlled measurement edit: 4/4
+- Characterisation CSV round trip: 8/8
+- Unified Build Report render: 16/16
+- REV 1.0.35 reuse/navigation-specific: 12/12
+
+Selected regression total: 171 passed / 0 failed
+Additional checks: JavaScript syntax (core/services/repository/app) passed; schema 20 -> 21 migration passed with 0 invariant errors.
+
+REV 1.0.35 focus
+- compatible released process route/work instructions reused automatically
+- compatible approved Control Plan reused without repeat setup/reapproval
+- compatible PFMEA risk knowledge reused
+- build-specific Control Plan edits clone the approved master instead of superseding it
+- Process Engineering + Quality reviews are created for build-specific reused-document deltas
+- Product Safety review is added for safety-relevant deltas
+- pending delta reviews block readiness
+- permanent delegated navigation survives repeated renderNav()/persist cycles
+- navigation clears stale modal overlays

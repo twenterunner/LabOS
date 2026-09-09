@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.34-poc';
-  ProtoLab.SCHEMA_VERSION = 20;
+  ProtoLab.VERSION = '1.0.35-poc';
+  ProtoLab.SCHEMA_VERSION = 21;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -182,6 +182,60 @@
     return false;
   };
 
+  // REV 1.0.35 · reuse-first governance. Approved standard information is inherited; only build-specific deltas trigger review.
+  ProtoLab.ensureReusePackage = r => {
+    r.reusePackage=r.reusePackage&&typeof r.reusePackage==='object'?r.reusePackage:{};
+    r.reusePackage.route=r.reusePackage.route||{mode:'none'};
+    r.reusePackage.controlPlan=r.reusePackage.controlPlan||{mode:'none'};
+    r.reusePackage.pfmea=r.reusePackage.pfmea||{mode:'none'};
+    r.reusePackage.deltas=Array.isArray(r.reusePackage.deltas)?r.reusePackage.deltas:[];
+    return r.reusePackage;
+  };
+  ProtoLab.sameProductRequests = (state,r) => (state.requests||[]).filter(x=>x.id!==r.id&&x.productId===r.productId&&String(x.productRevision||'')===String(r.productRevision||''));
+  ProtoLab.routeStandardReady = (state,route) => !!(route?.steps?.length&&route.steps.every(s=>{if(s.type!=='standard')return false;const p=(state.processes||[]).find(x=>x.id===s.processId);return !!p&&p.status==='Released'&&String(p.revision)===String(s.processRevision);}));
+  ProtoLab.findReusableRouteSource = (state,r) => ProtoLab.sameProductRequests(state,r).map(x=>({request:x,route:(state.routes||[]).find(q=>q.requestId===x.id)})).find(x=>x.route?.confirmed===true&&ProtoLab.routeStandardReady(state,x.route))||null;
+  ProtoLab.findReusableControlPlan = (state,r) => {
+    const current=(state.controlPlans||[]).find(x=>x.id===r.controlPlanId);
+    if(current?.status==='Approved'&&!current.buildSpecific)return current;
+    const compatible=new Set(ProtoLab.sameProductRequests(state,r).map(x=>x.id));
+    return (state.controlPlans||[]).find(cp=>cp.status==='Approved'&&!cp.buildSpecific&&(cp.requestIds||[]).some(id=>compatible.has(id)))||null;
+  };
+  ProtoLab.findReusablePfmeaSource = (state,r) => {
+    for(const prev of ProtoLab.sameProductRequests(state,r)){
+      const items=(state.pfmea||[]).filter(x=>x.requestId===prev.id);
+      if(items.length&&items.every(x=>x.status!=='Open high risk'))return {request:prev,items};
+    }
+    return null;
+  };
+  ProtoLab.applyReusePackage = (state,r,{actor='System'}={}) => {
+    if(!state||!r)return null;const pack=ProtoLab.ensureReusePackage(r),route=(state.routes||[]).find(x=>x.requestId===r.id);
+    if(route&&route.confirmed!==true){
+      if(ProtoLab.routeStandardReady(state,route)){route.confirmed=true;route.proposed=false;route.assessedAt=ProtoLab.now();route.source={...(route.source||{}),mode:'product-standard-reused'};route.steps.forEach(s=>{if(s.status==='Proposed')s.status='Planned'});pack.route={mode:'reused',source:'Product standard route',revision:route.revision||'A'};}
+      else {const src=ProtoLab.findReusableRouteSource(state,r);if(src){route.steps=ProtoLab.deepClone(src.route.steps).map((s,i)=>({...s,id:ProtoLab.uid('STEP'),order:i+1,status:'Planned',readiness:'pending',planned:null,executionRuns:[]}));route.confirmed=true;route.proposed=false;route.source={mode:'previous-reused',requestId:src.request.id,revision:src.route.revision};pack.route={mode:'reused',source:`${src.request.id} released route`,revision:src.route.revision||'A'};}}
+    }else if(route?.confirmed===true&&ProtoLab.routeStandardReady(state,route)&&pack.route.mode==='none')pack.route={mode:'reused',source:'Released confirmed route',revision:route.revision||'A'};
+    const cp=ProtoLab.findReusableControlPlan(state,r);if(cp&&!r.controlPlanId){r.controlPlanId=cp.id;cp.requestIds=Array.isArray(cp.requestIds)?cp.requestIds:[];if(!cp.requestIds.includes(r.id))cp.requestIds.push(r.id);pack.controlPlan={mode:'reused',baselineId:cp.id,revision:cp.revision,source:cp.name};}else if(cp&&r.controlPlanId===cp.id&&pack.controlPlan.mode==='none')pack.controlPlan={mode:'reused',baselineId:cp.id,revision:cp.revision,source:cp.name};
+    const currentRisks=(state.pfmea||[]).filter(x=>x.requestId===r.id);if(!currentRisks.length){const src=ProtoLab.findReusablePfmeaSource(state,r);if(src){const srcRoute=(state.routes||[]).find(x=>x.requestId===src.request.id),dstRoute=(state.routes||[]).find(x=>x.requestId===r.id);for(const old of src.items){const oldStep=srcRoute?.steps?.find(x=>x.id===old.stepId);const dstStep=dstRoute?.steps?.find(x=>x.processId===oldStep?.processId)||dstRoute?.steps?.[Math.max(0,(oldStep?.order||1)-1)];const clone=ProtoLab.deepClone(old);clone.id=ProtoLab.uid('RISK');clone.requestId=r.id;clone.stepId=dstStep?.id||null;clone.reuseSourceRequestId=src.request.id;clone.reuseSourceRiskId=old.id;clone.lockedBaseline=true;(state.pfmea||[]).push(clone);}pack.pfmea={mode:'reused',sourceRequestId:src.request.id,count:src.items.length};}}
+    else if(pack.pfmea.mode==='none'&&currentRisks.every(x=>x.status!=='Open high risk'))pack.pfmea={mode:'reused',sourceRequestId:currentRisks[0]?.reuseSourceRequestId||r.id,count:currentRisks.length};
+    pack.appliedAt=pack.appliedAt||ProtoLab.now();pack.appliedBy=pack.appliedBy||actor;return pack;
+  };
+  ProtoLab.buildChangeReviewRoles = r => ['Process Engineer','Quality Engineer',...(r?.productSafety?['Product Safety Representative']:[])];
+  ProtoLab.ensureBuildChangeApprovals = (state,r,area,reason='Build-specific change to reused controlled information') => {
+    state.approvals=state.approvals||[];const roles=ProtoLab.buildChangeReviewRoles(r),roleIds={'Process Engineer':'process_engineer','Quality Engineer':'quality','Product Safety Representative':'product_safety'};
+    for(const role of roles){let a=state.approvals.find(x=>x.requestId===r.id&&x.stage==='build-change'&&x.changeArea===area&&x.role===role&&x.status!=='Superseded');if(!a){const person=(state.users||[]).find(u=>u.role===roleIds[role])?.name||role;a={id:ProtoLab.uid('APR'),requestId:r.id,type:`Build-specific ${area} review`,role,roleId:roleIds[role],person,status:'Pending',timestamp:null,stage:'build-change',changeArea:area,comment:reason};state.approvals.push(a);}}
+    return state.approvals.filter(x=>x.requestId===r.id&&x.stage==='build-change'&&x.changeArea===area&&x.status!=='Superseded');
+  };
+  ProtoLab.buildChangeApprovalsComplete = (state,r,area=null) => {
+    const rows=(state.approvals||[]).filter(x=>x.requestId===r.id&&x.stage==='build-change'&&x.status!=='Superseded'&&(!area||x.changeArea===area));return !rows.length||rows.every(x=>x.status==='Approved');
+  };
+  ProtoLab.markBuildSpecificDelta = (state,r,area,reason) => {
+    if(!state||!r)return;const pack=ProtoLab.ensureReusePackage(r);const asset=area==='Control Plan'?'controlPlan':area==='PFMEA'?'pfmea':'route';if(pack[asset])pack[asset].mode='modified';
+    if(!pack.deltas.some(x=>x.area===area&&x.status==='Open'))pack.deltas.push({id:ProtoLab.uid('DELTA'),area,reason:reason||'Build-specific adaptation',status:'Open',createdAt:ProtoLab.now(),createdBy:state.identity?.name||'System'});
+    ProtoLab.ensureBuildChangeApprovals(state,r,area,reason);ProtoLab.audit(state,'Reused baseline changed for current build','Request',r.id,'Approved/released baseline reused',`Build-specific ${area}`,reason||'Controlled build-specific adaptation');
+  };
+  ProtoLab.beginBuildSpecificControlPlanRevision = (state,r,cp,reason='Build-specific Control Plan adaptation') => {
+    if(!state||!r||!cp)throw new Error('Request and Control Plan are required.');if(cp.buildSpecific&&cp.buildRequestId===r.id)return cp;
+    const clone=ProtoLab.deepClone(cp);clone.id=ProtoLab.uid('CP');clone.revision=`${cp.revision}.B1`;clone.status='Draft';clone.approvedBy=null;clone.approvedAt=null;clone.baselineId=cp.id;clone.baselineRevision=cp.revision;clone.buildSpecific=true;clone.buildRequestId=r.id;clone.requestIds=[r.id];clone.name=`${cp.name} · ${r.id} adaptation`;state.controlPlans.push(clone);r.controlPlanId=clone.id;const pack=ProtoLab.ensureReusePackage(r);pack.controlPlan={mode:'modified',baselineId:cp.id,revision:cp.revision,buildSpecificId:clone.id};ProtoLab.markBuildSpecificDelta(state,r,'Control Plan',reason);return clone;
+  };
   ProtoLab.DEFAULT_BOMS = {
     'PRD-001':[['BPS-HSG-3200','Pressure sensor housing','D'],['BPS-PCB-3200','Pressure sensor PCB','C'],['BPS-CON-3200','Connector insert','B']],
     'PRD-002':[['BCS-HSG-0810','Current sensor housing','B'],['BCS-PCB-0810','Current sensor PCB','B'],['BCS-BAR-0810','Busbar assembly','A']],

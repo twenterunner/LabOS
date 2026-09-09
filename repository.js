@@ -169,6 +169,12 @@ class MigrationService{
     });
     s.dataVersion=wasDemo?'2026.09-demo-23':(s.dataVersion||'migrated');s.schemaVersion=20;continue;
    }
+   if(s.schemaVersion===20){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    (s.requests||[]).forEach(r=>{P.ensureReusePackage(r);const route=(s.routes||[]).find(x=>x.requestId===r.id),cp=(s.controlPlans||[]).find(x=>x.id===r.controlPlanId),risks=(s.pfmea||[]).filter(x=>x.requestId===r.id);if(route?.confirmed&&P.routeStandardReady(s,route)&&r.reusePackage.route.mode==='none')r.reusePackage.route={mode:'reused',source:'Existing released route',revision:route.revision||'A'};if(cp?.status==='Approved'&&!cp.buildSpecific&&r.reusePackage.controlPlan.mode==='none')r.reusePackage.controlPlan={mode:'reused',baselineId:cp.id,revision:cp.revision,source:cp.name};if(risks.length&&risks.every(x=>x.status!=='Open high risk')&&r.reusePackage.pfmea.mode==='none')r.reusePackage.pfmea={mode:'reused',sourceRequestId:r.id,count:risks.length};});
+    P.audit(s,'Reuse-first workflow enabled','System','Controlled information','Repeat setup per build','Approved route / Control Plan / PFMEA inheritance with delta reviews','REV 1.0.35 reuse-first migration');
+    s.dataVersion=wasDemo?'2026.09-demo-24':(s.dataVersion||'migrated');s.schemaVersion=21;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

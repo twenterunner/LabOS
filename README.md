@@ -1,7 +1,10 @@
+## REV 1.0.35 — Reuse-first controlled workflow + navigation reliability
 
-## REV 1.0.34 — Unified Build Report & editable characterisation
+LabOS now treats previously approved/released information as a reusable baseline rather than forcing each prototype build through the complete document-setup cycle again. A compatible new request automatically inherits the released process route/work instructions, an approved Control Plan, controlled PFMEA knowledge and released standard test definitions where available. Unchanged inherited assets need no repeat setup or build-level reapproval.
 
-LabOS now produces **one controlled Build Report per prototype build**. The Build Report contains the requested tests/characterisation, process flow, Control Plan, PFMEA linkage, critical/safety-characteristic distribution plots, anomaly highlighting, Cpk where statistically valid, raw data, photos, genealogy, deviations/yield and approval. Characterisation results can be corrected through a controlled edit action and through a CSV round-trip worksheet. The former separate Test Report is retired; legacy links open the Build Report. The redundant duplicate Build Readiness summary card has been removed from the workspace, while the guided Build Readiness workflow remains the authoritative readiness control. Change-impact records now render as readable field-by-field changes rather than raw JSON.
+If the current build genuinely differs, **Change for this build** creates a build-specific delta. The master baseline remains unchanged for other projects; Process Engineering and Quality review the delta, with Product Safety included when applicable. An approved Control Plan is cloned into a build-specific Draft rather than superseding the approved master.
+
+Navigation has also been hardened: sidebar/navigation and request-opening controls now use one permanent delegated handler that survives repeated UI re-renders, and navigation clears stale modal overlays. This addresses menu buttons becoming unresponsive after extended use.
 
 REV 1.0.32 — Quality Workbench + best-in-class Build Report + Resource Assurance engine
 
@@ -352,7 +355,7 @@ The lab dashboard is now the near-term operating control room. It defaults to la
 
 The Quality / Deviations status page is replaced by an actionable Quality Workbench. Quality can create controlled cases, manage release holds, capture containment/root cause/objective evidence, disposition parts, assign and close corrective/rework/retest actions with owner and due date, verify effectiveness and close. Separate views manage the Control Plan approval queue, PFMEA risk priorities, root-cause trends/continuous-improvement proposals and closed case history. The legacy workspace and Action Centre quality shortcuts now open the same complete controlled quality-case workflow.
 
-## REV 1.0.34 — print-safe controlled Build Report
+## REV 1.0.35 — print-safe controlled Build Report
 
 - The Build Report viewport is width-contained on phones; only genuinely wide evidence tables scroll horizontally inside their own wrappers.
 - Mobile process-flow content is reflowed vertically and report cards/photos adapt to the available width instead of widening the whole report.
