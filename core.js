@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.28-poc';
-  ProtoLab.SCHEMA_VERSION = 14;
+  ProtoLab.VERSION = '1.0.29-poc';
+  ProtoLab.SCHEMA_VERSION = 15;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -92,6 +92,34 @@
     sample.evidencePhotos.forEach(x=>{x.id=x.id||ProtoLab.uid('PHOTO');x.caption=x.caption||x.fileName||'Sample photo';x.description=x.description||'';x.includeInBuildReport=x.includeInBuildReport!==false;x.capturedAt=x.capturedAt||ProtoLab.now();x.capturedBy=x.capturedBy||'';});
     return sample;
   };
+  ProtoLab.captureRequirementKey = value => String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||ProtoLab.uid('REQ').toLowerCase();
+  ProtoLab.parseCaptureRequirementLines = (text,prefix='REQ') => String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map((line,i)=>{
+    const bits=line.split('|').map(x=>x.trim()),label=bits[0]||`Field ${i+1}`,unit=bits[1]||'';return {id:`${prefix}-${ProtoLab.captureRequirementKey(label)}`,label,unit,required:true,includeInBuildReport:true};
+  });
+  ProtoLab.ensureCapturePlan = (state,r) => {
+    if(!r)return null;
+    r.batchDataRequirements=Array.isArray(r.batchDataRequirements)?r.batchDataRequirements:[];
+    r.sampleDataRequirements=Array.isArray(r.sampleDataRequirements)?r.sampleDataRequirements:[];
+    r.photoEvidenceRequirements=Array.isArray(r.photoEvidenceRequirements)?r.photoEvidenceRequirements:[];
+    const norm=(arr,prefix)=>arr.map((x,i)=>typeof x==='string'?{id:`${prefix}-${ProtoLab.captureRequirementKey(x)}`,label:x,unit:'',required:true,includeInBuildReport:true}:{id:x.id||`${prefix}-${ProtoLab.captureRequirementKey(x.label||i)}`,label:x.label||`Field ${i+1}`,unit:x.unit||'',required:x.required!==false,includeInBuildReport:x.includeInBuildReport!==false});
+    r.batchDataRequirements=norm(r.batchDataRequirements,'BATCH');r.sampleDataRequirements=norm(r.sampleDataRequirements,'SAMPLE');r.photoEvidenceRequirements=norm(r.photoEvidenceRequirements,'PHOTO');
+    r.batchEvidence=r.batchEvidence&&typeof r.batchEvidence==='object'?r.batchEvidence:{description:'',dataFields:[]};r.batchEvidence.dataFields=Array.isArray(r.batchEvidence.dataFields)?r.batchEvidence.dataFields:[];
+    for(const def of r.batchDataRequirements){let row=r.batchEvidence.dataFields.find(x=>x.definitionId===def.id);if(!row){row={id:ProtoLab.uid('BDATA'),definitionId:def.id,label:def.label,value:'',unit:def.unit,description:'',includeInBuildReport:def.includeInBuildReport!==false};r.batchEvidence.dataFields.push(row);}row.label=def.label;row.unit=def.unit;row.required=def.required!==false;}
+    r.capturePlan=r.capturePlan||{revision:1};r.capturePlan.revision=Number(r.capturePlan.revision||1);r.capturePlan.flowdown={buildMaturity:r.maturity||'',configuration:r.configuration||'',bomRef:r.bomRef||'',materialSource:ProtoLab.normaliseMaterialSource(r.materialOwnership),productSafety:!!r.productSafety,characterisation:[...(r.characterisation||[])],specialCharacteristics:[...(r.specialCharacteristics||[])]};r.capturePlan.batchFields=ProtoLab.deepClone(r.batchDataRequirements);r.capturePlan.sampleFields=ProtoLab.deepClone(r.sampleDataRequirements);r.capturePlan.photoSlots=ProtoLab.deepClone(r.photoEvidenceRequirements);r.capturePlan.updatedAt=r.capturePlan.updatedAt||ProtoLab.now();
+    return r.capturePlan;
+  };
+  ProtoLab.ensureSampleCaptureFields = (sample,r) => {
+    ProtoLab.ensureSampleEvidence(sample);ProtoLab.ensureCapturePlan(null,r);
+    const active=new Set((r.sampleDataRequirements||[]).map(x=>x.id));
+    for(const def of r.sampleDataRequirements||[]){let row=sample.dataFields.find(x=>x.definitionId===def.id);if(!row){row={id:ProtoLab.uid('SDATA'),definitionId:def.id,label:def.label,value:'',unit:def.unit,description:'',includeInBuildReport:def.includeInBuildReport!==false,required:def.required!==false};sample.dataFields.push(row);}row.label=def.label;row.unit=def.unit;row.required=def.required!==false;row.definitionActive=true;}
+    sample.dataFields.forEach(x=>{if(x.definitionId&&!active.has(x.definitionId))x.definitionActive=false;});return sample;
+  };
+  ProtoLab.syncRequestFlowdown = (state,r,{incrementRevision=false}={}) => {
+    if(!state||!r)return null;ProtoLab.ensureTestRequirements(state,r);const plan=ProtoLab.ensureCapturePlan(state,r);if(incrementRevision){plan.revision=Number(plan.revision||1)+1;plan.updatedAt=ProtoLab.now();}
+    const route=(state.routes||[]).find(x=>x.requestId===r.id);if(route){route.flowdown=ProtoLab.deepClone({revision:plan.revision,...plan.flowdown,batchFields:plan.batchFields,sampleFields:plan.sampleFields,photoSlots:plan.photoSlots});route.flowdown.updatedAt=ProtoLab.now();}
+    (state.serials||[]).filter(x=>x.requestId===r.id).forEach(sample=>{sample.configuration=r.configuration||sample.configuration||'';ProtoLab.ensureSampleCaptureFields(sample,r);});
+    return plan;
+  };
   ProtoLab.nextReportRevision = rev => {
     const src=String(rev||'A').toUpperCase().replace(/[^A-Z]/g,'')||'A';let n=0;for(const ch of src)n=n*26+(ch.charCodeAt(0)-64);n++;let out='';while(n){n--;out=String.fromCharCode(65+n%26)+out;n=Math.floor(n/26);}return out;
   };
@@ -161,7 +189,7 @@
   ProtoLab.ensurePlanningModel = state => {
     state.standardTests=state.standardTests||[]; state.buildHistory=state.buildHistory||[]; state.competencies=state.competencies||[]; state.planningEvents=state.planningEvents||[];
     (state.requests||[]).forEach(r=>{
-      r.materialOwnership=ProtoLab.normaliseMaterialSource(r.materialOwnership);ProtoLab.ensureAssuranceProfile(r);ProtoLab.ensureMaterialRequirements(state,r);ProtoLab.ensureTestRequirements(state,r);
+      r.materialOwnership=ProtoLab.normaliseMaterialSource(r.materialOwnership);ProtoLab.ensureAssuranceProfile(r);ProtoLab.ensureMaterialRequirements(state,r);ProtoLab.ensureTestRequirements(state,r);ProtoLab.ensureCapturePlan(state,r);
       r.originalRequestedDate=r.originalRequestedDate||r.requiredDate||null;
       r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];
       if(!r.originalCommitmentDate&&r.triage?.status==='Committed'&&r.triage?.forecastDate){r.originalCommitmentDate=r.triage.forecastDate;r.currentCommitmentDate=r.triage.forecastDate;r.commitmentHistory.push({seq:1,type:'initial',at:r.triage.assessedAt||ProtoLab.now(),oldDate:null,newDate:r.triage.forecastDate,deltaDays:0,cumulativeDays:0,reasonCategory:'Initial commitment',reason:'Migrated from committed planning forecast.',eventId:null,actor:r.owner||'Lab Planner'});}

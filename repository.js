@@ -113,9 +113,15 @@ class MigrationService{
     P.repairDuplicateSamples(s);
     s.dataVersion=wasDemo?'2026.09-demo-17':(s.dataVersion||'migrated');s.schemaVersion=14;continue;
    }
+   if(s.schemaVersion===14){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);
+    if(wasDemo)(s.requests||[]).forEach(r=>{if(!(r.batchDataRequirements||[]).length)r.batchDataRequirements=[{id:'BATCH-fixture-setup-id',label:'Fixture / setup ID',unit:'',required:true,includeInBuildReport:true},{id:'BATCH-batch-build-observation',label:'Batch build observation',unit:'',required:false,includeInBuildReport:true}];if(!(r.sampleDataRequirements||[]).length)r.sampleDataRequirements=[{id:'SAMPLE-final-mass',label:'Final mass',unit:'g',required:false,includeInBuildReport:true},{id:'SAMPLE-visual-condition',label:'Visual condition',unit:'',required:true,includeInBuildReport:true}];if(!(r.photoEvidenceRequirements||[]).length)r.photoEvidenceRequirements=[{id:'PHOTO-overall-sample',label:'Overall sample',unit:'',required:true,includeInBuildReport:true},{id:'PHOTO-label-serial-identification',label:'Label / serial identification',unit:'',required:false,includeInBuildReport:true},...(r.productSafety?[{id:'PHOTO-special-characteristic-evidence',label:'Special-characteristic evidence',unit:'',required:true,includeInBuildReport:true}]:[])]});
+    (s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));
+    s.dataVersion=wasDemo?'2026.09-demo-18':(s.dataVersion||'migrated');s.schemaVersion=15;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
 class BrowserDocumentStore{download(name,text,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);} readFile(file){return file.text();}}

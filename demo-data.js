@@ -80,6 +80,22 @@ const requests=requestScenarios.map((s,i)=>{
  originalCommitmentDate:['CLOSED','DELIVERED'].includes(status)?d(dueOffset-2):null,currentCommitmentDate:['CLOSED','DELIVERED'].includes(status)?d(dueOffset):null,
  commitmentHistory:['CLOSED','DELIVERED'].includes(status)?[{id:`COM-${i+1}-0`,type:'Original commitment',from:null,to:d(dueOffset-2),daysMoved:0,reasonCategory:'Initial commitment',reason:'Initial lab commitment',timestamp:dt(dueOffset-18),actor:'Mila Jansen'},{id:`COM-${i+1}-1`,type:'Replan',from:d(dueOffset-2),to:d(dueOffset),daysMoved:2,reasonCategory:i===16?'Equipment outage':i===17?'Material delay':'Capacity / congestion',reason:i===16?'Correlation bench outage required a two-day move.':i===17?'Incoming material arrived later than planned.':'Portfolio load required a controlled two-day move.',timestamp:dt(dueOffset-10),actor:'Mila Jansen'}]:[]};
 });
+
+requests.forEach((r,i)=>{
+  r.batchDataRequirements=[
+    {id:'BATCH-SETUP-ID',label:'Fixture / setup ID',unit:'',required:true,includeInBuildReport:true},
+    {id:'BATCH-BUILD-OBS',label:'Batch build observation',unit:'',required:false,includeInBuildReport:true}
+  ];
+  r.sampleDataRequirements=[
+    {id:'SAMPLE-FINAL-MASS',label:'Final mass',unit:'g',required:false,includeInBuildReport:true},
+    {id:'SAMPLE-VISUAL',label:'Visual condition',unit:'',required:true,includeInBuildReport:true}
+  ];
+  r.photoEvidenceRequirements=[
+    {id:'PHOTO-OVERALL',label:'Overall sample',unit:'',required:true,includeInBuildReport:true},
+    {id:'PHOTO-LABEL',label:'Label / serial identification',unit:'',required:false,includeInBuildReport:true}
+  ];
+  if(r.productSafety)r.photoEvidenceRequirements.push({id:'PHOTO-SAFETY',label:'Special-characteristic evidence',unit:'',required:true,includeInBuildReport:true});
+});
 const routeTemplates=[0,1,2,5,9,13,14,16,19,20,21];
 const routes=requests.map((r,i)=>({id:r.routeId,requestId:r.id,revision:'A',steps:routeTemplates.map((idx,j)=>({id:`${r.id}-S${j+1}`,order:j+1,processId:processes[idx].id,name:processes[idx].name,processRevision:processes[idx].revision,type:j===3&&i===1?'new':j===4&&i===2?'modified':'standard',owner:j%3===0?'Liam Smit':j%3===1?'Noah Visser':'Daan Mulder',planned:dt(-1+j,8+(j%8)),status:['CLOSED','DELIVERED'].includes(r.status)?'Complete':j<Math.max(0,P.GATES.indexOf(r.status)-5)?'Complete':j===Math.max(0,P.GATES.indexOf(r.status)-5)?'In progress':'Planned',readiness:(i===6&&j===6)?'blocked':(i===7&&j===7)?'blocked':j<2?'ready':'pending',parallelGroup:(j===6||j===7)&&i%4===0?'P1':null,optional:j===10&&i%2===0})),reworkLoops:i===10?[{fromStep:9,toStep:6,reason:'Crimp pull-force failure',status:'Completed'}]:[]}));
 // Force development candidates for scenario 2
@@ -128,7 +144,7 @@ products.forEach((product,pi)=>{
  }
 });
 P.createDemoState=function(){
- const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-17',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,competencies,standardTests,buildHistory,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false,demoDataset:true}});
+ const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-18',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,competencies,standardTests,buildHistory,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false,demoDataset:true}});
  P.ensureMaterialModel(state);
  const demoConsumables={
   'PRD-001':[{id:'BOM-PRD-001-C1',partNumber:'CONS-IPA',description:'Cleaning solvent allocation',revision:'A',qtyPerUnit:5,unit:'mL',kind:'consumable',unitCost:.02,wastePct:10,basis:'unit'}],
@@ -136,7 +152,7 @@ P.createDemoState=function(){
   'PRD-005':[{id:'BOM-PRD-005-C1',partNumber:'CONS-POT-02',description:'Potting compound',revision:'B',qtyPerUnit:18,unit:'g',kind:'consumable',unitCost:.07,wastePct:8,basis:'unit'}]
  };
  Object.entries(demoConsumables).forEach(([pid,items])=>{const p=state.products.find(x=>x.id===pid);if(p&&!p.bom.some(x=>String(x.kind||'').toLowerCase()==='consumable'))p.bom.push(...items);});
- P.ensurePlanningModel(state);P.ensureEnterpriseModel(state);
+ P.ensurePlanningModel(state);P.ensureEnterpriseModel(state);state.requests.forEach(r=>P.syncRequestFlowdown(state,r));
  const demoCostReq=state.requests.find(r=>r.productId==='PRD-005');if(demoCostReq){demoCostReq.consumablesEnabled=true;demoCostReq.buildConsumables=[{id:'BC-DEMO-01',description:'One-off masking / protection',qty:1,basis:'build',unit:'build',unitCost:9.5,wastePct:0}];}
  state.requests.forEach((r,i)=>{
    r.materialOwnership=P.normaliseMaterialSource(r.materialOwnership);

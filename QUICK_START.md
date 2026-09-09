@@ -1,8 +1,21 @@
-## REV 1.0.28 — persisted-browser archive repair
+
+REV 1.0.29 — Controlled request flow-down & batch capture
+-----------------------------------------------------------
+- Request-defined build maturity, configuration, BOM/material source, characterisation and special characteristics now flow into the build route/evidence plan.
+- Requests can define required batch data, fixed sample-data columns and controlled photo-evidence slots.
+- Sample fields flowed down from the request cannot be renamed independently per sample.
+- Added Batch Data Worksheet with common batch values, sample-by-sample table, CSV template and CSV import.
+- Added Photo Matrix for consistent required photo evidence across all samples.
+- Added Batch Characterisation result grid plus full sample x test CSV template/import workflow.
+- Route Traveller and controlled reports show the flow-down; Build Report also includes common batch evidence.
+- Applied the approved LabOS Concept 3 identity to the application header, PWA icons/favicons and report headers.
+- Schema 15 migrates existing datasets in place and preserves the existing archive/history.
+
+## REV 1.0.29 — persisted-browser archive repair
 
 Schema 14 re-runs archived-demo installation for already-upgraded browser data. Existing active work is preserved; three completed demo builds are added/normalized under Prototype Requests → Archived. A visible fallback button is shown when a recognized demo still has zero archived builds.
 
-# ProtoLab OS — Quick Start — REV 1.0.28
+# ProtoLab OS — Quick Start — REV 1.0.29
 
 ## What changed in REV 1.0.25
 
