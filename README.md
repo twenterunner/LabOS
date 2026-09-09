@@ -1,3 +1,7 @@
+## REV 1.0.36 — Fixed Guided Build Workflow cockpit
+
+The request workspace now uses a stable, role-aware operating shell. The Guided Build Workflow remains visible while users work through a build: full sticky checklist on desktop/tablet and a compact sticky step rail on mobile. Build identity, current step/owner, Edit, Approval and Next Step controls stay in fixed positions while only the working content below changes. Status semantics are normalized everywhere in the guided workflow: green ✓ = done, yellow ● = ongoing, red ✕ = blocked/late, grey ● = future/open. Automatic mobile scroll-to-section behavior was removed so changing steps no longer jumps the user up and down the page.
+
 ## REV 1.0.35 — Reuse-first controlled workflow + navigation reliability
 
 LabOS now treats previously approved/released information as a reusable baseline rather than forcing each prototype build through the complete document-setup cycle again. A compatible new request automatically inherits the released process route/work instructions, an approved Control Plan, controlled PFMEA knowledge and released standard test definitions where available. Unchanged inherited assets need no repeat setup or build-level reapproval.

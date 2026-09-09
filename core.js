@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.35-poc';
+  ProtoLab.VERSION = '1.0.36-poc';
   ProtoLab.SCHEMA_VERSION = 21;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -182,7 +182,7 @@
     return false;
   };
 
-  // REV 1.0.35 · reuse-first governance. Approved standard information is inherited; only build-specific deltas trigger review.
+  // REV 1.0.36 · reuse-first governance. Approved standard information is inherited; only build-specific deltas trigger review.
   ProtoLab.ensureReusePackage = r => {
     r.reusePackage=r.reusePackage&&typeof r.reusePackage==='object'?r.reusePackage:{};
     r.reusePackage.route=r.reusePackage.route||{mode:'none'};
