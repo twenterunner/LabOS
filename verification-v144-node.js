@@ -1,0 +1,12 @@
+const assert=require('assert'),fs=require('fs'),vm=require('vm');global.window=global;vm.runInThisContext(fs.readFileSync('core.js','utf8'));vm.runInThisContext(fs.readFileSync('demo-data.js','utf8'));vm.runInThisContext(fs.readFileSync('services.js','utf8'));const app=fs.readFileSync('app.js','utf8'),css=fs.readFileSync('styles.css','utf8'),index=fs.readFileSync('index.html','utf8');let ok=0,fail=0;function t(n,f){try{f();console.log('PASS',n);ok++}catch(e){console.error('FAIL',n,e.message);fail++}}
+t('Version is 1.0.44 schema 21',()=>{assert.equal(ProtoLab.VERSION,'1.0.44-poc');assert.equal(ProtoLab.SCHEMA_VERSION,21)});
+t('Dashboard exposes Accept Reject and Defer decisions',()=>{assert(app.includes('data-improvement-decision'));assert(app.includes('|Accepted'));assert(app.includes('|Rejected'));assert(app.includes('|Deferred'))});
+t('Improvement decisions are persisted and audited',()=>{assert(app.includes('improvementDecisions'));assert(app.includes('Improvement proposal ${decision.toLowerCase()}'));assert(app.includes('Decision rationale / evidence'))});
+t('Accepted improvement becomes tracked action',()=>{assert(app.includes('improvementProposalId:id'));assert(app.includes('Improvement · ${x.type}'));assert(app.includes('planningNeedsReview=true'))});
+t('Improvement generator suppresses accepted/rejected/deferred signals appropriately',()=>{const s=ProtoLab.createDemoState();const svc=new ProtoLab.ImprovementService();let out=svc.generate(s);assert(out.length>0);const x=out[0];s.improvementDecisions=[{proposalId:x.id,decision:'Accepted',at:ProtoLab.now()}];out=svc.generate(s);assert(!out.some(y=>y.id===x.id))});
+t('Control Plan definition blocker exposes direct resolver',()=>{assert(app.includes('data-cp-definition-resolver'));assert(app.includes('Complete missing controlled definition'));assert(app.includes('function controlPlanDefinitionResolver'))});
+t('Guided approval dock routes definition blockers directly',()=>assert(app.includes('Complete Control Plan definition')));
+t('Previous REV 1.0.43 features remain: audit, capability plots, batch-first capture',()=>{assert(app.includes('function renderAuditReadiness()'));assert(app.includes('cap-hist-bar'));assert(app.includes("captureLevel:x.captureLevel||x.scope||'batch'"))});
+t('Dashboard actionable cards are responsive',()=>assert(css.includes('.daily-opportunity-actions')));
+t('Versioned assets use 1.0.44',()=>{assert(index.includes('REV 1.0.44'));assert(index.includes('app.js?v=1.0.44'))});
+console.log(`\n${ok} passed / ${fail} failed`);if(fail)process.exit(1);

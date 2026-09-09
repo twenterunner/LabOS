@@ -1,11 +1,7 @@
-## REV 1.0.42 · Control Plan approval
+## REV 1.0.44 · Quick Start
 
-For a build-specific Control Plan adaptation:
-
-1. Complete the Process Engineering / Quality / applicable Product Safety **change reviews**.
-2. The Control Plan remains **Draft** until its separate **Formal Control Plan approval** is completed.
-3. If the current authorised Quality Engineer is independent of the Control Plan owner, choose **Approve Control Plan**.
-4. If the current user owns/authored the Control Plan, LabOS shows **Switch to independent approver** instead of allowing self-approval.
-5. After formal approval, the Control Plan becomes **Approved** and the Guided Build Workflow control step can turn green (subject to any Product Safety approval that also applies).
-
-Schema 21 is unchanged; existing browser data migrates without reset.
+1. In Build Execution, use **Batch / sample worksheet**. Enter setup/common process parameters once under **Batch setup / common data**.
+2. Use per-sample columns only for values that genuinely vary by unit.
+3. Open a Build Report to review the improved capability histogram/Cpk presentation and cleaner Control Plan typography.
+4. Open **Audit Readiness** from Governance. Select **IATF 16949** or **ISO/IEC 17025**, review potential major/minor gaps, then download findings or the generated laboratory scope CSV.
+5. Replace demo scope metadata with organisation-approved ranges, methods and uncertainty/capability statements before using it as formal audit evidence.

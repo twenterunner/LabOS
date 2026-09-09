@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.42-poc';
+  ProtoLab.VERSION = '1.0.44-poc';
   ProtoLab.SCHEMA_VERSION = 21;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -41,8 +41,8 @@
   ProtoLab.PERMISSIONS = {
     engineering_requester:['request:create','request:view','product:view','delivery:ack','report:view'], engineering_lead:['request:view','request:clarify','request:approve','approval:perform','product:view','product:manage','report:view'],
     lab_planner:['request:view','triage','plan','route:edit','materials:allocate','materials:receive','product:view','report:view','improvement:review'], process_engineer:['request:view','route:edit','process:develop','process:release','pfmea:edit','workinstruction:edit','product:view','report:view'],
-    technician:['request:view','execution:run','evidence:add','measurement:add','report:view'], quality:['request:view','controlplan:edit','controlplan:approve','quality:disposition','release:review','approval:perform','report:approve'],
-    metrology:['request:view','equipment:manage','measurement:review','calibration:manage','maintenance:manage'], product_safety:['request:view','productsafety:approve','approval:perform'], lab_manager:['request:view','plan','process:develop','product:view','planning:standards','finance:manage','skills:manage','equipment:manage','calibration:manage','maintenance:manage','improvement:review','priority:change','override:approve','release:approve','approval:perform','dashboard:management'],
+    technician:['request:view','execution:run','evidence:add','measurement:add','report:view'], quality:['request:view','controlplan:edit','controlplan:approve','quality:disposition','release:review','approval:perform','report:approve','audit:view'],
+    metrology:['request:view','equipment:manage','measurement:review','calibration:manage','maintenance:manage'], product_safety:['request:view','productsafety:approve','approval:perform'], lab_manager:['request:view','plan','process:develop','product:view','planning:standards','finance:manage','skills:manage','equipment:manage','calibration:manage','maintenance:manage','improvement:review','priority:change','override:approve','release:approve','approval:perform','dashboard:management','audit:view'],
     approver:['request:view','approval:perform','controlplan:approve','report:view'], auditor:['request:view','audit:view','report:view'], administrator:['*']
   };
   ProtoLab.can = (role,perm) => { const p=ProtoLab.PERMISSIONS[role]||[]; return p.includes('*')||p.includes(perm); };

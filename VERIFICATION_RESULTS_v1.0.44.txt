@@ -1,0 +1,167 @@
+LabOS REV 1.0.44 verification
+Wed Sep  9 18:41:50 UTC 2026
+
+===== verification-node.js =====
+PASS | Demo state contains 18 prototype requests
+PASS | Demo state contains 25+ process definitions
+PASS | Demo state contains 40+ serialized units
+PASS | Serial numbers are unique
+PASS | Initial seeded state passes implemented invariants
+PASS | Request creation remains Draft and adds audit
+PASS | Request submission requires mandatory evidence fields
+PASS | AUTO-PLAN assigns equipment and staff and preserves route order
+PASS | Readiness identifies seeded blocker scenario
+PASS | Controlled override rejects unauthorised role
+PASS | Control Plan approved revision cannot be silently revised in place
+PASS | Serial generation creates unique traceable serials
+PASS | Quality release is blocked by unresolved release hold
+PASS | Deviation cannot close while mandatory action remains open
+PASS | Measurement limit evaluation detects fail
+PASS | Process fit assessment distinguishes released vs adaptation
+PASS | Planner never assigns equipment with invalid calibration
+PASS | Planner substitutes available qualified staff where preferred person is unavailable
+PASS | Process development cannot release with incomplete gates
+PASS | Completed process development releases reusable process revision
+PASS | Control Plan separation of duties prevents self-approval
+PASS | Independent Control Plan approval records person and timestamp
+PASS | Approver / Reviewer has explicit Control Plan approval permission
+PASS | Control Plan service rejects a role without approval authority
+PASS | Rework seed preserves original process history and explicit loop
+PASS | Failed objective measurement exists with quality hold linkage
+PASS | Delivered serial retains delivery reference
+PASS | Report service assembles serial, measurement and deviation evidence
+PASS | Auditor has view permission but no execution permission
+PASS | Administrator wildcard permission allows configuration actions
+PASS | Demo reset seed is a fresh deep copy
+PASS | Seeded approved Control Plans use independent approver evidence
+PASS | New request receives exact BOM requirements and reuses a released compatible route when available
+PASS | Arbitrary material allocation cannot satisfy an exact BOM requirement
+PASS | Exact part/revision allocations satisfy material readiness
+PASS | AUTO-PLAN creates visible step bookings and a timing triage result
+PASS | AUTO-PLAN respects locked bookings on the same request
+PASS | Limit-only special characteristic can pass Control Plan definition
+PASS | Product-safety request automatically gets a concrete pending approval record
+PASS | Only Engineering supplied and Lab supplied material routes are supported
+PASS | Lab supplied material must be exact-reserved before AUTO-PLAN eligibility
+PASS | Engineering supplied material uses promised arrival as planning input but not Build Readiness
+PASS | AUTO-PLAN leverages reusable released route/test information before previewing timing
+PASS | Standard tests and competency master data are present and used by planning
+PASS | Historical same-product builds refine estimates
+PASS | Closing a build captures learning record once
+
+RESULT: 46 passed, 0 failed
+
+===== verification-ui-node.js =====
+PASS | application ready flag
+PASS | dashboard markup rendered
+PASS | navigation markup rendered
+PASS | role selector populated
+PASS | action count populated
+PASS | modal form interaction does not close modal
+PASS | backdrop tap does not close modal on mobile
+PASS | modal backdrop is not marked as a close control
+PASS | modal close is bound explicitly inside modal root
+PASS | guided checklist replaces horizontal workspace navigation
+PASS | guided checklist rows expose owner and next action
+PASS | Control Plan offers direct independent-approval path
+PASS | visible revision badge is populated
+PASS | workspace is streamlined to ten top-level guided controls
+PASS | lab triage shows timing feasibility and visual build swimlane
+PASS | material allocation is requirement driven and exact revision matched
+PASS | wizard offers only Engineering supplied and Lab supplied material sources
+PASS | AUTO-PLAN provides best-feasible preview while keeping material/process definition as commitment prerequisites
+PASS | standard tests and lab skills are exposed as planning master data
+PASS | planning shows historical learning basis and estimate basis
+PASS | digital traveller records start/complete actual duration
+PASS | Control Plan accepts target or limits as objective specification
+PASS | product safety approval has concrete direct-action workflow
+
+RESULT: 23 passed, 0 failed
+
+===== verification-repository-node.js =====
+PASS | IndexedDB adapter initializes
+PASS | IndexedDB adapter saves and reloads state across repository calls
+PASS | JSON export includes schema metadata
+PASS | JSON import persists compatible state
+PASS | Reset restores seeded demo data
+PASS | Schema 1 data migrates to exact BOM, approvals and proposed route model
+
+RESULT: 6 passed, 0 failed
+
+===== verification-v133-csv-node.js =====
+PASS | CSV worksheet downloads with expected filename
+PASS | CSV worksheet has round-trip measurement id column
+PASS | CSV worksheet contains all 8 samples x 4 requested tests
+PASS | CSV worksheet contains existing values instead of blank template only
+PASS | CSV round-trip updates existing measurement rather than duplicating
+PASS | CSV correction retains edit history
+PASS | CSV correction records new evidence
+PASS | CSV correction changed the seeded value
+
+RESULT: 8 passed, 0 failed
+
+===== verification-v133-edit-node.js =====
+PASS | Manual edit changes captured value
+PASS | Manual edit retains edit history
+PASS | Manual edit records correction evidence
+PASS | Manual edit keeps same measurement id
+
+RESULT: 4 passed, 0 failed
+
+===== verification-v141-node.js =====
+PASS | Release is v1.0.44 schema 21
+PASS | Readiness gate surfaces open items before satisfied items
+PASS | Readiness copy explains that prior work is verified not repeated
+PASS | Execution record and process data are separately labelled
+PASS | Execution record explains automatic timer and duration
+PASS | Execution note is optional rather than duplicate structured data
+PASS | Process data definitions support required and capture level
+PASS | Required process data gates completion
+PASS | Process worksheet distinguishes batch and per-sample fields
+PASS | Control Plan is presented as formal separate evidence
+PASS | Responsive capture purpose layout exists
+PASS | Versioned assets point to v1.0.44
+
+RESULT: 12 passed, 0 failed
+
+===== verification-v142-node.js =====
+PASS | Release is v1.0.44 schema 21
+PASS | Formal approveCp action exists and uses ControlPlanService
+PASS | Guided approval dock uses shared eligibility logic
+PASS | Build workspace separates delta review from formal approval
+PASS | Quality Workbench uses centralized Control Plan approval state
+PASS | Versioned assets point to v1.0.44
+PASS | Separation of duties blocks Control Plan owner self-approval
+PASS | Independent Approver can formally approve build-specific Control Plan
+PASS | Independent Quality Engineer can formally approve when not the owner
+PASS | Build-specific formal approval still requires completed delta reviews
+
+RESULT: 10 passed, 0 failed
+
+===== verification-v143-node.js =====
+PASS Version is 1.0.44 schema 21
+PASS Versioned assets use 1.0.44
+PASS Released process parameters default to batch capture
+PASS Audit Readiness navigation and renderer exist
+PASS Audit supports IATF and ISO17025
+PASS Laboratory scope export exists
+PASS Build report removes standalone PFMEA section
+PASS Capability chart is histogram plus normal curve
+PASS Report typography prevents destructive word breaking
+
+9 passed / 0 failed
+
+===== verification-v144-node.js =====
+PASS Version is 1.0.44 schema 21
+PASS Dashboard exposes Accept Reject and Defer decisions
+PASS Improvement decisions are persisted and audited
+PASS Accepted improvement becomes tracked action
+PASS Improvement generator suppresses accepted/rejected/deferred signals appropriately
+PASS Control Plan definition blocker exposes direct resolver
+PASS Guided approval dock routes definition blockers directly
+PASS Previous REV 1.0.43 features remain: audit, capability plots, batch-first capture
+PASS Dashboard actionable cards are responsive
+PASS Versioned assets use 1.0.44
+
+10 passed / 0 failed
+

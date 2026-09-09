@@ -147,6 +147,22 @@ products.forEach((product,pi)=>{
 P.createDemoState=function(){
  const state=P.deepClone({schemaVersion:P.SCHEMA_VERSION,dataVersion:'2026.09-demo-23',identity:{userId:'U03',name:'Mila Jansen',role:'lab_planner'},users,teams,products,processes,equipment,staff,competencies,standardTests,buildHistory,customers,requests,routes,processDevelopments,controlPlans,pfmea,materials,allocations:[],serials,measurements,deviations,approvals,bookings,actions,auditTrail,lessons,documents:[{id:'DOC-001',requestId:requests[13].id,type:'Prototype Build Report',revision:'A',status:'Approved',owner:'Sofia Bakker',effectiveDate:d(-3),approval:'Nora Dekker',supersedes:null}],settings:{separationOfDuties:true,serialPattern:'{REQUEST}-{NNN}',retentionDefault:'R3',safeLaunchDefault:false,demoDataset:true}});
  P.ensureMaterialModel(state);
+ // REV 1.0.43: illustrative scope metadata so the Audit Readiness / lab-scope feature is demonstrable.
+ const demoScope={
+  'EQ-001':['Laser joining / welding','100–1000 W','1 W','See current calibration / validation record','WI-PROC-006'],
+  'EQ-002':['Laser joining / welding','100–1000 W','1 W','See current calibration / validation record','WI-PROC-006'],
+  'EQ-003':['Helium leak measurement','1e-9–1e-3 mbar·L/s','1e-10 mbar·L/s','See current calibration certificate','Released leak-test method'],
+  'EQ-004':['Pressure calibration / measurement','-1 to 20 bar','0.001 bar','See current calibration certificate','Released pressure-calibration method'],
+  'EQ-005':['Torque application / verification','0.1–20 N·m','0.01 N·m','See current calibration certificate','Controlled torque work instruction'],
+  'EQ-006':['Dimensional measurement','0–500 mm','0.001 mm','See current calibration certificate','CMM dimensional method'],
+  'EQ-007':['Electrical measurement','0–30 V / 0–5 A','0.001 V','See current calibration certificate','Released electrical-test method'],
+  'EQ-008':['Electrical measurement','0–30 V / 0–5 A','0.001 V','See current calibration certificate','Released electrical-test method'],
+  'EQ-009':['Environmental temperature exposure','-40 to 180 °C','0.1 °C','See current calibration certificate','Environmental chamber method'],
+  'EQ-010':['Programming / flashing','Controlled interface / software revision','N/A','N/A – functional process resource','Released programming work instruction'],
+  'EQ-011':['Optical inspection','Up to 50× magnification','1×','See current verification record','Visual / optical inspection method'],
+  'EQ-012':['Potting / dispense process','0.1–100 g dispense','0.1 g','See current verification / calibration record','Released potting work instruction']
+ };
+ (state.equipment||[]).forEach(e=>{const x=demoScope[e.id];if(x&&!e.scopeSpecification){e.scopeSpecification={activity:x[0],range:x[1],resolution:x[2],uncertainty:x[3],method:x[4],note:'Illustrative demo scope — replace with the organisation-approved equipment specification and uncertainty statement.'};}});
  const demoConsumables={
   'PRD-001':[{id:'BOM-PRD-001-C1',partNumber:'CONS-IPA',description:'Cleaning solvent allocation',revision:'A',qtyPerUnit:5,unit:'mL',kind:'consumable',unitCost:.02,wastePct:10,basis:'unit'}],
   'PRD-003':[{id:'BOM-PRD-003-C1',partNumber:'CONS-ADH-01',description:'Engineering adhesive',revision:'A',qtyPerUnit:3.5,unit:'g',kind:'consumable',unitCost:.18,wastePct:12,basis:'unit'}],
