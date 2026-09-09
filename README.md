@@ -1,3 +1,8 @@
+
+## REV 1.0.34 — Unified Build Report & editable characterisation
+
+LabOS now produces **one controlled Build Report per prototype build**. The Build Report contains the requested tests/characterisation, process flow, Control Plan, PFMEA linkage, critical/safety-characteristic distribution plots, anomaly highlighting, Cpk where statistically valid, raw data, photos, genealogy, deviations/yield and approval. Characterisation results can be corrected through a controlled edit action and through a CSV round-trip worksheet. The former separate Test Report is retired; legacy links open the Build Report. The redundant duplicate Build Readiness summary card has been removed from the workspace, while the guided Build Readiness workflow remains the authoritative readiness control. Change-impact records now render as readable field-by-field changes rather than raw JSON.
+
 REV 1.0.32 — Quality Workbench + best-in-class Build Report + Resource Assurance engine
 
 This revision carries forward the REV 1.0.30 comprehensive controlled Build Report and adds a proposal-first calibration, preventive-maintenance and training engine.
@@ -346,3 +351,13 @@ The lab dashboard is now the near-term operating control room. It defaults to la
 ## REV 1.0.32 — Quality Workbench
 
 The Quality / Deviations status page is replaced by an actionable Quality Workbench. Quality can create controlled cases, manage release holds, capture containment/root cause/objective evidence, disposition parts, assign and close corrective/rework/retest actions with owner and due date, verify effectiveness and close. Separate views manage the Control Plan approval queue, PFMEA risk priorities, root-cause trends/continuous-improvement proposals and closed case history. The legacy workspace and Action Centre quality shortcuts now open the same complete controlled quality-case workflow.
+
+## REV 1.0.34 — print-safe controlled Build Report
+
+- The Build Report viewport is width-contained on phones; only genuinely wide evidence tables scroll horizontally inside their own wrappers.
+- Mobile process-flow content is reflowed vertically and report cards/photos adapt to the available width instead of widening the whole report.
+- **Print / save PDF** now opens a dedicated standalone print document rather than printing the fixed scrollable modal. Print CSS removes modal height/overflow limits, uses A4 pagination, repeats table headers, keeps plots/photos within the page, and includes the full evidence appendices.
+- Build Report approval is now explicitly bound to a measurement-evidence version and deterministic measurement fingerprint.
+- Adding or correcting measured evidence increments the evidence set. If the Build Report was FINAL/APPROVED, that approved revision is retained as **Superseded**, the report advances to the next revision, and the approval cycle returns to Draft.
+- Direct measurement edits, batch characterisation edits and CSV round-trip corrections all use the same document-control path. Re-importing or saving unchanged data does not create a needless report revision.
+- The report visibly shows current revision, evidence set, last evidence change and revision history.

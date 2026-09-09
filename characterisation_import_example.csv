@@ -1,3 +1,2 @@
-serial,characteristic,value,unit,lsl,usl,target,method,equipment,calibration,evidence
-P26-0042-001,Calibration offset,0.05,mV,-0.2,0.2,0,Calibration bench,EQ-004,Valid,CSV-DEMO-001
-P26-0042-002,Electrical output,5.01,V,4.8,5.2,5,Electrical test,EQ-007,Valid,CSV-DEMO-002
+measurement_id,sample_number,lab_sample_id,serial_number,test,value,unit,lsl,usl,target,method,equipment,evidence
+,1,,,Functional verification,1,,,,1,Functional verification,,Example result

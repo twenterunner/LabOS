@@ -175,9 +175,9 @@ class ReportService{
    return {r,serials,meas,dev,characteristics:measurementAnalytics(meas),yield:{built:serials.length,tested:tested.length,passedUnits,failedUnits:Math.max(0,tested.length-passedUnits),firstPassYieldPct:tested.length?passedUnits/tested.length*100:null,accepted,buildYieldPct:serials.length?accepted/serials.length*100:null,yieldLoss:Math.max(0,serials.length-accepted),scrap,hold,rework:reworkSerials.size,measurementPass:meas.filter(m=>m.pass!==false&&m.compliant!==false).length,measurementFail:meas.filter(m=>m.pass===false||m.compliant===false).length}};
  }
  build(requestId){
-   const r=this.state.requests.find(x=>x.id===requestId),serials=this.state.serials.filter(s=>s.requestId===requestId),meas=this.state.measurements.filter(m=>m.requestId===requestId),dev=this.state.deviations.filter(d=>d.requestId===requestId),approval=P.ensureBuildReportApproval(this.state,r);
+   const r=this.state.requests.find(x=>x.id===requestId),serials=this.state.serials.filter(s=>s.requestId===requestId),meas=this.state.measurements.filter(m=>m.requestId===requestId),dev=this.state.deviations.filter(d=>d.requestId===requestId),approval=P.ensureBuildReportApproval(this.state,r),fingerprint=P.measurementEvidenceFingerprint(this.state,requestId),approvalStale=approval.status==='Approved'&&!!r.buildReportApprovedMeasurementFingerprint&&r.buildReportApprovedMeasurementFingerprint!==fingerprint,approved=approval.status==='Approved'&&!approvalStale;
    serials.forEach(s=>P.ensureSampleEvidence(s));
-   return {r,serials,meas,dev,approval,approved:approval.status==='Approved',generatedAt:P.now(),approver:approval.status==='Approved'?approval.person:null,testAnalytics:this.testAnalytics(requestId)};
+   return {r,serials,meas,dev,approval,approved,approvalStale,measurementFingerprint:fingerprint,generatedAt:P.now(),approver:approved?approval.person:null,testAnalytics:this.testAnalytics(requestId)};
  }
 }
 P.RequestService=RequestService;P.ProcessService=ProcessService;P.ControlPlanService=ControlPlanService;P.ReadinessService=ReadinessService;P.LearningService=LearningService;P.PlannerService=PlannerService;P.LocalPlannerService=PlannerService;P.QualityService=QualityService;P.SerialService=SerialService;P.ReportService=ReportService;

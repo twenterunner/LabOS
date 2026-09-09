@@ -1,3 +1,8 @@
+
+## REV 1.0.34 — Unified Build Report & editable characterisation
+
+LabOS now produces **one controlled Build Report per prototype build**. The Build Report contains the requested tests/characterisation, process flow, Control Plan, PFMEA linkage, critical/safety-characteristic distribution plots, anomaly highlighting, Cpk where statistically valid, raw data, photos, genealogy, deviations/yield and approval. Characterisation results can be corrected through a controlled edit action and through a CSV round-trip worksheet. The former separate Test Report is retired; legacy links open the Build Report. The redundant duplicate Build Readiness summary card has been removed from the workspace, while the guided Build Readiness workflow remains the authoritative readiness control. Change-impact records now render as readable field-by-field changes rather than raw JSON.
+
 REV 1.0.30 — Best-in-class controlled Build Report
 ---------------------------------------------------
 - Rebuilt the Prototype Build Report as a controlled automotive build dossier with executive disposition, document metadata and independent final approval.

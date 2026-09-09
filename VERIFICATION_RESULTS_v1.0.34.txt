@@ -1,0 +1,30 @@
+LabOS REV 1.0.34 — Verification Results
+=======================================
+
+Exact delivery snapshot verification:
+
+11/11  REV 1.0.34 report-format / print / evidence-control checks
+16/16  Unified-report / Quality / migration checks
+11/11  Resource Assurance checks
+16/16  Instrumented comprehensive Build Report render checks
+4/4    Controlled measurement-edit functional checks
+8/8    Characterisation CSV round-trip functional checks
+46/46  Core domain/regression checks
+6/6    Repository/storage checks
+23/23  UI smoke/regression checks
+31/31  Static/package checks
+5/5    JavaScript syntax checks
+
+TOTAL: 177 passed / 0 failed
+
+Specific controls verified:
+- whole Build Report cannot horizontally pan beyond mobile viewport;
+- wide evidence tables use local horizontal scrolling only;
+- print/save-PDF uses a dedicated standalone full-document view;
+- A4 print CSS removes modal scroll/max-height limits and contains tables, plots and photos;
+- measurement evidence is versioned and fingerprinted;
+- adding/correcting measurement data invalidates current Build Report approval;
+- an approved report becomes Superseded and the next report revision returns to Draft;
+- report revision history and last evidence-change information are rendered;
+- unchanged batch/CSV saves do not cause unnecessary report revision churn;
+- archived pressure DV example retains the comprehensive unified report, 32 specified end results, four critical/safety distributions, Cpk/anomaly analysis and photo evidence.

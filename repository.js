@@ -147,6 +147,28 @@ class MigrationService{
     P.audit(s,'Quality Workbench case model enabled','Quality','Portfolio','Legacy guided quality cards','Controlled action / Control Plan / PFMEA / trend workbench','REV 1.0.32 quality-workbench migration');
     s.dataVersion=wasDemo?'2026.09-demo-21':(s.dataVersion||'migrated');s.schemaVersion=18;continue;
    }
+   if(s.schemaVersion===18){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    // REV 1.0.33: keep customer data untouched, but enrich the controlled archived demo dossier with the unified report's end-characterisation evidence.
+    if(wasDemo&&P.createDemoState){
+      s.settings=s.settings||{};s.settings.demoDataset=true;const seed=P.createDemoState(),src=seed.requests.find(r=>r.title==='Archived pressure DV batch'),dst=(s.requests||[]).find(r=>r.id===src?.id)||s.requests.find(r=>r.title===src?.title);
+      if(src&&dst){dst.characterisation=P.deepClone(src.characterisation||[]);dst.testRequirements=P.deepClone(src.testRequirements||[]);dst.specialCharacteristics=P.deepClone(src.specialCharacteristics||[]);const sourceEnd=(seed.measurements||[]).filter(m=>m.requestId===src.id&&m.measurementType==='end-characterisation');s.measurements=(s.measurements||[]).filter(m=>!(m.requestId===dst.id&&m.measurementType==='end-characterisation'));s.measurements.push(...P.deepClone(sourceEnd));P.syncRequestFlowdown(s,dst);P.invalidateBuildReport(s,dst,'Unified Build Report end-characterisation evidence installed for demo exemplar');const ba=P.ensureBuildReportApproval(s,dst);ba.status='Approved';ba.person='Sofia Bakker';ba.role='Quality Engineer';ba.roleId='quality';ba.timestamp=dst.closedAt||P.now();ba.comment='Unified Build Report example reviewed including end-characterisation, critical distributions/Cpk, Control Plan, PFMEA and photographic evidence.';dst.buildReportApprovedAt=ba.timestamp;dst.buildReportApprovedBy=ba.person;P.audit(s,'Unified Build Report exemplar enriched','Demo data','Prototype Build Report',dst.id,'Control Plan-only critical data','Critical data + complete specified end-characterisation','REV 1.0.33 report/CSV migration');}
+    }
+    s.dataVersion=wasDemo?'2026.09-demo-22':(s.dataVersion||'migrated');s.schemaVersion=19;continue;
+   }
+   if(s.schemaVersion===19){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    (s.requests||[]).forEach(r=>{
+      const a=P.ensureBuildReportApproval(s,r);r.buildReportEvidenceVersion=Number(r.buildReportEvidenceVersion||1);
+      if(a.status==='Approved'){
+        r.buildReportApprovedEvidenceVersion=r.buildReportEvidenceVersion;
+        r.buildReportApprovedMeasurementFingerprint=P.measurementEvidenceFingerprint(s,r.id);
+        const doc=(s.documents||[]).find(d=>d.requestId===r.id&&d.type==='Prototype Build Report'&&d.status==='Approved'&&String(d.revision||'A')===String(r.buildReportRevision||'A'));
+        if(doc){doc.evidenceVersion=r.buildReportApprovedEvidenceVersion;doc.measurementFingerprint=r.buildReportApprovedMeasurementFingerprint;doc.approvedAt=a.timestamp||doc.approvedAt||P.now();}
+      }
+    });
+    s.dataVersion=wasDemo?'2026.09-demo-23':(s.dataVersion||'migrated');s.schemaVersion=20;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.32-poc';
-  ProtoLab.SCHEMA_VERSION = 18;
+  ProtoLab.VERSION = '1.0.34-poc';
+  ProtoLab.SCHEMA_VERSION = 20;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -77,6 +77,7 @@
       a.status=a.status||'Draft';
     }
     r.buildReportRevision=r.buildReportRevision||'A';
+    r.buildReportEvidenceVersion=Number(r.buildReportEvidenceVersion||1);
     return a;
   };
   ProtoLab.audit = (state, action, objectType, objectId, previousState, newState, reason='') => {
@@ -150,17 +151,35 @@
   ProtoLab.nextReportRevision = rev => {
     const src=String(rev||'A').toUpperCase().replace(/[^A-Z]/g,'')||'A';let n=0;for(const ch of src)n=n*26+(ch.charCodeAt(0)-64);n++;let out='';while(n){n--;out=String.fromCharCode(65+n%26)+out;n=Math.floor(n/26);}return out;
   };
+  ProtoLab.measurementEvidenceFingerprint = (state,requestId) => {
+    const rows=(state?.measurements||[]).filter(m=>m.requestId===requestId).map(m=>({
+      id:m.id||'',serial:m.serial||'',measurementType:m.measurementType||'',routeStepId:m.routeStepId||'',testRequirementId:m.testRequirementId||'',characteristicId:m.characteristicId||'',characteristic:m.characteristic||'',
+      value:m.value??null,unit:m.unit||'',lsl:m.lsl??null,usl:m.usl??null,target:m.target??null,method:m.method||'',equipment:m.equipment||'',calibrationCertificateId:m.calibrationCertificateId||'',equipmentCalibrationStatus:m.equipmentCalibrationStatus||'',pass:m.pass!==false,compliant:m.compliant!==false,evidence:m.evidence||'',timestamp:m.timestamp||''
+    })).sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+    const text=JSON.stringify(rows);let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16).padStart(8,'0');
+  };
   ProtoLab.invalidateBuildReport = (state,r,reason='Controlled report content changed') => {
-    if(!state||!r)return false;const a=ProtoLab.ensureBuildReportApproval(state,r),prev=a.status;
+    if(!state||!r)return false;const a=ProtoLab.ensureBuildReportApproval(state,r),prev=a.status,now=ProtoLab.now();
+    r.buildReportEvidenceVersion=Number(r.buildReportEvidenceVersion||1)+1;r.buildReportLastChangedAt=now;r.buildReportLastChangedBy=state.identity?.name||'System';r.buildReportLastChangeReason=reason;
     if(!['Approved','Pending'].includes(prev))return false;
     if(prev==='Approved'){
       const oldRev=r.buildReportRevision||'A',next=ProtoLab.nextReportRevision(oldRev);r.buildReportRevision=next;
       state.documents=state.documents||[];const doc=state.documents.find(d=>d.requestId===r.id&&d.type==='Prototype Build Report'&&d.status==='Approved'&&String(d.revision||'A')===String(oldRev));
-      if(doc){doc.status='Superseded';doc.supersededBy=next;doc.supersededAt=ProtoLab.now();}
+      if(doc){doc.status='Superseded';doc.supersededBy=next;doc.supersededAt=now;doc.supersededReason=reason;}
+    }else if(prev==='Pending'){
+      a.withdrawnAt=now;a.withdrawnBy=state.identity?.name||'System';a.withdrawnReason=reason;
     }
     a.status='Draft';a.timestamp=null;a.approvedAt=null;a.requestedAt=null;a.requestedBy=null;a.comment=`Re-approval required: ${reason}`;
-    r.buildReportApprovedAt=null;r.buildReportApprovedBy=null;
-    ProtoLab.audit(state,'Build report approval invalidated','Request',r.id,prev,'Draft',`${reason}; current report revision ${r.buildReportRevision||'A'}`);return true;
+    r.buildReportApprovedAt=null;r.buildReportApprovedBy=null;r.buildReportApprovedMeasurementFingerprint=null;r.buildReportApprovedEvidenceVersion=null;
+    ProtoLab.audit(state,'Build report approval invalidated','Request',r.id,prev,'Draft',`${reason}; current report revision ${r.buildReportRevision||'A'} · evidence set v${r.buildReportEvidenceVersion}`);return true;
+  };
+  ProtoLab.reconcileBuildReportApproval = (state,r) => {
+    if(!state||!r)return false;const a=ProtoLab.ensureBuildReportApproval(state,r),current=ProtoLab.measurementEvidenceFingerprint(state,r.id);
+    r.buildReportEvidenceVersion=Number(r.buildReportEvidenceVersion||1);
+    if(a.status!=='Approved')return false;
+    if(!r.buildReportApprovedMeasurementFingerprint){r.buildReportApprovedMeasurementFingerprint=current;r.buildReportApprovedEvidenceVersion=r.buildReportEvidenceVersion;return false;}
+    if(r.buildReportApprovedMeasurementFingerprint!==current)return ProtoLab.invalidateBuildReport(state,r,'Measurement evidence changed after Build Report approval');
+    return false;
   };
 
   ProtoLab.DEFAULT_BOMS = {
