@@ -2474,6 +2474,192 @@ function installV1063Listeners(){
 const _renderV1063Base=render;
 render=function(){_renderV1063Base();installV1063Listeners();installGlobalNextGuidanceV1063();installStickySubmenusV1063();upgradeScopeTablesV1063();};
 
+
+
+/* ============================================================
+   LabOS REV 1.0.64 — operational planning move workflow,
+   dashboard filter tiles, integrated resource assurance and
+   raster 5S bench-top reference renders.
+   ============================================================ */
+function engineeringDashboardDataV1064(){
+  const role=currentRole(),mine=(App.state.requests||[]).filter(r=>r.requester===App.state.identity.name||role==='engineering_lead');
+  const openClarificationIds=new Set(openActions().filter(a=>a.category==='Needs clarification'&&a.requestId).map(a=>a.requestId));
+  const archived=r=>!!(r.archived||['ARCHIVED','CLOSED'].includes(r.status));
+  const late=r=>!archived(r)&&((r.forecastDate&&r.requiredDate&&new Date(r.forecastDate)>new Date(r.requiredDate))||(r.requiredDate&&new Date(`${r.requiredDate}T23:59:59`)<new Date()&&!['RELEASED','DELIVERED'].includes(r.status)));
+  const prep=r=>!archived(r)&&P.GATES.indexOf(r.status)>0&&P.GATES.indexOf(r.status)<P.GATES.indexOf('BUILD IN PROGRESS');
+  const filters={all:mine,clarification:mine.filter(r=>openClarificationIds.has(r.id)),preparation:mine.filter(prep),progress:mine.filter(r=>r.status==='BUILD IN PROGRESS'),ready:mine.filter(r=>r.status==='RELEASED'),risk:mine.filter(r=>!archived(r)&&(r.risk==='High'||late(r)))};
+  return {mine,filters};
+}
+const _renderDashboardV1064Base=renderDashboard;
+renderDashboard=function(){
+  const role=currentRole();
+  if(!['engineering_requester','engineering_lead'].includes(role))return _renderDashboardV1064Base();
+  const {filters}=engineeringDashboardDataV1064(),mode=App.filters.engineeringDashboardFilterV1064||'all',shown=filters[mode]||filters.all;
+  const defs=[['all','My requests'],['clarification','Awaiting clarification'],['preparation','In preparation'],['progress','Build in progress'],['ready','Ready for delivery'],['risk','At risk']];
+  const tiles=defs.map(([id,label])=>`<button type="button" class="card metric dashboard-filter-tile-v1064 ${mode===id?'active':''} ${id==='risk'&&filters[id].length?'bad':''}" data-v1064-eng-filter="${id}" aria-pressed="${mode===id?'true':'false'}"><div class="label">${esc(label)}</div><div class="value">${filters[id].length}</div><div class="trend">${mode===id?'Showing these requests':'Use as filter'}</div></button>`).join('');
+  const heading=mode==='all'?'Recent engineering requests':`Engineering requests · ${defs.find(x=>x[0]===mode)?.[1]||'Filtered'}`;
+  return pageHeader(roleDashboardTitle(),'Your prototype portfolio, delivery status and requests needing engineering input.',can('request:create')?btn('+ New prototype request','data-new-request','button primary'):'')+`<div class="grid cols-3 dashboard-filter-grid-v1064">${tiles}</div><div style="height:14px"></div>${requestTable((mode==='all'?shown.slice(0,8):shown),heading)}`;
+};
+
+function fiveSBenchGalleryV1064(compact=false){return `<div class="five-s-bench-gallery-v1064 ${compact?'compact':''}"><figure><img src="assets/5s/bench-good.jpg" alt="5S good laboratory bench example"><figcaption><strong>Good · defined bench locations</strong><span>Clean worktop, labelled zones, tools and equipment returned to visual locations.</span></figcaption></figure><figure><img src="assets/5s/bench-bad.jpg" alt="5S poor laboratory bench example"><figcaption><strong>Bad · clutter and obstruction</strong><span>Unidentified material, loose items and cable obstruction make abnormalities difficult to see.</span></figcaption></figure><figure><img src="assets/5s/bench-shadow-board.jpg" alt="5S shadow board and labelled storage example"><figcaption><strong>Good · visual management</strong><span>Shadow-board control and labelled storage support fast abnormality detection.</span></figcaption></figure></div>`}
+fiveSExamplesMarkupV1063=function(){return `${fiveSBenchGalleryV1064()}<div class="five-s-examples-v1063-copy"><div class="callout good"><strong>GOOD EXAMPLE</strong><p>Defined locations, labelled areas, clean worktop, clear access and abnormalities immediately visible.</p></div><div class="callout bad"><strong>BAD EXAMPLE</strong><p>Unneeded items, undefined storage, blocked access and unclear material/equipment status.</p></div></div>`};
+const _fiveSAuditModalV1064Base=fiveSAuditModal;
+fiveSAuditModal=function(zoneId){
+  _fiveSAuditModalV1064Base(zoneId);
+  setTimeout(()=>{
+    const modal=$('#modalRoot .modal');if(!modal)return;
+    modal.querySelector('.five-s-examples-v1061')?.remove();
+    modal.querySelector('.five-s-examples-v1063')?.remove();
+    if(!modal.querySelector('.five-s-bench-gallery-v1064')){
+      const callout=modal.querySelector('.callout');
+      callout?.insertAdjacentHTML('afterend',`<div class="five-s-reference-head-v1064"><strong>5S bench-top reference</strong><small>Compare the actual zone against the visual baseline before scoring.</small></div>${fiveSBenchGalleryV1064(true)}`);
+    }
+  },35);
+};
+function install5SBenchGalleryV1064(){
+  if(App.currentView!=='process-library')return;
+  const cards=[...document.querySelectorAll('#page > .card,#page > .section-stack > .card')];
+  const card=cards.find(c=>/Workplace standards by zone/i.test(c.querySelector('h2')?.textContent||''));
+  if(card&&!card.querySelector('.five-s-bench-gallery-v1064')){
+    const head=card.querySelector('.section-title-row');
+    head?.insertAdjacentHTML('afterend',`<div class="five-s-reference-head-v1064"><strong>5S visual reference · bench-top examples</strong><small>Raster examples are included in the WEB build and remain available offline.</small></div>${fiveSBenchGalleryV1064(true)}`);
+  }
+}
+
+function resourceCareOverlapV1064(a,b,c,d){return new Date(a)<new Date(d)&&new Date(c)<new Date(b)}
+function resourceAssuranceSetupRowsV1064(){
+  const svc=new P.ResourceCareService(),forecast=svc.forecast(App.state,52).filter(x=>['Calibration','Maintenance','Training'].includes(x.type)),scheduled=(App.state.resourceCareBookings||[]).filter(x=>x.status==='Scheduled'),byKey=new Map(forecast.map(x=>[x.itemKey||x.id,x]));
+  for(const rec of scheduled){
+    const key=rec.itemKey||rec.id,existing=byKey.get(key),eq=(App.state.equipment||[]).find(e=>e.id===rec.equipmentId),st=(App.state.staff||[]).find(x=>x.id===rec.staffId);
+    if(existing)Object.assign(existing,{scheduledStart:rec.start,scheduledEnd:rec.end,scheduleSource:rec.scheduleSource,affectedRequestIds:rec.affectedRequestIds||rec.autoReplannedRequestIds||existing.affectedRequestIds});
+    else byKey.set(key,{id:key,itemKey:key,type:rec.type,targetId:rec.equipmentId||rec.staffId,targetName:eq?.name||st?.name||rec.targetName||key,equipmentId:rec.equipmentId,staffId:rec.staffId,dueDate:rec.dueDate||rec.start?.slice(0,10),daysToDue:rec.dueDate?P.daysBetween(P.todayISO(),rec.dueDate):0,scheduledStart:rec.start,scheduledEnd:rec.end,durationHours:rec.durationHours||((new Date(rec.end)-new Date(rec.start))/3600000),status:'Scheduled',scheduleSource:rec.scheduleSource,affectedRequestIds:rec.affectedRequestIds||rec.autoReplannedRequestIds||[]});
+  }
+  const now=new Date();
+  return [...byKey.values()].map(x=>{
+    const start=x.scheduledStart||x.proposedStart||x.recommendedStart||null,end=x.scheduledEnd||(start?new Date(new Date(start).getTime()+Number(x.durationHours||4)*3600000).toISOString():null),eq=(App.state.equipment||[]).find(e=>e.id===x.equipmentId),st=(App.state.staff||[]).find(s=>s.id===x.staffId),overlapIds=new Set(x.affectedRequestIds||[]);
+    if(start&&end)for(const b of App.state.bookings||[]){if(((x.equipmentId&&b.equipmentId===x.equipmentId)||(x.staffId&&b.staffId===x.staffId))&&resourceCareOverlapV1064(start,end,b.start,b.end))overlapIds.add(b.requestId)}
+    const active=!!(start&&end&&new Date(start)<=now&&new Date(end)>now),planned=!!x.scheduledStart;
+    return {...x,start,end,resource:eq?.name||st?.name||x.targetName||x.targetId||'Resource',resourceId:eq?.id||st?.id||x.targetId||'',active,planned,affectedRequestIds:[...overlapIds],nextUseRequestId:x.nextUseRequestId||null};
+  }).sort((a,b)=>String(a.start||a.dueDate||'9999').localeCompare(String(b.start||b.dueDate||'9999')));
+}
+function resourceAssuranceIntegratedHtmlV1064(){
+  const rows=resourceAssuranceSetupRowsV1064(),mode=App.filters.standardsAssuranceFilterV1064||'all',today=P.todayISO(),visible=rows.filter(x=>{if(mode==='all')return true;if(mode==='risk')return x.daysToDue<0||/Conflict|Overdue|Action required/i.test(x.status||'');if(mode==='active')return x.active;return mode.toLowerCase()===String(x.type||'').toLowerCase()});
+  const counts={all:rows.length,calibration:rows.filter(x=>x.type==='Calibration').length,maintenance:rows.filter(x=>x.type==='Maintenance').length,training:rows.filter(x=>x.type==='Training').length,active:rows.filter(x=>x.active).length,risk:rows.filter(x=>x.daysToDue<0||/Conflict|Overdue|Action required/i.test(x.status||'')).length};
+  const tile=(id,label)=>`<button type="button" class="assurance-inline-tile-v1064 ${mode===id?'active':''} ${id==='risk'&&counts[id]?'bad':''}" data-v1064-assurance-filter="${id}"><span>${esc(label)}</span><strong>${counts[id]}</strong><small>${mode===id?'Shown below':'Filter'}</small></button>`;
+  const trs=visible.slice(0,18).map(x=>{const state=x.active?'Pulled from service now':x.planned?'Reserved / scheduled':x.daysToDue<0?'Overdue · not scheduled':'Forecast / not yet reserved',impact=[...(x.affectedRequestIds||[]),x.nextUseRequestId].filter(Boolean);return `<tr class="${x.active?'care-active-v1064':''}"><td><strong>${esc(x.resourceId)} · ${esc(x.resource)}</strong><small>${esc((App.state.equipment||[]).find(e=>e.id===x.equipmentId)?.capability||x.skillName||'')}</small></td><td><span class="status ${x.type==='Calibration'?'info':x.type==='Maintenance'?'warn':'purple'}">${esc(x.type)}</span><small>${esc(state)}</small></td><td>${x.start?P.formatDateTime(x.start):`Due ${P.formatDate(x.dueDate)}`}<small>${x.end?`Return ${P.formatDateTime(x.end)}`:`Suggested ${P.formatDateTime(x.recommendedStart||x.proposedStart)}`}</small></td><td>${impact.length?`<strong>${esc([...new Set(impact)].join(', '))}</strong><small>${x.scheduleSource?esc(x.scheduleSource):'Affected/next planned use'}</small>`:'<span class="subtle">No build impact identified</span>'}</td><td>${x.daysToDue<0?'<span class="status bad">Overdue</span>':x.active?'<span class="status warn">Unavailable now</span>':x.planned?'<span class="status info">Scheduled</span>':'<span class="status neutral">Forecast</span>'}</td><td>${btn(x.planned?'Review':'Schedule',`data-v1064-open-care="${esc(x.itemKey||x.id)}"`,'button tiny secondary')}</td></tr>`}).join('');
+  return `<section id="std-assurance" class="card resource-assurance-inline-v1064"><div class="section-title-row"><div><span class="eyebrow">RESOURCE ASSURANCE & AVAILABILITY</span><h2>Which setups are being pulled from service?</h2><div class="subtle">Calibration, maintenance and training are shown here alongside the standards/resources that planning depends on. Scheduled activity shows the exact pull-out and return window plus affected or next-use builds.</div></div><div class="route-toolbar">${btn('Open full Resource Assurance','data-nav="equipment-master"','button small secondary')}${btn('Create assurance report','data-v1061-assurance-report','button small primary')}</div></div><div class="assurance-inline-tiles-v1064">${tile('all','All assurance')}${tile('calibration','Calibration')}${tile('maintenance','Maintenance')}${tile('training','Training')}${tile('active','Pulled now')}${tile('risk','Overdue / risk')}</div><div class="table-wrap"><table class="data-table assurance-pull-table-v1064"><thead><tr><th>Setup / resource</th><th>Reason pulled</th><th>Out / return window</th><th>Build impact / next use</th><th>State</th><th></th></tr></thead><tbody>${trs||'<tr><td colspan="6">No resource-assurance items match this filter.</td></tr>'}</tbody></table></div></section>`;
+}
+function installResourceAssuranceInStandardsV1064(){
+  if(App.currentView!=='process-library')return;
+  const page=$('#page'); if(!page)return;
+  page.querySelector('#std-assurance')?.remove();
+  const tools=page.querySelector('.standards-tools-v1061'),head=page.querySelector('.page-header');
+  const target=tools||head;
+  target?.insertAdjacentHTML('afterend',resourceAssuranceIntegratedHtmlV1064());
+  const chips=page.querySelector('.standards-chip-row');
+  if(chips&&!chips.querySelector('[data-v1064-jump-assurance]'))chips.insertAdjacentHTML('afterbegin','<button type="button" class="filter-chip" data-v1064-jump-assurance>Resource Assurance</button>');
+}
+
+function resourceAssurancePullSummaryV1064(){
+  const rows=resourceAssuranceSetupRowsV1064().filter(x=>x.planned&&['Calibration','Maintenance'].includes(x.type)).slice(0,10);
+  if(!rows.length)return `<div class="callout good resource-pull-summary-v1064"><strong>✓ No equipment is currently reserved out of service for calibration or maintenance.</strong></div>`;
+  return `<section class="card resource-pull-summary-v1064"><div class="section-title-row"><div><span class="eyebrow">SETUPS PULLED FROM SERVICE</span><h2>Calibration & maintenance reservations</h2><div class="subtle">Exact out-of-service windows and return times for equipment already reserved in Resource Assurance.</div></div></div><div class="resource-pull-grid-v1064">${rows.map(x=>`<button type="button" class="resource-pull-card-v1064 ${x.active?'active':''}" data-v1064-open-care="${esc(x.itemKey||x.id)}"><span>${x.active?'● OUT NOW':'○ SCHEDULED'} · ${esc(x.type)}</span><strong>${esc(x.resourceId)} · ${esc(x.resource)}</strong><small>${P.formatDateTime(x.start)} → ${P.formatDateTime(x.end)}</small><small>${x.affectedRequestIds?.length?`Build impact: ${esc(x.affectedRequestIds.join(', '))}`:'No overlapping build identified'}</small></button>`).join('')}</div></section>`;
+}
+function installResourceAssurancePullSummaryV1064(){
+  if(App.currentView!=='equipment-master')return;
+  const page=$('#page');if(!page||page.querySelector('.resource-pull-summary-v1064'))return;
+  const tiles=page.querySelector('.assurance-tiles'),head=page.querySelector('.page-header');
+  (tiles||head)?.insertAdjacentHTML('afterend',resourceAssurancePullSummaryV1064());
+}
+function planningNextWorkStartV1064(input){let d=new Date(input);d.setSeconds(0,0);while(true){const day=d.getDay();if(day===0){d.setDate(d.getDate()+1);d.setHours(8,0,0,0);continue}if(day===6){d.setDate(d.getDate()+2);d.setHours(8,0,0,0);continue}if(d.getHours()<8){d.setHours(8,0,0,0);return d}if(d.getHours()>=17){d.setDate(d.getDate()+1);d.setHours(8,0,0,0);continue}return d}}
+function planningAddWorkHoursV1064(start,hours){let d=planningNextWorkStartV1064(start),left=Math.max(.25,Number(hours)||1);while(left>0){const end=new Date(d);end.setHours(17,0,0,0);const avail=Math.max(0,(end-d)/3600000);if(left<=avail)return new Date(d.getTime()+left*3600000);left-=avail;d=planningNextWorkStartV1064(new Date(end.getTime()+15*60000));}return d}
+function planningSlotFeasibleV1064(booking,start,equipmentId,staffId,ignoreIds=new Set()){
+  const st=planningNextWorkStartV1064(start),en=planningAddWorkHoursV1064(st,booking.durationHours||1),over=(a,b,c,d)=>new Date(a)<new Date(d)&&new Date(c)<new Date(b);
+  for(const b of App.state.bookings||[]){if(ignoreIds.has(b.id)||b.id===booking.id)continue;if(((equipmentId&&b.equipmentId===equipmentId)||(staffId&&b.staffId===staffId))&&over(st,en,b.start,b.end))return false}
+  for(const c of App.state.resourceCareBookings||[]){if(c.status!=='Scheduled')continue;if(((equipmentId&&c.equipmentId===equipmentId)||(staffId&&c.staffId===staffId))&&over(st,en,c.start,c.end))return false}
+  for(const ev of App.state.planningEvents||[]){if(ev.active===false)continue;const affects=ev.scope==='lab'||(ev.scope==='staff'&&ev.staffId===staffId)||(ev.scope==='equipment'&&ev.equipmentId===equipmentId);if(affects&&over(st,en,ev.start,ev.end))return false}
+  return {start:st,end:en};
+}
+bookingSlotFeasibleWithResourcesV1062=function(booking,start,equipmentId,staffId,ignoreIds=new Set()){return !!planningSlotFeasibleV1064(booking,start,equipmentId,staffId,ignoreIds)};
+candidateEquipmentForBookingV1062=function(booking,dateIso){
+  const req=bookingRequirementV1062(booking),day=dateIso||P.todayISO(),all=App.state.equipment||[],assigned=all.find(e=>e.id===booking.equipmentId);
+  let pool=req.capability?all.filter(e=>capabilityMatchesV1063(e.capability,req.capability)||capabilityMatchesV1063(scopeSpecResolvedV1063(e).activity,req.capability)):all.slice();
+  pool=pool.filter(e=>P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,e,day):P.equipmentReady(e,day,App.state));
+  if(assigned&&(!req.capability||capabilityMatchesV1063(assigned.capability,req.capability))&&!pool.some(e=>e.id===assigned.id)){const ready=P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,assigned,day):P.equipmentReady(assigned,day,App.state);if(ready)pool.unshift(assigned)}
+  return pool.slice(0,12);
+};
+candidateStaffForBookingV1062=function(booking,dateIso){
+  const req=bookingRequirementV1062(booking),day=dateIso||P.todayISO(),all=(App.state.staff||[]).filter(s=>s.available!==false),assigned=(App.state.staff||[]).find(s=>s.id===booking.staffId);
+  let pool=req.skillId?all.filter(s=>P.projectedStaffQualification?P.projectedStaffQualification(App.state,s,req.skillId,day).valid:(s.competencies||[]).includes(req.skillId)):all;
+  if(assigned&&assigned.available!==false&&(!req.skillId||(P.projectedStaffQualification?P.projectedStaffQualification(App.state,assigned,req.skillId,day).valid:(assigned.competencies||[]).includes(req.skillId)))&&!pool.some(s=>s.id===assigned.id))pool.unshift(assigned);
+  return pool.slice(0,12);
+};
+feasibleAssignmentsV1062=function(booking,limit=24,fromDate=null,ignoreIds=new Set()){
+  const out=[],seen=new Set(),base=planningNextWorkStartV1064(fromDate||new Date());
+  for(let i=0;i<2*24*366&&out.length<limit;i++){
+    const d=planningNextWorkStartV1064(new Date(base.getTime()+i*30*60000));if(d.getHours()>=17)continue;
+    const day=d.toISOString().slice(0,10),eqs=candidateEquipmentForBookingV1062(booking,day),staffs=candidateStaffForBookingV1062(booking,day);
+    if(!eqs.length||!staffs.length)continue;
+    for(const eq of eqs){for(const st of staffs){const fit=planningSlotFeasibleV1064(booking,d,eq.id||null,st.id||null,ignoreIds);if(!fit)continue;const key=[fit.start.toISOString(),eq.id||'',st.id||''].join('|');if(seen.has(key))continue;seen.add(key);out.push({start:fit.start.toISOString(),end:fit.end.toISOString(),equipmentId:eq.id||null,staffId:st.id||null,equipmentName:eq.name||eq.id||'Equipment',staffName:st.name||st.id||'Person'});if(out.length>=limit)break}if(out.length>=limit)break}
+  }
+  return out;
+};
+function showFeasibleSlotsV1064(booking){
+  $('#dragFeasibleSlotsV1061')?.remove();
+  const reqBookings=(App.state.bookings||[]).filter(b=>b.requestId===booking.requestId).sort((a,b)=>new Date(a.start)-new Date(b.start)),idx=reqBookings.findIndex(b=>b.id===booking.id),prev=idx>0?reqBookings[idx-1]:null,ignore=new Set(reqBookings.slice(Math.max(0,idx)).map(b=>b.id)),from=prev?.end||new Date(),slots=feasibleAssignmentsV1062(booking,30,from,ignore),req=bookingRequirementV1062(booking),eqCount=candidateEquipmentForBookingV1062(booking,String(from).slice(0,10)).length,staffCount=candidateStaffForBookingV1062(booking,String(from).slice(0,10)).length,root=$('.planning-visual-main')||$('#page');
+  App.dragBookingV1061=booking.id;
+  root.insertAdjacentHTML('afterbegin',`<div id="dragFeasibleSlotsV1061" class="drag-feasible-panel"><div class="section-title-row"><div><strong>Move · ${esc(booking.requestId)} · ${esc(booking.stepName||'selected step')}</strong><small>${slots.length} feasible options found · ${eqCount} capable/ready equipment candidate${eqCount===1?'':'s'} · ${staffCount} qualified/available person candidate${staffCount===1?'':'s'}.</small><small>Drag the bar onto an option below, or tap an option. Downstream work for this build will be replanned automatically.</small></div>${btn('Cancel','data-v1064-cancel-drag','button tiny secondary')}</div><div class="drag-slot-grid">${slots.map((s,i)=>`<button type="button" class="drag-slot" data-v1061-drop-slot="${planningAssignmentTokenV1062(s)}" data-v1064-move-slot="1"><strong>${i===0?'Best · ':''}${P.formatDateTime(s.start)}</strong><span class="drag-slot-meta">${esc(s.equipmentName)} · ${esc(s.staffName)} · until ${P.formatDateTime(s.end)}</span></button>`).join('')||`<div class="callout bad"><strong>No feasible option could be generated.</strong><p>Capability: ${esc(req.capability||'none')} · competency: ${esc(req.skillId||'none')} · equipment candidates ${eqCount} · people candidates ${staffCount}. This is treated as a planning blocker, not as a silent drag failure.</p></div>`}</div></div>`);
+}
+showFeasibleSlotsV1061=showFeasibleSlotsV1064;
+moveBookingAndReplanV1061=async function(id,target){
+  const b=(App.state.bookings||[]).find(x=>x.id===id);if(!b)return;
+  const reqBookings=(App.state.bookings||[]).filter(x=>x.requestId===b.requestId).sort((a,c)=>new Date(a.start)-new Date(c.start)),idx=reqBookings.findIndex(x=>x.id===id);if(idx<0)return;
+  const moving=reqBookings.slice(idx),ignore=new Set(moving.map(x=>x.id)),before=P.deepClone(reqBookings),first=decodePlanningAssignmentV1062(target),newTimes=[];let cursor=planningNextWorkStartV1064(first?.start||new Date());
+  for(let i=0;i<moving.length;i++){
+    const x=moving[i];let choice=null;
+    if(i===0&&first?.start){const eqId=first.equipmentId||x.equipmentId,stId=first.staffId||x.staffId,fit=planningSlotFeasibleV1064(x,first.start,eqId,stId,ignore);if(fit)choice={start:fit.start.toISOString(),end:fit.end.toISOString(),equipmentId:eqId,staffId:stId}}
+    if(!choice)choice=feasibleAssignmentsV1062(x,1,cursor,ignore)[0]||null;
+    if(!choice){toast(`Cannot replan ${x.stepName||x.id}: no feasible downstream slot exists.`,true);showFeasibleSlotsV1064(x);return}
+    newTimes.push([x,choice]);cursor=planningNextWorkStartV1064(new Date(choice.end).getTime()+30*60000);
+  }
+  const r=requestById(b.requestId);if(r){r.planningPreferences=r.planningPreferences||{};r.planningPreferences.staffByTask=r.planningPreferences.staffByTask||{};r.planningPreferences.staffByTaskName=r.planningPreferences.staffByTaskName||{};r.planningPreferences.equipmentByTask=r.planningPreferences.equipmentByTask||{}}
+  for(const [x,c] of newTimes){x.start=c.start;x.end=c.end;x.equipmentId=c.equipmentId;x.staffId=c.staffId;const route=(App.state.routes||[]).find(q=>q.requestId===x.requestId),step=route?.steps?.find(q=>q.id===x.stepId),staff=(App.state.staff||[]).find(q=>q.id===c.staffId);if(step){step.planned=c.start;step.equipmentId=c.equipmentId;if(staff)step.owner=staff.name}if(r&&x.stepId){r.planningPreferences.equipmentByTask[x.stepId]=c.equipmentId;r.planningPreferences.staffByTask[x.stepId]=c.staffId;if(x.stepName)r.planningPreferences.staffByTaskName[x.stepName]=c.staffId}}
+  const last=newTimes.at(-1)?.[1];if(r&&last){r.forecastDate=last.end.slice(0,10);r.pendingReplanContext={reasonCategory:'Manual planning adjustment',reason:`${b.stepName||b.id} moved manually; ${Math.max(0,moving.length-1)} downstream task(s) automatically replanned around equipment, people and resource-assurance constraints.`,createdAt:P.now()}}
+  P.audit(App.state,'Planning drag move applied','Request',b.requestId,before.map(x=>`${x.stepName}:${x.start}`).join(' | '),newTimes.map(([x,c])=>`${x.stepName}:${c.start}:${c.equipmentId}:${c.staffId}`).join(' | '),'User drag/drop with constrained downstream replan');
+  App.dragBookingV1061=null;await persist();render();toast(`${b.stepName||'Step'} moved. ${Math.max(0,moving.length-1)} downstream task${moving.length===2?'':'s'} replanned.`)
+};
+function enablePlanningDragV1064(){
+  if(App.currentView!=='planning'||!can('plan'))return;
+  $$('.swim-bar[data-planning-booking-v1061]').forEach(el=>{
+    if(el.dataset.v1064DragBound)return;el.dataset.v1064DragBound='1';el.draggable=true;el.classList.add('planning-movable-v1064');
+    const id=el.dataset.planningBookingV1061,b=(App.state.bookings||[]).find(x=>x.id===id);if(!b)return;
+    if(!el.querySelector('.planning-drag-grip-v1064'))el.insertAdjacentHTML('beforeend','<span class="planning-drag-grip-v1064" aria-hidden="true">⠿</span>');
+    el.addEventListener('dragstart',e=>{App.dragBookingV1061=id;el.classList.add('dragging');showFeasibleSlotsV1064(b);if(e.dataTransfer){e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',id)}});
+    el.addEventListener('dragend',()=>{el.classList.remove('dragging')});
+    let start=null,dragging=false;
+    el.addEventListener('pointerdown',e=>{if(e.button!==0)return;start={x:e.clientX,y:e.clientY,id,pointerId:e.pointerId};dragging=false;try{el.setPointerCapture?.(e.pointerId)}catch(_){}});
+    el.addEventListener('pointermove',e=>{if(!start)return;if(dragging){e.preventDefault();return}if(Math.hypot(e.clientX-start.x,e.clientY-start.y)>7){dragging=true;App.dragBookingV1061=id;el.classList.add('dragging');showFeasibleSlotsV1064(b);e.preventDefault()}});
+    el.addEventListener('pointerup',e=>{if(!start)return;const pointerId=start.pointerId,was=dragging;start=null;dragging=false;try{el.releasePointerCapture?.(pointerId)}catch(_){}el.classList.remove('dragging');if(!was)return;App.suppressPlanningOpenV1064=Date.now()+500;const target=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('[data-v1061-drop-slot]');if(target){e.preventDefault();e.stopPropagation();moveBookingAndReplanV1061(id,target.dataset.v1061DropSlot)}else{e.preventDefault();e.stopPropagation();toast('Drag started. Drop on one of the highlighted feasible options, or tap an option to move the step.')}});
+  });
+}
+function installV1064Listeners(){
+  if(App._v1064Listeners)return;App._v1064Listeners=true;
+  document.addEventListener('click',e=>{
+    if(App.suppressPlanningOpenV1064&&Date.now()<App.suppressPlanningOpenV1064&&e.target.closest?.('.planning-movable-v1064')){e.preventDefault();e.stopPropagation();return}
+    const t=e.target.closest?.('[data-v1064-eng-filter],[data-v1064-assurance-filter],[data-v1064-jump-assurance],[data-v1064-open-care],[data-v1064-move-slot],[data-v1064-cancel-drag]');if(!t)return;
+    if(t.dataset.v1064EngFilter){App.filters.engineeringDashboardFilterV1064=t.dataset.v1064EngFilter;render();return}
+    if(t.dataset.v1064AssuranceFilter){App.filters.standardsAssuranceFilterV1064=t.dataset.v1064AssuranceFilter;render();setTimeout(()=>document.getElementById('std-assurance')?.scrollIntoView({block:'start'}),20);return}
+    if(t.hasAttribute('data-v1064-jump-assurance')){document.getElementById('std-assurance')?.scrollIntoView({behavior:'smooth',block:'start'});return}
+    if(t.dataset.v1064OpenCare){const item=resourceAssuranceSetupRowsV1064().find(x=>(x.itemKey||x.id)===t.dataset.v1064OpenCare);App.filters.careTypeV1061=item?.type||'All';App.filters.careScopeV1061=item?.equipmentId||'All';App.filters.careStatusV1061='All';App.filters.careSearchV1061='';nav('equipment-master');return}
+    if(t.dataset.v1064MoveSlot&&App.dragBookingV1061){e.preventDefault();e.stopPropagation();moveBookingAndReplanV1061(App.dragBookingV1061,t.dataset.v1061DropSlot);return}
+    if(t.hasAttribute('data-v1064-cancel-drag')){App.dragBookingV1061=null;$('#dragFeasibleSlotsV1061')?.remove();return}
+  },true);
+  document.addEventListener('dragover',e=>{const t=e.target.closest?.('[data-v1061-drop-slot]');if(t){e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='move';t.classList.add('drag-over')}});
+  document.addEventListener('drop',e=>{const t=e.target.closest?.('[data-v1061-drop-slot]');if(t&&App.dragBookingV1061){e.preventDefault();e.stopPropagation();const id=App.dragBookingV1061;moveBookingAndReplanV1061(id,t.dataset.v1061DropSlot)}} ,true);
+}
+const _renderV1064Base=render;
+render=function(){_renderV1064Base();installV1064Listeners();installResourceAssuranceInStandardsV1064();installResourceAssurancePullSummaryV1064();install5SBenchGalleryV1064();annotatePlanningBarsV1061();enablePlanningDragV1064();installStickySubmenusV1063();};
+
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
 })();
