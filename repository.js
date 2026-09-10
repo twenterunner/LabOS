@@ -247,6 +247,14 @@ class MigrationService{
     P.audit(s,'Measurement assurance workflow refined','System','LabOS','MSA hidden from process/test context / separate capability workspace / manual-only daily refresh','Process/test/equipment-linked MSA / upload-or-run guided GRR / daily automatic operations check / simplified quality workspace','REV 1.0.57 migration');
     s.dataVersion=wasDemo?'2026.09-demo-32':(s.dataVersion||'migrated');s.schemaVersion=29;continue;
    }
+   if(s.schemaVersion===29){
+    const wasDemo=P.isDemoDataset(s);if(wasDemo&&typeof P.createDemoState==='function'){
+      const priorIdentity=P.deepClone(s.identity||{}),weekends=!!s.settings?.includeWeekendsForBuilds,seed=P.createDemoState();
+      s=seed;s.identity=priorIdentity?.role?priorIdentity:s.identity;s.settings=s.settings||{};s.settings.includeWeekendsForBuilds=weekends;
+      P.audit(s,'Demo portfolio replaced','System','Demo dataset','Previous demo build/request records','Fresh 24-request power-tool prototype portfolio','REV 1.0.79 intentionally replaces prior demo build data while preserving identity and weekend-planning preference');
+    }else{P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.ensureAssuranceProfile(r));s.schemaVersion=30;}
+    s.dataVersion=wasDemo?'2026.09-demo-33-power-tools':(s.dataVersion||'migrated');s.schemaVersion=30;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

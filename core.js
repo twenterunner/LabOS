@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.78-poc';
-  ProtoLab.SCHEMA_VERSION = 29;
+  ProtoLab.VERSION = '1.0.79-poc';
+  ProtoLab.SCHEMA_VERSION = 30;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -46,20 +46,18 @@
 
   ProtoLab.GATES = ['DRAFT REQUEST','SUBMITTED','FEASIBILITY','PROCESS DEFINITION','LAB TRIAGE','BUILD READINESS REVIEW','READY TO BUILD','BUILD IN PROGRESS','CHARACTERISATION','QUALITY REVIEW','ENGINEERING REVIEW','RELEASE APPROVAL','RELEASED','DELIVERED','CLOSED'];
   ProtoLab.ASSURANCE_PROFILES = {
-    rapid:{id:'rapid',code:'E0',label:'Rapid Engineering',tagline:'Fast learning with essential safety and traceability only',description:'For quick engineering experiments, troubleshooting, failure analysis and early process learning. Allows provisional methods and simplified records. Not customer-releasable and not production representative.',formalLevel:0,requires:{processRelease:false,testRelease:false,controlPlan:false,independentControlPlanApproval:false,formalReadiness:false,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
-    controlled:{id:'controlled',code:'E1',label:'Controlled Engineering',tagline:'Lean but repeatable engineering build',description:'For design learning, correlation and engineering prototypes where repeatability and useful traceability matter. Released standards are preferred; provisional engineering methods may be used with explicit owner/evidence.',formalLevel:1,requires:{processRelease:false,testRelease:false,controlPlan:'special-only',independentControlPlanApproval:false,formalReadiness:true,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
-    validation:{id:'validation',code:'V',label:'Validation / Customer',tagline:'Controlled evidence for DV/PV or customer-facing samples',description:'For design validation, customer samples and formal engineering verification. Requires released methods, controlled risks, approved Control Plan where applicable, traceable measurements and formal quality/release review.',formalLevel:2,requires:{processRelease:true,testRelease:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}},
-    production:{id:'production',code:'P',label:'Production Intent',tagline:'Maximum prototype governance for production-representative parts',description:'For production-intent, PPAP-supporting, safe-launch or equivalent production-representative builds. Applies the strongest available prototype controls, customer-specific gates, full genealogy, approved methods and formal release.',formalLevel:3,requires:{processRelease:true,testRelease:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}}
+    rapid:{id:'rapid',code:'E0',label:'Pre-A / Exploratory Engineering',tagline:'Minimum controlled evidence for preliminary experimental work',description:'Internal LabOS profile for pre-A samples and early exploratory engineering only. Keep the flow deliberately lean: identify the item, intended experiment, material/source, route or test intent, responsible person and objective evidence sufficient to reproduce the learning. It is not for formal project conclusions, customer evidence or production-representative claims.',formalLevel:0,requires:{processRelease:false,testRelease:false,controlPlan:false,independentControlPlanApproval:false,formalReadiness:false,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
+    controlled:{id:'controlled',code:'E1',label:'A-sample / Structured Engineering',tagline:'Repeatable experiments used for engineering project conclusions',description:'Internal LabOS profile for A-samples and structured engineering experiments whose results will support project decisions. Requires an explicitly reviewed route/test intent, controlled key settings, traceable material/source and sufficient measurement evidence for the stated conclusion; released methods are preferred but controlled provisional engineering methods remain possible.',formalLevel:1,requires:{processRelease:false,testRelease:false,controlPlan:'special-only',independentControlPlanApproval:false,formalReadiness:true,releaseApproval:false,customerApprovals:false,serialisation:false,fullGenealogy:false}},
+    validation:{id:'validation',code:'V',label:'B-sample / Validation',tagline:'Formal controlled evidence for B-sample verification and validation',description:'Internal LabOS profile for B-samples and formal verification/validation. Requires released or formally released-for-use methods, controlled risks and characteristics, traceable measurements, qualified people, capable resources, full sample traceability and formal review/release as applicable.',formalLevel:2,requires:{processRelease:true,testRelease:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}},
+    production:{id:'production',code:'P',label:'C-sample / Production Intent',tagline:'Highest prototype governance for C-sample / production-intent builds',description:'Internal LabOS profile for C-samples, production-intent, PPAP-supporting or equivalent representative builds. Applies the strongest configured prototype controls, customer-specific requirements, full genealogy, approved methods, capable measurement resources and formal release.',formalLevel:3,requires:{processRelease:true,testRelease:true,controlPlan:true,independentControlPlanApproval:true,formalReadiness:true,releaseApproval:true,customerApprovals:true,serialisation:true,fullGenealogy:true}}
   };
   ProtoLab.profile = r => ProtoLab.ASSURANCE_PROFILES[r?.assuranceProfile]||ProtoLab.ASSURANCE_PROFILES.controlled;
   ProtoLab.recommendAssuranceProfile = data => {
-    const purpose=String(data?.purpose||'').toLowerCase(),maturity=String(data?.maturity||'').toLowerCase(),customer=String(data?.customerId||'').toLowerCase();
-    if(data?.productSafety)return 'validation';
-    if(/production|ppap|safe launch|production intent/.test(purpose))return 'production';
-    if(/customer|design validation|dv|pv|formal validation/.test(purpose))return 'validation';
-    if(/quick|experiment|failure analysis|process learning|troubleshoot|debug/.test(purpose))return 'rapid';
-    if(/correlation|design learning|engineering prototype/.test(purpose))return 'controlled';
-    if(maturity.includes('c-sample')&&customer&&!customer.includes('internal'))return 'validation';
+    const purpose=String(data?.purpose||'').toLowerCase(),maturity=String(data?.maturity||'').toLowerCase();
+    if(/c-sample|c sample/.test(maturity)||/production|ppap|safe launch|production intent/.test(purpose))return 'production';
+    if(data?.productSafety||/b-sample|b sample/.test(maturity)||/customer|design validation|dv|pv|formal validation|verification|validation/.test(purpose))return 'validation';
+    if(/a-sample|a sample/.test(maturity)||/correlation|structured experiment|design learning|project conclusion|engineering prototype/.test(purpose))return 'controlled';
+    if(/pre-a|pre a|concept|exploratory/.test(maturity)||/quick|preliminary|experiment|process learning|troubleshoot|debug|feasibility/.test(purpose))return 'rapid';
     return 'controlled';
   };
   ProtoLab.ensureAssuranceProfile = r => { if(!r.assuranceProfile)r.assuranceProfile=ProtoLab.recommendAssuranceProfile(r); if(r.productSafety&&ProtoLab.profile(r).formalLevel<2)r.assuranceProfile='validation'; return ProtoLab.profile(r); };
@@ -797,5 +795,32 @@
   };
   const _ensurePlanningModelV1068=ProtoLab.ensurePlanningModel;
   ProtoLab.ensurePlanningModel = state => {state=_ensurePlanningModelV1068(state);ProtoLab.ensurePlanningCapabilityModelV1068(state);return state;};
+
+
+  /* REV 1.0.79 — time-accurate projected readiness. A care/training activity
+     only makes a resource usable after that activity has actually finished,
+     not merely because it occurs on the same calendar date. */
+  ProtoLab.projectedEquipmentReadyAt = (state,e,useStart=ProtoLab.now()) => {
+    if(!e)return false;
+    const t=new Date(useStart||ProtoLab.now()),onDate=t.toISOString().slice(0,10);
+    const governance=ProtoLab.equipmentGovernanceAssessment?ProtoLab.equipmentGovernanceAssessment(e):{ready:true};
+    const exception=ProtoLab.activeAdminException?.(state,'Equipment',e.id,'Equipment governance');
+    if(!governance.ready&&!exception)return false;
+    const care=(state?.resourceCareBookings||[]).filter(x=>x.status==='Scheduled'&&x.equipmentId===e.id&&new Date(x.end||x.start)<=t);
+    const cert=ProtoLab.validCalibrationCertificate?.(state,e.id,onDate);
+    const calBase=e.calibrationRequired===false || (!!cert&&e.calibrationStatus==='Valid'&&(!e.calibrationDue||e.calibrationDue>=onDate));
+    const calOk=calBase || care.some(x=>x.type==='Calibration'&&(!x.projectedNextDue||x.projectedNextDue>=onDate));
+    const mntBase=e.maintenanceStatus!=='Overdue'&&(!e.maintenanceDue||e.maintenanceDue>=onDate);
+    const mntOk=mntBase || care.some(x=>x.type==='Maintenance'&&(!x.projectedNextDue||x.projectedNextDue>=onDate));
+    return !!(calOk&&mntOk);
+  };
+  ProtoLab.projectedStaffQualificationAt = (state,staff,skillId,useStart=ProtoLab.now()) => {
+    if(!staff)return {valid:false,reason:'No staff assigned'};
+    if(!skillId)return {valid:true,reason:'No specific competency required'};
+    const t=new Date(useStart||ProtoLab.now()),onDate=t.toISOString().slice(0,10),q=ProtoLab.staffQualification(state,staff,skillId,onDate);
+    if(q.valid)return q;
+    const planned=(state?.resourceCareBookings||[]).filter(x=>x.status==='Scheduled'&&x.type==='Training'&&x.staffId===staff.id&&x.skillId===skillId&&new Date(x.end||x.start)<=t&&(!x.projectedNextDue||x.projectedNextDue>=onDate)).sort((a,b)=>String(b.end||b.start).localeCompare(String(a.end||a.start)))[0];
+    return {valid:!!planned,planned:planned||null,reason:planned?`Training completed before planned use; projected valid to ${planned.projectedNextDue||'future due date'}`:`No valid qualification completed before planned use`};
+  };
 
 })();

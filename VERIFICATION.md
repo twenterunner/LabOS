@@ -39,3 +39,6 @@ Sequential workflow ordering, stage confirmation, assurance reporting/navigation
 - Main and build swimlanes now expose active − / Fit / + zoom controls.
 - Commitment replan reasons are surfaced in Build Commitment Health and aggregated on the KPI tab.
 - See `VERIFICATION_v1.0.78.md` and `verification-v178.py` for executable evidence.
+
+## REV 1.0.79
+See `VERIFICATION_v1.0.79.md`. AUTO-PLAN/readiness resource semantics are unified, same-day calibration/maintenance/training readiness is time-accurate, 5S preserves scroll position, the Lab Standards & Resources sticky navigator is unified, E0/E1/V/P are remapped to Pre-A/A/B/C intent, and the demo portfolio is replaced with 24 power-tool prototype requests.

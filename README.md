@@ -3,6 +3,11 @@
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
+## REV 1.0.79 — planner/readiness consistency and power-tool demo portfolio
+
+REV 1.0.79 unifies AUTO-PLAN and Build Readiness resource semantics, makes same-day calibration/maintenance/training prerequisites time-accurate, preserves scroll position after 5S corrective actions, uses a unified sticky navigator in Lab Standards & Resources, remaps E0/E1/V/P to internal Pre-A/A/B/C prototype-control intent, and intentionally replaces the prior demo build data with a 24-request power-tool portfolio.
+
+
 ## REV 1.0.61 — guided requester action, constrained drag replanning and consolidated Resource Assurance
 
 This is the **static web / GitHub Pages** build. It deliberately uses browser IndexedDB and contains no Python/SQLite server. REV 1.0.61 makes missing requester inputs explicit, adds administrator abort/archive/retention deletion, constrained drag-and-drop replanning, collapsed sample registers, sticky/local search navigation, consolidated Calibration/Maintenance/Training/EHS assurance with 30/60/90-day reporting and configurable due warnings, clearer vacation impact previews, default decision rationales, and visual good/bad 5S examples.
