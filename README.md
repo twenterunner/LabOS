@@ -1,12 +1,12 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.56
+# LabOS — Laboratory Operations System POC · REV 1.0.57
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
 
-## REV 1.0.56 — governed measurement assurance, safer exceptions and faster navigation
+## REV 1.0.57 — governed measurement assurance, safer exceptions and faster navigation
 
-REV 1.0.56 adds MSA / Gage R&R, governed EHS and commissioning evidence for processes and equipment, formal calibration-procedure and calibration-certificate approval, controlled process-step skip approval, administrator exceptions that remain auditable, product-grouped Control Plans, retrospective/manual Lessons Learned capture, generated sample identity without duplicate entry, guided blocker-resolution paths and sticky section-jump navigation across long workspaces. Action semantics are standardized: blockers/resolution are red, next-step actions are yellow, and administrator exceptions are visually distinct.
+REV 1.0.57 adds MSA / Gage R&R, governed EHS and commissioning evidence for processes and equipment, formal calibration-procedure and calibration-certificate approval, controlled process-step skip approval, administrator exceptions that remain auditable, product-grouped Control Plans, retrospective/manual Lessons Learned capture, generated sample identity without duplicate entry, guided blocker-resolution paths and sticky section-jump navigation across long workspaces. Action semantics are standardized: blockers/resolution are red, next-step actions are yellow, and administrator exceptions are visually distinct.
 
 ## REV 1.0.55 — LabOS platform architecture, scoped capability studies and readiness revision fix
 
@@ -15,9 +15,8 @@ This revision deliberately evolves the POC from a prototype-only menu toward the
 - **One Requests front door** now introduces Prototype, future Validation and future Failure Analysis work types. The two future modules are clearly marked as framework placeholders; they do not create fake operational records.
 - **Workstreams are first-class:** Prototype is operational; Validation reserves the future DV/PV / reliability / test-development flow; Failure Analysis reserves the failure → root cause → corrective action → verification loop.
 - **Shared operations remain shared.** Planning, products/BOM, standards/resources, resource assurance, sample/serial history, quality, reports and management are not duplicated under each workstream.
-- **Process Capability is no longer a standalone menu.** It is now **Quality → Capability & SPC**, beside Control Plans and quality cases.
-- **Capability is study-scoped.** Raw measurements are never pooled across product revision, configuration, process revision, equipment, Control Plan revision, characteristic/specification or method. Product/configuration/equipment filters make that scope explicit.
-- **Low-volume prototype data is not overclaimed.** Cpk is withheld until an exact study has a two-sided numeric specification, at least 20 observations, complete scope and no point beyond the basic Individuals-chart 3σ stability screen. Ppk is shown from n≥20 using overall variation. Acceptance thresholds remain controlled company/customer rules rather than hidden universal defaults.
+- **Capability & SPC workspace removed in REV 1.0.57.** Quality now focuses on Control Plans, MSA/Gage R&R, quality cases, trends and history.
+- **The former Capability & SPC UI is retired.** Measurement assurance is now handled through controlled MSA/Gage R&R records linked directly to the process/test/equipment where the measurement is used.
 - **Build Readiness process-release defect fixed.** A build remains valid when its route points to a historically released process revision even if the library has since moved to a newer draft/under-review revision. If an exact routed revision really is missing or unreleased, LabOS names that specific step/revision instead of showing only the generic “Processes released” blocker.
 
 ## REV 1.0.54 — hard workflow gates, learning closeout and plain-language reporting
@@ -45,10 +44,10 @@ An actionable recommendation is shown only when LabOS can carry the proposal thr
 - Large builds use searchable/collapsible sample registers and execution-group selection rather than hundreds of permanently expanded cards.
 - Build execution follows the confirmed route + released process revision + approved Control Plan, with recipe/setup capture and sampling-rule-driven per-sample evidence in one matrix.
 - Sample & Serial History supports search and grouped drill-down.
-- Quality → Capability & SPC uses governed Control Plan evidence only and separates statistically comparable study populations before calculating capability/performance indices.
+- Quality → MSA / Gage R&R retains controlled measurement-system evidence and explicitly links each study to its process and/or Standard Test plus gage/equipment.
 - Lab Setup Wizard and controlled CSV migration support customers, products, people, competencies, equipment, calibration/maintenance/training evidence and certificate links.
 - Calibration, maintenance and training durations are schedulable and participate in planning.
-- 5S workplace control, configurable test families, category-based capability scope and personal Action Centre remain available.
+- 5S workplace control, configurable test families, measurement-system assurance and the personal Action Centre remain available.
 
 ## GitHub Pages
 

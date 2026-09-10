@@ -1,4 +1,4 @@
-# LabOS REV 1.0.56 · Quick Start
+# LabOS REV 1.0.57 · Quick Start
 
 1. **Set up a lab** — Administrator → Configuration → **Start / continue setup**. Work through scope, customers/internal use, products, people/competencies, equipment/readiness durations, evidence, released standards and the final integrity check. If there is no historical readiness evidence to migrate, choose the clean-start option so LabOS schedules readiness before first use.
 2. **Migrate existing LIMS data** — Configuration → **Import from existing LIMS**, or use the import actions inside the setup wizard. Download the relevant template, export/map your current data to the recognised columns, validate, then import. Equipment should precede calibration/maintenance; staff and competencies should precede training certificates.
@@ -9,14 +9,14 @@
 7. **Execute a process step** — For large quantities the execution group is folded by default. All pending samples are selected; open the foldout only to search/change the group. Enter recipe/setup controls, start the real execution group, capture the governed matrix/CSV data, then complete when required evidence exists.
 8. **Review samples** — The build Sample Register is folded for large batches and searchable. Use the batch/sample matrix as the primary capture surface; individual sample records are for identity or exceptional evidence.
 9. **Find genealogy** — **Serial History** supports search across sample/Lab ID/formal serial/build/product/customer/lot/process/operator/equipment and groups results in foldouts.
-10. **Review capability evidence** — open **Quality → Capability & SPC**. Select product/configuration/process/equipment/characteristic scope. Each card is one comparable study population; LabOS does not pool calibration offsets or Cpk across unlike products/configurations/equipment/specifications. Cpk is withheld when study size/scope/stability is insufficient.
+10. **Review measurement-system evidence** — open **Quality → MSA / Gage R&R**. Upload an existing MSA or run a guided Gage R&R; link the study to its process/test and gage, retain the study date and submit it for formal review.
 11. **Resource readiness** — Schedule calibration, maintenance or training with an editable duration. LabOS automatically protects affected build schedules or refuses the unresolved slot.
 12. **Improvement Scan** — Only proposals LabOS can implement end-to-end are actionable. Accept means apply + verify, not “go replan manually.”
 
 
 
 
-## REV 1.0.56 — key workflow changes
+## REV 1.0.57 — key workflow changes
 
 Use **Quality → MSA / Gage R&R** before relying on capability conclusions. Process and equipment setup now carry governed EHS / commissioning evidence; in-house calibration can define a controlled calibration procedure; calibration certificates require formal approval before readiness. Build/process blockers now open a guided resolution path. Administrators retain an explicit audited exception path where normal completion is impossible. Process execution supports approved step skips. Long workspaces expose sticky section-jump navigation, and build Lessons can be added manually or reviewed from automated proposals, including retrospectively.
 
@@ -25,7 +25,7 @@ Use **Quality → MSA / Gage R&R** before relying on capability conclusions. Pro
 - Use **Requests** as the shared front door. **Prototype** is operational today; **Validation** and **Failure Analysis** are visible as future workstreams so the framework can grow without changing the platform architecture later.
 - **Validation** shows the intended requirement → validation plan → test legs/DUTs → constrained plan → execution → results → requirement verification thread, plus controlled test-method development for genuine gaps.
 - **Failure Analysis** shows the intended failure intake → triage/containment → evidence/hypothesis → analysis → root cause → corrective action → verification/retest → learning thread.
-- Use **Quality → Capability & SPC**, not a separate Process Capability menu. Always check the study scope displayed on the card before interpreting Cpk/Ppk.
+- Use **Quality → MSA / Gage R&R** for controlled measurement-system evidence.
 - If Build Readiness says **Processes released**, the check now resolves the exact process revision recorded on each route step. A later library draft does not invalidate the older released revision. A genuine mismatch names the affected route step and revision.
 
 ## REV 1.0.54 — hard setup, learning and commitment decisions

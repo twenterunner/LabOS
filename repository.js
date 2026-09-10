@@ -240,6 +240,13 @@ class MigrationService{
     P.audit(s,'Measurement assurance and controlled exception model enabled','System','LabOS','Ungoverned setup/calibration evidence / no MSA object / hard dead ends','Controlled EHS/commissioning dossiers / formal calibration-certificate approval / Gage R&R / auditable administrator exceptions / approved process-step skip','REV 1.0.56 migration');
     s.dataVersion=wasDemo?'2026.09-demo-31':(s.dataVersion||'migrated');s.schemaVersion=28;continue;
    }
+   if(s.schemaVersion===28){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    s.gageRRStudies=Array.isArray(s.gageRRStudies)?s.gageRRStudies:[];
+    s.gageRRStudies.forEach(study=>{study.standardTestId=study.standardTestId||'';study.studyDate=study.studyDate||String(study.createdAt||P.now()).slice(0,10);study.sourceType=study.sourceType||'LabOS calculated';study.conclusion=study.conclusion||((study.result?.valid&&Number(study.result?.studyPct)<=30)?'Acceptable':'Review required');study.documentUploaded=!!(study.documentUploaded||study.fileData);});
+    P.audit(s,'Measurement assurance workflow refined','System','LabOS','MSA hidden from process/test context / separate capability workspace / manual-only daily refresh','Process/test/equipment-linked MSA / upload-or-run guided GRR / daily automatic operations check / simplified quality workspace','REV 1.0.57 migration');
+    s.dataVersion=wasDemo?'2026.09-demo-32':(s.dataVersion||'migrated');s.schemaVersion=29;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

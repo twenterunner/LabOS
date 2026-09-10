@@ -1,0 +1,48 @@
+{
+  "revision": "1.0.57",
+  "schema": 29,
+  "status": "PASS",
+  "passed": 1953,
+  "failed": 0,
+  "total": 1953,
+  "suites": [
+    {
+      "name": "Core domain/planning",
+      "passed": 46,
+      "failed": 0
+    },
+    {
+      "name": "Persistence/migration",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "name": "REV 1.0.57 focused behavior",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "name": "REV 1.0.57 UI regression",
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "name": "Static/package checks",
+      "passed": 28,
+      "failed": 0
+    },
+    {
+      "name": "Build Report retained regression",
+      "passed": 14,
+      "failed": 0
+    },
+    {
+      "name": "Role/build/workspace stress",
+      "passed": 1820,
+      "failed": 0
+    }
+  ],
+  "notes": [
+    "Final release must be re-extracted and these suites rerun against the packaged copy."
+  ]
+}
