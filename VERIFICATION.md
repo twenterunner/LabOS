@@ -1,3 +1,7 @@
+## REV 1.0.71 verification
+
+REV 1.0.71 consolidates Dashboard and Action Centre into the role-specific My Work view and moves drag alternatives from a separate list onto the swimlane itself. Planning alternatives are classified green/yellow/red according to current-resource feasibility, prevalidated training, or quantified cross-build impact. Red and yellow alternatives require an explicit decision; green no-impact alternatives apply directly.
+
 # LabOS REV 1.0.61 — verification
 
 REV 1.0.61 was built on the REV 1.0.60 static application baseline. The database pilot is not included; the application explicitly uses browser IndexedDB.

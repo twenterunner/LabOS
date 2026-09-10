@@ -3182,6 +3182,171 @@ function enableWorkspacePlanningDragV1070(){if(App.currentView!=='workspace'||!c
 function installV1070(){if(App._v1070Installed)return;App._v1070Installed=true;document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1070-skill-option],[data-v1070-open-skills],[data-v1070-start-build-move]');if(!t)return;e.preventDefault();e.stopPropagation();if(t.dataset.v1070SkillOption){applySkillResolutionV1070(t.dataset.v1070SkillOption);return}if(t.hasAttribute('data-v1070-open-skills')){closeModal();nav('process-library');setTimeout(()=>document.getElementById('std-skill')?.scrollIntoView({behavior:'smooth',block:'start'}),80);return}if(t.dataset.v1070StartBuildMove){const b=(App.state.bookings||[]).find(x=>x.id===t.dataset.v1070StartBuildMove);if(b)planningMovePanelV1070(b);return}},true)}
 const _renderV1070Base=render;render=function(){_renderV1070Base();installV1070();enableWorkspacePlanningDragV1070();if(App.currentView==='workspace')scheduleWorkspaceCockpitLayout()};
 
+
+
+/* ============================================================
+   LabOS REV 1.0.71 — unified role home + in-lane move choices
+   ============================================================ */
+function roleWorkHubV1071(){
+  const mine=[...openActions()].sort((a,b)=>(a.severity==='bad'?0:a.severity==='warn'?1:2)-(b.severity==='bad'?0:b.severity==='warn'?1:2)||String(a.due||'').localeCompare(String(b.due||'')));
+  const me=String(App.state.identity?.name||'').trim();
+  const proposals=new P.ImprovementService().generate(App.state).filter(x=>String(x.owner||'').trim()===me);
+  const mandatory=mine.slice(0,8).map(a=>`<div class="my-work-row-v1071 ${a.severity==='bad'?'bad':a.severity==='warn'?'warn':'neutral'}"><span class="my-work-state-v1071">${a.severity==='bad'?'✕':a.severity==='warn'?'●':'•'}</span><div><strong>${esc(a.title)}</strong><small>${esc(a.requestId||a.category||'LabOS')} · ${esc(a.owner||'Unassigned')}${a.due?` · due ${P.formatDate(a.due)}`:''}</small></div>${btn('Open',a.id?`data-resolve-action="${esc(a.id)}"`:`data-nav="${esc(a.resolve||'dashboard')}"`,'button tiny primary')}</div>`).join('');
+  const improve=proposals.slice(0,5).map(x=>`<div class="my-work-row-v1071 improvement"><span class="my-work-state-v1071">↗</span><div><strong>${esc(x.title)}</strong><small>${esc(x.type||'Improvement')} · ${esc(x.impact||x.proposal||'Review improvement')}</small></div>${btn('Review',`data-improvement="${esc(x.id)}"`,'button tiny secondary')}</div>`).join('');
+  return `<section id="myWorkHubV1071" class="card my-work-hub-v1071"><div class="section-title-row"><div><span class="eyebrow">MY WORK</span><h2>Mandatory actions assigned to you</h2><p class="subtle">Mandatory actions and executable improvement proposals assigned to your current role are shown here alongside the information needed to act on them.</p></div><span class="pill">${mine.length} mandatory</span></div><div class="my-work-grid-v1071"><div><div class="my-work-section-head-v1071"><strong>Mandatory</strong><span>${mine.length}</span></div>${mandatory||'<div class="empty compact">✓ No mandatory action is currently assigned to you.</div>'}</div><div><div class="my-work-section-head-v1071"><strong>Improvements assigned to you</strong><span>${proposals.length}</span></div>${improve||'<div class="empty compact">No executable improvement proposal is currently assigned to you.</div>'}</div></div></section>`;
+}
+const _renderDashboardV1071Base=renderDashboard;
+renderDashboard=function(){
+  let html=_renderDashboardV1071Base();
+  const hub=roleWorkHubV1071();
+  if(html.includes('<div class="grid cols-3 dashboard-filter-grid-v1064">'))html=html.replace('<div class="grid cols-3 dashboard-filter-grid-v1064">',hub+'<div class="grid cols-3 dashboard-filter-grid-v1064">');
+  else if(html.includes('<div class="ops-filterbar visual">'))html=html.replace('<div class="ops-filterbar visual">',hub+'<div class="ops-filterbar visual">');
+  else html=hub+html;
+  return html.replaceAll('Action Centre →','My work →').replaceAll('All actions →','Mandatory actions →');
+};
+renderActionCentre=function(){return renderDashboard()};
+const _renderNavV1071Base=renderNav;
+renderNav=function(){_renderNavV1071Base();const navRoot=$('#mainNav');navRoot?.querySelector('[data-nav="action-centre"]')?.remove();const dash=navRoot?.querySelector('[data-nav="dashboard"] span:first-child');if(dash)dash.textContent='My Work'};
+const _navV1071Base=nav;
+nav=function(view){if(view==='action-centre'){App.filters.dashboardFocusV1071='actions';view='dashboard';const out=_navV1071Base(view);setTimeout(()=>document.getElementById('myWorkHubV1071')?.scrollIntoView({behavior:'smooth',block:'start'}),40);return out}return _navV1071Base(view)};
+installGlobalNextGuidanceV1058=function(){};
+if(typeof installGlobalNextGuidanceV1063==='function')installGlobalNextGuidanceV1063=function(){};
+globalNextGuidanceV1058=function(){return null};
+
+function overlapsV1071(a,b,c,d){return new Date(a)<new Date(d)&&new Date(c)<new Date(b)}
+function moveStartCandidatesV1071(from,maxDays=35){
+  const out=[],base=planningNextWorkStartV1064(from||new Date());
+  for(let i=0;i<maxDays;i++){
+    const d=planAddDays(base,i);if([0,6].includes(d.getDay()))continue;
+    for(const hour of [8,13]){const x=new Date(d);x.setHours(hour,0,0,0);if(x>=base)out.push(x)}
+  }
+  return out;
+}
+function hardBlockedMoveTargetV1071(state,booking,start,equipmentId,staffId){
+  const st=planningNextWorkStartV1064(start),en=planningAddWorkHoursV1064(st,booking.durationHours||1);
+  for(const c of state.resourceCareBookings||[]){if(c.status!=='Scheduled')continue;if(((equipmentId&&c.equipmentId===equipmentId)||(staffId&&c.staffId===staffId))&&overlapsV1071(st,en,c.start,c.end))return true}
+  for(const ev of state.planningEvents||[]){if(ev.active===false)continue;const affects=ev.scope==='lab'||(ev.scope==='staff'&&ev.staffId===staffId)||(ev.scope==='equipment'&&ev.equipmentId===equipmentId);if(affects&&overlapsV1071(st,en,ev.start,ev.end))return true}
+  return false;
+}
+function buildConflictsAtTargetV1071(state,booking,start,equipmentId,staffId){
+  const st=planningNextWorkStartV1064(start),en=planningAddWorkHoursV1064(st,booking.durationHours||1);
+  return (state.bookings||[]).filter(b=>b.requestId!==booking.requestId&&((equipmentId&&b.equipmentId===equipmentId)||(staffId&&b.staffId===staffId))&&overlapsV1071(st,en,b.start,b.end));
+}
+function simulateCrossBuildMoveV1071(baseState,bookingId,target){
+  const sourceFingerprint=planningFingerprintV1070(baseState),selected=(baseState.bookings||[]).find(x=>x.id===bookingId);if(!selected)return {ok:false,error:'Planned item missing.'};
+  const first=typeof target==='string'?decodePlanningAssignmentV1062(target):target;if(!first?.start)return {ok:false,error:'Target missing.'};
+  if(hardBlockedMoveTargetV1071(baseState,selected,first.start,first.equipmentId||selected.equipmentId,first.staffId||selected.staffId))return {ok:false,error:'Target is blocked by calibration, maintenance, training, absence or lab closure.'};
+  let next=P.deepClone(baseState);const targetEnd=planningAddWorkHoursV1064(planningNextWorkStartV1064(first.start),selected.durationHours||1),seen=new Set();
+  for(let guard=0;guard<12;guard++){
+    const currentSelected=(next.bookings||[]).find(x=>x.id===bookingId);if(!currentSelected)return {ok:false,error:'Selected work disappeared during simulation.'};
+    const conflicts=buildConflictsAtTargetV1071(next,currentSelected,first.start,first.equipmentId||currentSelected.equipmentId,first.staffId||currentSelected.staffId).filter(x=>!seen.has(x.requestId));
+    if(!conflicts.length)break;
+    const conflict=conflicts.sort((a,b)=>new Date(a.start)-new Date(b.start))[0];seen.add(conflict.requestId);
+    const shiftFrom=planningNextWorkStartV1064(new Date(targetEnd.getTime()+30*60000));
+    const sim=simulateBuildMoveV1070(next,conflict.id,{start:shiftFrom.toISOString(),equipmentId:conflict.equipmentId,staffId:conflict.staffId});
+    if(!sim.ok)return {ok:false,error:`Cannot recover ${conflict.requestId}: ${sim.error}`};next=sim.nextState;
+  }
+  const finalSim=simulateBuildMoveV1070(next,bookingId,first);if(!finalSim.ok)return finalSim;
+  const finalState=finalSim.nextState,external=planningBookingDiffV1070(baseState,finalState,selected.requestId),inv=P.validateInvariants(finalState);if(inv.length)return {ok:false,error:inv[0]};
+  return {...finalSim,sourceFingerprint,nextState:finalState,externalChanges:external,kind:'impact'};
+}
+function simulateTrainingMoveV1071(baseState,bookingId,start,equipmentId,staffId){
+  const sourceFingerprint=planningFingerprintV1070(baseState),booking=(baseState.bookings||[]).find(x=>x.id===bookingId);if(!booking)return null;const req=bookingRequirementV1062(booking);if(!req.skillId)return null;
+  let prepared=P.deepClone(baseState),training=null;
+  const ok=withPlanningStateV1070(prepared,()=>{const st=(prepared.staff||[]).find(x=>x.id===staffId),sk=(prepared.competencies||[]).find(x=>x.id===req.skillId);if(!st||!sk||st.available===false)return false;if((st.competencies||[]).includes(req.skillId))return false;const h=Number(sk.trainingDurationHours||4),item={id:`MOVE-TRN-${bookingId}-${staffId}`,itemKey:`MOVE-TRN-${bookingId}-${staffId}`,type:'Training',staffId,skillId:req.skillId,targetId:staffId,targetName:`${st.name} · ${sk.name}`,durationHours:h,dueDate:new Date(start).toISOString().slice(0,10),validMonths:Number(sk.validMonths||24),owner:sk.owner||'Lab Manager',reason:`Required for a proposed move of ${booking.requestId} · ${booking.stepName||booking.id}.`};try{const svc=new P.ResourceCareService(),slot=svc.nextResolvableSlot(prepared,item,new Date()),scheduled=svc.scheduleResolved(prepared,item,slot.start,{durationHours:h,note:`Move option prevalidation for ${booking.requestId}`});if(new Date(scheduled.record.end)>new Date(start))return false;st.competencies=Array.from(new Set([...(st.competencies||[]),req.skillId]));training={staffId,staffName:st.name,skillId:req.skillId,skillName:sk.name,hours:h,start:scheduled.record.start,end:scheduled.record.end};return true}catch(_){return false}});
+  if(!ok||!training)return null;const sim=simulateBuildMoveV1070(prepared,bookingId,{start:new Date(start).toISOString(),equipmentId,staffId});if(!sim.ok)return null;const external=planningBookingDiffV1070(baseState,sim.nextState,booking.requestId);if(external.length)return null;const inv=P.validateInvariants(sim.nextState);if(inv.length)return null;return {...sim,sourceFingerprint,externalChanges:[],kind:'training',training};
+}
+function moveOptionKeyV1071(x){return `${halfDayLabelV1066(x.start)}|${x.equipmentId||''}`}
+function validatedMoveOptionsV1071(booking,limit=12){
+  const reqBookings=(App.state.bookings||[]).filter(b=>b.requestId===booking.requestId).sort((a,b)=>new Date(a.start)-new Date(b.start));
+  const idx=reqBookings.findIndex(b=>b.id===booking.id),prev=idx>0?reqBookings[idx-1]:null,from=prev?.end||new Date(),req=bookingRequirementV1062(booking),result=[],used=new Set();
+  App.planningMoveProposalsV1071={};App.planningMoveProposalsV1070={};
+  const greenRaw=validatedMoveOptionsV1070(booking,18);
+  for(const x of greenRaw){
+    if(result.length>=6)break;
+    const prop=App.planningMoveProposalsV1070?.[x.id];if(!prop?.ok)continue;
+    const key=moveOptionKeyV1071(x);if(used.has(key))continue;
+    used.add(key);const id=`G-${result.length+1}-${Math.random().toString(36).slice(2,6)}`;prop.kind='green';App.planningMoveProposalsV1071[id]=prop;result.push({id,kind:'green',...x,externalCount:0});
+  }
+  if(req.skillId){
+    const unqualified=(App.state.staff||[]).filter(s=>s.available!==false&&!(P.projectedStaffQualification?P.projectedStaffQualification(App.state,s,req.skillId,P.todayISO()).valid:(s.competencies||[]).includes(req.skillId))).slice(0,3);
+    let y=0,attempts=0;
+    outerYellow: for(const d of moveStartCandidatesV1071(from,24)){
+      if(y>=3||attempts>=60)break;
+      const eqs=candidateEquipmentForBookingV1062(booking,d.toISOString().slice(0,10)).slice(0,5);
+      for(const eq of eqs){
+        for(const st of unqualified){
+          attempts++;const key=`${halfDayLabelV1066(d)}|${eq.id}`;if(used.has(key))continue;
+          const sim=simulateTrainingMoveV1071(App.state,booking.id,d,eq.id,st.id);if(!sim)continue;
+          const id=`Y-${y+1}-${Math.random().toString(36).slice(2,6)}`;
+          sim.option={start:d.toISOString(),end:sim.newTimes?.[0]?.end,equipmentId:eq.id,staffId:st.id,equipmentName:eq.name,staffName:st.name};
+          App.planningMoveProposalsV1071[id]=sim;result.push({id,kind:'yellow',start:d.toISOString(),end:sim.newTimes?.[0]?.end,equipmentId:eq.id,staffId:st.id,equipmentName:eq.name,staffName:st.name,training:sim.training});used.add(key);y++;
+          if(y>=3)break outerYellow;
+        }
+      }
+    }
+  }
+  let red=0,attempts=0;
+  const qualified=(App.state.staff||[]).filter(s=>s.available!==false&&(!req.skillId||(P.projectedStaffQualification?P.projectedStaffQualification(App.state,s,req.skillId,P.todayISO()).valid:(s.competencies||[]).includes(req.skillId)))).slice(0,5);
+  outerRed: for(const d of moveStartCandidatesV1071(from,28)){
+    if(red>=4||attempts>=100)break;
+    const eqs=candidateEquipmentForBookingV1062(booking,d.toISOString().slice(0,10)).slice(0,6);
+    for(const eq of eqs){
+      for(const st of qualified){
+        attempts++;const key=`${halfDayLabelV1066(d)}|${eq.id}`;if(used.has(key))continue;
+        const conflicts=buildConflictsAtTargetV1071(App.state,booking,d,eq.id,st.id);if(!conflicts.length)continue;
+        const sim=simulateCrossBuildMoveV1071(App.state,booking.id,{start:d.toISOString(),equipmentId:eq.id,staffId:st.id});if(!sim.ok||!sim.externalChanges.length)continue;
+        const id=`R-${red+1}-${Math.random().toString(36).slice(2,6)}`;sim.option={start:d.toISOString(),end:sim.newTimes?.find(x=>x.id===booking.id)?.end,equipmentId:eq.id,staffId:st.id,equipmentName:eq.name,staffName:st.name};
+        App.planningMoveProposalsV1071[id]=sim;result.push({id,kind:'red',start:d.toISOString(),end:sim.option.end,equipmentId:eq.id,staffId:st.id,equipmentName:eq.name,staffName:st.name,externalCount:sim.externalChanges.length});used.add(key);red++;
+        if(red>=4)break outerRed;
+      }
+    }
+  }
+  return result.slice(0,limit);
+}
+function planningChartWindowV1071(){
+  const view=App.filters.planView||'portfolio',requestId=view==='build'?(App.filters.planBuild||null):null,weeks=Math.max(2,Math.min(13,Number(App.filters.planWeeks||8))),today=planWeekStart(new Date()),builds=(App.state.bookings||[]).map(x=>({...x,kind:'build'})),care=(App.state.resourceCareBookings||[]).filter(x=>x.status==='Scheduled').map(x=>({...x,kind:'care'})),situations=planningSituationEvents(),all=[...builds,...care,...situations];let relevant=all;if(view==='build'&&requestId)relevant=all.filter(x=>x.kind==='situation'||x.requestId===requestId||x.sourceRequestId===requestId);let earliest=relevant.length?new Date(Math.min(...relevant.map(x=>+new Date(x.start)))):today;const start=planWeekStart(earliest<today?earliest:today);return {view,requestId,weeks,start,days:weeks*7};
+}
+function workspaceChartWindowV1071(requestId){const b=(App.state.bookings||[]).filter(x=>x.requestId===requestId).sort((a,z)=>new Date(a.start)-new Date(z.start));if(!b.length)return null;let start=new Date(b[0].start);start.setHours(0,0,0,0);start=planAddDays(start,-1);let last=b.reduce((m,x)=>+new Date(x.end)>+new Date(m.end)?x:m,b[0]),end=new Date(last.end);end.setHours(0,0,0,0);end=planAddDays(end,2);return {start,days:Math.max(2,Math.ceil((end-start)/86400000))}}
+function findMoveOverlayTrackV1071(opt,booking){
+  if(App.currentView==='workspace'){
+    const labels=[...document.querySelectorAll('.workspace-plan-lane-label-v1070')],label=labels.find(x=>(x.querySelector('b')?.textContent||'').includes(booking.stepName||''));return label?.nextElementSibling||null;
+  }
+  const board=document.querySelector('.planning-visual-main .swim-board');if(!board)return null;const labels=[...board.querySelectorAll('.swim-label:not(.swim-head)')],view=App.filters.planView||'portfolio';let label=null;
+  if(view==='equipment'){const eq=(App.state.equipment||[]).find(e=>e.id===opt.equipmentId);label=labels.find(x=>(x.querySelector('strong')?.textContent||'').trim()===(eq?.name||opt.equipmentName||''));}
+  else if(view==='people'){const st=(App.state.staff||[]).find(s=>s.id===opt.staffId);label=labels.find(x=>(x.querySelector('strong')?.textContent||'').trim()===(st?.name||opt.staffName||''));}
+  else if(view==='build')label=labels.find(x=>(x.querySelector('strong')?.textContent||'').trim()===(booking.stepName||''));
+  else label=labels.find(x=>(x.querySelector('strong')?.textContent||'').startsWith(booking.requestId));
+  return label?.nextElementSibling||null;
+}
+function clearMoveOverlaysV1071(){document.querySelectorAll('.planning-slot-overlay-v1071').forEach(x=>x.remove());document.getElementById('dragFeasibleSlotsV1061')?.remove()}
+function drawMoveOverlaysV1071(booking,options){
+  const windowInfo=App.currentView==='workspace'?workspaceChartWindowV1071(booking.requestId):planningChartWindowV1071();if(!windowInfo)return;const {start,days}=windowInfo;const end=planAddDays(start,days);
+  for(const opt of options){if(new Date(opt.start)<start||new Date(opt.start)>=end)continue;const track=findMoveOverlayTrackV1071(opt,booking);if(!track)continue;track.style.position='relative';const s=halfDayCoordV1066(opt.start,start,days,false),e=Math.max(s+.5,halfDayCoordV1066(opt.end||planningAddWorkHoursV1064(new Date(opt.start),booking.durationHours||1),start,days,true)),left=s/days*100,width=Math.max(.5/days*100,(e-s)/days*100),prop=App.planningMoveProposalsV1071?.[opt.id],impactBuilds=prop?[...new Set((prop.externalChanges||[]).map(x=>x.requestId).filter(Boolean))].length:0,title=opt.kind==='green'?`GREEN · feasible with current qualified staff and equipment · no other build affected · ${opt.equipmentName} · ${opt.staffName}`:opt.kind==='yellow'?`YELLOW · ${opt.training?.staffName||opt.staffName} requires ${opt.training?.skillName||'training'} before this move · ${opt.training?.hours||''} h training`: `RED · feasible only by moving ${impactBuilds} other build${impactBuilds===1?'':'s'} · click/drop to review quantified impact`;
+    const el=document.createElement('button');el.type='button';el.className=`planning-slot-overlay-v1071 ${opt.kind}`;el.dataset.v1061DropSlot=`V1071:${opt.id}`;el.dataset.v1071MoveOption=opt.id;el.style.left=`${left}%`;el.style.width=`${width}%`;el.title=title;el.setAttribute('aria-label',title);el.innerHTML=`<span>${opt.kind==='green'?'✓':opt.kind==='yellow'?'T':'!'}</span>`;track.appendChild(el);
+  }
+}
+function planningMovePanelV1071(booking){
+  clearMoveOverlaysV1071();const options=validatedMoveOptionsV1071(booking,13),root=App.currentView==='workspace'?(document.querySelector('.workspace-mini-plan-v1066')||$('#page')):(document.querySelector('.planning-visual-main')||$('#page'));App.dragBookingV1061=booking.id;
+  const counts={green:options.filter(x=>x.kind==='green').length,yellow:options.filter(x=>x.kind==='yellow').length,red:options.filter(x=>x.kind==='red').length};
+  const banner=document.createElement('div');banner.id='dragFeasibleSlotsV1061';banner.className='planning-move-banner-v1071';banner.innerHTML=`<div><span class="eyebrow">MOVE · ${esc(booking.requestId)} · ${esc(booking.stepName||'planned work')}</span><strong>Drop directly onto a highlighted half-day in the swimlane</strong><small>Only end-to-end validated options are highlighted. Green applies immediately; yellow requires training approval; red requires approval of the quantified impact on other builds.</small></div><div class="planning-move-legend-v1071"><span class="green">● ${counts.green} no impact</span><span class="yellow">● ${counts.yellow} training</span><span class="red">● ${counts.red} other-build impact</span>${btn('Cancel move','data-v1064-cancel-drag','button tiny secondary')}</div>`;
+  const scroll=root.querySelector?.('.swim-scroll,.workspace-plan-scroll-v1069');if(scroll)root.insertBefore(banner,scroll);else root.prepend(banner);drawMoveOverlaysV1071(booking,options);if(!options.length)toast('No end-to-end feasible move is available in the current planning horizon.',true);
+}
+planningMovePanelV1070=planningMovePanelV1071;planningMovePanelV1065=planningMovePanelV1071;planningMovePanelV1066=planningMovePanelV1071;showFeasibleSlotsV1064=planningMovePanelV1071;showFeasibleSlotsV1061=planningMovePanelV1071;
+function crossBuildImpactSummaryV1071(prop){
+  const ids=[...new Set((prop.externalChanges||[]).map(x=>x.requestId).filter(Boolean))],rows=ids.map(id=>{const before=(App.state.requests||[]).find(r=>r.id===id),after=(prop.nextState.requests||[]).find(r=>r.id===id),beforeF=before?.forecastDate||before?.currentCommitmentDate||before?.requiredDate,afterF=after?.forecastDate||beforeF,shift=beforeF&&afterF?P.daysBetween(beforeF,afterF):0,late=after?.requiredDate&&afterF?Math.max(0,P.daysBetween(after.requiredDate,afterF)):0,count=(prop.externalChanges||[]).filter(x=>x.requestId===id).length;return {id,title:before?.title||id,beforeF,afterF,shift,late,count}});return rows;
+}
+function reviewExternalMoveImpactV1071(prop){const rows=crossBuildImpactSummaryV1071(prop),worst=Math.max(0,...rows.map(x=>x.shift));openModal('Move affects other builds',`<div class="resolution-focus"><span class="eyebrow">RED SLOT · APPROVAL REQUIRED</span><h2>${rows.length} other build${rows.length===1?'':'s'} would move</h2><p>This option is feasible only if the changes below are accepted. Nothing changes until you approve it.</p></div><div class="grid cols-3"><div class="mini-kpi"><span>Other builds</span><strong>${rows.length}</strong></div><div class="mini-kpi"><span>Bookings moved</span><strong>${prop.externalChanges.length}</strong></div><div class="mini-kpi"><span>Worst forecast shift</span><strong>${worst>0?'+'+worst:worst} d</strong></div></div><div class="table-wrap" style="margin-top:12px"><table class="data-table"><thead><tr><th>Build</th><th>Bookings moved</th><th>Forecast before</th><th>Forecast after</th><th>Shift</th><th>Late after move</th></tr></thead><tbody>${rows.map(x=>`<tr class="${x.late>0?'bad-row':x.shift>0?'warn-row':''}"><td><strong>${esc(x.id)}</strong><small>${esc(x.title)}</small></td><td>${x.count}</td><td>${P.formatDate(x.beforeF)}</td><td>${P.formatDate(x.afterF)}</td><td><strong>${x.shift>0?'+':''}${x.shift} d</strong></td><td>${x.late>0?`<strong class="bad-text">${x.late} d late</strong>`:'On time'}</td></tr>`).join('')}</tbody></table></div><div class="field"><label>Decision rationale</label><textarea id="v1071MoveRationale">Accepting this move because the quantified effect on ${rows.length} other build${rows.length===1?'':'s'} is acceptable; worst forecast movement is ${worst} day${worst===1?'':'s'}.</textarea></div>`,`${btn('Reject · keep current plan','data-modal-close','button')}${btn('Approve red-slot impact','data-v1071-accept-red','button danger')}`,true);setTimeout(()=>{$('[data-v1071-accept-red]').onclick=()=>{const why=$('#v1071MoveRationale')?.value.trim()||'';closeModal();commitMoveProposalV1070(prop,why)}},0)}
+function reviewTrainingMoveV1071(prop){const t=prop.training;openModal('Training required for this move',`<div class="resolution-focus"><span class="eyebrow">YELLOW SLOT · TRAINING REQUIRED</span><h2>${esc(t?.staffName||'Selected person')} · ${esc(t?.skillName||'required competency')}</h2><p>The move is feasible only after the training below is scheduled. No other build needs to move.</p></div><div class="grid cols-3"><div class="mini-kpi"><span>Training</span><strong>${Number(t?.hours||0).toFixed(1)} h</strong></div><div class="mini-kpi"><span>Training slot</span><strong>${esc(halfDayLabelV1066(t?.start))}</strong></div><div class="mini-kpi"><span>Other builds moved</span><strong>0</strong></div></div><div class="field"><label>Decision rationale</label><textarea id="v1071TrainingRationale">Approve training ${esc(t?.staffName||'the selected person')} for ${esc(t?.skillName||'the required competency')} so this build can use the highlighted slot without moving another build.</textarea></div>`,`${btn('Reject · keep current plan','data-modal-close','button')}${btn('Approve training & move','data-v1071-accept-training','button warn-action')}`,true);setTimeout(()=>{$('[data-v1071-accept-training]').onclick=()=>{const why=$('#v1071TrainingRationale')?.value.trim()||'';closeModal();commitMoveProposalV1070(prop,why)}},0)}
+moveBookingAndReplanV1061=async function(id,target){
+  if(String(target||'').startsWith('V1071:')){const prop=App.planningMoveProposalsV1071?.[String(target).slice(6)];if(!prop?.ok||prop.bookingId!==id){const b=(App.state.bookings||[]).find(x=>x.id===id);if(b)planningMovePanelV1071(b);toast('Planning changed; highlighted move options were refreshed.',true);return}if(planningFingerprintV1070(App.state)!==prop.sourceFingerprint){const b=(App.state.bookings||[]).find(x=>x.id===id);if(b)planningMovePanelV1071(b);toast('Planning changed; highlighted move options were refreshed.',true);return}if(prop.kind==='training'){reviewTrainingMoveV1071(prop);return}if(prop.kind==='impact'||prop.externalChanges?.length){reviewExternalMoveImpactV1071(prop);return}commitMoveProposalV1070(prop);return}
+  let prop=null;if(String(target||'').startsWith('V1070:'))prop=App.planningMoveProposalsV1070?.[String(target).slice(6)]||null;else prop=simulateBuildMoveV1070(App.state,id,target);if(!prop?.ok){const b=(App.state.bookings||[]).find(x=>x.id===id);if(b)planningMovePanelV1071(b);toast('That move is not currently validated. Highlighted options were refreshed.',true);return}if(prop.externalChanges?.length){reviewExternalMoveImpactV1071(prop);return}commitMoveProposalV1070(prop)
+};
+function bindPlanningSlotOverlaysV1071(){if(App._v1071OverlayBound)return;App._v1071OverlayBound=true;document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1071-move-option],[data-v1064-cancel-drag]');if(!t)return;if(t.hasAttribute('data-v1064-cancel-drag')){clearMoveOverlaysV1071();App.dragBookingV1061=null;return}e.preventDefault();e.stopPropagation();if(App.dragBookingV1061)moveBookingAndReplanV1061(App.dragBookingV1061,`V1071:${t.dataset.v1071MoveOption}`)},true)}
+hideFeasibleSlotsV1061=function(){};
+const _renderV1071Base=render;
+render=function(){if(App.currentView==='action-centre')App.currentView='dashboard';_renderV1071Base();document.querySelectorAll('.global-next-guide').forEach(x=>x.remove());bindPlanningSlotOverlaysV1071()};
+
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}const planningModelV1068=P.ensurePlanningCapabilityModelV1068?.(App.state);if(planningModelV1068?.changed)await App.repo.save(App.state);App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
 })();
