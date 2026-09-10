@@ -1,7 +1,16 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.80
+# LabOS — Laboratory Operations System POC · REV 1.0.81
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
+
+
+## REV 1.0.81 — planning-integrity root-cause correction
+
+REV 1.0.81 removes a legacy demo-data scheduling shortcut that bypassed the production planner. In REV 1.0.79/80, the power-tool demo portfolio selected the first matching equipment and person and spaced tasks by day without validating future calibration, maintenance, qualification, shared-resource collisions or planning events. The visible equipment-readiness messages were therefore correct diagnoses of an invalid seeded schedule, not false alarms from the readiness checker.
+
+The demo portfolio is now seeded through the same `PlannerService` used by AUTO-PLAN. A dedicated planning-integrity audit checks equipment readiness, staff qualification, equipment overlaps, staff overlaps, hard planning-event overlaps and capability mismatches. Existing REV 1.0.80 demo states are repaired once on migration using an atomic optimizer replan; user-created planning events such as whole-lab closures remain hard constraints and commitments are preserved. Final-state builds no longer retain obsolete future seed bookings.
+
+The planner also now preserves completed/actual booking history during replans, skips completed route/test work, and reuses an already scheduled future calibration/maintenance activity instead of creating duplicate readiness work. The equipment resolver groups failed bookings by root equipment resource and displays the actual calibration/maintenance reason rather than presenting every downstream booking as an unrelated fault.
 
 ## REV 1.0.80 — conflict-visible manual planning and closure-safe replanning
 

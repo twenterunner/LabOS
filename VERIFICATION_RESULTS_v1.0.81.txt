@@ -1,0 +1,32 @@
+PASS | Version is REV 1.0.81
+PASS | Schema upgraded to 31
+PASS | Main assets cache-busted to 1.0.81
+PASS | Service-worker reset identity updated
+PASS | Legacy shortcut demo scheduler removed
+PASS | Fresh demo uses production PlannerService
+PASS | Planner-integrity audit covers six planning hazards
+PASS | REV80 -> REV81 migration invokes seed repair
+PASS | On-load fallback repair is present
+PASS | Legacy final-state future seed bookings are removed
+PASS | Completed/actual booking history is preserved by replan
+PASS | Completed route/test work is skipped by replan
+PASS | Pending future care is reused instead of duplicated
+PASS | Final candidate slot is revalidated after capacity search
+PASS | Equipment resolver groups failures by root resource
+PASS | Equipment resolver exposes explicit calibration/maintenance reasons
+PASS | Manual conflict checker uses exact-time readiness
+PASS | REV80 manual three tiers retained
+PASS | REV80 month/CW swimlane retained
+PASS | REV80 closure residual guard retained
+PASS | JavaScript syntax: core.js | OK
+PASS | JavaScript syntax: demo-data.js | OK
+PASS | JavaScript syntax: repository.js | OK
+PASS | JavaScript syntax: services.js | OK
+PASS | JavaScript syntax: app.js | OK
+PASS | JavaScript syntax: service-worker.js | OK
+PASS | Runtime: fresh REV81 demo has zero planning-integrity defects | {"counts":{"equipmentReadinessFailures":0,"staffQualificationFailures":0,"equipmentOverlaps":0,"staffOverlaps":0,"planningEventOverlaps":0,"equipmentCapabilityMismatches":0},"ok":true,"p1024Equipment":true,"p1024People":true,"bookings":104,"care":1,"duplicateCare":0,"invariants":0,"marker":"1.0.81"}
+PASS | Runtime: screenshot four-failure root cause reproduced and repaired | {"beforeP1024":4,"badResources":["EQ-007","EQ-011"],"eq11":{"cal":"2026-10-14","mnt":"2026-09-30"},"eq7":{"cal":"2026-10-11","mnt":"2026-10-25"},"repair":{"changed":true,"reason":"replanned","residual":0},"after":{"equipmentReadinessFailures":0,"staffQualificationFailures":0,"equipmentOverlaps":0,"staffOverlaps":0,"planningEventOverlaps":0,"equipmentCapabilityMismatches":0},"p1024Equipment":true,"closurePreserved":true,"invariants":0}
+PASS | Runtime: closure replans future work while preserving completed history | {"histPresent":true,"closureOverlaps":0,"counts":{"equipmentReadinessFailures":0,"staffQualificationFailures":0,"equipmentOverlaps":0,"staffOverlaps":0,"planningEventOverlaps":0,"equipmentCapabilityMismatches":0},"integrity":true,"plannerFailures":0}
+PASS | Required REV81 release files present | all present
+
+SUMMARY | 30/30 passed | 0 failed

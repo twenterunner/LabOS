@@ -46,3 +46,6 @@ See `VERIFICATION_v1.0.79.md`. AUTO-PLAN/readiness resource semantics are unifie
 
 ## REV 1.0.80
 See `VERIFICATION_v1.0.80.md`. Manual planning uses Green/Yellow/Red prevalidated choices in a staged draft, current conflicts are visible before save, swimlane headers include month/CW/weekday/day with full-track weekend shading when weekends are disabled, and hard planning situations force overlapping future locked work back through replanning. A residual lab-closure collision blocks proposal acceptance.
+## REV 1.0.81
+See `VERIFICATION_v1.0.81.md`. The legacy shortcut demo scheduler is removed; fresh demo plans run through the production optimizer, schema-30 demo states are repaired atomically, planning integrity is audited across readiness/capacity/events, equipment blocker UX is grouped by root resource, and completed planning history is preserved during replans.
+

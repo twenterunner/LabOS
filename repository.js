@@ -255,6 +255,13 @@ class MigrationService{
     }else{P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.ensureAssuranceProfile(r));s.schemaVersion=30;}
     s.dataVersion=wasDemo?'2026.09-demo-33-power-tools':(s.dataVersion||'migrated');s.schemaVersion=30;continue;
    }
+   if(s.schemaVersion===30){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);s.settings=s.settings||{};
+    const repair=wasDemo&&P.repairSeedPlanningIntegrityV1081?P.repairSeedPlanningIntegrityV1081(s):{changed:false,reason:'repair-service-not-loaded'};
+    if(wasDemo&&!repair.changed&&repair.reason==='repair-service-not-loaded')delete s.settings.seedPlanningIntegrityVersion;
+    P.audit(s,'Planning integrity model upgraded','System','Planning','REV 1.0.80 schedule state','REV 1.0.81 resource-valid schedule state',repair.changed?`Legacy demo seed repaired: ${repair.moved||0} active booking(s) replanned; ${repair.removedFinal||0} obsolete final-state booking(s) removed.`:'Planning integrity validation enabled; no legacy seed repair required at migration time.');
+    s.dataVersion=wasDemo?'2026.09-demo-34-planning-integrity':(s.dataVersion||'migrated');s.schemaVersion=31;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
