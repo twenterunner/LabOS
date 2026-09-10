@@ -2931,7 +2931,7 @@ renderPlanning=function(){
  P.ensurePlanningModel(App.state);P.ensureEnterpriseModel(App.state);const b=(App.state.bookings||[]).slice().sort((a,b)=>new Date(a.start)-new Date(b.start)),situations=(App.state.planningEvents||[]).filter(x=>x.active!==false),open=App.state.requests.filter(r=>!['DELIVERED','CLOSED','RELEASED'].includes(r.status)),view=App.filters.planView||'portfolio',weeks=Number(App.filters.planWeeks||8),includePotential=App.filters.planPotential!==false,selected=App.filters.planBuild||open[0]?.id||null,structuralGaps=open.filter(r=>r.triage?.planQuality==='Structural gap').length,late=open.filter(r=>r.forecastDate&&r.requiredDate&&P.daysBetween(r.requiredDate,r.forecastDate)>0).length,provisional=open.filter(r=>r.triage?.planQuality&&r.triage.planQuality!=='Best feasible').length,pending=open.filter(r=>r.currentCommitmentDate&&r.forecastDate&&r.forecastDate!==r.currentCommitmentDate).length;
  const controls=`<div class="planning-controls"><div class="filter-row plan-view-tabs">${[['portfolio','Overall'],['build','Per build'],['equipment','Per equipment'],['people','Per person']].map(([id,l])=>`<button type="button" class="filter-chip ${view===id?'active':''}" data-plan-view="${id}">${l}</button>`).join('')}</div><div class="planning-control-grid">${view==='build'?`<label class="compact-select">Build<select id="planBuild">${open.map(r=>`<option value="${r.id}" ${selected===r.id?'selected':''}>${esc(r.id)} · ${esc(r.productFamily)}</option>`).join('')}</select></label>`:''}<label class="compact-select">Horizon<select id="planWeeks">${[4,8,13].map(n=>`<option value="${n}" ${weeks===n?'selected':''}>${n} weeks</option>`).join('')}</select></label><label class="plan-switch"><input id="planPotential" type="checkbox" ${includePotential?'checked':''}><span>Show potential projects</span></label></div></div>`;
  const situationCards=situations.slice().sort((a,b)=>new Date(a.start)-new Date(b.start)).map(x=>`<div class="situation-row"><span class="situation-x">✕</span><div><strong>${esc(planningSituationLabel(x))}</strong><small>${P.formatDateTime(x.start)} → ${P.formatDateTime(x.end)} · ${esc(x.reason)}</small></div><div class="route-toolbar">${btn('Edit',`data-edit-planning-situation="${x.id}"`,'button tiny secondary')}${btn('Remove',`data-remove-planning-situation="${x.id}"`,'button tiny danger')}</div></div>`).join('')||'<div class="empty compact">No vacations, outages or lab closures entered.</div>';
- return pageHeader('Visual Resource Planning','One controlled planning decision: optimize resource assignments, forecasts and any resulting movement of already-committed dates together. Original commitments remain permanently in history.',can('plan')?`${btn('+ Planning situation','data-new-planning-situation','button secondary')}${btn('+ Potential project','data-new-pipeline','button secondary')}${btn('REVIEW & OPTIMIZE PLAN','data-plan-portfolio','button primary')}`:'')+`<div class="planning-decision-explainer-v1068"><strong>One review, not two.</strong><span>“Commitment movement” below is information only. If optimization changes an existing committed date, that movement is shown and approved inside <b>Review & Optimize Plan</b>; there is no separate second commitment approval.</span></div><div class="grid cols-6">${metric('Open builds',open.length)+metric('Build bookings',b.length)+metric('Active situations',situations.length)+metric('Commitment movement',pending,pending?`${pending} current difference${pending===1?'':'s'} · included in plan review`:'No committed-date movement','warn')+metric('Forecast late',late,late?'Forecast later than requested date':'No late forecasts',late?'bad':'good')+metric('Provisional / recovery',provisional,provisional?'Plans using provisional/recovery assumptions':'All planned work best-feasible',provisional?'warn':'good')}</div><div style="height:14px"></div><div class="card planning-visual-main"><div class="section-title-row"><div><span class="eyebrow">SWIMLANE PLANNER</span><h2>${view==='portfolio'?'Overall portfolio':view==='build'?'Build detail':view==='equipment'?'Equipment loading':'People / qualification loading'}</h2><div class="subtle">Resource lanes now use the technical capability required by each process/test. A technically invalid legacy assignment is moved to “Unassigned / resource gap” instead of being displayed on the wrong machine. Click an item to decide whether to open its build; drag it to move.</div></div>${status(structuralGaps?'Structural gap':'Optimizer active')}</div>${controls}${planningSwimlane({view,requestId:view==='build'?selected:null,weeks,includePotential})}</div><div style="height:14px"></div><div class="grid cols-2"><div class="card"><div class="section-title-row"><div><span class="eyebrow">CAPACITY SITUATIONS</span><h2>Vacations, outages & closures</h2></div>${can('plan')?btn('+ Add situation','data-new-planning-situation','button small primary'):''}</div><div class="situation-list">${situationCards}</div></div><div class="card"><div class="section-title-row"><h2>Build commitment health</h2><span class="pill">Original promise never overwritten</span></div>${open.map(r=>{const q=r.triage?.planQuality||'Not planned',m=P.commitmentMetrics(r),delta=m.original?m.netReplanDays:null,pendingMove=m.current&&r.forecastDate&&m.current!==r.forecastDate,lateDays=r.requiredDate&&r.forecastDate?P.daysBetween(r.requiredDate,r.forecastDate):null;return `<button type="button" class="planning-build-row ${pendingMove?'replan-pending':''}" data-open-request="${r.id}" data-tab="schedule"><span><strong>${esc(r.id)} · ${esc(r.productFamily)}</strong><small>Original ${P.formatDate(m.original)} · current ${P.formatDate(m.current)} · ${m.replanCount} replan(s)</small></span><span>${r.forecastDate?P.formatDate(r.forecastDate):'Not planned'}<small>${lateDays>0?`${lateDays} d late vs requested`:pendingMove?'Commitment movement included in next plan review':delta===null?'Not committed':`${delta>0?'+':''}${delta} d vs original`} · ${esc(q)}</small></span></button>`}).join('')}</div></div><div style="height:14px"></div><div class="card"><details class="planning-details"><summary>Detailed bookings and estimate basis</summary>${bookingDetailTable(b)}</details></div>`;
+ return pageHeader('Visual Resource Planning','One controlled planning decision: optimize resource assignments, forecasts and any resulting movement of already-committed dates together. Original commitments remain permanently in history.',can('plan')?`${btn('+ Planning situation','data-new-planning-situation','button secondary')}${btn('+ Potential project','data-new-pipeline','button secondary')}${btn('REVIEW & OPTIMIZE PLAN','data-plan-portfolio','button next-action')}`:'')+`<div class="planning-decision-explainer-v1068"><strong>One review, not two.</strong><span>“Commitment movement” below is information only. If optimization changes an existing committed date, that movement is shown and approved inside <b>Review & Optimize Plan</b>; there is no separate second commitment approval.</span></div><div class="grid cols-6">${metric('Open builds',open.length)+metric('Build bookings',b.length)+metric('Active situations',situations.length)+metric('Commitment movement',pending,pending?`${pending} current difference${pending===1?'':'s'} · included in plan review`:'No committed-date movement','warn')+metric('Forecast late',late,late?'Forecast later than requested date':'No late forecasts',late?'bad':'good')+metric('Provisional / recovery',provisional,provisional?'Plans using provisional/recovery assumptions':'All planned work best-feasible',provisional?'warn':'good')}</div><div style="height:14px"></div><div class="card planning-visual-main"><div class="section-title-row"><div><span class="eyebrow">SWIMLANE PLANNER</span><h2>${view==='portfolio'?'Overall portfolio':view==='build'?'Build detail':view==='equipment'?'Equipment loading':'People / qualification loading'}</h2><div class="subtle">Resource lanes now use the technical capability required by each process/test. A technically invalid legacy assignment is moved to “Unassigned / resource gap” instead of being displayed on the wrong machine. Click an item to decide whether to open its build; drag it to move.</div></div>${status(structuralGaps?'Structural gap':'Optimizer active')}</div>${controls}${planningSwimlane({view,requestId:view==='build'?selected:null,weeks,includePotential})}</div><div style="height:14px"></div><div class="grid cols-2"><div class="card"><div class="section-title-row"><div><span class="eyebrow">CAPACITY SITUATIONS</span><h2>Vacations, outages & closures</h2></div>${can('plan')?btn('+ Add situation','data-new-planning-situation','button small primary'):''}</div><div class="situation-list">${situationCards}</div></div><div class="card"><div class="section-title-row"><h2>Build commitment health</h2><span class="pill">Original promise never overwritten</span></div>${open.map(r=>{const q=r.triage?.planQuality||'Not planned',m=P.commitmentMetrics(r),delta=m.original?m.netReplanDays:null,pendingMove=m.current&&r.forecastDate&&m.current!==r.forecastDate,lateDays=r.requiredDate&&r.forecastDate?P.daysBetween(r.requiredDate,r.forecastDate):null;return `<button type="button" class="planning-build-row ${pendingMove?'replan-pending':''}" data-open-request="${r.id}" data-tab="schedule"><span><strong>${esc(r.id)} · ${esc(r.productFamily)}</strong><small>Original ${P.formatDate(m.original)} · current ${P.formatDate(m.current)} · ${m.replanCount} replan(s)</small></span><span>${r.forecastDate?P.formatDate(r.forecastDate):'Not planned'}<small>${lateDays>0?`${lateDays} d late vs requested`:pendingMove?'Commitment movement included in next plan review':delta===null?'Not committed':`${delta>0?'+':''}${delta} d vs original`} · ${esc(q)}</small></span></button>`}).join('')}</div></div><div style="height:14px"></div><div class="card"><details class="planning-details"><summary>Detailed bookings and estimate basis</summary>${bookingDetailTable(b)}</details></div>`;
 };
 
 function planCommitmentMovesV1068(before,proposed,ids){return (ids||[]).map(id=>{const a=before.requests.find(r=>r.id===id),b=proposed.requests.find(r=>r.id===id),current=a?.currentCommitmentDate||a?.originalCommitmentDate||null,next=b?.forecastDate||null;if(!current||!next||current===next)return null;const ctx=b?.pendingReplanContext||a?.pendingReplanContext||{},category=ctx.reasonCategory||'Capacity / congestion',reason=ctx.reason||`Best-feasible portfolio optimization moved the forecast from ${P.formatDate(current)} to ${P.formatDate(next)} under the current resource and dependency constraints.`;return {id,title:a?.title||id,current,next,delta:P.daysBetween(current,next),category,reason,eventId:ctx.eventId||null}}).filter(Boolean)}
@@ -3828,6 +3828,203 @@ function installV1075Listeners(){
 }
 const _renderV1075Base=render;
 render=function(){_renderV1075Base();installV1075Listeners();installWorkspaceIssueBannerV1075();};
+
+
+
+/* ============================================================
+   LabOS REV 1.0.76 — smart target-first re-optimization,
+   single impact review, staged yellow planning action, and
+   laboratory scope moved into Audit Readiness.
+   ============================================================ */
+function v1076OpenPlanningRequests(state){
+  return (state.requests||[]).filter(r=>!['DELIVERED','CLOSED','RELEASED','ARCHIVED'].includes(r.status));
+}
+function v1076RequestBookingSignature(state,id){
+  return (state.bookings||[]).filter(b=>b.requestId===id).map(b=>[b.stepId||b.itemKey||b.stepName,b.taskType,b.start,b.end,b.equipmentId,b.staffId,!!b.locked].join('|')).sort().join('||');
+}
+function v1076ImpactedRequestIds(before,after,focusId=null){
+  const ids=new Set();
+  for(const r of v1076OpenPlanningRequests(after)){
+    const a=(before.requests||[]).find(x=>x.id===r.id);
+    if(!a)continue;
+    if(a.forecastDate!==r.forecastDate||v1076RequestBookingSignature(before,r.id)!==v1076RequestBookingSignature(after,r.id))ids.add(r.id);
+  }
+  if(focusId)ids.add(focusId);
+  return [...ids];
+}
+function v1076PlanningNeed(state,b){
+  const r=(state.requests||[]).find(x=>x.id===b.requestId),route=(state.routes||[]).find(x=>x.requestId===b.requestId),st=route?.steps?.find(x=>x.id===b.stepId),proc=st&&(state.processes||[]).find(x=>x.id===st.processId),tr=(r?.testRequirements||[]).find(x=>x.id===b.stepId),test=tr?.standardTestId&&(state.standardTests||[]).find(x=>x.id===tr.standardTestId);
+  const cap=test?(P.planningCapabilityForTest?.(test)||test.equipmentCapability):tr?.equipmentCapability||(proc?P.planningCapabilityForProcess?.(state,r,proc):null);
+  const skill=test?.competency||tr?.competency||(proc?P.planningSkillForProcess?.(proc):null)||b.skillId||null;
+  return {r,st,proc,tr,test,cap,skill};
+}
+function v1076ValidatePlannerState(state,requestIds=[]){
+  const ids=new Set(requestIds),errs=[];
+  const selected=(state.bookings||[]).filter(b=>!ids.size||ids.has(b.requestId));
+  for(const b of selected){
+    const start=new Date(b.start),end=new Date(b.end);if(!Number.isFinite(+start)||!Number.isFinite(+end)||end<=start){errs.push(`${b.requestId} · ${b.stepName||b.stepId}: invalid booking time.`);continue}
+    const need=v1076PlanningNeed(state,b);
+    if(need.cap){const eq=(state.equipment||[]).find(x=>x.id===b.equipmentId),got=eq&&(P.equipmentPlanningCapability?.(eq)||eq.capability);if(!eq||got!==need.cap)errs.push(`${b.requestId} · ${b.stepName||b.stepId}: requires ${need.cap}, assigned ${eq?.name||'no equipment'}.`)}
+    if(need.skill&&!b.staffId)errs.push(`${b.requestId} · ${b.stepName||b.stepId}: required competency ${need.skill} has no planned person.`);
+  }
+  const all=state.bookings||[];
+  for(let i=0;i<selected.length;i++){
+    const a=selected[i],as=+new Date(a.start),ae=+new Date(a.end);for(const z of all){if(a.id===z.id)continue;if(String(a.id)>String(z.id)&&ids.has(z.requestId))continue;const same=(a.equipmentId&&a.equipmentId===z.equipmentId)||(a.staffId&&a.staffId===z.staffId);if(!same)continue;const zs=+new Date(z.start),ze=+new Date(z.end);if(as<ze&&zs<ae)errs.push(`${a.requestId} · ${a.stepName||a.stepId}: resource collision with ${z.requestId} · ${z.stepName||z.stepId}.`)}
+  }
+  const inv=P.validateInvariants?.(state)||[];if(inv.length)errs.push(...inv.slice(0,5));
+  return [...new Set(errs)];
+}
+function v1076TargetFirstPortfolio(state,focusId){
+  P.ensurePlanningModel(state);P.ensureEnterpriseModel(state);P.ensurePlanningCapabilityModelV1068?.(state);
+  const open=v1076OpenPlanningRequests(state),ids=new Set(open.map(r=>r.id));
+  state.bookings=(state.bookings||[]).filter(b=>!ids.has(b.requestId)||b.locked);
+  state.resourceCareBookings=(state.resourceCareBookings||[]).filter(b=>!b.autoGenerated||!ids.has(b.sourceRequestId)||b.locked);
+  const priority={Critical:0,High:1,Normal:2,Low:3};
+  const rest=open.filter(r=>r.id!==focusId).sort((a,b)=>(priority[a.priority]??2)-(priority[b.priority]??2)||String(a.requiredDate||'9999').localeCompare(String(b.requiredDate||'9999')));
+  const focus=open.find(r=>r.id===focusId),order=focus?[focus,...rest]:rest,planner=new P.PlannerService(),results=[];
+  for(const r of order){try{const changes=planner.autoPlan(state,r.id);results.push({requestId:r.id,ok:true,bookings:changes.length,forecast:r.forecastDate,quality:r.triage?.planQuality})}catch(e){results.push({requestId:r.id,ok:false,error:e.message,code:e.code||'PLANNING_BLOCKED',details:{taskName:e.taskName||null,skillId:e.skillId||null,skillName:e.skillName||null,capability:e.capability||null,staffId:e.staffId||null,equipmentId:e.equipmentId||null,careType:e.careType||null}})}}
+  return {results,ids:order.map(r=>r.id)};
+}
+function v1076ForecastTime(state,id){const d=(state.requests||[]).find(r=>r.id===id)?.forecastDate;return d?+new Date(`${d}T12:00:00`):Number.POSITIVE_INFINITY}
+function v1076SmartPlanProposal(focusId,contextEvent=null){
+  const direct=P.deepClone(App.state);P.ensurePlanningCapabilityModelV1068?.(direct);let directResult=null,directError=null;
+  try{const changes=new P.PlannerService().autoPlan(direct,focusId);directResult={requestId:focusId,ok:true,bookings:changes.length,forecast:direct.requests.find(r=>r.id===focusId)?.forecastDate,quality:direct.requests.find(r=>r.id===focusId)?.triage?.planQuality}}catch(e){directError=e}
+  const target=P.deepClone(App.state);let targetRun=null;try{targetRun=v1076TargetFirstPortfolio(target,focusId)}catch(e){targetRun={results:[{requestId:focusId,ok:false,error:e.message,code:e.code||'PLANNING_BLOCKED'}],ids:[focusId]}}
+  const targetFocus=targetRun.results.find(x=>x.requestId===focusId),targetFailures=targetRun.results.filter(x=>!x.ok),directErrors=directResult?v1076ValidatePlannerState(direct,[focusId]):[directError?.message||'Direct plan failed'],targetErrors=targetFocus?.ok&&!targetFailures.length?v1076ValidatePlannerState(target,targetRun.ids):targetFailures.map(x=>x.error||x.code);
+  const directValid=!!directResult&&!directErrors.length,targetValid=!!targetFocus?.ok&&!targetErrors.length;
+  if(!directValid&&!targetValid){const e=directError||new Error(targetErrors[0]||'AUTO-PLAN could not create a valid controlled plan.');e.code=e.code||targetFailures[0]?.code||'CAPACITY_UNRESOLVABLE';throw e}
+  const live=requestById(focusId),required=live?.requiredDate?+new Date(`${live.requiredDate}T23:59:59`):Number.POSITIVE_INFINITY,dt=v1076ForecastTime(direct,focusId),tt=v1076ForecastTime(target,focusId);
+  // Keep the existing build-only plan when it already meets the requested date. If it is late,
+  // allow the selected build to compete for all unlocked portfolio capacity and re-plan the rest.
+  const useTarget=targetValid&&(!directValid||(dt>required&&tt<dt));const proposed=useTarget?target:direct;
+  const impacted=v1076ImpactedRequestIds(App.state,proposed,focusId),results=useTarget?targetRun.results.filter(x=>impacted.includes(x.requestId)):[directResult];
+  const focus=(proposed.requests||[]).find(r=>r.id===focusId);if(focus?.triage){focus.triage.optimizerStrategy=useTarget?'Target-first portfolio re-optimization':'Build-only constrained re-optimization';focus.triage.optimizerComparedPortfolio=true;focus.triage.riskNotes=[`${focus.triage.optimizerStrategy}. AUTO-PLAN compared the existing-build-only result with a target-first portfolio simulation and selected the earlier valid solution without overriding locked work.`,...(focus.triage.riskNotes||[])];}
+  for(const id of impacted){const a=requestById(id),b=(proposed.requests||[]).find(x=>x.id===id);if(a?.currentCommitmentDate&&b?.forecastDate&&a.currentCommitmentDate!==b.forecastDate)b.pendingReplanContext={reasonCategory:'Capacity / congestion',reason:`Smart re-optimization for ${focusId} changed the best-feasible forecast for ${id}.`,createdAt:P.now()}}
+  return {proposed,impacted,results,useTarget,directForecast:directResult?.forecast||null,targetForecast:targetFocus?.forecast||null};
+}
+
+// Individual build planning now compares the existing constrained plan with a target-first portfolio simulation.
+autoPlan=async function(id,contextEvent=null){
+  try{const smart=v1076SmartPlanProposal(id,contextEvent);showPlanProposal({mode:'single',proposedState:smart.proposed,requestIds:smart.impacted,results:smart.results,contextEvent,focusRequestId:id,optimizerMeta:smart})}
+  catch(e){if(['ZERO_EQUIPMENT_CAPABILITY','ZERO_REQUIRED_SKILL','STAFF_UNAVAILABLE','CAPACITY_UNRESOLVABLE','READINESS_SLOT_UNRESOLVABLE'].includes(e.code)){planningStructuralBlockerModal(id,e);return}console.error('SMART AUTO-PLAN preview failed',e);planningUnexpectedErrorModal(id,e)}
+};
+
+function v1076PlanImpactRows(before,proposed,ids,focusId=null,contextEvent=null){
+  return (ids||[]).map(id=>{const a=(before.requests||[]).find(r=>r.id===id),b=(proposed.requests||[]).find(r=>r.id===id);if(!a||!b)return null;const current=a.currentCommitmentDate||a.originalCommitmentDate||null,forecastBefore=a.forecastDate||null,forecastAfter=b.forecastDate||null,forecastDelta=forecastBefore&&forecastAfter?P.daysBetween(forecastBefore,forecastAfter):null,commitDelta=current&&forecastAfter?P.daysBetween(current,forecastAfter):null,bookingChanges=planProposalChanges(before,proposed,[id]).length,external=!!focusId&&id!==focusId,changed=forecastBefore!==forecastAfter||bookingChanges>0;return {id,title:a.title||id,current,forecastBefore,forecastAfter,forecastDelta,commitDelta,bookingChanges,external,changed}}).filter(Boolean).filter(x=>x.changed||x.id===focusId||contextEvent);
+}
+function v1076ImpactLabel(x){if(x.external)return 'Other programme impact';if(x.forecastDelta==null)return x.changed?'Plan updated':'Revalidated';if(x.forecastDelta>0)return `${x.forecastDelta} d later`;if(x.forecastDelta<0)return `${Math.abs(x.forecastDelta)} d earlier`;return x.bookingChanges?'Timing / resource change':'No date change'}
+
+const _showPlanProposalV1076Base=showPlanProposal;
+showPlanProposal=function({mode,proposedState,requestIds,results=[],contextEvent=null,focusRequestId=null,optimizerMeta=null}){
+  const before=App.state,ids=requestIds||[],focus=focusRequestId||(mode==='single'?ids[0]:null),rows=v1076PlanImpactRows(before,proposedState,ids,focus,contextEvent),moves=planCommitmentMovesV1068(before,proposedState,ids),blocked=(results||[]).filter(x=>x.ok===false);
+  App.pendingPlanProposal={mode,proposedState,requestIds:ids,contextEvent,commitMoves:moves,focusRequestId:focus,optimizerMeta};
+  const rationale=contextEvent?`Planning event: ${contextEvent.type} — ${contextEvent.reason}. The impact below was recalculated using capable equipment, qualified people, resource-assurance windows, dependencies and locked work.`:focus?`AUTO-PLAN compared the current constrained schedule with a target-first portfolio re-optimization for ${focus}. The displayed proposal is the best valid option found; other-programme impacts are highlighted and require this review before they are applied.`:`Portfolio optimized using capable equipment, qualified people, resource-assurance windows, dependencies, priorities, requested dates and locked work.`;
+  const context=contextEvent?`<div class="callout info"><strong>${esc(contextEvent.type)} · planning impact</strong><p>${esc(contextEvent.reason)}</p></div>`:focus&&optimizerMeta?`<div class="callout ${optimizerMeta.useTarget?'warn':'info'}"><strong>${esc(optimizerMeta.strategy|| (optimizerMeta.useTarget?'Portfolio re-optimization':'Build-only re-optimization'))} selected</strong><p>${optimizerMeta.useTarget?`${esc(focus)} was tested against build-only, selective-ripple and target-first portfolio strategies. LabOS selected the best valid result while preserving locked work and minimizing other-programme disruption whenever the requested date could still be met.`:`The selected build can be optimized without moving another programme.`}</p></div>`:'';
+  const table=rows.length?`<div class="table-wrap"><table class="data-table plan-impact-table-v1076"><thead><tr><th>Programme / build</th><th>Current commitment</th><th>Current forecast</th><th>Proposed forecast</th><th>Change</th><th>Plan changes</th></tr></thead><tbody>${rows.map(x=>`<tr class="${x.external?'other-program-impact-v1076':''}"><td><strong>${esc(x.id)}</strong><small>${esc(x.title)}</small>${x.external?'<span class="status warn">Other programme</span>':''}</td><td>${P.formatDate(x.current)}</td><td>${P.formatDate(x.forecastBefore)}</td><td><strong>${P.formatDate(x.forecastAfter)}</strong></td><td><strong class="${x.forecastDelta>0?'bad-text':x.forecastDelta<0?'good-text':''}">${esc(v1076ImpactLabel(x))}</strong>${x.commitDelta&&x.commitDelta!==0?`<small>${x.commitDelta>0?'+':''}${x.commitDelta} d vs current commitment</small>`:''}</td><td>${x.bookingChanges} booking${x.bookingChanges===1?'':'s'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="callout good"><strong>No material plan impact.</strong><p>The current plan was revalidated and no forecast or booking changes are required.</p></div>';
+  const title=contextEvent?'Review planning event impact':mode==='portfolio'?'Review & optimize plan':'Review re-optimized plan';
+  closeModal();openModal(title,`${context}<section class="report-section single-plan-impact-v1076"><div class="section-title-row"><div><span class="eyebrow">PLAN IMPACT · SINGLE DECISION VIEW</span><h3>${focus?'Selected build and any affected programmes':'Affected programmes'}</h3><div class="subtle">Yellow rows are other programmes affected by this proposal. No separate resource/timing table is repeated.</div></div></div>${table}</section>${blocked.length?`<div class="callout bad"><strong>${blocked.length} planning issue${blocked.length===1?'':'s'} remain.</strong><p>${blocked.map(x=>`${x.requestId}: ${x.error}`).join(' · ')}</p></div>`:''}<div class="field"><label>Planning decision rationale <small>system-proposed · editable · retained in audit history</small></label><textarea id="planProposalNote">${esc(rationale)}</textarea></div>`,`${btn('Reject · keep current plan','data-reject-plan-proposal','button danger')}${btn('Accept reviewed plan','data-accept-plan-proposal','button next-action')}`,true);
+  setTimeout(()=>{const ac=$('[data-accept-plan-proposal]'),rj=$('[data-reject-plan-proposal]');if(ac)ac.onclick=acceptPlanProposal;if(rj)rj.onclick=rejectPlanProposal},0)
+};
+
+const _acceptPlanProposalV1076Base=acceptPlanProposal;
+acceptPlanProposal=async function(){
+  const pp=App.pendingPlanProposal;if(!pp)return;
+  // Planning situations and portfolio-wide reviews keep the established one-decision transaction.
+  if(pp.contextEvent||(!pp.focusRequestId&&pp.mode==='portfolio'))return _acceptPlanProposalV1076Base();
+  const note=$('#planProposalNote')?.value.trim();if(!note){toast('A planning decision rationale is required.',true);return}
+  const identity=P.deepClone(App.state.identity),live=P.deepClone(App.state),next=P.deepClone(pp.proposedState);next.identity=identity;
+  // Replanning another programme must not silently reopen a lifecycle stage that was already committed.
+  for(const id of pp.requestIds||[]){if(id===pp.focusRequestId)continue;const a=(live.requests||[]).find(x=>x.id===id),b=(next.requests||[]).find(x=>x.id===id);if(!a||!b)continue;if(a.triage?.status==='Committed'&&b.triage)b.triage.status='Committed';}
+  const focus=(next.requests||[]).find(x=>x.id===pp.focusRequestId);if(!focus?.triage){toast('Reviewed plan is missing its timing record.',true);return}
+  focus.triage.status='Reviewed';focus.triage.reviewedForecast=focus.forecastDate;focus.triage.reviewedAt=P.now();focus.triage.reviewRationale=note;focus.triage.reviewedPlanFingerprint=planningFingerprintV1070(next);
+  P.audit(next,'Re-optimized resource plan reviewed','Planning',focus.id,'Proposed','Reviewed',`${note} · ${(pp.requestIds||[]).filter(x=>x!==focus.id).length} other programme(s) included in the accepted planning impact.`);
+  App.state=next;App.identity=new P.DemoIdentityProvider(App.state);populateRoles();App.pendingPlanProposal=null;clearMoveOverlaysV1071?.();App.dragBookingV1061=null;App.v1074MoveCache=null;App.v1072MoveCache=null;await persist();closeModal();render();toast(`Resource plan reviewed. Commit forecast for ${focus.id} is now the next action.`)
+};
+
+const _commitTriageV1076Base=commitTriage;
+commitTriage=async function(id){
+  const r=requestById(id);if(!r)return;
+  if(r.triage?.status!=='Reviewed')return _commitTriageV1076Base(id);
+  if(!can('triage')&&currentRole()!=='administrator'){toast('Lab Planner role is required to commit timing.',true);return}
+  const mat=P.materialPlanningAssessment(App.state,r),proc=P.processPlanningAssessment(App.state,r);if(!mat.planningReady||!proc.ready){toast('Cannot commit timing until material feasibility and process/test definition are complete.',true);return}
+  if(r.triage.reviewedForecast!==r.forecastDate||r.triage.reviewedPlanFingerprint!==planningFingerprintV1070(App.state)){toast('The plan changed after review. Re-optimize and review the current impact before committing.',true);return}
+  const forecast=r.forecastDate,current=r.currentCommitmentDate||r.originalCommitmentDate,why=r.triage.reviewRationale||`Reviewed best-feasible plan for ${r.id}.`,category=r.pendingReplanContext?.reasonCategory||'Capacity / congestion';
+  try{const rec=P.recordCommitment(App.state,r,forecast,{reasonCategory:category,reason:why,eventId:r.pendingReplanContext?.eventId||null});r.triage.status='Committed';r.pendingReplanContext=null;P.audit(App.state,rec.type==='initial'?'Lab timing committed':'Reviewed lab timing committed','Request',id,current||'—',forecast,`${category} · ${why}`);await persist();render();toast(rec.type==='initial'?`Forecast committed: ${P.formatDate(forecast)}.`:`Reviewed forecast committed: ${P.formatDate(forecast)}.`)}catch(e){toast(e.message,true)}
+};
+
+// Make the planning workflow deliberately sequential: review/re-optimize first, commit second.
+const _workspaceScheduleV1076Base=workspaceSchedule;
+workspaceSchedule=function(r){
+  let html=_workspaceScheduleV1076Base(r),t=r.triage||{},reviewed=t.status==='Reviewed'&&t.reviewedForecast===r.forecastDate&&t.reviewedPlanFingerprint===planningFingerprintV1070(App.state),committed=t.status==='Committed';
+  const autoRe=new RegExp(`<button type="button" class="[^"]*" data-auto-plan="${String(r.id).replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')}">([^<]+)<\\/button>`);
+  html=html.replace(autoRe,(m,label)=>btn(label,`data-auto-plan="${esc(r.id)}"`,reviewed||committed?'button secondary':'button next-action'));
+  const commitRe=new RegExp(`<button type="button" class="[^"]*" data-commit-triage="${String(r.id).replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')}">[^<]*<\\/button>`);
+  if(reviewed)html=html.replace(commitRe,btn('Commit forecast →',`data-commit-triage="${esc(r.id)}"`,'button next-action'));
+  else if(!committed)html=html.replace(commitRe,'');
+  if(!committed&&!reviewed)html=html.replace(/<div class="section-title-row"><div><span class="eyebrow">LAB TRIAGE \/ TIMING<\/span>/,`<div class="planning-next-hint-v1076"><strong>Next: review the optimized plan.</strong><span>Re-optimize is the only required action now. Commit forecast becomes available after you accept the planning impact.</span></div><div class="section-title-row"><div><span class="eyebrow">LAB TRIAGE / TIMING</span>`);
+  if(reviewed)html=html.replace(/<div class="section-title-row"><div><span class="eyebrow">LAB TRIAGE \/ TIMING<\/span>/,`<div class="planning-next-hint-v1076 ready"><strong>Plan reviewed.</strong><span>The resource plan is accepted. Commit forecast is now the next required action.</span></div><div class="section-title-row"><div><span class="eyebrow">LAB TRIAGE / TIMING</span>`);
+  return html;
+};
+
+const _guidedNextDockV1076Base=guidedNextDock;
+guidedNextDock=function(r,steps,step){
+  if(step?.id==='schedule'&&!step.done){
+    const reviewed=r.triage?.status==='Reviewed'&&r.triage?.reviewedForecast===r.forecastDate&&r.triage?.reviewedPlanFingerprint===planningFingerprintV1070(App.state);
+    if(reviewed)return btn('Commit forecast →',`data-commit-triage="${esc(r.id)}"`,'button small next-action workflow-dock-button');
+    return btn((App.state.bookings||[]).some(b=>b.requestId===r.id)?'Review / re-optimize plan →':'Create & review plan →',`data-auto-plan="${esc(r.id)}"`,'button small next-action workflow-dock-button');
+  }
+  return _guidedNextDockV1076Base(r,steps,step);
+};
+
+// Lab Standards & Resources is for operational assurance/methods/people/5S. Detailed equipment scope belongs to Audit.
+renderProcessLibrary=function(){
+  P.ensureEnterpriseModel(App.state);
+  return pageHeader('Lab Standards & Resources','Run the lab: plan calibration, maintenance and training, maintain released methods and competencies, and manage workplace standards.')+v1075AssuranceSection()+v1075MethodsSection()+v1075PeopleSection()+v1075FiveSSection()+governanceRegister('standards');
+};
+const _renderAuditReadinessV1076Base=renderAuditReadiness;
+renderAuditReadiness=function(){
+  let html=_renderAuditReadinessV1076Base();
+  html=html.replace(/<details class="card fold"><summary>Laboratory capability scope by equipment category[\s\S]*?<\/details>/,'');
+  const detailed=v1075EquipmentSection().replace('id="std-equipment"','id="audit-equipment-scope"').replace('<b>Equipment & laboratory scope</b>','<b>Equipment & laboratory scope</b>').replace('Capability, range, resolution and current readiness in one register','Audit-facing equipment capability, range, resolution, readiness and assurance status');
+  const marker='<details class="card fold"><summary>Exports & audit documents';
+  if(html.includes(marker))html=html.replace(marker,detailed+marker);else html+=detailed;
+  return html;
+};
+installStandardsNavV1061=function(){
+  if(App.currentView!=='process-library')return;const page=$('#page');if(!page||page.querySelector('.standards-tools-v1061'))return;const head=page.querySelector('.page-header');if(!head)return;head.insertAdjacentHTML('afterend',`<div class="standards-tools-v1061 standards-search-only-v1075"><input id="v1061StandardsSearch" type="search" placeholder="Search methods, people, skills or 5S…"></div>`);const input=$('#v1061StandardsSearch');if(input)input.oninput=()=>{const q=input.value.trim().toLowerCase();page.querySelectorAll('[data-v1075-searchable]').forEach(el=>el.hidden=!!q&&!el.textContent.toLowerCase().includes(q))};
+};
+
+
+// v1.0.76 optimizer refinement: minimise collateral programme movement when the due date can still be met.
+function v1076SelectiveBlockers(before,direct,focusId){
+  const fb=(direct.bookings||[]).filter(b=>b.requestId===focusId),caps=new Set(),skills=new Set(),eqIds=new Set(),staffIds=new Set();
+  for(const b of fb){const eq=(direct.equipment||[]).find(x=>x.id===b.equipmentId),cap=eq&&(P.equipmentPlanningCapability?.(eq)||eq.capability);if(cap)caps.add(cap);if(b.skillId)skills.add(b.skillId)}
+  for(const e of before.equipment||[]){const cap=P.equipmentPlanningCapability?.(e)||e.capability;if(caps.has(cap))eqIds.add(e.id)}
+  for(const st of before.staff||[]){if(!skills.size||[...(st.competencies||[])].some(x=>skills.has(x))||(before.trainingCertificates||[]).some(c=>c.staffId===st.id&&skills.has(c.skillId)))staffIds.add(st.id)}
+  const end=Math.max(...fb.map(b=>+new Date(b.end||b.start)).filter(Number.isFinite),Date.now()),start=Date.now()-3600000,ids=new Set();
+  for(const b of before.bookings||[]){if(b.requestId===focusId||b.locked)continue;const s=+new Date(b.start),e=+new Date(b.end||b.start);if(!(s<end&&e>start))continue;if((b.equipmentId&&eqIds.has(b.equipmentId))||(b.staffId&&staffIds.has(b.staffId)))ids.add(b.requestId)}
+  return [...ids].filter(Boolean);
+}
+function v1076RunSubsetTargetFirst(state,focusId,otherIds=[]){
+  P.ensurePlanningModel(state);P.ensureEnterpriseModel(state);P.ensurePlanningCapabilityModelV1068?.(state);const set=new Set([focusId,...otherIds]);
+  state.bookings=(state.bookings||[]).filter(b=>!set.has(b.requestId)||b.locked);state.resourceCareBookings=(state.resourceCareBookings||[]).filter(b=>!b.autoGenerated||!set.has(b.sourceRequestId)||b.locked);
+  const score={Critical:0,High:1,Normal:2,Low:3},focus=(state.requests||[]).find(r=>r.id===focusId),rest=(state.requests||[]).filter(r=>otherIds.includes(r.id)).sort((a,b)=>(score[a.priority]??2)-(score[b.priority]??2)||String(a.requiredDate||'9999').localeCompare(String(b.requiredDate||'9999'))),order=[focus,...rest].filter(Boolean),planner=new P.PlannerService(),results=[];
+  for(const r of order){try{const changes=planner.autoPlan(state,r.id);results.push({requestId:r.id,ok:true,bookings:changes.length,forecast:r.forecastDate,quality:r.triage?.planQuality})}catch(e){results.push({requestId:r.id,ok:false,error:e.message,code:e.code||'PLANNING_BLOCKED',details:{taskName:e.taskName||null,skillId:e.skillId||null,capability:e.capability||null}})}}return {results,ids:order.map(r=>r.id)};
+}
+function v1076CandidateSummary(before,state,focusId,strategy,results){
+  const impacted=v1076ImpactedRequestIds(before,state,focusId),focus=(state.requests||[]).find(r=>r.id===focusId),required=(before.requests||[]).find(r=>r.id===focusId)?.requiredDate,forecast=focus?.forecastDate,external=impacted.filter(x=>x!==focusId),delay=external.reduce((n,id)=>{const a=(before.requests||[]).find(r=>r.id===id),b=(state.requests||[]).find(r=>r.id===id),base=a?.forecastDate||a?.currentCommitmentDate,after=b?.forecastDate;if(!base||!after)return n;return n+Math.max(0,P.daysBetween(base,after))},0),errors=(results||[]).filter(x=>!x.ok).map(x=>x.error||x.code),validation=errors.length?errors:v1076ValidatePlannerState(state,(results||[]).map(x=>x.requestId));return {state,strategy,results,impacted,externalCount:external.length,externalDelay:delay,forecast,forecastTime:forecast?+new Date(`${forecast}T12:00:00`):Infinity,meets:!!(forecast&&required&&new Date(forecast)<=new Date(required)),valid:validation.length===0,errors:validation};
+}
+v1076SmartPlanProposal=function(focusId,contextEvent=null){
+  const before=App.state,candidates=[];
+  const direct=P.deepClone(before);P.ensurePlanningCapabilityModelV1068?.(direct);let directResults=[];try{const ch=new P.PlannerService().autoPlan(direct,focusId),r=direct.requests.find(x=>x.id===focusId);directResults=[{requestId:focusId,ok:true,bookings:ch.length,forecast:r?.forecastDate,quality:r?.triage?.planQuality}]}catch(e){directResults=[{requestId:focusId,ok:false,error:e.message,code:e.code||'PLANNING_BLOCKED'}]}candidates.push(v1076CandidateSummary(before,direct,focusId,'Build-only constrained re-optimization',directResults));
+  if(candidates[0].valid){const blockers=v1076SelectiveBlockers(before,direct,focusId);if(blockers.length){const selective=P.deepClone(before),run=v1076RunSubsetTargetFirst(selective,focusId,blockers);candidates.push(v1076CandidateSummary(before,selective,focusId,'Selective ripple re-optimization',run.results))}}
+  const full=P.deepClone(before),fullRun=v1076TargetFirstPortfolio(full,focusId);candidates.push(v1076CandidateSummary(before,full,focusId,'Target-first portfolio re-optimization',fullRun.results));
+  const valid=candidates.filter(x=>x.valid);if(!valid.length){const first=candidates.flatMap(x=>x.errors||[])[0]||'AUTO-PLAN could not create a valid controlled plan.';const e=new Error(first);e.code='CAPACITY_UNRESOLVABLE';throw e}
+  const meeting=valid.filter(x=>x.meets),pool=meeting.length?meeting:valid;pool.sort((a,b)=>meeting.length?(a.externalCount-b.externalCount||a.externalDelay-b.externalDelay||a.forecastTime-b.forecastTime):(a.forecastTime-b.forecastTime||a.externalCount-b.externalCount||a.externalDelay-b.externalDelay));const best=pool[0],focus=(best.state.requests||[]).find(r=>r.id===focusId);
+  if(focus?.triage){focus.triage.optimizerStrategy=best.strategy;focus.triage.optimizerComparedPortfolio=true;focus.triage.riskNotes=[`${best.strategy}. AUTO-PLAN compared build-only, selective-ripple and target-first portfolio strategies, rejected invalid alternatives, and selected ${meeting.length?'the least-disruptive valid solution that meets the requested date':'the earliest valid solution when the requested date could not be met'}. Locked work was preserved.`,...(focus.triage.riskNotes||[])]}
+  for(const id of best.impacted){const a=requestById(id),b=(best.state.requests||[]).find(x=>x.id===id);if(a?.currentCommitmentDate&&b?.forecastDate&&a.currentCommitmentDate!==b.forecastDate)b.pendingReplanContext={reasonCategory:'Capacity / congestion',reason:`${best.strategy} for ${focusId} changed the best-feasible forecast for ${id}.`,createdAt:P.now()}}
+  return {proposed:best.state,impacted:best.impacted,results:best.results,useTarget:best.strategy!=='Build-only constrained re-optimization',strategy:best.strategy,directForecast:candidates[0]?.forecast||null,targetForecast:best.forecast,candidates:candidates.map(x=>({strategy:x.strategy,valid:x.valid,meets:x.meets,forecast:x.forecast,externalCount:x.externalCount,externalDelay:x.externalDelay}))};
+};
 
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}const planningModelV1068=P.ensurePlanningCapabilityModelV1068?.(App.state);if(planningModelV1068?.changed)await App.repo.save(App.state);App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);

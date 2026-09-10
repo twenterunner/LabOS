@@ -27,3 +27,6 @@ REV 1.0.70 replaces optimistic move suggestions with transaction-safe prevalidat
 The sticky build plan now renders every planned activity on its own lane and exposes the same move workflow directly in the build workspace. Within-build timing changes apply without a separate approval. The transaction contains a cross-build impact gate for any move that changes other builds.
 
 `verification-v170.py` reports 21/21 release checks passed, including JavaScript syntax, portfolio planning with intentionally stale/unqualified preferences (14 plans, 198 bookings, 0 invariant errors), and an end-to-end true missing-skill training + plan resolution simulation.
+
+## REV 1.0.76
+See `VERIFICATION_v1.0.76.md`. Smart target-first/selective replanning, one-section impact review, staged yellow Re-optimize → Commit workflow, and Audit relocation of detailed equipment scope were regression tested before packaging.
