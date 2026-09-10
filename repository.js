@@ -206,6 +206,19 @@ class MigrationService{
     P.audit(s,'Executable-only guided-workflow contract enabled','System','Operations','Advisory proposals could be accepted before full resolution was guaranteed','Only prevalidated proposals can be accepted; accepted proposals apply atomically or are withdrawn','REV 1.0.49 workflow migration');
     s.dataVersion=wasDemo?'2026.09-demo-27':(s.dataVersion||'migrated');s.schemaVersion=24;continue;
    }
+   if(s.schemaVersion===24){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    s.settings=s.settings||{};s.settings.auditEquipmentScopes=s.settings.auditEquipmentScopes||{};
+    const groups={};
+    (s.equipment||[]).forEach(e=>{const key=String(e.scopeCategory||e.capability||e.equipmentType||'Other equipment').trim()||'Other equipment';(groups[key]||(groups[key]=[])).push(e)});
+    Object.entries(groups).forEach(([key,items])=>{
+      if(s.settings.auditEquipmentScopes[key])return;
+      const defined=items.map(e=>e.scopeSpecification||{}).find(x=>x.activity||x.range||x.method)||{};
+      s.settings.auditEquipmentScopes[key]={category:key,activity:defined.activity||'',range:defined.range||'',resolution:defined.resolution||'',uncertainty:defined.uncertainty||'',method:defined.method||'',note:defined.note||''};
+    });
+    P.audit(s,'UX master-data model upgraded','System','LabOS','Per-asset scope / fixed test families / duplicated execution navigation','Category capability scope / configurable test families / integrated route navigation / 5S zone model','REV 1.0.50 migration');
+    s.dataVersion=wasDemo?'2026.09-demo-28':(s.dataVersion||'migrated');s.schemaVersion=25;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

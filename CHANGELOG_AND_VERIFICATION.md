@@ -1,148 +1,78 @@
-# LabOS REV 1.0.49 — Change & Verification Record
+# LabOS REV 1.0.50 — UX, route navigation, 5S, audit scope and personal actions
 
-## Release objective
+## Release intent
+REV 1.0.50 continues the hard LabOS workflow contract introduced in 1.0.49: a user-facing action must either be executable to a real controlled outcome or guide the user through the complete evidence-backed resolution. This revision focuses on reducing duplicated controls and improving daily usability.
 
-REV 1.0.49 completes the application-wide **no-dead-end / executable-only workflow contract** and adds the usability/setup changes requested during mobile testing of REV 1.0.48.
+## Changes
 
-The governing rule is now:
+### Build execution navigation
+- Removed the redundant four-button `Process settings + Control Plan measurements` card from the execution page.
+- The primary execution action remains the one guided entry point: `Record required data` when data is missing.
+- CSV download, CSV upload and build-specific-field creation now live inside the data-matrix workflow rather than being repeated on the page.
+- Route operations are now rendered as a second, horizontally scrollable sticky sub-navigation inside the main fixed build cockpit.
+- Route chips show complete / partial / pending state and allow direct inspection of a route step without reintroducing a separate large route list.
 
-> **LabOS may not present an actionable recommendation or accepted change that leaves the user to manually work out the remainder. A controlled change is either carried through to a complete feasible state, or it is not applied.**
+### Audit capability scope by equipment category
+- Laboratory capability scope is no longer maintained separately for every physical asset.
+- Scope records are maintained by equipment capability/category, with the member equipment list retained underneath the category.
+- Range, resolution, uncertainty/capability reference, method and notes are defined once at the relevant category level.
+- Audit findings and scope CSV exports now use the category model.
+- Existing per-asset scope data is non-destructively consolidated during schema migration when possible.
 
-## 1. Executable-only Improvement Scan
+### Configurable test families
+- Added a controlled `testFamilies` master.
+- Every standard test now references a test-family ID instead of relying on an implicit/free-text grouping.
+- Administrators/Lab Managers can open `Configure test families` from the Standard Test Library.
+- Test-family assignment is editable as part of the planning-standard editor.
 
-- Staffing and equipment load-balancing proposals are shown only after a complete qualified/conflict-free reassignment has been prevalidated.
-- Accepting a proposal revalidates it against current bookings, qualification/readiness and capacity.
-- The real controlled booking/route assignments are changed on acceptance.
-- Effectiveness is verified before the state is committed.
-- If the proposal is no longer fully executable, it is withdrawn and nothing is applied.
-- Legacy accepted-but-unimplemented improvement actions are withdrawn by the schema-24 migration.
+### 5S workplace control
+- Added optional 5S zones under Lab Standards & Resources.
+- Each zone has a named owner and physical area.
+- 5S checks score Sort, Set in order, Shine, Standardize and Sustain on a 1–5 scale.
+- Scores below 4 create a real Action Centre action assigned to the zone owner.
+- The owner gets a guided resolution workflow requiring objective resolution evidence before the action can close.
+- 5S is treated as an operational workplace-control / continuous-improvement mechanism, not as a substitute for product/process quality controls.
 
-## 2. Atomic planning situations and blocker resolution
+### Personal Action Centre
+- Action Centre now shows only the current user's assigned mandatory actions and executable improvement proposals.
+- The redundant `Person` grouping was removed because the queue is already personal.
+- The top action badge and navigation count use the same personal queue.
+- Global build blocker calculations still use all open actions, so another person's blocker cannot incorrectly make a build look clear.
+- Legacy role-labelled action owners are normalized to a concrete user where a matching role user exists.
 
-Staff absence, equipment outage, lab closure and similar capacity events now use one transaction:
+## Migration
+- Application schema: **25**.
+- REV 1.0.49 / schema 24 data is migrated automatically.
+- Existing equipment scope records are retained and used to seed category scope where useful.
+- Standard tests receive a deterministic default family when no family existed.
+- Existing data is not deleted by the migration.
 
-**proposed capacity change → complete portfolio simulation → resolve structural blockers → re-run complete simulation → Accept/Reject → atomic apply**
-
-- A capacity constraint is not written to live state before its complete portfolio schedule is feasible and accepted.
-- Planner errors now return structured blocker context including task, skill, capability, staff/equipment and readiness type.
-- Competency, missing-equipment and staff-availability blockers route directly into their functional guided resolvers.
-- After the blocker is resolved, the pending capacity/schedule solution is retried automatically.
-- Generic “open the build and work it out” is no longer the resolution path for these blockers.
-
-## 3. Calibration, maintenance and training scheduling
-
-- Duration is editable directly inside the readiness-scheduling transaction.
-- The selected duration updates the equipment/competency master data.
-- Build collisions trigger automatic replanning of the affected build(s).
-- Fixed readiness/lab-event collisions are refused rather than saved unresolved.
-- A readiness reservation is committed only after residual-collision verification.
-
-## 4. Large-quantity sample UX
-
-### Build Sample Register
-- For more than 8 samples the register is collapsed by default.
-- Search is available by sample number, Lab Sample ID, formal serial and lot/status content.
-- Batch/sample data matrix remains the primary action; per-sample detail is for identity or exceptional evidence.
-
-### Build execution group
-- For more than 8 pending samples the execution-group selector is collapsed by default.
-- All pending samples remain selected by default.
-- Opening the foldout allows search, Select all, Clear and per-sample selection.
-- This changes presentation only; the sample selection remains a real execution-group input.
-
-## 5. Sample & Serial History
-
-- Added full-text search across sample number, Lab Sample ID, formal serial, build, product/configuration, customer, material lots, process history, operator and equipment.
-- Grouping is retained (product/build/month/quarter/person/equipment/process/customer/team/purpose/release state).
-- Groups are collapsible and large result sets are not expanded automatically.
-- Sample tiles were reformatted into distinct identity, build/product and evidence metadata instead of concatenated text.
-
-## 6. Characterisation clarified
-
-The global **Characterisation** navigation item is now **Results & Capability**.
-
-Its purpose is cross-build analysis/review only:
-- distributions/capability and result status;
-- traceability review;
-- drill-down to the owning build.
-
-It no longer exposes a second generic measurement-entry/CSV path. New or corrected evidence is entered through the governed route-step or end-test workflow.
-
-## 7. Lab Setup Wizard
-
-Administrator → Configuration now contains **Start / continue setup** with 8 guided areas:
-
-1. Organisation, site/laboratory and audit scope
-2. Customers or explicit internal-only operation
-3. Products & BOM master
-4. People & competencies
-5. Equipment plus calibration/maintenance durations
-6. Readiness evidence / clean-start mode
-7. Released processes/methods
-8. Go-live integrity validation
-
-A new lab with no historical readiness evidence can choose **clean start**; LabOS then relies on its scheduling engine to place required calibration/maintenance/training before first governed use rather than forcing the wizard into a dead end.
-
-## 8. Existing-LIMS migration
-
-Controlled CSV import now supports:
-- equipment;
-- calibration certificates;
-- maintenance records;
-- staff;
-- competencies;
-- training certificates;
-- products;
-- customers.
-
-Each dataset has a downloadable template. The UI states the recommended dependency order. Imports are applied to a clone, validated with LabOS invariants, audited, and committed only if valid. Evidence/certificate URLs are preserved as links. Binary documents remain in the controlled document repository and can be referenced by URL in this POC.
-
-## 9. Governed build execution retained from REV 1.0.48
-
-The following remains fully enforced:
-
-**confirmed route + released process revision + approved Control Plan → execution group → recipe/setup → process/sample/CP matrix → sampling-rule evidence → completion**
-
-This includes 100% sampling, reduced-sampling subsets, CP/process de-duplication, real execution runs, released work-instruction rendering and method-development evidence materialisation.
-
-## 10. Schema / compatibility
-
-- Application: **REV 1.0.49**
-- Schema: **24**
-- Existing schema-23 data migrates automatically.
-- Existing unresolved legacy improvement actions are withdrawn so they cannot violate the executable-only contract.
-- Existing REV 1.0.48 governed-execution migration is retained.
-
-## Verification results
+## Verification
+The final packaged source was run through the current regression programme:
 
 | Suite | Result |
 |---|---:|
-| Core domain/planning | 46 / 46 |
+| Core domain/planner | 46 / 46 |
 | Persistence/migration | 6 / 6 |
 | Base UI regression | 23 / 23 |
 | Governed execution / CP | 18 / 18 |
-| REV 1.0.49 UX / setup / migration / no-dead-end | 15 / 15 |
-| Realistic disruption scenarios | 10 / 10 |
-| Role/build/workspace DOM stress | 1,783 / 1,783 |
-| Responsive/static/package checks | 31 / 31 |
-| **Total** | **1,932 / 1,932** |
+| REV 1.0.49 guided-workflow/UX regression | 15 / 15 |
+| REV 1.0.50 focused UX/master-data tests | 12 / 12 |
+| Tough planning/disruption scenarios | 10 / 10 |
+| Role/build/workspace render stress | 1,783 / 1,783 |
+| Static/mobile/package checks | 31 / 31 |
+| **Total** | **1,944 / 1,944** |
 
-New REV 1.0.49 tests explicitly exercise:
-- folded/searchable large sample registers;
-- folded/searchable 10-sample execution group;
-- Serial History search and structured foldouts;
-- analytics-only Results & Capability;
-- all 8 Lab Setup areas and clean-start readiness option;
-- all 8 LIMS import dataset types;
-- equipment + calibration + maintenance migration with evidence links and durations;
-- staff + competency + training-certificate migration with qualification association and evidence link;
-- suppression of non-executable improvement proposals;
-- automatic, verified staffing reassignment on acceptance;
-- editable calibration duration inside the scheduling transaction;
-- atomic capacity-situation preview;
-- guided blocker routing and automatic retry of the pending complete solution;
-- structured planner blocker payloads.
+REV 1.0.50 focused tests explicitly cover:
+- category-level equipment scope;
+- integrated sticky route navigation;
+- removal of duplicated execution-data tiles;
+- CSV/field controls inside the data matrix;
+- configurable test-family master and test assignment;
+- 5S zone/action architecture;
+- individual Action Centre isolation;
+- preservation of global blocker status independent of personal action visibility;
+- mobile horizontal route navigation.
 
-## Test-environment limitation
-
-The environment used for this release does not permit a genuine physical-device Chromium exploratory run. DOM/state stress, responsive/static checks and mobile-oriented rendering logic passed, but production acceptance should still include real Android/iOS/desktop exploratory testing, accessibility testing and real print/PDF-output verification.
+## Known validation limitation
+The automated runtime/DOM/state/mobile checks pass, but this execution environment still does not provide a genuine physical Android/iOS/desktop exploratory browser session. Real-device visual/touch validation should therefore remain part of final production acceptance.

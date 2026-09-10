@@ -1,14 +1,14 @@
-# LabOS — Prototype Build Management POC · REV 1.0.49
+# LabOS — Prototype Build Management POC · REV 1.0.50
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
-## Operating contract in REV 1.0.49
+## Operating contract in REV 1.0.50
 
 **No dead ends. No fake completion. No accepted recommendation that leaves the user to work out the next step.**
 
 An actionable recommendation is shown only when LabOS has already found a complete feasible implementation. Accepting it revalidates and applies the controlled changes. Capacity situations are also transactional: the constraint and complete portfolio replan are accepted together or neither is saved. Structural blockers route into guided competency/equipment/staff resolution and automatically retry the pending solution after the blocker is resolved.
 
-## Key REV 1.0.49 changes
+## Key REV 1.0.50 changes
 
 - Large build quantities no longer create permanently expanded sample lists. Sample registers and execution-group selection collapse into searchable foldouts; all pending samples remain selected by default and can be changed when needed.
 - **Sample & Serial History** has full-text search and collapsible groups with clean sample/Lab ID/formal-serial/build metadata.
@@ -26,3 +26,7 @@ Upload the ZIP contents to the repository root. `index.html` must remain at root
 ## Production boundary
 
 This prototype supports controlled automotive-quality workflows but is not itself a production QMS/LIMS. Production deployment still requires authenticated identity/SSO, server-side authorization, shared transactional persistence, concurrency controls, validated electronic signatures where applicable, immutable audit/retention storage, backup/disaster recovery, cybersecurity hardening and governed enterprise integrations.
+
+## REV 1.0.50 usability model
+
+REV 1.0.50 removes duplicated execution controls and integrates route-step navigation into the sticky build cockpit. Laboratory audit scope is maintained by equipment capability/category instead of repeating the same scope statement per asset. Standard-test families are controlled master data. Optional 5S workplace checks create evidence-backed owner actions. The Action Centre is an individual work queue rather than a shared list; this visibility rule does not weaken global build/readiness blockers.

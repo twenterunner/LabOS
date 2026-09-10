@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.49-poc';
-  ProtoLab.SCHEMA_VERSION = 24;
+  ProtoLab.VERSION = '1.0.50-poc';
+  ProtoLab.SCHEMA_VERSION = 25;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -474,7 +474,44 @@
     state.settings.capacity=state.settings.capacity||{productiveStaffHoursPerWeek:32,equipmentHoursPerWeek:60};
     state.settings.resourceAssurance=state.settings.resourceAssurance||{proposalFirst:true,defaultHorizonWeeks:26,warningDays:{Calibration:30,Maintenance:45,Training:60}};
     state.settings.auditProfile=state.settings.auditProfile||{organisation:'',site:'',scopeStatement:'',auditOwner:'',exclusions:'',controlledReference:'',recordsRetentionReference:'',internalAuditReference:''};
+    state.settings.auditEquipmentScopes=state.settings.auditEquipmentScopes||{};
+    state.testFamilies=Array.isArray(state.testFamilies)?state.testFamilies:[];
+    if(!state.testFamilies.length){
+      const defaults=[
+        ['TF-DIM','Dimensional / metrology','Dimensional measurement, geometry and metrology'],
+        ['TF-ELEC','Electrical','Electrical performance and electrical verification'],
+        ['TF-FUNC','Functional','Functional verification and end-of-line checks'],
+        ['TF-ENV','Environmental / durability','Environmental exposure, durability and life testing'],
+        ['TF-LEAK','Leak / pressure','Leak, pressure and sealing verification'],
+        ['TF-OTHER','Other','Other controlled laboratory tests']
+      ];
+      state.testFamilies=defaults.map(x=>({id:x[0],name:x[1],description:x[2],status:'Active'}));
+    }
+    const inferTestFamily=t=>{
+      const s=`${t?.name||''} ${t?.output||''} ${t?.equipmentCapability||''}`.toLowerCase();
+      if(/dimension|cmm|metrolog|geometry/.test(s))return 'TF-DIM';
+      if(/electr|current|voltage|resistance/.test(s))return 'TF-ELEC';
+      if(/thermal|temperature|humidity|vibration|shock|durab|environment|cycle/.test(s))return 'TF-ENV';
+      if(/leak|pressure|helium|seal/.test(s))return 'TF-LEAK';
+      if(/functional|function|verification/.test(s))return 'TF-FUNC';
+      return 'TF-OTHER';
+    };
+    (state.standardTests||[]).forEach(t=>{t.familyId=t.familyId||inferTestFamily(t)});
+    state.fiveSZones=Array.isArray(state.fiveSZones)?state.fiveSZones:[];
+    state.fiveSAudits=Array.isArray(state.fiveSAudits)?state.fiveSAudits:[];
+    if(!state.fiveSZones.length && (state.staff||[]).length){
+      const owner=(state.staff||[]).find(x=>x.available!==false)?.name||(state.identity?.name||'Lab Manager');
+      state.fiveSZones=[
+        {id:'5S-ZONE-PROTOTYPE',name:'Prototype build area',area:'Prototype lab',owner,status:'Active'},
+        {id:'5S-ZONE-METROLOGY',name:'Measurement & metrology area',area:'Metrology',owner,status:'Active'}
+      ];
+    }
     state.improvementProposals=state.improvementProposals||[];
+    (state.actions||[]).forEach(a=>{
+      const owner=String(a.owner||'').trim();if(!owner)return;
+      const role=ProtoLab.ROLES.find(r=>r.id===owner||r.label===owner);
+      if(role){const u=(state.users||[]).find(x=>x.role===role.id);if(u?.name)a.owner=u.name}
+    });
     state.dailyOperationsReviews=Array.isArray(state.dailyOperationsReviews)?state.dailyOperationsReviews:[];
     state.settings.lastOperationsReviewDate=state.settings.lastOperationsReviewDate||null;
     (state.products||[]).forEach((p,pi)=>{p.bom=p.bom||[];(p.bom||[]).forEach((b,bi)=>{b.kind=b.kind||'component';b.unitCost=Number(b.unitCost??0);b.wastePct=Number(b.wastePct??0);});});

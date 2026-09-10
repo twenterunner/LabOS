@@ -1,0 +1,82 @@
+{
+  "pass": 15,
+  "fail": 0,
+  "total": 15,
+  "checks": [
+    {
+      "name": "Large sample register is folded by default and searchable",
+      "pass": true,
+      "detail": "P26-0059 · 10 samples"
+    },
+    {
+      "name": "Large execution group selection is folded, not a giant always-open list",
+      "pass": true,
+      "detail": "10-sample execution group folded"
+    },
+    {
+      "name": "Serial History has search and foldout groups with clean structured tiles",
+      "pass": true,
+      "detail": "search + grouped drill-down"
+    },
+    {
+      "name": "Results & Capability is analytics-only, not a duplicate data-entry route",
+      "pass": true,
+      "detail": "review/analytics only"
+    },
+    {
+      "name": "Lab Setup Wizard covers the minimum functional lab configuration",
+      "pass": true,
+      "detail": "8 guided setup areas"
+    },
+    {
+      "name": "LIMS migration covers operational master/evidence datasets",
+      "pass": true,
+      "detail": "equipment, calibration, maintenance, staff, competencies, training, products, customers"
+    },
+    {
+      "name": "LIMS import actually creates equipment and linked calibration/maintenance evidence",
+      "pass": true,
+      "detail": "Legacy CMM + linked evidence"
+    },
+    {
+      "name": "LIMS people/competency/training import preserves certificate link and qualification association",
+      "pass": true,
+      "detail": "staff + competency + certificate"
+    },
+    {
+      "name": "Improvement Scan suppresses non-executable load balancing instead of creating a dead-end proposal",
+      "pass": true,
+      "detail": "0 executable proposal(s)"
+    },
+    {
+      "name": "Executable staffing proposal is auto-applied and verified on acceptance",
+      "pass": true,
+      "detail": "2 booking(s) reassigned"
+    },
+    {
+      "name": "Resource-care duration is editable in the scheduling transaction and updates the master",
+      "pass": true,
+      "detail": "2.5 h"
+    },
+    {
+      "name": "Planning-situation preview is atomic: blocked proposal does not mutate live capacity state",
+      "pass": true,
+      "detail": "live state unchanged"
+    },
+    {
+      "name": "Blocked portfolio change routes to guided resolver and automatically retries after resolution",
+      "pass": true,
+      "detail": "resolve → apply → retry"
+    },
+    {
+      "name": "Planner returns blocker details needed by guided resolution",
+      "pass": true,
+      "detail": "structured blocker payload"
+    },
+    {
+      "name": "Configuration entry points expose setup wizard and controlled LIMS migration",
+      "pass": true,
+      "detail": "guided setup + atomic migration"
+    }
+  ]
+}
