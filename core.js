@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.67-poc';
+  ProtoLab.VERSION = '1.0.68-poc';
   ProtoLab.SCHEMA_VERSION = 29;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -720,5 +720,75 @@
     if(!governance.ready&&!exception)return false;
     return _projectedEquipmentReady1056(state,e,onDate);
   };
+
+
+  /* REV 1.0.68 — planning resource semantics. Planning uses an explicit
+     capability layer so a process is only scheduled on a technically
+     suitable setup rather than any resource in a broad demo category. */
+  ProtoLab.equipmentPlanningCapability = e => e?.planningCapability || e?.capability || null;
+  ProtoLab.planningSkillForProcess = proc => proc?.planningCompetency || proc?.competency || null;
+  ProtoLab.planningCapabilityForTest = test => test?.planningCapability || test?.equipmentCapability || null;
+  ProtoLab.planningCapabilityForProcess = (state,r,proc) => {
+    if(!proc)return null;
+    if(proc.planningCapability!==undefined)return proc.planningCapability;
+    const n=String(proc.name||'').toLowerCase(),product=String(r?.productFamily||state?.products?.find(p=>p.id===r?.productId)?.family||'').toLowerCase();
+    if(/material receipt|cleaning$|surface preparation|mechanical assembly|packaging|soldering|ultrasonic cleaning|conformal coat/.test(n))return null;
+    if(/incoming inspection|optical inspection|final inspection|x-ray/.test(n))return 'Optical Inspection';
+    if(/adhesive dispense|potting/.test(n))return 'Potting / Dispense';
+    if(/laser welding|resistance welding/.test(n))return 'Laser Welding';
+    if(/fastening|torque/.test(n))return 'Torque / Fastening';
+    if(/cure|thermal soak/.test(n))return 'Environmental Chamber';
+    if(/programming|flashing/.test(n))return 'Programming / Flashing';
+    if(/leak testing/.test(n))return 'Helium Leak Test';
+    if(/electrical test|functional verification/.test(n))return 'Electrical Test';
+    if(/dimensional inspection/.test(n))return 'Dimensional Metrology';
+    if(/pressure cycling/.test(n))return 'Pressure Calibration';
+    if(/^calibration$/.test(n)){
+      if(/pressure|coolant|thermal valve/.test(product))return 'Pressure Calibration';
+      if(/torque/.test(product))return 'Torque / Fastening';
+      if(/hydrogen|leak/.test(product))return 'Helium Leak Test';
+      return 'Electrical Test';
+    }
+    return proc.equipmentCapability||null;
+  };
+  ProtoLab.ensurePlanningCapabilityModelV1068 = state => {
+    if(!state)return {changed:false,bookingsRepaired:0,resourceMismatches:0};
+    let changed=false,repaired=0,mismatches=0;
+    const equip={
+      'EQ-001':'Laser Welding','EQ-002':'Laser Welding','EQ-003':'Helium Leak Test','EQ-004':'Pressure Calibration',
+      'EQ-005':'Torque / Fastening','EQ-006':'Dimensional Metrology','EQ-007':'Electrical Test','EQ-008':'Electrical Test',
+      'EQ-009':'Environmental Chamber','EQ-010':'Programming / Flashing','EQ-011':'Optical Inspection','EQ-012':'Potting / Dispense'
+    };
+    const procSkill={
+      'PROC-001':'COMP-01','PROC-002':'COMP-05','PROC-003':'COMP-01','PROC-004':'COMP-01','PROC-005':'COMP-01','PROC-006':'COMP-02','PROC-007':'COMP-02','PROC-008':'COMP-01','PROC-009':'COMP-01','PROC-010':'COMP-01','PROC-011':'COMP-01','PROC-012':'COMP-01','PROC-013':'COMP-08','PROC-014':'COMP-06','PROC-015':'COMP-07','PROC-016':'COMP-04','PROC-017':'COMP-03','PROC-018':'COMP-05','PROC-019':'COMP-05','PROC-020':'COMP-03','PROC-021':'COMP-05','PROC-022':'COMP-01','PROC-023':'COMP-01','PROC-024':'COMP-01','PROC-025':'COMP-08','PROC-026':'COMP-08','PROC-027':'COMP-01','PROC-028':'COMP-05'
+    };
+    const testCaps={'TST-001':'Electrical Test','TST-002':'Dimensional Metrology','TST-003':'Helium Leak Test','TST-004':'Electrical Test','TST-005':'Electrical Test','TST-006':'Electrical Test','TST-007':'Pressure Calibration','TST-008':'Environmental Chamber'};
+    const isDemo=ProtoLab.isDemoDataset?ProtoLab.isDemoDataset(state):state?.settings?.demoDataset===true;
+    if(isDemo){
+      for(const e of state.equipment||[]){const v=equip[e.id];if(v&&e.planningCapability!==v){e.planningCapability=v;changed=true}}
+      for(const p of state.processes||[]){const sk=procSkill[p.id];if(sk&&p.planningCompetency!==sk){p.planningCompetency=sk;changed=true}}
+      for(const t of state.standardTests||[]){const v=testCaps[t.id];if(v&&t.planningCapability!==v){t.planningCapability=v;changed=true}}
+    }
+    const expected = b => {
+      const r=(state.requests||[]).find(x=>x.id===b.requestId),route=(state.routes||[]).find(x=>x.requestId===b.requestId),step=route?.steps?.find(x=>x.id===b.stepId);
+      if(step){const proc=(state.processes||[]).find(x=>x.id===step.processId);return {cap:ProtoLab.planningCapabilityForProcess(state,r,proc),skill:ProtoLab.planningSkillForProcess(proc),step};}
+      const tr=(r?.testRequirements||[]).find(x=>x.id===b.stepId);if(tr){const test=(state.standardTests||[]).find(x=>x.id===tr.standardTestId);return {cap:ProtoLab.planningCapabilityForTest(test),skill:test?.competency||tr.competency||b.skillId||null,step:null};}
+      return {cap:b.equipmentCapability||b.capability||null,skill:b.skillId||null,step:null};
+    };
+    const overlaps=(a,b,c,d)=>new Date(a)<new Date(d)&&new Date(b)>new Date(c);
+    const freeEq=(id,b)=>!(state.bookings||[]).some(x=>x.id!==b.id&&x.equipmentId===id&&overlaps(b.start,b.end,x.start,x.end))&&!(state.resourceCareBookings||[]).some(x=>x.status==='Scheduled'&&x.equipmentId===id&&overlaps(b.start,b.end,x.start,x.end));
+    const freeStaff=(id,b)=>!(state.bookings||[]).some(x=>x.id!==b.id&&x.staffId===id&&overlaps(b.start,b.end,x.start,x.end))&&!(state.resourceCareBookings||[]).some(x=>x.status==='Scheduled'&&x.staffId===id&&overlaps(b.start,b.end,x.start,x.end));
+    const exp=new Map((state.bookings||[]).map(b=>[b.id,expected(b)]));
+    // First clear technically invalid legacy assignments so they cannot block a correct candidate.
+    for(const b of state.bookings||[]){const x=exp.get(b.id),eq=(state.equipment||[]).find(e=>e.id===b.equipmentId),staff=(state.staff||[]).find(s=>s.id===b.staffId);if(x.cap===null&&b.equipmentId){b.equipmentId=null;changed=true;repaired++;}else if(x.cap&&(!eq||ProtoLab.equipmentPlanningCapability(eq)!==x.cap)){b.equipmentId=null;changed=true;mismatches++;}if(x.skill&&staff&&!(staff.competencies||[]).includes(x.skill)){b.staffId=null;changed=true;mismatches++;}}
+    for(const b of (state.bookings||[]).slice().sort((a,c)=>new Date(a.start)-new Date(c.start))){const x=exp.get(b.id);if(x.cap&&!b.equipmentId){const candidates=(state.equipment||[]).filter(e=>ProtoLab.equipmentPlanningCapability(e)===x.cap);const chosen=candidates.find(e=>freeEq(e.id,b));if(chosen){b.equipmentId=chosen.id;changed=true;repaired++;if(x.step)x.step.equipmentId=chosen.id}else{b.status='Resource reassignment required';b.risk=true;}}
+      if(x.skill&&!b.staffId){const candidates=(state.staff||[]).filter(s=>s.available!==false&&(s.competencies||[]).includes(x.skill));const chosen=candidates.find(s=>freeStaff(s.id,b));if(chosen){b.staffId=chosen.id;changed=true;repaired++;if(x.step)x.step.owner=chosen.name}else{b.status='Resource reassignment required';b.risk=true;}}
+      b.planningCapability=x.cap||null;b.skillId=x.skill||b.skillId||null;
+    }
+    state.settings=state.settings||{};if(state.settings.planningResourceSemanticsVersion!=='1.0.68'){state.settings.planningResourceSemanticsVersion='1.0.68';changed=true}
+    return {changed,bookingsRepaired:repaired,resourceMismatches:mismatches};
+  };
+  const _ensurePlanningModelV1068=ProtoLab.ensurePlanningModel;
+  ProtoLab.ensurePlanningModel = state => {state=_ensurePlanningModelV1068(state);ProtoLab.ensurePlanningCapabilityModelV1068(state);return state;};
 
 })();
