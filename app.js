@@ -2948,6 +2948,140 @@ function installV1068(){installPlanningItemPromptV1068();P.ensurePlanningCapabil
 const _renderV1068Base=render;
 render=function(){_renderV1068Base();installV1068();if(App.currentView==='planning'){enablePlanningDragV1065();planningHealthEnhanceV1065();planningHealthSummaryV1065();}};
 
+
+
+/* ============================================================
+   LabOS REV 1.0.69 — deterministic guided colours, yellow next
+   action, refined execution route card, full-build sticky plan.
+   ============================================================ */
+const _buildGuidedStepsV1069=buildGuidedSteps;
+buildGuidedSteps=function(r){
+  const steps=_buildGuidedStepsV1069(r);
+  const firstOpen=steps.find(s=>!s.done);
+  if(firstOpen&&firstOpen.state==='blocked'){
+    firstOpen.hasBlocker=true;
+    firstOpen.state='current';
+    firstOpen.locked=false;
+  }
+  let reachedCurrent=false;
+  for(const s of steps){
+    if(s.done){s.state='complete';s.locked=false;continue}
+    if(!reachedCurrent){s.state='current';s.locked=false;reachedCurrent=true;continue}
+    s.state='pending';
+    s.locked=true;
+  }
+  return steps;
+};
+
+function workflowStateLabelV1069(s){
+  if(s.done)return 'Complete';
+  if(s.state==='current')return s.hasBlocker?'Current · blocker':'Current';
+  return 'Future';
+}
+workspaceWorkflowRailV1066=function(steps){
+  const selected=selectedGuidedStep(steps);
+  return `<div class="workspace-workflow-rail-v1066 workspace-workflow-rail-v1069"><span class="workspace-rail-label-v1066">BUILD WORKFLOW</span><div class="workspace-workflow-scroll-v1066">${steps.map(s=>`<button type="button" class="workspace-workflow-step-v1066 ${s.done?'complete':s.state==='current'?'current':'pending'} ${selected?.id===s.id?'selected':''} ${s.hasBlocker?'has-blocker-v1069':''}" ${s.locked?'disabled aria-disabled="true"':`data-workspace-tab="${s.id}"`} title="Step ${s.index} · ${esc(s.title)} · ${workflowStateLabelV1069(s)}"><span>${s.done?'✓':s.state==='current'?'●':s.index}</span><b>${s.index}. ${esc(s.title)}</b>${s.hasBlocker?'<em class="workflow-blocker-flag-v1069">BLOCKER</em>':''}</button>`).join('')}</div></div>`;
+};
+
+workspaceSubstepRailV1066=function(r,step){
+  const subs=workflowSubstepsV1066(r,step);
+  if(!subs.length)return `<div class="workspace-substep-rail-v1066 workspace-substep-rail-v1069"><span class="workspace-rail-label-v1066">${esc(step?.title||'Current step')}</span><span class="workspace-substep-empty-v1066">No lower-level actions are required for this stage.</span></div>`;
+  const nextIdx=subs.findIndex(x=>!x.done);
+  return `<div class="workspace-substep-rail-v1066 workspace-substep-rail-v1069"><span class="workspace-rail-label-v1066">${esc(step?.title||'Current step')} · ROUTE / SUBSTEPS</span><div class="workspace-substep-scroll-v1066">${subs.map((x,i)=>{const state=x.done?'complete':i===nextIdx?'current':'future';return `<button type="button" class="workspace-substep-chip-v1066 ${state} ${i===nextIdx?'next-required-v1069':''}" ${x.attrs||'disabled'} title="${esc(x.label)} · ${x.done?'Complete':i===nextIdx?'Current / next action':'Future'}"><span>${x.done?'✓':i+1}</span><b>${esc(x.label)}</b>${i===nextIdx?'<em>NEXT</em>':''}</button>`}).join('')}</div></div>`;
+};
+
+function workspacePlanZoomStateV1069(r){
+  App.workspacePlanZoomByRequest=App.workspacePlanZoomByRequest||{};
+  const raw=Number(App.workspacePlanZoomByRequest[r.id]||0);
+  return Math.max(0,Math.min(3,raw));
+}
+function workspacePlanStatusV1069(r,step){
+  const samples=activeSamplesForRequest(r),current=currentExecutionStep(r);
+  const done=step&&samples.length&&samples.every(sm=>stepDoneForSample(step,sm));
+  if(done)return 'complete';
+  if(current&&step?.id===current.id)return 'current';
+  return 'future';
+}
+workspaceMiniPlanningSwimlaneV1066=function(r){
+  const allBookings=(App.state.bookings||[]).filter(x=>x.requestId===r.id).sort((a,b)=>new Date(a.start)-new Date(b.start));
+  const route=(App.state.routes||[]).find(x=>x.requestId===r.id),routeSteps=routeExecutionSteps(r);
+  if(!allBookings.length)return `<div class="workspace-mini-plan-v1066 workspace-full-plan-v1069 empty"><div class="workspace-plan-head-v1069"><span class="workspace-rail-label-v1066">BUILD PLAN · ENTIRE FLOW</span><div class="workspace-plan-zoom-v1069"><button type="button" disabled>−</button><button type="button" disabled>Fit</button><button type="button" disabled>+</button></div></div><div class="workspace-plan-empty-copy-v1069"><b>Not planned yet</b><small>Use Resource plan & committed timing to create the build schedule.</small></div></div>`;
+  const first=new Date(allBookings[0].start),last=new Date(allBookings.reduce((m,x)=>+new Date(x.end)>+new Date(m.end)?x:m,allBookings[0]).end);
+  let start=new Date(first);start.setHours(0,0,0,0);start=planAddDays(start,-1);
+  let end=new Date(last);end.setHours(0,0,0,0);end=planAddDays(end,2);
+  const days=Math.max(2,Math.ceil((end-start)/86400000));
+  const zoomIdx=workspacePlanZoomStateV1069(r),zoomScale=[1,1.5,2.25,3.25][zoomIdx],innerPct=Math.round(zoomScale*100);
+  const every=zoomIdx>=2?1:days<=12?1:days<=24?2:7;
+  const heads=Array.from({length:days},(_,i)=>{const d=planAddDays(start,i),show=i%every===0||i===days-1;return `<div class="workspace-full-day-v1069" style="left:${i/days*100}%;width:${100/days}%"><b>${show?d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:days>20?'short':undefined}):''}</b><span><i>AM</i><i>PM</i></span></div>`}).join('');
+  const tracks=assignTracks(allBookings),trackCount=Math.max(1,...tracks.map(x=>x.track+1)),height=Math.max(29,8+trackCount*23);
+  const bars=tracks.map(b=>{const step=routeSteps.find(s=>s.id===b.stepId),state=workspacePlanStatusV1069(r,step),a=halfDayCoordV1066(b.start,start,days,false),z=Math.max(a+.5,halfDayCoordV1066(b.end,start,days,true)),left=a/days*100,width=Math.max(.5/days*100,(z-a)/days*100),label=`${step?.order||''}${step?.order?' · ':''}${b.stepName||step?.name||'Planned work'}`;return `<div class="workspace-full-plan-bar-v1069 ${state}" style="left:${left}%;width:${width}%;top:${4+b.track*23}px" title="${esc(label)} · ${esc(halfDayLabelV1066(b.start))}"><span>${esc(label)}</span></div>`}).join('');
+  const unscheduled=routeSteps.filter(s=>!allBookings.some(b=>b.stepId===s.id));
+  return `<div class="workspace-mini-plan-v1066 workspace-full-plan-v1069"><div class="workspace-plan-head-v1069"><span class="workspace-rail-label-v1066">BUILD PLAN · ENTIRE FLOW · MORNING / AFTERNOON</span><div class="workspace-plan-zoom-v1069" aria-label="Build plan zoom"><button type="button" data-v1069-plan-zoom="out" ${zoomIdx===0?'disabled':''} title="Zoom out">−</button><button type="button" data-v1069-plan-zoom="fit" class="${zoomIdx===0?'active':''}">Fit</button><span>${zoomIdx===0?'Entire flow':`${zoomScale.toFixed(2).replace(/\.00$/,'')}×`}</span><button type="button" data-v1069-plan-zoom="in" ${zoomIdx===3?'disabled':''} title="Zoom in">+</button></div></div><div class="workspace-plan-scroll-v1069"><div class="workspace-plan-inner-v1069" style="width:${innerPct}%"><div class="workspace-mini-axis-v1066 workspace-full-axis-v1069">${heads}</div><div class="workspace-mini-track-v1066 workspace-full-track-v1069" style="height:${height}px;--half-cell:${100/(days*2)}%">${bars}</div></div></div>${unscheduled.length?`<div class="workspace-plan-unscheduled-v1069"><b>Not yet scheduled:</b> ${unscheduled.map(s=>`${esc(s.order)} · ${esc(s.name)}`).join(' · ')}</div>`:''}</div>`;
+};
+
+const _guidedNextDockV1069=guidedNextDock;
+guidedNextDock=function(r,steps,step){
+  if(step?.id!=='execution'||step.done)return _guidedNextDockV1069(r,steps,step);
+  const current=currentExecutionStep(r),selected=selectedExecutionStep(r);
+  if(!current)return '<span class="workflow-dock-clear">✓ Route complete</span>';
+  if(selected&&current.id!==selected.id)return btn(`Go to ${current.name} →`,`data-exec-step="${esc(current.id)}"`,'button small next-action workflow-dock-button');
+  if(!can('execution:run'))return '<button type="button" class="button small workflow-dock-button" disabled>Technician action required</button>';
+  current.executionRuns=current.executionRuns||[];
+  const run=current.executionRuns.find(x=>x.status==='In progress'),reqStatus=processDataRequirementStatus(r,current,run),samples=activeSamplesForRequest(r),pending=samples.filter(x=>!stepDoneForSample(current,x)),capability=processCapabilityForStep(r,current),readyEq=(App.state.equipment||[]).filter(e=>(!capability||e.capability===capability)&&P.equipmentReady(e,P.todayISO(),App.state));
+  if(run&&!reqStatus.complete)return btn(`Record required data →`,`data-process-data="${r.id}|${current.id}"`,'button small next-action workflow-dock-button');
+  if(run)return btn(`Complete ${current.name} →`,`data-complete-step="${current.id}"`,'button small next-action workflow-dock-button');
+  if(!pending.length)return '<span class="workflow-dock-clear">✓ Step complete</span>';
+  if(capability&&!readyEq.length)return btn('Resolve equipment readiness →','data-nav="equipment-master"','button small next-action workflow-dock-button');
+  return btn(`Start ${current.name} →`,`data-start-step="${current.id}"`,'button small next-action workflow-dock-button');
+};
+
+const _workspaceExecutionV1069=workspaceExecution;
+workspaceExecution=function(r){
+  let html=_workspaceExecutionV1069(r);
+  const steps=routeExecutionSteps(r),selected=selectedExecutionStep(r),current=currentExecutionStep(r),samples=activeSamplesForRequest(r),doneCount=selected?samples.filter(sm=>stepDoneForSample(selected,sm)).length:0;
+  if(!selected)return html;
+  const done=samples.length>0&&doneCount===samples.length,isCurrent=!done&&(!current||current.id===selected.id),stage=done?'complete':isCurrent?'current':'future';
+  html=html.replace('card execution-step-cockpit','card execution-step-cockpit route-step-main-v1069 '+stage);
+  const oldEye=`ROUTE STEP ${esc(selected.order)} · ${doneCount}/${samples.length} SAMPLES COMPLETE`;
+  const newEye=`BUILD ROUTE · STEP ${esc(selected.order)} OF ${steps.length} · ${doneCount}/${samples.length} SAMPLES COMPLETE`;
+  html=html.replace(oldEye,newEye);
+  if(done)html=html.replace('<span class="status good">✓ Complete</span>','<span class="route-step-status-v1069 complete">✓ COMPLETE</span>');
+  else html=html.replace('<span class="status warn">● Pending</span>',isCurrent?'<span class="route-step-status-v1069 current">● CURRENT STEP</span>':'<span class="route-step-status-v1069 future">○ FUTURE STEP</span>');
+  html=html.replace(/>Recipe \/ setup</g,'>Setup / recipe data<').replace(/>Sample process data</g,'>Sample-level process data<').replace(/>Control Plan</g,'>Control Plan evidence<');
+  html=html.replace('<strong>Do now</strong>','<strong>NEXT ACTION</strong>');
+  html=html.replace('<strong>Ready to execute</strong><small>Starting records who, when, which samples and which equipment. It does not fabricate process evidence.</small>','<strong>Ready for this operation</strong><small>The selected samples and equipment are ready. Starting records the operator, equipment, samples and actual start time.</small>');
+  html=html.replace(/class="button primary" (data-start-step=)/g,'class="button next-action route-next-action-v1069" $1');
+  html=html.replace(/class="button primary" (data-process-data=)/g,'class="button next-action route-next-action-v1069" $1');
+  html=html.replace(/class="button primary" (data-complete-step=)/g,'class="button next-action route-next-action-v1069" $1');
+  html=html.replace(/class="button primary" (data-exec-step=)/g,'class="button next-action route-next-action-v1069" $1');
+  html=html.replace('<div class="callout warn"><strong>Ready equipment required before starting.</strong></div>','<div class="callout bad route-blocker-v1069"><strong>Equipment blocker</strong><p>No ready setup currently satisfies this step. Use the yellow NEXT action in the sticky workflow to resolve equipment readiness.</p></div>');
+  html=html.replace(/<div class="execution-prerequisite-v1067">/g,'<div class="execution-prerequisite-v1067 route-blocker-v1069">');
+  return html;
+};
+
+function workspaceFixedCockpitV1069(r,steps){
+  const step=selectedGuidedStep(steps),edit=canEditRequest(r)?btn('Edit build info',`data-edit-request="${r.id}"`,'button small secondary workflow-dock-button'):`<button class="button small workflow-dock-button" type="button" disabled>View build info</button>`,commit=P.commitmentMetrics(r),approval=guidedApprovalDock(r,step),nextAction=guidedNextDock(r,steps,step),pct=workflowProgressV1066(r,steps);
+  return `<div class="workspace-fixed-cockpit workspace-cockpit-v1066 workspace-cockpit-v1069"><div class="workspace-context-strip workspace-context-v1066 workspace-context-v1069"><div class="workspace-context-primary"><span>BUILD</span><strong>${esc(r.id)} · ${esc(r.title)}</strong></div><div><span>PRODUCT / QTY</span><strong>${esc(r.productFamily)} · ${r.quantity}</strong></div><div><span>COMMITMENT</span><strong>${P.formatDate(commit.current)}</strong></div><div><span>FORECAST</span><strong>${r.forecastDate?P.formatDate(r.forecastDate):'Not planned'}</strong></div><div class="workspace-progress-v1066"><span>OVERALL PROGRESS</span><strong>${pct}%</strong><div><i style="width:${pct}%"></i></div></div></div>${workspaceWorkflowRailV1066(steps)}${workspaceSubstepRailV1066(r,step)}${workspaceMiniPlanningSwimlaneV1066(r)}<div class="workflow-command-bar workflow-command-v1066 workflow-command-v1069"><div class="workflow-command-slot workflow-edit-slot"><span class="workflow-slot-label">BUILD INFO</span>${edit}</div><div class="workflow-command-current"><span class="workflow-step-icon ${step?.done?'complete':'current'}">${step?.done?'✓':'●'}</span><div><span class="workflow-slot-label">CURRENT WORKFLOW STAGE</span><strong>${esc(step?.title||'Workflow')}</strong><small><b>Owner:</b> ${esc(step?.owner||r.owner)}${step?.hasBlocker?' · <b class="bad-text">Blocker requires resolution</b>':''}</small></div></div><div class="workflow-command-slot workflow-approval-slot"><span class="workflow-slot-label">SIGN-OFF</span>${approval}</div><div class="workflow-command-slot workflow-next-slot"><span class="workflow-slot-label">NEXT ACTION</span>${nextAction}</div></div></div>`;
+}
+workspaceFixedCockpit=workspaceFixedCockpitV1069;
+
+function installV1069(){
+  if(App._v1069Installed)return;App._v1069Installed=true;
+  document.addEventListener('click',e=>{
+    const z=e.target.closest?.('[data-v1069-plan-zoom]');if(!z)return;
+    e.preventDefault();e.stopPropagation();
+    const r=requestById(App.workspaceId);if(!r)return;
+    App.workspacePlanZoomByRequest=App.workspacePlanZoomByRequest||{};
+    let idx=workspacePlanZoomStateV1069(r);
+    if(z.dataset.v1069PlanZoom==='in')idx=Math.min(3,idx+1);
+    else if(z.dataset.v1069PlanZoom==='out')idx=Math.max(0,idx-1);
+    else idx=0;
+    App.workspacePlanZoomByRequest[r.id]=idx;render();
+  },true);
+}
+const _renderV1069Base=render;
+render=function(){_renderV1069Base();installV1069();if(App.currentView==='workspace')scheduleWorkspaceCockpitLayout();};
+
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}const planningModelV1068=P.ensurePlanningCapabilityModelV1068?.(App.state);if(planningModelV1068?.changed)await App.repo.save(App.state);App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
 })();

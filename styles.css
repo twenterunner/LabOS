@@ -1119,3 +1119,98 @@ html,body,.main,#page{overflow-x:visible}
 .planning-item-prompt-v1068 h2{margin:5px 0 12px}.planning-item-prompt-v1068 .grid{margin-top:8px}.planning-item-prompt-v1068 .callout{margin-top:12px}
 .halfday-day-v1068 span{display:grid;grid-template-columns:1fr 1fr;font-size:9px;color:var(--muted)}.halfday-day-v1068 span i{font-style:normal;text-align:center;border-top:1px solid var(--line)}.halfday-day-v1068 span i+ i{border-left:1px solid var(--line)}
 @media(max-width:800px){.planning-decision-explainer-v1068{display:grid}.planning-decision-explainer-v1068 strong{white-space:normal}}
+
+/* REV 1.0.69 — guided colour semantics + refined sticky build cockpit */
+.workspace-cockpit-v1069{padding:8px 14px 10px!important}
+.workspace-context-v1069>div{padding:6px 9px!important;min-height:46px!important}
+.workspace-context-v1069 span{font-size:9px!important;font-weight:800!important;letter-spacing:.06em}
+.workspace-context-v1069 strong{font-size:12.5px!important;line-height:1.25!important}
+.workspace-context-v1069 .workspace-progress-v1066>strong{font-size:19px!important}
+.workspace-rail-label-v1066{font-size:9.5px!important;letter-spacing:.075em!important;padding:0 5px!important}
+.workspace-workflow-rail-v1069,.workspace-substep-rail-v1069{padding:5px 7px!important;gap:8px!important}
+.workspace-workflow-step-v1066{min-height:43px!important;padding:5px 8px!important;grid-template-columns:22px minmax(0,1fr) auto!important;gap:6px!important}
+.workspace-workflow-step-v1066 span{width:22px!important;height:22px!important;font-size:11.5px!important}
+.workspace-workflow-step-v1066 b{font-size:10.5px!important;line-height:1.2!important}
+.workspace-workflow-step-v1066.complete{background:#edf8f1!important;border-color:#b5dbc1!important;color:#1e633d!important}
+.workspace-workflow-step-v1066.complete span{background:#d9f0e1!important;color:var(--good)!important}
+.workspace-workflow-step-v1066.current{background:#fff6cf!important;border-color:#d7ad37!important;color:#4b3900!important;box-shadow:inset 0 -3px 0 #d6aa2c!important}
+.workspace-workflow-step-v1066.current span{background:#f4cf62!important;color:#3a2b00!important}
+.workspace-workflow-step-v1066.pending{background:#f3f5f6!important;border-color:#d7dfe1!important;color:#738185!important;box-shadow:none!important}
+.workspace-workflow-step-v1066.pending span{background:#e4e9ea!important;color:#718085!important}
+.workspace-workflow-step-v1066.selected:not(.current):not(.complete){box-shadow:inset 0 -2px 0 #9aa9ad!important;border-color:#bbc7ca!important}
+.workspace-workflow-step-v1066.current.selected{border-color:#c99b22!important}
+.workflow-blocker-flag-v1069{font-style:normal;font-size:7.5px;font-weight:900;letter-spacing:.06em;color:#fff;background:var(--bad);padding:3px 5px;border-radius:999px;white-space:nowrap}
+.workspace-workflow-step-v1066.has-blocker-v1069{border-left:4px solid var(--bad)!important}
+.workspace-substep-chip-v1066{min-height:35px!important;padding:5px 8px!important;grid-template-columns:20px minmax(0,1fr) auto!important;gap:6px!important}
+.workspace-substep-chip-v1066 span{width:20px!important;height:20px!important;font-size:10px!important}
+.workspace-substep-chip-v1066 b{font-size:10px!important;line-height:1.2!important}
+.workspace-substep-chip-v1066.complete{background:#edf8f1!important;border-color:#b8dbc3!important;color:#246440!important}
+.workspace-substep-chip-v1066.current{background:#fff6cf!important;border-color:#d6aa2c!important;color:#4b3900!important;box-shadow:inset 0 -3px 0 #d6aa2c!important}
+.workspace-substep-chip-v1066.current span{background:#f4cf62!important;color:#3a2b00!important}
+.workspace-substep-chip-v1066.future{background:#f3f5f6!important;border-color:#d9e0e2!important;color:#7b898d!important}
+.workspace-substep-chip-v1066.future span{background:#e5eaeb!important;color:#748286!important}
+.workspace-substep-chip-v1066.current em{font-style:normal;font-size:7.5px;font-weight:900;letter-spacing:.07em;color:#5b4300;background:#ffe7a0;border-radius:999px;padding:2px 5px}
+.workspace-substep-chip-v1066.future em{display:none}
+
+.workspace-full-plan-v1069{padding:6px 7px 7px!important;margin-bottom:6px!important;overflow:hidden!important}
+.workspace-plan-head-v1069{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}
+.workspace-plan-head-v1069 .workspace-rail-label-v1066{position:static!important}
+.workspace-plan-zoom-v1069{display:flex;align-items:center;gap:4px;flex:0 0 auto}
+.workspace-plan-zoom-v1069 button{min-width:28px;height:26px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font-weight:850;padding:0 7px}
+.workspace-plan-zoom-v1069 button:hover:not(:disabled),.workspace-plan-zoom-v1069 button.active{background:var(--teal-soft);border-color:#9dccd2;color:var(--teal)}
+.workspace-plan-zoom-v1069 button:disabled{opacity:.42;cursor:not-allowed}
+.workspace-plan-zoom-v1069 span{font-size:9px;color:var(--muted);min-width:56px;text-align:center;font-weight:700}
+.workspace-plan-scroll-v1069{width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;border-radius:7px}
+.workspace-plan-inner-v1069{min-width:100%;position:relative}
+.workspace-full-axis-v1069{height:30px!important;position:relative!important}
+.workspace-full-day-v1069{position:absolute;top:0;height:100%;border-left:1px solid #dfe6e7;text-align:center;display:grid;grid-template-rows:16px 13px;align-content:center;overflow:hidden}
+.workspace-full-day-v1069:first-child{border-left:0}.workspace-full-day-v1069 b{font-size:8.5px;line-height:1;white-space:nowrap;color:#40565b}.workspace-full-day-v1069 span{display:grid;grid-template-columns:1fr 1fr;font-size:7.5px;color:#718085}.workspace-full-day-v1069 span i{font-style:normal;border-top:1px solid #e2e8e9}.workspace-full-day-v1069 span i+i{border-left:1px solid #e2e8e9}
+.workspace-full-track-v1069{position:relative!important;min-height:32px!important;background:repeating-linear-gradient(90deg,#fff 0,#fff calc(3.5714% - 1px),#f1f5f5 calc(3.5714% - 1px),#f1f5f5 3.5714%)!important}
+.workspace-full-plan-bar-v1069{position:absolute;height:18px;border-radius:5px;padding:1px 5px;font-size:8.5px;font-weight:850;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2;border:1px solid transparent}
+.workspace-full-plan-bar-v1069.complete{background:#dff2e5;border-color:#a9d3b5;color:#21623d}
+.workspace-full-plan-bar-v1069.current{background:#ffe9a8;border-color:#d6aa2c;color:#4a3700;box-shadow:0 0 0 1px rgba(214,170,44,.12)}
+.workspace-full-plan-bar-v1069.future{background:#e9edef;border-color:#cbd5d8;color:#68777b}
+.workspace-plan-unscheduled-v1069{margin-top:5px;padding:5px 7px;border:1px dashed #c9d3d5;border-radius:7px;background:#f7f9fa;color:#6e7d81;font-size:9px;line-height:1.35}
+.workspace-plan-unscheduled-v1069 b{color:#56686d}
+.workspace-plan-empty-copy-v1069{display:flex;gap:8px;align-items:center;font-size:10px}.workspace-plan-empty-copy-v1069 small{color:var(--muted)}
+
+.workflow-command-v1069{grid-template-columns:minmax(120px,.6fr) minmax(300px,1.8fr) minmax(150px,.8fr) minmax(190px,1fr)!important}
+.workflow-command-v1069 .workflow-command-slot,.workflow-command-v1069 .workflow-command-current{min-height:53px!important;padding:6px 8px!important}
+.workflow-command-v1069 .workflow-slot-label{font-size:8.5px!important;letter-spacing:.07em!important}
+.workflow-command-v1069 .workflow-command-current strong{font-size:12.5px!important;line-height:1.25!important}
+.workflow-command-v1069 .workflow-command-current small{font-size:9.5px!important;line-height:1.25!important}
+.workflow-command-v1069 .workflow-dock-button,.workflow-command-v1069 .workflow-dock-clear{min-height:35px!important;height:auto!important;font-size:10px!important;padding:6px 9px!important}
+.workflow-command-v1069 .workflow-next-slot .button:not(:disabled){background:#f4cf62!important;border-color:#d6aa2c!important;color:#3a2b00!important;box-shadow:0 1px 0 rgba(100,70,0,.08)!important}
+.workflow-command-v1069 .workflow-next-slot{background:#fffaf0!important;border-color:#ead59a!important}
+.workflow-command-v1069 .workflow-command-current{background:#fffaf0!important;border-color:#ead59a!important}
+
+.route-step-main-v1069{border-top:4px solid #cbd5d8!important;padding:14px 16px!important;box-shadow:0 2px 8px rgba(18,38,43,.04)!important}
+.route-step-main-v1069.current{border-top-color:#d6aa2c!important;background:linear-gradient(180deg,#fffdf4 0,#fff 92px)!important}
+.route-step-main-v1069.complete{border-top-color:var(--good)!important;background:linear-gradient(180deg,#f7fcf8 0,#fff 92px)!important}
+.route-step-main-v1069.future{border-top-color:#b9c5c8!important;background:linear-gradient(180deg,#f8fafb 0,#fff 92px)!important}
+.route-step-main-v1069 .section-title-row{margin-bottom:8px!important;align-items:flex-start!important}.route-step-main-v1069 .section-title-row h2{font-size:21px!important;margin:2px 0 3px!important}.route-step-main-v1069 .section-title-row .eyebrow{font-size:9.5px!important}.route-step-main-v1069 .section-title-row .subtle{font-size:11px!important}
+.route-step-status-v1069{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.04em;white-space:nowrap}
+.route-step-status-v1069.current{background:#fff0bd;color:#795a00}.route-step-status-v1069.complete{background:#e2f5e9;color:#237148}.route-step-status-v1069.future{background:#eaf0f1;color:#657579}
+.route-step-main-v1069 .execution-requirement-strip{margin:9px 0!important;gap:7px!important}.route-step-main-v1069 .execution-requirement-strip>div{padding:8px 10px!important;border-radius:10px!important;background:#fafcfc!important}.route-step-main-v1069 .execution-requirement-strip span{font-size:9.5px!important}.route-step-main-v1069 .execution-requirement-strip strong{font-size:12.5px!important}
+.route-step-main-v1069 .execution-instruction{margin:9px 0!important;padding:9px 11px!important;border-radius:10px!important;background:#fff8dc!important;border-color:#e7cd76!important;grid-template-columns:auto minmax(0,1fr)!important}.route-step-main-v1069 .execution-instruction strong{color:#765500!important;font-size:10px!important}.route-step-main-v1069 .execution-instruction span{font-size:12px!important;font-weight:650!important;color:#2f3f43!important}
+.route-step-main-v1069 .execution-primary-action{margin-top:10px!important;padding-top:10px!important}.route-step-main-v1069 .execution-primary-action>div:first-child strong{font-size:12.5px}.route-step-main-v1069 .execution-primary-action>div:first-child small{font-size:10px}
+.route-next-action-v1069{background:#f4cf62!important;border-color:#d6aa2c!important;color:#3a2b00!important;font-weight:800!important}
+.route-blocker-v1069{border-color:#e2a6a6!important;background:#fff2f2!important;color:#703232!important}.route-blocker-v1069 .eyebrow{color:var(--bad)!important}.route-blocker-v1069 .button.next-action{background:#f4cf62!important;border-color:#d6aa2c!important;color:#3a2b00!important}
+.execution-prerequisite-v1067.route-blocker-v1069{border-left:4px solid var(--bad)!important}
+
+@media(min-width:1500px){
+ .workspace-cockpit-v1069{padding-left:18px!important;padding-right:18px!important}
+ .workspace-workflow-step-v1066{max-width:230px!important}
+ .workspace-substep-chip-v1066{max-width:260px!important}
+}
+@media(max-width:1120px){
+ .workspace-context-v1069 strong{font-size:11.5px!important}.workspace-workflow-step-v1066 b{font-size:9.8px!important}
+ .workflow-command-v1069{grid-template-columns:minmax(105px,.55fr) minmax(250px,1.5fr) minmax(130px,.75fr) minmax(165px,.9fr)!important}
+}
+@media(max-width:820px){
+ .workspace-full-plan-v1069{display:block!important}.workspace-plan-head-v1069{align-items:flex-start}.workspace-plan-zoom-v1069 span{display:none}
+ .workspace-workflow-step-v1066{flex:0 0 145px!important;min-width:145px!important;max-width:145px!important}
+ .workspace-substep-chip-v1066{max-width:200px!important}
+ .workflow-command-v1069{grid-template-columns:1fr 1fr!important}.workflow-command-v1069 .workflow-command-current{grid-column:1/-1!important}.workflow-command-v1069 .workflow-next-slot{grid-column:1/-1!important}
+}
+.workspace-full-track-v1069{background:repeating-linear-gradient(90deg,#fff 0,#fff calc(var(--half-cell,3.5714%) - 1px),#f1f5f5 calc(var(--half-cell,3.5714%) - 1px),#f1f5f5 var(--half-cell,3.5714%))!important}
