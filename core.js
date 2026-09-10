@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.55-poc';
-  ProtoLab.SCHEMA_VERSION = 27;
+  ProtoLab.VERSION = '1.0.56-poc';
+  ProtoLab.SCHEMA_VERSION = 28;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -634,6 +634,90 @@
     const q=ProtoLab.staffQualification(state,staff,skillId,onDate); if(q.valid)return q;
     const b=(state.resourceCareBookings||[]).find(x=>x.status==='Scheduled'&&x.type==='Training'&&x.staffId===staff?.id&&x.skillId===skillId&&x.start<=`${onDate}T23:59:59`&&(!x.projectedNextDue||x.projectedNextDue>=onDate));
     return {valid:!!b,planned:b||null,reason:b?`Renewal training scheduled ${b.start.slice(0,10)}; projected valid to ${b.projectedNextDue}`:`No valid or scheduled qualification for ${skillId}`};
+  };
+
+
+  // REV 1.0.56 — governed setup dossiers, calibration approval, MSA and controlled exceptions.
+  const _ensureEnterpriseModel1055 = ProtoLab.ensureEnterpriseModel;
+  ProtoLab.ensureEnterpriseModel = state => {
+    state=_ensureEnterpriseModel1055(state);
+    state.gageRRStudies=Array.isArray(state.gageRRStudies)?state.gageRRStudies:[];
+    state.adminExceptions=Array.isArray(state.adminExceptions)?state.adminExceptions:[];
+    state.processSkipApprovals=Array.isArray(state.processSkipApprovals)?state.processSkipApprovals:[];
+    const legacyDoc=(id,title,approved=true)=>({id,title,revision:'A',status:approved?'Approved':'Draft',reference:approved?`${id}-LEGACY-RELEASE`:'',description:approved?'Migrated from a previously released/commissioned controlled definition.':'',approvedBy:approved?'Migration / prior release evidence':'',approvedAt:approved?ProtoLab.now():null,fileName:'',fileData:null,documentUploaded:false});
+    const ensureDoc=(obj,key,id,title,approved)=>{if(!obj[key])obj[key]=legacyDoc(id,title,approved);else{const d=obj[key];d.id=d.id||id;d.title=d.title||title;d.revision=d.revision||'A';d.status=d.status||((approved&&d.reference)?'Approved':'Draft');d.reference=d.reference||'';d.description=d.description||'';d.fileName=d.fileName||'';d.documentUploaded=!!(d.documentUploaded||d.fileData);if(d.status==='Approved'){d.approvedBy=d.approvedBy||'Migration / prior release evidence';d.approvedAt=d.approvedAt||ProtoLab.now();}}return obj[key];};
+    const seedProcessDocs=proc=>{
+      const approved=proc.status==='Released';
+      ensureDoc(proc,'ehsRiskAssessment',`EHS-${proc.id||'PROCESS'}`,`EHS risk assessment · ${proc.name||proc.id||'process'}`,approved);
+      ensureDoc(proc,'commissioningDocument',`COMM-${proc.id||'PROCESS'}`,`Process release / commissioning · ${proc.name||proc.id||'process'}`,approved);
+      if(proc.workInstruction&&typeof proc.workInstruction==='object'){proc.workInstruction.status=proc.workInstruction.status||(approved?'Released':'Draft');proc.workInstruction.revision=proc.workInstruction.revision||'A';}
+      (proc.revisionHistory||[]).forEach(h=>{if(h?.snapshot){const snap=h.snapshot,ok=snap.status==='Released'||h.status==='Released';ensureDoc(snap,'ehsRiskAssessment',`EHS-${snap.id||proc.id}-${h.rev||h.revision||'HIST'}`,`EHS risk assessment · ${snap.name||proc.name||proc.id}`,ok);ensureDoc(snap,'commissioningDocument',`COMM-${snap.id||proc.id}-${h.rev||h.revision||'HIST'}`,`Process release / commissioning · ${snap.name||proc.name||proc.id}`,ok);}});
+    };
+    (state.processes||[]).forEach(seedProcessDocs);
+    (state.standardTests||[]).forEach(test=>{const approved=test.status==='Released';ensureDoc(test,'ehsRiskAssessment',`EHS-${test.id}`,`EHS risk assessment · ${test.name}`,approved);ensureDoc(test,'commissioningDocument',`COMM-${test.id}`,`Test setup release / commissioning · ${test.name}`,approved);if(test.workInstruction&&typeof test.workInstruction==='object'){test.workInstruction.status=test.workInstruction.status||(approved?'Released':'Draft');test.workInstruction.revision=test.workInstruction.revision||'A';}});
+    (state.equipment||[]).forEach(e=>{
+      const commissioned=!['Commissioning','Out of service'].includes(e.status);
+      ensureDoc(e,'ehsRiskAssessment',`EHS-${e.id}`,`EHS / setup risk assessment · ${e.name}`,commissioned);
+      ensureDoc(e,'commissioningDocument',`COMM-${e.id}`,`Equipment setup release / commissioning · ${e.name}`,commissioned);
+      e.calibrationMode=e.calibrationMode||'External';
+      if(!e.calibrationProcedure)e.calibrationProcedure=legacyDoc(`CALPROC-${e.id}`,`Calibration procedure · ${e.name}`,e.calibrationMode!=='In-house');
+      if(e.calibrationMode==='In-house'&&e.calibrationProcedure.status==='Approved'&&!e.calibrationProcedure.description&&!e.calibrationProcedure.reference&&!e.calibrationProcedure.fileData){e.calibrationProcedure.status='Draft';e.calibrationProcedure.approvedBy='';e.calibrationProcedure.approvedAt=null;}
+    });
+    (state.calibrationCertificates||[]).forEach(c=>{
+      c.documentUploaded=!!(c.documentUploaded||c.fileData);
+      if(!c.sourceType)c.sourceType='Legacy / imported';
+      // Existing valid certificates were already accepted in previous controlled revisions. New certificates are always pending approval.
+      if(!c.approvalStatus){c.approvalStatus=c.status==='Valid'?'Approved':'Pending approval';if(c.approvalStatus==='Approved'){c.approvedBy=c.approvedBy||'Migration / prior certificate review';c.approvedAt=c.approvedAt||c.completedAt||ProtoLab.now();c.approvalRationale=c.approvalRationale||'Grandfathered prior controlled certificate acceptance.';}}
+    });
+    (state.routes||[]).forEach(route=>(route.steps||[]).forEach(step=>{step.skipStatus=step.skipStatus||null;step.skipApprovalId=step.skipApprovalId||null;}));
+    return state;
+  };
+  ProtoLab.controlledDocumentApproved = d => !!d && d.status==='Approved' && !!(String(d.reference||'').trim() || d.fileData || d.documentUploaded===true || String(d.description||'').trim()) && !!d.approvedBy;
+  ProtoLab.processGovernanceAssessment = proc => {
+    if(!proc)return {ready:false,issues:['Process definition not found']};
+    const issues=[];
+    const wi=proc.workInstruction;
+    if(!(wi && (wi.status==='Released'||wi.status==='Approved') && Array.isArray(wi.steps) && wi.steps.length))issues.push('Released work instruction');
+    if(!ProtoLab.controlledDocumentApproved(proc.ehsRiskAssessment))issues.push('Approved EHS risk assessment');
+    if(!ProtoLab.controlledDocumentApproved(proc.commissioningDocument))issues.push('Approved process release / commissioning evidence');
+    return {ready:issues.length===0,issues};
+  };
+  ProtoLab.equipmentGovernanceAssessment = e => {
+    if(!e)return {ready:false,issues:['Equipment not found']};
+    const issues=[];
+    if(!ProtoLab.controlledDocumentApproved(e.ehsRiskAssessment))issues.push('Approved EHS / setup risk assessment');
+    if(!ProtoLab.controlledDocumentApproved(e.commissioningDocument))issues.push('Approved equipment setup release / commissioning evidence');
+    if(e.calibrationMode==='In-house'&&!ProtoLab.controlledDocumentApproved(e.calibrationProcedure))issues.push('Approved in-house calibration procedure');
+    return {ready:issues.length===0,issues};
+  };
+  ProtoLab.activeAdminException = (state,scopeType,scopeId,condition='') => (state?.adminExceptions||[]).find(x=>x.status==='Active'&&String(x.scopeType||'').toLowerCase()===String(scopeType||'').toLowerCase()&&x.scopeId===scopeId&&(!x.expiresAt||x.expiresAt>=ProtoLab.todayISO())&&(!condition||!x.condition||x.condition===condition));
+  const _processRevisionReleaseAssessment1055=ProtoLab.processRevisionReleaseAssessment;
+  ProtoLab.processRevisionReleaseAssessment=(state,requestId,route)=>{
+    const out=_processRevisionReleaseAssessment1055(state,requestId,route);
+    out.rows=out.rows.map(row=>{
+      if(!row.ok||row.type!=='standard')return row;
+      const gov=ProtoLab.processGovernanceAssessment(row.definition),exception=ProtoLab.activeAdminException(state,'Process',row.step?.processId,'Process governance');
+      if(gov.ready||exception)return {...row,governance:gov,exception,ok:true};
+      return {...row,governance:gov,ok:false,detail:`${row.step?.name||row.step?.processId||'Process'} · routed revision lacks ${gov.issues.join(', ')}.`};
+    });
+    out.unresolved=out.rows.filter(x=>!x.ok);out.ready=!!(route?.steps?.length)&&out.rows.every(x=>x.ok);return out;
+  };
+  ProtoLab.validCalibrationCertificate = (state,equipmentId,onDate=ProtoLab.todayISO()) => {
+    const certs=(state?.calibrationCertificates||[]).filter(c=>c.equipmentId===equipmentId&&c.result==='Pass'&&c.status==='Valid'&&c.approvalStatus==='Approved'&&!!c.approvedBy&&(c.fileData||c.documentUploaded===true)&&c.completedAt&&c.completedAt<=onDate&&c.nextDue&&c.nextDue>=onDate);
+    certs.sort((a,b)=>String(b.completedAt).localeCompare(String(a.completedAt)));return certs[0]||null;
+  };
+  ProtoLab.equipmentReady = (e,onDate=ProtoLab.todayISO(),state=null) => {
+    if(!e)return false;
+    const governanceOk=state?ProtoLab.equipmentGovernanceAssessment(e).ready:true;
+    const certOk=state?!!ProtoLab.validCalibrationCertificate(state,e.id,onDate):e.calibrationCertificateValid===true;
+    return governanceOk && certOk && e.calibrationStatus==='Valid' && (!e.calibrationDue||e.calibrationDue>=onDate) && e.maintenanceStatus!=='Overdue' && (!e.maintenanceDue||e.maintenanceDue>=onDate);
+  };
+  const _projectedEquipmentReady1056=ProtoLab.projectedEquipmentReady;
+  ProtoLab.projectedEquipmentReady = (state,e,onDate=ProtoLab.todayISO()) => {
+    if(!e)return false;
+    const governance=ProtoLab.equipmentGovernanceAssessment(e),exception=ProtoLab.activeAdminException(state,'Equipment',e.id,'Equipment governance');
+    if(!governance.ready&&!exception)return false;
+    return _projectedEquipmentReady1056(state,e,onDate);
   };
 
 })();

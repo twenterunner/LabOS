@@ -1,12 +1,12 @@
 {
-  "pass": 13,
-  "fail": 1,
+  "pass": 12,
+  "fail": 2,
   "total": 14,
   "checks": [
     {
       "name": "REV 1.0.54 / schema 27",
       "pass": false,
-      "detail": "1.0.55-poc"
+      "detail": "1.0.56-poc"
     },
     {
       "name": "Partial issued BOM material creates an exact output limiter",
@@ -20,8 +20,8 @@
     },
     {
       "name": "Schema-25 migration does not invent a zero-output limiter before material is issued",
-      "pass": true,
-      "detail": "no false limiter"
+      "pass": false,
+      "detail": "migration did not reach 27"
     },
     {
       "name": "Schema-25 migration preserves a real partial-output limiter",

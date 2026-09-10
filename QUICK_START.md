@@ -1,4 +1,4 @@
-# LabOS REV 1.0.55 · Quick Start
+# LabOS REV 1.0.56 · Quick Start
 
 1. **Set up a lab** — Administrator → Configuration → **Start / continue setup**. Work through scope, customers/internal use, products, people/competencies, equipment/readiness durations, evidence, released standards and the final integrity check. If there is no historical readiness evidence to migrate, choose the clean-start option so LabOS schedules readiness before first use.
 2. **Migrate existing LIMS data** — Configuration → **Import from existing LIMS**, or use the import actions inside the setup wizard. Download the relevant template, export/map your current data to the recognised columns, validate, then import. Equipment should precede calibration/maintenance; staff and competencies should precede training certificates.
@@ -14,6 +14,11 @@
 12. **Improvement Scan** — Only proposals LabOS can implement end-to-end are actionable. Accept means apply + verify, not “go replan manually.”
 
 
+
+
+## REV 1.0.56 — key workflow changes
+
+Use **Quality → MSA / Gage R&R** before relying on capability conclusions. Process and equipment setup now carry governed EHS / commissioning evidence; in-house calibration can define a controlled calibration procedure; calibration certificates require formal approval before readiness. Build/process blockers now open a guided resolution path. Administrators retain an explicit audited exception path where normal completion is impossible. Process execution supports approved step skips. Long workspaces expose sticky section-jump navigation, and build Lessons can be added manually or reviewed from automated proposals, including retrospectively.
 
 ## REV 1.0.55 — menu and capability workflow
 

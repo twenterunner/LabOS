@@ -1,12 +1,12 @@
 {
-  "pass": 13,
-  "fail": 1,
+  "pass": 14,
+  "fail": 0,
   "total": 14,
   "checks": [
     {
-      "name": "Version is REV 1.0.54 with schema 27",
-      "pass": false,
-      "detail": "version 1.0.56-poc"
+      "name": "Version is REV 1.0.56 with schema 28",
+      "pass": true,
+      "detail": "1.0.56-poc / schema 28"
     },
     {
       "name": "Demo contains governed Control Plan measurement evidence",
@@ -61,7 +61,7 @@
     {
       "name": "Complete Build Report modal renders the compact evidence structure without runtime error",
       "pass": true,
-      "detail": "35185 rendered characters"
+      "detail": "35037 rendered characters"
     },
     {
       "name": "Build Report no longer contains duplicated legacy Control implementation section",

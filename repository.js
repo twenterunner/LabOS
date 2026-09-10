@@ -234,6 +234,12 @@ class MigrationService{
     P.audit(s,'Hard-gated workflow and learning model enabled','System','LabOS','Data-presence ticks / implicit closeout learning','Explicit reviewed setup milestones / evidence-based lessons proposals / concise report terminology','REV 1.0.54 migration');
     s.dataVersion=wasDemo?'2026.09-demo-30':(s.dataVersion||'migrated');s.schemaVersion=27;continue;
    }
+   if(s.schemaVersion===27){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    s.gageRRStudies=Array.isArray(s.gageRRStudies)?s.gageRRStudies:[];s.adminExceptions=Array.isArray(s.adminExceptions)?s.adminExceptions:[];s.processSkipApprovals=Array.isArray(s.processSkipApprovals)?s.processSkipApprovals:[];
+    P.audit(s,'Measurement assurance and controlled exception model enabled','System','LabOS','Ungoverned setup/calibration evidence / no MSA object / hard dead ends','Controlled EHS/commissioning dossiers / formal calibration-certificate approval / Gage R&R / auditable administrator exceptions / approved process-step skip','REV 1.0.56 migration');
+    s.dataVersion=wasDemo?'2026.09-demo-31':(s.dataVersion||'migrated');s.schemaVersion=28;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

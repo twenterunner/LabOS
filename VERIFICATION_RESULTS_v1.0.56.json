@@ -1,12 +1,12 @@
 {
-  "pass": 10,
-  "fail": 1,
+  "pass": 11,
+  "fail": 0,
   "total": 11,
   "checks": [
     {
-      "name": "REV 1.0.55 / schema 27",
-      "pass": false,
-      "detail": "1.0.56-poc"
+      "name": "REV 1.0.56 / schema 28",
+      "pass": true,
+      "detail": "1.0.56-poc / 28"
     },
     {
       "name": "Historical routed released process revision remains readiness-valid after library revision",

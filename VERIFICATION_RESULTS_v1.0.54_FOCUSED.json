@@ -1,6 +1,6 @@
 {
-  "pass": 11,
-  "fail": 0,
+  "pass": 10,
+  "fail": 1,
   "total": 11,
   "checks": [
     {
@@ -10,8 +10,8 @@
     },
     {
       "name": "Schema-26 migration resets inferred setup ticks and initializes learning decisions",
-      "pass": true,
-      "detail": "schema 27 explicit review reset"
+      "pass": false,
+      "detail": "not migrated"
     },
     {
       "name": "Future build workflow steps are hard locked behind first incomplete step",

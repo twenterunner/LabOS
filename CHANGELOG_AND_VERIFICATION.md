@@ -1,3 +1,28 @@
+# LabOS REV 1.0.56 — MSA, governed setup/calibration evidence, guided resolution and navigation
+
+## What changed
+
+- Added Quality → MSA / Gage R&R as a scoped measurement-system study workflow.
+- Capability/SPC can distinguish decision-ready studies from measurements without adequate MSA support.
+- Added governed EHS risk assessment and commissioning/release evidence to process and equipment/setup records.
+- Added controlled in-house calibration procedure definition and approval.
+- Calibration certificates from internal or external sources require formal approval before satisfying readiness.
+- Resolve actions route through a guided diagnosis → corrective transaction → evidence → recheck path.
+- Added audited Administrator exception paths without falsely turning missing controls green.
+- Added controlled process-step skip with approval, rationale, impact/containment and retained evidence.
+- Standardized action semantics: blocker/resolution red; next-step actions yellow; admin exception visually distinct.
+- Control Plans are grouped by product.
+- Lessons Learned are easier to reach, can be manually added during or after a build, and automated proposals remain governed by Accept/Reject decisions.
+- Sample/Lab Sample IDs are generated so users do not enter the same sample number twice.
+- Added reusable sticky section-jump navigation across long workspaces, including Lab Standards & Resources.
+- Fixed mobile Define/action layout overlap.
+
+## Verification
+
+The final package is verified after extraction using syntax checks, core/repository regression tests, REV 1.0.56 UI/static checks and the retained role/build/workspace stress suite.
+
+---
+
 # LabOS REV 1.0.55 — platform-ready workstreams, scoped capability/SPC and exact process-revision readiness
 
 ## Purpose

@@ -1,0 +1,44 @@
+{
+  "version": "1.0.56-poc",
+  "schema": 28,
+  "suites": [
+    {
+      "name": "Core domain/planning",
+      "passed": 46,
+      "failed": 0
+    },
+    {
+      "name": "Persistence/migration",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "name": "REV 1.0.56 UI regression",
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "name": "REV 1.0.56 static/package prechecks",
+      "passed": 20,
+      "failed": 0
+    },
+    {
+      "name": "REV 1.0.56 menu/capability focused",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "name": "Build report retained regression",
+      "passed": 14,
+      "failed": 0
+    },
+    {
+      "name": "Role/build/workspace stress",
+      "passed": 1820,
+      "failed": 0
+    }
+  ],
+  "passed": 1943,
+  "failed": 0,
+  "total": 1943
+}
