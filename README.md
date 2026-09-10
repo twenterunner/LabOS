@@ -3,11 +3,9 @@
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
-## REV 1.0.61 — guided requester action, constrained drag replanning and consolidated Resource Assurance
 
-This is the **static web / GitHub Pages** build. It deliberately uses browser IndexedDB and contains no Python/SQLite server. REV 1.0.61 makes missing requester inputs explicit, adds administrator abort/archive/retention deletion, constrained drag-and-drop replanning, collapsed sample registers, sticky/local search navigation, consolidated Calibration/Maintenance/Training/EHS assurance with 30/60/90-day reporting and configurable due warnings, clearer vacation impact previews, default decision rationales, and visual good/bad 5S examples.
 
-## REV 1.0.60 — guided blocker resolution
+## REV 1.0.61 — guided blocker resolution
 
 Engineering clarification blockers can now be completed directly from the Action Centre Resolve modal. The modal shows the blocker cause, required evidence, current owner, next owner and the exact field to complete. Interface-specific requests use a dedicated programming/calibration interface definition rather than treating any non-empty configuration string as sufficient. After the definition is saved, Lab Planning can run the guided feasibility reassessment; LabOS then routes to the next real blocker or planning step.
 

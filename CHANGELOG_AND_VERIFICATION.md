@@ -1,4 +1,4 @@
-# LabOS REV 1.0.60 — guided clarification resolution with zero guesswork
+# LabOS REV 1.0.61 — guided clarification resolution with zero guesswork
 
 ## What changed
 
@@ -11,7 +11,7 @@
 
 ## Verification
 
-REV 1.0.60 adds focused checks for the new guided resolver and retains REV 1.0.59 behavior.
+REV 1.0.61 adds focused checks for the new guided resolver and retains REV 1.0.59 behavior.
 
 ---
 
