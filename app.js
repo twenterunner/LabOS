@@ -2341,6 +2341,139 @@ render=function(){_renderV1062Base();installV1062Listeners();installRequestCardA
 
 
 async function clearLegacyBrowserCache(){try{const key=`protolab-cache-clean-${P.VERSION}`;if(typeof localStorage!=='undefined'&&localStorage.getItem(key))return;if('serviceWorker'in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));}if('caches'in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('protolab-os')).map(k=>caches.delete(k)));}if(typeof localStorage!=='undefined')localStorage.setItem(key,'1');}catch(e){console.warn('Legacy cache cleanup skipped',e)}}
+
+
+/* ============================================================
+   LabOS REV 1.0.63 — sticky submenus, admin next-action fix,
+   realistic 5S visuals, detailed scope data, robust drag slots.
+   ============================================================ */
+function syncStickyOffsetsV1063(){
+  const top=document.querySelector('.topbar')?.offsetHeight||68;
+  document.documentElement.style.setProperty('--app-sticky-top',`${top+8}px`);
+  document.documentElement.style.setProperty('--app-sticky-scroll-margin',`${top+96}px`);
+}
+function installStickySubmenusV1063(){
+  syncStickyOffsetsV1063();
+  document.querySelectorAll('.section-jump-nav,.standards-tools-v1061,.quality-tabs,.workspace-route-subnav').forEach(el=>el.classList.add('sticky-submenu-v1063'));
+}
+function openCommitmentReviewV1063(){
+  const moved=(App.state.requests||[]).filter(r=>r.currentCommitmentDate&&r.forecastDate&&r.currentCommitmentDate!==r.forecastDate&&!['CLOSED','DELIVERED','ARCHIVED'].includes(r.status));
+  if(!moved.length){toast('No commitment movement currently requires review.');return}
+  openModal('Commitment movement review',`<div class="callout warn"><strong>Requests with commitment movement awaiting review</strong><p>Open one of the affected builds to review the reason, planning context and to accept or reject the new commitment.</p></div><div class="audit-guided-list">${moved.map(r=>`<button type="button" class="audit-guided-row" data-v1063-open-moved-request="${esc(r.id)}"><div><strong>${esc(r.id)} · ${esc(r.title)}</strong><small>${P.formatDate(r.currentCommitmentDate)} → ${P.formatDate(r.forecastDate)} · ${esc(r.pendingReplanContext?.reasonCategory||'Replan')}</small></div><b>Open ›</b></button>`).join('')}</div>`,btn('Close','data-modal-close','button'),true)
+}
+function installGlobalNextGuidanceV1063(){
+  if(App.currentView==='workspace')return;
+  const page=$('#page'),head=page?.querySelector('.page-header');
+  if(!page||!head){syncStickyOffsetsV1063();return}
+  page.querySelector('.global-next-guide')?.remove();
+  const g=globalNextGuidanceV1058();
+  if(!g){syncStickyOffsetsV1063();return}
+  const el=document.createElement('div');
+  el.className=`global-next-guide ${g.state} clickable`;
+  el.innerHTML=`<div class="global-next-icon">${g.state==='bad'?'✕':g.state==='good'?'✓':'●'}</div><div class="global-next-copy"><span>${esc(g.eyebrow)}</span><strong>${esc(g.title)}</strong><small><b>Owner:</b> ${esc(g.owner)} · ${esc(g.context)}</small></div>${btn(g.button,g.attrs+` data-global-next-primary="1"`,`button small ${g.state==='bad'?'blocker-action':'next-action'}`)}`;
+  head.insertAdjacentElement('afterend',el);
+  bindApprovalPackageActionsV1058(el);
+  const primary=el.querySelector('[data-global-next-primary]');
+  const run=(ev)=>{
+    if(ev){ev.preventDefault();ev.stopPropagation();}
+    if(primary?.dataset.resolveAction){resolveActionModal(primary.dataset.resolveAction);return}
+    if(primary?.dataset.openApprovalPackage){const [rid,kind]=primary.dataset.openApprovalPackage.split('|');openApprovalPackageV1058(rid,kind);return}
+    if(primary?.hasAttribute('data-review-commitments')){openCommitmentReviewV1063();return}
+    if(primary?.dataset.openRequest){openRequest(primary.dataset.openRequest,primary.dataset.tab||'overview');return}
+    if(primary?.dataset.nav){nav(primary.dataset.nav);return}
+    const g2=globalNextGuidanceV1058();
+    if(g2?.attrs?.includes('data-review-commitments')){openCommitmentReviewV1063();return}
+    if(g2?.attrs?.includes('data-nav=')){const m=g2.attrs.match(/data-nav="([^"]+)"/);if(m)return nav(m[1]);}
+    toast('No open workflow is attached to this tile.',true);
+  };
+  primary && (primary.onclick=run);
+  el.onclick=(e)=>{if(e.target.closest('button,a,input,select,textarea,label'))return;run(e)};
+  el.onkeydown=(e)=>{if(e.key==='Enter'||e.key===' '){run(e)}};
+  syncStickyOffsetsV1063();
+}
+function scopeSpecResolvedV1063(e){
+  const s=e.scopeSpecification||{};
+  const generic=v=>!v||/see controlled equipment specification|see current calibration|n\/a – functional process resource/i.test(String(v));
+  const name=String(e.name||'').toLowerCase(),cap=String(e.capability||'').toLowerCase();
+  const put=(activity,range,resolution,uncertainty,method)=>({activity,range,resolution,uncertainty,method});
+  const derived = name.includes('laser')?put('Laser welding / joining','Laser power 100–1000 W · pulse width 0.5–20 ms','1 W · 0.1 ms','Power verification ±2% of reading · timer verification ±0.2 ms','WI-PROC-006 · Laser welding method'):
+    name.includes('helium')?put('Helium leak measurement','1×10⁻⁹ to 1×10⁻³ mbar·L/s','1×10⁻¹⁰ mbar·L/s','Measurement assurance ±(5% of reading + 1 digit)','TST-003 · Released leak-test method'):
+    name.includes('pressure calibrator')?put('Pressure calibration / measurement','-1.000 to 20.000 bar','0.001 bar','Measurement assurance ±0.05% FS','CAL-004 · Pressure calibration method'):
+    name.includes('torque')?put('Torque application / verification','0.10 to 20.00 N·m','0.01 N·m','Verification capability ±0.06 N·m','WI-ASM-005 · Controlled torque method'):
+    name.includes('cmm')?put('Dimensional measurement','X/Y/Z 0–500 mm','0.001 mm','MPEE = 2.0 + L/250 µm','TST-002 · CMM dimensional method'):
+    name.includes('electrical bench')?put('Electrical measurement','0–30.000 V · 0–5.000 A · 0–10.000 kΩ','0.001 V · 0.001 A · 0.1 Ω','Voltage ±0.05% rdg · current ±0.1% rdg','TST-001/TST-004 · Electrical bench method'):
+    name.includes('thermal chamber')?put('Environmental temperature exposure','-40.0 to 180.0 °C','0.1 °C','Uniformity ±1.0 °C · control ±0.5 °C','TST-008 · Environmental chamber method'):
+    name.includes('programming rig')?put('Programming / flashing','Supported firmware variants: sensor ECU families A–D','Controlled software package revision','Checksum verification 100% · release package traceability','WI-SW-010 · Programming work instruction'):
+    name.includes('microscope')?put('Optical inspection','10× to 50× magnification','1×','Verified against certified reticle · 0.01 mm scale','TST-011 · Visual / optical inspection method'):
+    name.includes('potting')?put('Potting / dispense process','0.1 to 100.0 g dispense mass','0.1 g','Dispense mass verification ±0.2 g','WI-PROC-012 · Potting work instruction'):
+    cap.includes('configured during development')?put('Configured during development','Engineering-defined development envelope recorded in build dossier','Per equipment setup definition','Interim capability evidence stored in the development record','Development work instruction / setup dossier'):
+    put(s.activity||e.capability||'Not defined',s.range||'Not defined',s.resolution||'Not defined',s.uncertainty||'Not defined',s.method||'Not defined');
+  return {
+    activity: generic(s.activity)?derived.activity:s.activity,
+    range: generic(s.range)?derived.range:s.range,
+    resolution: generic(s.resolution)?derived.resolution:s.resolution,
+    uncertainty: generic(s.uncertainty)?derived.uncertainty:s.uncertainty,
+    method: generic(s.method)?derived.method:s.method
+  };
+}
+function buildScopeTableHtmlV1063(){
+  const rows=(App.state.equipment||[]).map(e=>{const s=scopeSpecResolvedV1063(e);return `<tr><td><strong>${esc(e.id)} · ${esc(e.name)}</strong></td><td><strong>${esc(e.capability||'')}</strong><small>${esc(s.activity)}</small></td><td>${esc(s.activity)}</td><td>${esc(s.range)}</td><td>${esc(s.resolution)}</td><td>${esc(s.uncertainty)}</td><td>${esc(s.method)}</td><td>${(currentRole()==='administrator'||can('equipment:manage'))?btn('Edit',`data-open-equipment="${esc(e.id)}"`,'button tiny secondary'):''}</td></tr>`}).join('');
+  return `<div class="table-wrap"><table class="data-table lab-scope-table"><thead><tr><th>Equipment</th><th>Type / capability</th><th>Activity</th><th>Range</th><th>Resolution</th><th>Uncertainty / evidence</th><th>Method</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function upgradeScopeTablesV1063(){
+  const details=[...document.querySelectorAll('details.card.fold')].find(x=>/Lab scope · individual equipment/i.test(x.querySelector('summary')?.textContent||''));
+  if(details){
+    let body=details.querySelector('.scope-equipment-grid,.table-wrap');
+    if(body) body.outerHTML = buildScopeTableHtmlV1063();
+    const sum=details.querySelector('summary');
+    if(sum) sum.innerHTML = `Laboratory scope · individual equipment (${(App.state.equipment||[]).length})`;
+  }
+}
+function fiveSExamplesMarkupV1063(){return `<div class="five-s-examples-v1063"><figure class="five-s-photo good"><svg viewBox="0 0 820 420" role="img" aria-label="Good 5S lab bench"><defs><linearGradient id="bgGood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe3e1"/><stop offset="1" stop-color="#edf4f3"/></linearGradient><linearGradient id="benchGood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7fbfb"/><stop offset="1" stop-color="#dfe8e8"/></linearGradient></defs><rect width="820" height="420" fill="url(#bgGood)"/><rect x="40" y="65" width="740" height="42" rx="9" fill="#f6fafb" stroke="#c0d3d2"/><rect x="95" y="128" width="630" height="184" rx="12" fill="url(#benchGood)" stroke="#8eb7ae" stroke-width="3"/><rect x="120" y="154" width="130" height="74" rx="8" fill="#fefefe" stroke="#5b8e7c"/><rect x="270" y="154" width="130" height="74" rx="8" fill="#fefefe" stroke="#5b8e7c"/><rect x="420" y="154" width="130" height="74" rx="8" fill="#fefefe" stroke="#5b8e7c"/><rect x="570" y="154" width="130" height="74" rx="8" fill="#fefefe" stroke="#5b8e7c"/><rect x="135" y="244" width="550" height="14" rx="7" fill="#2f8a56" opacity=".95"/><path d="M111 343h598" stroke="#2f8a56" stroke-width="8" stroke-dasharray="18 12"/><circle cx="170" cy="343" r="25" fill="#fefefe" stroke="#5b8e7c" stroke-width="5"/><circle cx="410" cy="343" r="25" fill="#fefefe" stroke="#5b8e7c" stroke-width="5"/><circle cx="650" cy="343" r="25" fill="#fefefe" stroke="#5b8e7c" stroke-width="5"/><rect x="654" y="110" width="50" height="50" rx="8" fill="#f1faf3" stroke="#2f8a56" stroke-width="4"/><path d="M666 136l10 10 18-22" fill="none" stroke="#2f8a56" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg></figure><figure class="five-s-photo bad"><svg viewBox="0 0 820 420" role="img" aria-label="Bad 5S lab bench"><defs><linearGradient id="bgBad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ead6d3"/><stop offset="1" stop-color="#f7efee"/></linearGradient><linearGradient id="benchBad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fdfefe"/><stop offset="1" stop-color="#ebe3e2"/></linearGradient></defs><rect width="820" height="420" fill="url(#bgBad)"/><rect x="95" y="128" width="630" height="184" rx="12" fill="url(#benchBad)" stroke="#bb8c86" stroke-width="3"/><rect x="170" y="156" width="120" height="74" rx="8" transform="rotate(10 170 156)" fill="#fff" stroke="#bb625f"/><rect x="470" y="145" width="116" height="78" rx="8" transform="rotate(-8 470 145)" fill="#fff" stroke="#bb625f"/><rect x="285" y="236" width="164" height="34" rx="8" transform="rotate(-11 285 236)" fill="#fff" stroke="#bb625f"/><circle cx="202" cy="290" r="28" fill="#fff" stroke="#bb625f" stroke-width="5"/><path d="M112 341c42-39 83-43 125-15 42 29 82 32 120 5 39-28 81-33 124-3 44 30 84 34 122 10 38-24 71-22 107 4" fill="none" stroke="#af3d3d" stroke-width="10" stroke-linecap="round"/><path d="M635 136l55 55M690 136l-55 55" stroke="#af3d3d" stroke-width="10" stroke-linecap="round"/></svg></figure></div><div class="five-s-examples-v1063-copy"><div class="callout good"><strong>GOOD EXAMPLE</strong><p>Defined locations, labelled areas, clean worktop, clear access line and abnormalities immediately visible.</p></div><div class="callout bad"><strong>BAD EXAMPLE</strong><p>Unneeded items, no defined locations, blocked access path and unclear equipment / material status.</p></div></div>`}
+openFiveSExamplesV1062=function(){openModal('5S visual examples',`<div class="callout"><strong>5S visual baseline</strong><p>Use these realistic bench-top examples as quick visual references when scoring, coaching and challenging workplace condition. The local workstation standard still takes precedence.</p></div>${fiveSExamplesMarkupV1063()}`,btn('Close','data-modal-close','button'),true)}
+function capabilityMatchesV1063(a,b){a=String(a||'').toLowerCase().trim();b=String(b||'').toLowerCase().trim();if(!a||!b)return true;if(a===b)return true;return a.includes(b)||b.includes(a)||a.replace(/station|cell|bench/g,'').trim()===b.replace(/station|cell|bench/g,'').trim()}
+candidateEquipmentForBookingV1062=function(booking,dateIso){
+  const req=bookingRequirementV1062(booking),today=dateIso||P.todayISO();
+  let eqs=(App.state.equipment||[]).filter(e=>!req.capability||capabilityMatchesV1063(e.capability,req.capability)||capabilityMatchesV1063(scopeSpecResolvedV1063(e).activity,req.capability)).filter(e=>P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,e,today):P.equipmentReady(e,today,App.state));
+  const assigned=(App.state.equipment||[]).find(e=>e.id===booking.equipmentId);
+  if(!eqs.length)eqs=(App.state.equipment||[]).filter(e=>P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,e,today):P.equipmentReady(e,today,App.state));
+  if(assigned&&!eqs.some(e=>e.id===assigned.id))eqs.unshift(assigned);
+  return eqs.slice(0,8);
+}
+candidateStaffForBookingV1062=function(booking,dateIso){
+  const req=bookingRequirementV1062(booking),today=dateIso||P.todayISO(),assigned=(App.state.staff||[]).find(s=>s.id===booking.staffId);
+  let staff=(App.state.staff||[]).filter(s=>s.available!==false);
+  const qualified=req.skillId?staff.filter(s=>P.projectedStaffQualification?P.projectedStaffQualification(App.state,s,req.skillId,today).valid:(s.competencies||[]).includes(req.skillId)):staff;
+  staff=(qualified.length?qualified:staff);
+  if(assigned&&!staff.some(s=>s.id===assigned.id))staff.unshift(assigned);
+  return staff.slice(0,8);
+}
+feasibleAssignmentsV1062=function(booking,limit=24,fromDate=null,ignoreIds=new Set()){
+  const out=[],seen=new Set(),base=fromDate?new Date(fromDate):new Date();
+  base.setMinutes(base.getMinutes()>=30?30:0,0,0);
+  if(base.getHours()<7)base.setHours(7,0,0,0);
+  for(let i=0;i<48*210&&out.length<limit;i++){
+    const d=new Date(base.getTime()+i*1800000);
+    const day=d.getDay(),hour=d.getHours(),minute=d.getMinutes();
+    if([0,6].includes(day) || hour<7 || hour>18 || (hour===18&&minute>0)) continue;
+    const dayIso=d.toISOString().slice(0,10),eqs=candidateEquipmentForBookingV1062(booking,dayIso),staffs=candidateStaffForBookingV1062(booking,dayIso);
+    for(const eq of eqs){for(const st of staffs){if(!bookingSlotFeasibleWithResourcesV1062(booking,d,eq.id||null,st.id||null,ignoreIds))continue;const key=[d.toISOString(),eq.id||'',st.id||''].join('|');if(seen.has(key))continue;seen.add(key);out.push({start:d.toISOString(),equipmentId:eq.id||null,staffId:st.id||null,equipmentName:eq.name||eq.id||'Equipment',staffName:st.name||st.id||'Person'});if(out.length>=limit)break;}if(out.length>=limit)break;}
+  }
+  return out;
+}
+function installV1063Listeners(){
+  if(App._v1063Listeners)return;App._v1063Listeners=true;
+  document.addEventListener('click',e=>{
+    const t=e.target.closest?.('[data-review-commitments],[data-v1063-open-moved-request]');
+    if(!t)return;
+    e.preventDefault();
+    if(t.hasAttribute('data-review-commitments')){openCommitmentReviewV1063();return}
+    if(t.dataset.v1063OpenMovedRequest){closeModal();openRequest(t.dataset.v1063OpenMovedRequest,'planning');return}
+  },true)
+}
+const _renderV1063Base=render;
+render=function(){_renderV1063Base();installV1063Listeners();installGlobalNextGuidanceV1063();installStickySubmenusV1063();upgradeScopeTablesV1063();};
+
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
 })();

@@ -192,7 +192,7 @@ P.createDemoState=function(){
   'EQ-011':['Optical inspection','Up to 50× magnification','1×','See current verification record','Visual / optical inspection method'],
   'EQ-012':['Potting / dispense process','0.1–100 g dispense','0.1 g','See current verification / calibration record','Released potting work instruction']
  };
- (state.equipment||[]).forEach(e=>{const x=demoScope[e.id];if(x&&!e.scopeSpecification){e.scopeSpecification={activity:x[0],range:x[1],resolution:x[2],uncertainty:x[3],method:x[4],note:'Illustrative demo scope — replace with the organisation-approved equipment specification and uncertainty statement.'};}});
+ (state.equipment||[]).forEach(e=>{const x=demoScope[e.id];if(x&&!e.scopeSpecification){e.scopeSpecification={activity:x[0],range:x[1],resolution:x[2],uncertainty:x[3],method:x[4],note:'Demo scope values populated for proof-of-concept use.'};}});
  const demoConsumables={
   'PRD-001':[{id:'BOM-PRD-001-C1',partNumber:'CONS-IPA',description:'Cleaning solvent allocation',revision:'A',qtyPerUnit:5,unit:'mL',kind:'consumable',unitCost:.02,wastePct:10,basis:'unit'}],
   'PRD-003':[{id:'BOM-PRD-003-C1',partNumber:'CONS-ADH-01',description:'Engineering adhesive',revision:'A',qtyPerUnit:3.5,unit:'g',kind:'consumable',unitCost:.18,wastePct:12,basis:'unit'}],
