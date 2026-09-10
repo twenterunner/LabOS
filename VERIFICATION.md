@@ -42,3 +42,7 @@ Sequential workflow ordering, stage confirmation, assurance reporting/navigation
 
 ## REV 1.0.79
 See `VERIFICATION_v1.0.79.md`. AUTO-PLAN/readiness resource semantics are unified, same-day calibration/maintenance/training readiness is time-accurate, 5S preserves scroll position, the Lab Standards & Resources sticky navigator is unified, E0/E1/V/P are remapped to Pre-A/A/B/C intent, and the demo portfolio is replaced with 24 power-tool prototype requests.
+
+
+## REV 1.0.80
+See `VERIFICATION_v1.0.80.md`. Manual planning uses Green/Yellow/Red prevalidated choices in a staged draft, current conflicts are visible before save, swimlane headers include month/CW/weekday/day with full-track weekend shading when weekends are disabled, and hard planning situations force overlapping future locked work back through replanning. A residual lab-closure collision blocks proposal acceptance.

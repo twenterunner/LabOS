@@ -1,0 +1,26 @@
+PASS | Version is REV 1.0.80
+PASS | All main assets cache-busted to 1.0.80
+PASS | Service-worker reset identity updated
+PASS | Three manual tiers are explicit
+PASS | Manual planning uses prevalidated move options
+PASS | Manual plan is staged before live save
+PASS | Manual save has stale live-plan guard
+PASS | Manual save scans conflicts before commit
+PASS | Red tier requires explicit review
+PASS | Month shown in swimlane header
+PASS | Calendar week shown in swimlane header
+PASS | Weekend shading is conditional on weekend setting
+PASS | Hard planning situations invalidate infeasible locks
+PASS | Feasible locks are preserved without duplicate task bookings
+PASS | Residual lab-closure conflicts block proposal
+PASS | Existing saved closure overlaps reconcile on load
+PASS | JavaScript syntax: core.js | OK
+PASS | JavaScript syntax: demo-data.js | OK
+PASS | JavaScript syntax: repository.js | OK
+PASS | JavaScript syntax: services.js | OK
+PASS | JavaScript syntax: app.js | OK
+PASS | Runtime: closure replans locked open-build work with zero residual overlap | {"before":1,"after":0,"planned":21,"failed":0,"invariants":0,"lockedBookingRemoved":true}
+PASS | Runtime: feasible locked task is preserved exactly once | {"lockId":"BOOK-P26-1005-3","stepId":"P26-1005-S3","sameStepCount":1,"lockedPreserved":true,"invariants":0}
+PASS | Required release files present | all present
+
+SUMMARY | 24/24 passed | 0 failed

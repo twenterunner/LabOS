@@ -1,7 +1,13 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.61
+# LabOS — Laboratory Operations System POC · REV 1.0.80
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
+
+## REV 1.0.80 — conflict-visible manual planning and closure-safe replanning
+
+REV 1.0.80 replaces guess-and-reject manual scheduling with the same prevalidated three-tier choice model used by planning moves: **Green** for least-disruptive current-capacity options, **Yellow** for controlled training/qualification recovery, and **Red** for quantified cross-build impact requiring explicit review. The manual plan is staged in a draft and is applied atomically only when the planner saves it. Current conflicts are visible before selection.
+
+The main swimlane date axis now shows **month, calendar week (CW), weekday and day number**. When weekend planning is disabled, Saturdays and Sundays are shaded through the full swimlane tracks rather than only in the header. Lab-wide closures and other hard capacity situations now invalidate overlapping future planning locks, forcing affected open-build work through replanning; a residual-overlap safety check prevents accepting a planning-event proposal that still leaves work inside a lab closure. Existing saved REV 1.0.79 states are also reconciled on first load if they already contain future work inside an active whole-lab closure; commitments remain preserved for explicit review.
 
 ## REV 1.0.79 — planner/readiness consistency and power-tool demo portfolio
 
