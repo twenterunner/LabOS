@@ -1,112 +1,156 @@
 {
-  "pass": 21,
-  "fail": 0,
-  "total": 21,
+  "version": "1.0.61",
+  "passed": 37,
+  "failed": 0,
   "checks": [
     {
-      "name": "REV 1.0.61 / schema 29",
-      "pass": true,
-      "detail": "1.0.61-poc / 29"
+      "name": "required web release files present",
+      "passed": true
     },
     {
-      "name": "Engineering interface clarification opens the exact missing field",
-      "pass": true,
-      "detail": "Programming / calibration interface defined · Eva de Vries"
+      "name": "web-only package uses IndexedDB repository",
+      "passed": true
     },
     {
-      "name": "Clarification resolver visibly explains cause, evidence and owner",
-      "pass": true,
-      "detail": "zero-guess resolver UI present"
+      "name": "no API/SQLite storage class retained",
+      "passed": true
     },
     {
-      "name": "Interface definition transitions ownership to Lab Planning reassessment",
-      "pass": true,
-      "detail": "Lab feasibility reassessed · Mila Jansen"
+      "name": "REV 1.0.61 version",
+      "passed": true
     },
     {
-      "name": "Normal request editor retains structured interface definition",
-      "pass": true,
-      "detail": "structured interface retained"
+      "name": "all JS/CSS cache busting updated",
+      "passed": true
     },
     {
-      "name": "GRR <10% with ndc >=5 recommends APPROVE",
-      "pass": true,
-      "detail": "System recommendation: APPROVE for the stated measurement use"
+      "name": "sample register collapsed by default",
+      "passed": true
     },
     {
-      "name": "GRR 10-30% is application-dependent and default recommendation is REJECT",
-      "pass": true,
-      "detail": "At least one result is marginal or the study design is below the typical default. A controlled user approval is still possible with explicit risk/application rationale."
+      "name": "exact missing requester input guidance",
+      "passed": true
     },
     {
-      "name": "GRR >30% recommends REJECT",
-      "pass": true,
-      "detail": "out-of-guidance result blocked by default"
+      "name": "requester direct action opens controlled request editor",
+      "passed": true
     },
     {
-      "name": "GRR ndc below 5 recommends REJECT",
-      "pass": true,
-      "detail": "ndc 4 rejected"
+      "name": "generic management navigation not presented as Resolve",
+      "passed": true
     },
     {
-      "name": "Sub-typical calculated study design is not auto-approved",
-      "pass": true,
-      "detail": "2×2×2 requires reviewer justification"
+      "name": "administrator abort/archive workflow",
+      "passed": true
     },
     {
-      "name": "Uploaded study requires controlled design verification",
-      "pass": true,
-      "detail": "documented design must be verified"
+      "name": "archive manager cutoff deletion",
+      "passed": true
     },
     {
-      "name": "Only explicit human approval is decision-ready",
-      "pass": true,
-      "detail": "system recommendation and user decision remain separate"
+      "name": "archived builds read-only",
+      "passed": true
     },
     {
-      "name": "Legacy normalization no longer marks <=30% as simply Acceptable",
-      "pass": true,
-      "detail": "10–30% preserved as conditional"
+      "name": "drag feasible-slot planner",
+      "passed": true
     },
     {
-      "name": "GRR decision UI retains reviewer override governance",
-      "pass": true,
-      "detail": "reviewer controls final outcome"
+      "name": "drag feasibility includes people and equipment",
+      "passed": true
     },
     {
-      "name": "5S is present as a fifth management KPI with trend drill-down",
-      "pass": true,
-      "detail": "current score + actions + zones + trend"
+      "name": "drag feasibility includes care and planning situations",
+      "passed": true
     },
     {
-      "name": "5S KPI derives only from recorded data",
-      "pass": true,
-      "detail": "0 recorded checks / 2 active zones"
+      "name": "downstream tasks replan after drop",
+      "passed": true
     },
     {
-      "name": "Calibration audit resolver identifies the exact affected equipment and evidence chain",
-      "pass": true,
-      "detail": "EQ-008 · Electrical Bench B"
+      "name": "sticky standards navigation",
+      "passed": true
     },
     {
-      "name": "Readiness scheduling toast no longer implies resolution",
-      "pass": true,
-      "detail": "schedule != evidence completion"
+      "name": "standards local search",
+      "passed": true
     },
     {
-      "name": "Audit evidence pack has dedicated mobile and print/PDF formatting",
-      "pass": true,
-      "detail": "mobile + PDF layout guarded"
+      "name": "consolidated resource assurance domains",
+      "passed": true
     },
     {
-      "name": "Release signer package binds buttons to stable approval-record IDs",
-      "pass": true,
-      "detail": "2 signer records shown"
+      "name": "six resource assurance filter tiles",
+      "passed": true
     },
     {
-      "name": "Visible release sign-off can be completed without stale signer-package lookup",
-      "pass": true,
-      "detail": "0/2 → 1/2"
+      "name": "resource assurance individual equipment scope",
+      "passed": true
+    },
+    {
+      "name": "30/60/90 upcoming assurance buckets",
+      "passed": true
+    },
+    {
+      "name": "configurable due warning weeks/months",
+      "passed": true
+    },
+    {
+      "name": "combined assurance report selectable domains",
+      "passed": true
+    },
+    {
+      "name": "report exposes 0-30 / 31-60 / 61-90 bands",
+      "passed": true
+    },
+    {
+      "name": "default rationale for lesson review",
+      "passed": true
+    },
+    {
+      "name": "default rationale for MSA review",
+      "passed": true
+    },
+    {
+      "name": "default rationale for planning proposal",
+      "passed": true
+    },
+    {
+      "name": "vacation preview explains not saved yet",
+      "passed": true
+    },
+    {
+      "name": "5S good/bad visual examples and expectations",
+      "passed": true
+    },
+    {
+      "name": "mobile CSS covers new sticky/filter controls",
+      "passed": true
+    },
+    {
+      "name": "core.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "demo-data.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "repository.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "services.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "app.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "service-worker.js JavaScript syntax",
+      "passed": true
     }
-  ]
+  ],
+  "browser_note": "Source, syntax, packaging and feature-path verification completed. A local Chromium navigation pass was attempted but the execution environment blocks localhost navigation by administrator policy; final deployed exploratory acceptance remains recommended."
 }

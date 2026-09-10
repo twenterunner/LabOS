@@ -252,6 +252,7 @@ class MigrationService{
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
+
 class BrowserDocumentStore{download(name,text,type='application/json'){const blob=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);} readFile(file){return file.text();}}
 class DemoIdentityProvider{constructor(state){this.state=state;} currentUser(){return this.state.identity;} switchRole(role){const user=this.state.users.find(u=>u.role===role)||this.state.users[0];this.state.identity={userId:user.id,name:user.name,role};return this.state.identity;}}
 P.StorageRepository=StorageRepository;P.IndexedDBStorageRepository=IndexedDBStorageRepository;P.MigrationService=MigrationService;P.BrowserDocumentStore=BrowserDocumentStore;P.DemoIdentityProvider=DemoIdentityProvider;
