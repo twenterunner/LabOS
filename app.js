@@ -3515,6 +3515,138 @@ function hidePrematureApprovalPackagesV1073(){if(App.currentView!=='workspace'||
 const _renderV1073Base=render;
 render=function(){_renderV1073Base();installV1073Listeners();hidePrematureApprovalPackagesV1073();};
 
+
+
+/* ============================================================
+   LabOS REV 1.0.74 — planning move commit hardening, compact
+   responsive My Work request cards, three-period capacity view,
+   concise planning-event review, visible weekend setting,
+   collapsible build-plan swimlanes, and 5S gallery removal.
+   ============================================================ */
+
+function installDashboardRequestCardsV1074(){
+  if(App.currentView!=='dashboard')return;
+  document.querySelectorAll('.request-portfolio').forEach(x=>x.classList.add('dashboard-request-portfolio-v1074'));
+}
+
+function capacitySnapshotV1074(bucket,mode){
+  const rows=operationalRows(),build=rows.filter(x=>x.request&&inWindow(x.start,bucket.start,bucket.end)),care=rows.filter(x=>x.source==='readiness'&&inWindow(x.start,bucket.start,bucket.end)),cap=opsCapacityForPeriod(bucket);
+  const peopleLoad=sumHours(build.filter(x=>x.person&&x.person!=='Unassigned')),eqLoad=sumHours(build.filter(x=>x.equipment&&x.equipment!=='Unassigned'&&x.equipment!=='—')),peoplePct=opsPct(peopleLoad,cap.peopleHours),eqPct=opsPct(eqLoad,cap.equipmentHours);
+  const pMap=new Map(),eMap=new Map();for(const x of build){if(x.person&&x.person!=='Unassigned')pMap.set(x.person,(pMap.get(x.person)||0)+x.duration);if(x.equipment&&x.equipment!=='Unassigned'&&x.equipment!=='—')eMap.set(x.equipment,(eMap.get(x.equipment)||0)+x.duration)}
+  const scale=mode==='months'?4.3:1,staffCap=Math.max(1,Number(App.state.settings?.capacity?.productiveStaffHoursPerWeek||32)*scale),eqCap=Math.max(1,Number(App.state.settings?.capacity?.equipmentHoursPerWeek||60)*scale);
+  const bottlenecks=[...pMap].map(([name,h])=>({name,h,type:'Person',u:100*h/staffCap})).concat([...eMap].map(([name,h])=>({name,h,type:'Equipment',u:100*h/eqCap}))).sort((a,b)=>b.u-a.u).slice(0,3);
+  return {bucket,peopleLoad,eqLoad,peoplePct,eqPct,careHours:sumHours(care),bottlenecks};
+}
+capacityCardV1072=function(){
+  const mode=App.filters.capacityModeV1072||'weeks',buckets=opsPeriodBuckets(mode).slice(0,3),snaps=buckets.map(b=>capacitySnapshotV1074(b,mode)),cls=v=>v>100?'bad':v>85?'warn':'good';
+  const mini=s=>`<article class="capacity-period-card-v1074"><div class="capacity-period-title-v1074"><div><strong>${esc(s.bucket.label)}</strong><small>${esc(s.bucket.dateLabel)}</small></div><span class="status ${Math.max(s.peoplePct,s.eqPct)>100?'bad':Math.max(s.peoplePct,s.eqPct)>85?'warn':'good'}">${Math.round(Math.max(s.peoplePct,s.eqPct))}% peak</span></div><div class="capacity-period-bars-v1074"><div><span>People</span><b>${Math.round(s.peoplePct)}%</b><i><em class="${cls(s.peoplePct)}" style="width:${Math.min(100,s.peoplePct)}%"></em></i><small>${s.peopleLoad.toFixed(1)} h assigned</small></div><div><span>Equipment</span><b>${Math.round(s.eqPct)}%</b><i><em class="${cls(s.eqPct)}" style="width:${Math.min(100,s.eqPct)}%"></em></i><small>${s.eqLoad.toFixed(1)} h assigned</small></div></div><div class="capacity-period-readiness-v1074"><b>${s.careHours.toFixed(1)} h readiness</b><span>Calibration · maintenance · training</span></div><div class="capacity-period-bottlenecks-v1074"><strong>Key bottlenecks</strong>${s.bottlenecks.map(x=>`<span class="${cls(x.u)}"><b>${esc(x.name)}</b><small>${esc(x.type)} · ${x.h.toFixed(1)} h · ${Math.round(x.u)}%</small></span>`).join('')||'<span class="good"><b>No immediate bottleneck</b><small>No assigned load exceeds the selected-period thresholds.</small></span>'}</div></article>`;
+  return `<div class="card dash-cap-card v1072-capacity capacity-three-period-v1074"><div class="section-title-row"><div><span class="eyebrow">CAPACITY</span><h2>Immediate workload & bottlenecks</h2><div class="subtle">Last, current and next ${mode==='months'?'month':'week'} are shown together · ${v1072WeekendsEnabled()?'weekends included':'weekdays only'}.</div></div><label class="compact-select capacity-mode-only-v1074">Period size<select id="capacityModeV1072"><option value="weeks" ${mode==='weeks'?'selected':''}>Week</option><option value="months" ${mode==='months'?'selected':''}>Month</option></select></label></div><div class="capacity-three-grid-v1074">${snaps.map(mini).join('')}</div></div>`;
+};
+
+function planningCalendarSettingsModalV1074(){
+  const enabled=v1072WeekendsEnabled();
+  openModal('Planning calendar',`<div class="callout"><strong>Prototype build working calendar</strong><p>This setting is used by AUTO-PLAN, drag/move validation, resource-capacity calculations and downstream replanning.</p></div><div class="setting-row-v1072 setting-row-modal-v1074"><div><strong>Allow prototype builds on weekends</strong><small>${enabled?'Saturday and Sunday can currently be used for build work.':'Build work is currently planned Monday–Friday only.'}</small></div><label class="plan-switch"><input type="checkbox" data-v1074-weekends ${enabled?'checked':''}><span>${enabled?'Weekends enabled':'Weekdays only'}</span></label></div>`,btn('Close','data-modal-close','button'),true)
+}
+function installPlanningCalendarShortcutV1074(){
+  if(App.currentView!=='planning')return;
+  const actions=document.querySelector('.page-header .header-actions');if(!actions||actions.querySelector('[data-v1074-calendar-settings]'))return;
+  actions.insertAdjacentHTML('afterbegin',btn('Calendar settings','data-v1074-calendar-settings','button secondary'));
+}
+
+// Remove the optional 5S bench-image gallery from the operational UI again.
+fiveSBenchGalleryV1064=function(){return ''};
+install5SBenchGalleryV1064=function(){};
+installFiveSVisualEntryPointsV1062=function(){};
+fiveSAuditModal=function(zoneId){
+  _fiveSAuditModalV1064Base(zoneId);
+  setTimeout(()=>{const modal=$('#modalRoot .modal');if(!modal)return;modal.querySelectorAll('.five-s-bench-gallery-v1064,.five-s-reference-head-v1064,.five-s-examples-v1061,.five-s-examples-v1063').forEach(x=>x.remove())},40);
+};
+function remove5SGalleriesV1074(){document.querySelectorAll('.five-s-bench-gallery-v1064,.five-s-reference-head-v1064,.five-s-examples-v1061,.five-s-examples-v1063,[data-v1062-five-s-examples]').forEach(x=>x.remove())}
+
+// Make the sticky build plan a true fold-out and preserve its state across re-renders/zoom.
+const _workspaceMiniPlanningSwimlaneV1074Base=workspaceMiniPlanningSwimlaneV1066;
+workspaceMiniPlanningSwimlaneV1066=function(r){
+  const inner=_workspaceMiniPlanningSwimlaneV1074Base(r),bookings=(App.state.bookings||[]).filter(x=>x.requestId===r.id),open=!!App.workspaceBuildPlanOpenV1074?.[r.id]||App.dragBookingV1061&&bookings.some(x=>x.id===App.dragBookingV1061);
+  return `<details class="workspace-build-plan-fold-v1074" data-v1074-build-plan-fold="${esc(r.id)}" ${open?'open':''}><summary><span><b>Build plan swimlanes</b><small>${bookings.length?`${bookings.length} planned route operation${bookings.length===1?'':'s'} · entire build flow · AM/PM resolution`:'Not planned yet'}</small></span><em>${open?'Collapse':'Expand'}</em></summary>${inner}</details>`;
+};
+
+// Planning-event reviews should focus on the one user decision: committed-date movement.
+const _showPlanProposalV1074Base=showPlanProposal;
+showPlanProposal=function({mode,proposedState,requestIds,results=[],contextEvent=null}){
+  if(!contextEvent)return _showPlanProposalV1074Base({mode,proposedState,requestIds,results,contextEvent});
+  const before=App.state,ids=requestIds||[],moves=planCommitmentMovesV1068(before,proposedState,ids),defaultNote=`Planning event accepted: ${contextEvent.type}: ${contextEvent.reason}. Any committed-date movements shown below are accepted as part of this same controlled planning decision; original commitments remain preserved in history.`;
+  App.pendingPlanProposal={mode,proposedState,requestIds:ids,contextEvent,commitMoves:moves};
+  const movementBlock=moves.length?`<section class="report-section planning-event-only-section-v1074"><h3>Committed-date movements included in this decision</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>Build</th><th>Current commitment</th><th>New commitment</th><th>Movement</th><th>Reason</th></tr></thead><tbody>${moves.map(x=>`<tr><td><strong>${esc(x.id)}</strong><small>${esc(x.title)}</small></td><td>${P.formatDate(x.current)}</td><td>${P.formatDate(x.next)}</td><td><strong class="${x.delta>0?'bad-text':x.delta<0?'good-text':''}">${x.delta>0?'+':''}${x.delta} d</strong></td><td>${esc(x.category)}<small>${esc(x.reason)}</small></td></tr>`).join('')}</tbody></table></div></section>`:`<div class="callout good planning-event-only-section-v1074"><strong>No committed delivery date moves.</strong><p>The planning event can be accepted without changing any current commitment.</p></div>`;
+  closeModal();
+  openModal('Review planning event impact',`<div class="planning-event-review-v1074"><div class="callout ${moves.some(x=>x.delta>0)?'warn':'info'}"><strong>${esc(contextEvent.type)} · ${contextEvent.scope==='staff'?(App.state.staff||[]).find(x=>x.id===contextEvent.staffId)?.name||'person':contextEvent.scope==='equipment'?(App.state.equipment||[]).find(x=>x.id===contextEvent.equipmentId)?.name||'equipment':'whole lab'}</strong><p>${esc(contextEvent.reason)}</p></div>${movementBlock}<div class="field"><label>Decision rationale <small>system-proposed · editable</small></label><textarea id="planProposalNote">${esc(defaultNote)}</textarea></div></div>`,`${btn('Reject · keep current plan','data-reject-plan-proposal','button danger')}${btn('Accept planning event','data-accept-plan-proposal','button next-action')}`,true);
+  setTimeout(()=>{const ac=$('[data-accept-plan-proposal]'),rj=$('[data-reject-plan-proposal]');if(ac)ac.onclick=acceptPlanProposal;if(rj)rj.onclick=rejectPlanProposal},0)
+};
+planningVacationPreviewNoteV1061=function(){};
+
+function sameMovePlacementV1074(booking,opt){return !!(booking&&opt&&new Date(booking.start).toISOString()===new Date(opt.start).toISOString()&&(opt.equipmentId||booking.equipmentId)===booking.equipmentId&&(opt.staffId||booking.staffId)===booking.staffId)}
+const _validatedMoveOptionsV1074Base=validatedMoveOptionsV1071;
+validatedMoveOptionsV1071=function(booking,limit=10){
+  const key=`${booking.id}|${limit}|${planningFingerprintV1070(App.state)}|${v1072WeekendsEnabled()}`;
+  if(App.v1074MoveCache?.key===key){App.planningMoveProposalsV1071=App.v1074MoveCache.proposals;return App.v1074MoveCache.options}
+  App.v1072MoveCache=null;
+  const raw=_validatedMoveOptionsV1074Base(booking,Math.min(10,limit));
+  const v71={...(App.planningMoveProposalsV1071||{})},v70={...(App.planningMoveProposalsV1070||{})},options=[],proposals={};
+  // REV 1.0.71 generated a new key for green proposals and then accidentally overwrote the
+  // visible option id with the older V1070 id via object spread. Normalise every option to
+  // one id that is guaranteed to address the exact prevalidated proposal it displays.
+  for(const x of raw){
+    const prop=v71[x.id]||v70[x.id];if(!prop?.ok)continue;
+    if(sameMovePlacementV1074(booking,x))continue;
+    const id=`M74-${options.length+1}-${String(x.kind||prop.kind||'move').charAt(0).toUpperCase()}`;
+    prop.kind=prop.kind||x.kind||'green';proposals[id]=prop;options.push({...x,id});
+    if(options.length>=limit)break;
+  }
+  App.planningMoveProposalsV1071=proposals;App.v1074MoveCache={key,options,proposals};return options;
+};
+validatedMoveOptionsV1071._v1072=true;
+
+// Always restore the exact cached proposal map and keep move mode visibly tied to the selected booking.
+planningMovePanelV1071=function(booking){
+  clearMoveOverlaysV1071();const options=validatedMoveOptionsV1071(booking,10),root=App.currentView==='workspace'?(document.querySelector('.workspace-mini-plan-v1066')||$('#page')):(document.querySelector('.planning-visual-main')||$('#page'));App.dragBookingV1061=booking.id;
+  const counts={green:options.filter(x=>x.kind==='green').length,yellow:options.filter(x=>x.kind==='yellow').length,red:options.filter(x=>x.kind==='red').length};
+  const banner=document.createElement('div');banner.id='dragFeasibleSlotsV1061';banner.className='planning-move-banner-v1071';banner.innerHTML=`<div><span class="eyebrow">MOVE · ${esc(booking.requestId)} · ${esc(booking.stepName||'planned work')}</span><strong>Select a highlighted half-day directly in the swimlane</strong><small>Green applies immediately. Yellow includes prevalidated training. Red quantifies the impact on another build before you decide.</small></div><div class="planning-move-legend-v1071"><span class="green">● ${counts.green} no impact</span><span class="yellow">● ${counts.yellow} training</span><span class="red">● ${counts.red} other-build impact</span>${btn('Cancel move','data-v1064-cancel-drag','button tiny secondary')}</div>`;
+  const scroll=root.querySelector?.('.swim-scroll,.workspace-plan-scroll-v1069');if(scroll)root.insertBefore(banner,scroll);else root.prepend(banner);drawMoveOverlaysV1071(booking,options);if(!options.length)toast('No end-to-end feasible move is available in the current planning horizon.',true);
+};
+planningMovePanelV1070=planningMovePanelV1071;planningMovePanelV1065=planningMovePanelV1071;planningMovePanelV1066=planningMovePanelV1071;showFeasibleSlotsV1064=planningMovePanelV1071;showFeasibleSlotsV1061=planningMovePanelV1071;
+
+commitMoveProposalV1070=async function(prop,rationale=''){
+  if(!prop?.ok)return false;
+  const liveBefore=(App.state.bookings||[]).find(x=>x.id===prop.bookingId),planned=prop.newTimes?.find(x=>x.id===prop.bookingId)||prop.newTimes?.[0];
+  if(!liveBefore||!planned){clearMoveOverlaysV1071();App.dragBookingV1061=null;toast('The selected planning move no longer has a valid source/target. Nothing changed.',true);return false}
+  if(planningFingerprintV1070(App.state)!==prop.sourceFingerprint){clearMoveOverlaysV1071();App.v1074MoveCache=null;const b=(App.state.bookings||[]).find(x=>x.id===prop.bookingId);if(b)planningMovePanelV1071(b);toast('The live plan changed. Feasible highlights were recalculated before anything was applied.',true);return false}
+  if(sameMovePlacementV1074(liveBefore,{start:planned.start,equipmentId:planned.equipmentId,staffId:planned.staffId})&&!prop.training&&!prop.externalChanges?.length){clearMoveOverlaysV1071();App.dragBookingV1061=null;toast('That highlighted position is the current assignment, so no planning change is required.');return false}
+  const rollback=P.deepClone(App.state),from=halfDayLabelV1066(liveBefore.start),to=halfDayLabelV1066(planned.start);let next;
+  try{
+    next=P.deepClone(prop.nextState);const inv=P.validateInvariants(next);if(inv.length)throw new Error(inv[0]);
+    P.audit(next,'Validated planning move applied','Request',prop.requestId,'Existing build timing',`${prop.stepName} moved`,`${from} → ${to} · ${Math.max(0,(prop.newTimes||[]).length-1)} downstream step(s) reflowed · ${(prop.externalChanges||[]).length} other-build change(s)${rationale?' · '+rationale:''}`);
+    replaceStateAtomically(next);
+    const applied=(App.state.bookings||[]).find(x=>x.id===prop.bookingId);if(!applied||new Date(applied.start).toISOString()!==new Date(planned.start).toISOString()||applied.equipmentId!==planned.equipmentId||applied.staffId!==planned.staffId)throw new Error('The move transaction did not reproduce its prevalidated target.');
+  }catch(err){replaceStateAtomically(rollback);clearMoveOverlaysV1071();App.dragBookingV1061=null;App.v1074MoveCache=null;toast(`Move not applied: ${err.message||err}`,true);return false}
+  // Persist the validated transaction before any rendering. A UI redraw failure must never undo
+  // an already validated/saved planning move or leave the old highlighted alternatives active.
+  try{pruneResolvedActions();await App.repo.save(App.state)}catch(err){replaceStateAtomically(rollback);try{await App.repo.save(App.state)}catch(_){}clearMoveOverlaysV1071();App.dragBookingV1061=null;App.v1074MoveCache=null;toast(`Move could not be saved: ${err.message||err}`,true);return false}
+  clearMoveOverlaysV1071();App.dragBookingV1061=null;App.planningMoveProposalsV1070={};App.planningMoveProposalsV1071={};App.v1072MoveCache=null;App.v1074MoveCache=null;
+  try{renderNav();renderActionCount();render()}catch(err){console.error('Planning move saved but redraw failed',err);toast('The planning move was saved. Refresh the page to redraw the plan.',true);return true}
+  toast(`${prop.stepName} moved: ${from} → ${to}. ${Math.max(0,(prop.newTimes||[]).length-1)} downstream step${(prop.newTimes||[]).length===2?'':'s'} updated.`);return true;
+};
+const _acceptPlanProposalV1074Base=acceptPlanProposal;
+acceptPlanProposal=async function(){clearMoveOverlaysV1071();App.dragBookingV1061=null;App.v1074MoveCache=null;App.v1072MoveCache=null;return _acceptPlanProposalV1074Base()};
+
+function installV1074Listeners(){
+  if(App._v1074Listeners)return;App._v1074Listeners=true;
+  document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1074-calendar-settings]');if(!t)return;e.preventDefault();planningCalendarSettingsModalV1074()},true);
+  document.addEventListener('change',async e=>{const t=e.target.closest?.('[data-v1074-weekends]');if(!t)return;App.state.settings=App.state.settings||{};const before=!!App.state.settings.includeWeekendsForBuilds;App.state.settings.includeWeekendsForBuilds=!!t.checked;P.audit(App.state,'Planning calendar changed','Configuration','Weekend planning',before?'Weekends included':'Weekdays only',t.checked?'Weekends included':'Weekdays only',`${App.state.identity.name} changed build calendar availability.`);App.v1074MoveCache=null;App.v1072MoveCache=null;await persist();closeModal();render();toast(t.checked?'Weekend build planning enabled.':'Weekend build planning disabled.')},true);
+  document.addEventListener('toggle',e=>{const d=e.target.closest?.('[data-v1074-build-plan-fold]');if(!d)return;App.workspaceBuildPlanOpenV1074=App.workspaceBuildPlanOpenV1074||{};App.workspaceBuildPlanOpenV1074[d.dataset.v1074BuildPlanFold]=d.open;const em=d.querySelector('summary em');if(em)em.textContent=d.open?'Collapse':'Expand';setTimeout(()=>scheduleWorkspaceCockpitLayout?.(),0)},true);
+}
+
+const _renderV1074Base=render;
+render=function(){_renderV1074Base();installV1074Listeners();installDashboardRequestCardsV1074();installPlanningCalendarShortcutV1074();remove5SGalleriesV1074();};
+
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}const planningModelV1068=P.ensurePlanningCapabilityModelV1068?.(App.state);if(planningModelV1068?.changed)await App.repo.save(App.state);App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
 })();

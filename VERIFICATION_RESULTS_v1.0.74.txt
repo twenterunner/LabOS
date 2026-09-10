@@ -1,0 +1,26 @@
+PASS: core version 1.0.74
+PASS: header version 1.0.74
+PASS: cache busting 1.0.74
+PASS: dashboard request cards responsive 4/3/2/1
+PASS: capacity shows last current next together
+PASS: capacity selector is week/month only in new view
+PASS: planning calendar shortcut visible in planning header
+PASS: weekend planning setting persists
+PASS: build plan is a fold-out
+PASS: 5S gallery removed at runtime
+PASS: planning-event review only renders commitment movement section
+PASS: green proposal id normalization present
+PASS: move transaction verifies exact target
+PASS: move persists before redraw and clears overlays
+PASS: javascript syntax app.js
+PASS: javascript syntax core.js
+PASS: javascript syntax demo-data.js
+PASS: javascript syntax repository.js
+PASS: javascript syntax services.js
+PASS: javascript syntax service-worker.js
+PASS: portfolio planner regression
+Domain: {"plans":14,"failed":0,"bookings":198,"mismatches":0,"invariants":0}
+PASS: application-level green/yellow move transaction
+Move: {"green":{"optionId":"M74-1-G","committed":true,"changed":true},"yellow":{"available":true,"committed":true}}
+
+22/22 checks passed
