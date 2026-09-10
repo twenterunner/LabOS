@@ -2817,6 +2817,74 @@ if(_installGlobalNextGuidanceV1063V1066)installGlobalNextGuidanceV1063=function(
 const _renderV1066Base=render;
 render=function(){_renderV1066Base();enforceNextActionScopeV1066();if(App.currentView==='workspace')scheduleWorkspaceCockpitLayout();};
 
+
+
+/* ============================================================
+   LabOS REV 1.0.67 — scoped team action + compact build flow +
+   guided prerequisite navigation.
+   ============================================================ */
+const _globalNextGuidanceV1058V1067=globalNextGuidanceV1058;
+globalNextGuidanceV1058=function(){
+  if(!['dashboard','action-centre'].includes(App.currentView))return null;
+  return _globalNextGuidanceV1058V1067();
+};
+function suppressGlobalNextOutsideDashboardV1067(){
+  const allowed=['dashboard','action-centre'].includes(App.currentView);
+  if(!allowed)document.querySelectorAll('.global-next-guide').forEach(x=>x.remove());
+}
+function installGlobalNextGuardV1067(){
+  if(App._globalNextGuardV1067)return;App._globalNextGuardV1067=true;
+  const obs=new MutationObserver(()=>suppressGlobalNextOutsideDashboardV1067());
+  obs.observe(document.body,{childList:true,subtree:true});
+}
+
+const _guidedNextDockV1067=guidedNextDock;
+guidedNextDock=function(r,steps,step){
+  if(step?.id==='execution'&&!step.done){
+    const current=currentExecutionStep(r),selected=selectedExecutionStep(r);
+    if(current&&selected&&current.id!==selected.id)return btn(`Go to ${current.name} →`,`data-exec-step="${esc(current.id)}"`,'button small primary workflow-dock-button');
+    if(current)return `<button class="button small workflow-dock-button" type="button" disabled>Complete ${esc(current.name)} below</button>`;
+  }
+  return _guidedNextDockV1067(r,steps,step);
+};
+
+const _workspaceSubstepRailV1066V1067=workspaceSubstepRailV1066;
+workspaceSubstepRailV1066=function(r,step){
+  if(step?.id!=='execution')return _workspaceSubstepRailV1066V1067(r,step);
+  const subs=workflowSubstepsV1066(r,step);if(!subs.length)return _workspaceSubstepRailV1066V1067(r,step);
+  const nextIdx=subs.findIndex(x=>!x.done);
+  return `<div class="workspace-substep-rail-v1066 workspace-substep-rail-v1067"><span class="workspace-rail-label-v1066">${esc(step?.title||'Current step')} · SUBSTEPS</span><div class="workspace-substep-scroll-v1066">${subs.map((x,i)=>`<button type="button" class="workspace-substep-chip-v1066 ${x.done?'complete':'open'} ${i===nextIdx?'next-required-v1067':''}" ${x.attrs||'disabled'}><span>${x.done?'✓':i+1}</span><b>${esc(x.label)}</b>${i===nextIdx?'<em>NEXT</em>':''}</button>`).join('')}</div></div>`;
+};
+
+const _workspaceExecutionV1067=workspaceExecution;
+workspaceExecution=function(r){
+  let html=_workspaceExecutionV1067(r);
+  const current=currentExecutionStep(r),selected=selectedExecutionStep(r);
+  if(current&&selected&&current.id!==selected.id){
+    const old=`<div class="callout warn"><strong>Complete ${esc(current.name)} first.</strong></div>`;
+    const guide=`<div class="execution-prerequisite-v1067"><div><span class="eyebrow">PREREQUISITE REQUIRED</span><strong>${esc(current.order)} · ${esc(current.name)} must be completed first</strong><p>This build route is sequential. Open the prerequisite step, complete its required execution evidence for the applicable samples, then LabOS will unlock ${esc(selected.name)} automatically.</p></div>${btn(`Go to ${esc(current.name)} →`,`data-exec-step="${esc(current.id)}"`,'button primary')}</div>`;
+    html=html.replace(old,guide);
+    const marker='<div class="execution-requirement-strip">';
+    if(html.includes(marker))html=html.replace(marker,`<div class="execution-blocked-summary-v1067"><span>Blocked by prerequisite</span><strong>${esc(current.order)} · ${esc(current.name)}</strong><small>Use the highlighted NEXT substep in the sticky workflow or the guided button below.</small></div>${marker}`);
+  }
+  return html;
+};
+
+function compactWorkspaceWideLayoutV1067(){
+  if(App.currentView!=='workspace')return;
+  const page=$('#page');if(!page)return;
+  page.classList.add('workspace-compact-v1067');
+}
+
+const _renderV1067Base=render;
+render=function(){
+  _renderV1067Base();
+  installGlobalNextGuardV1067();
+  suppressGlobalNextOutsideDashboardV1067();
+  compactWorkspaceWideLayoutV1067();
+  if(App.currentView==='workspace')scheduleWorkspaceCockpitLayout();
+};
+
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
 })();
