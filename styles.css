@@ -1362,3 +1362,21 @@ html,body,.main,#page{overflow-x:visible}
 .planning-next-hint-v1076 strong{font-size:13px}.planning-next-hint-v1076 span{font-size:12px;color:#776735}
 .planning-next-hint-v1076.ready{background:#edf8f2;border-color:#b8dec6;color:#245f3b}.planning-next-hint-v1076.ready span{color:#50705c}
 @media(max-width:820px){.planning-next-hint-v1076{display:grid}}
+
+/* REV 1.0.77 */
+.assurance-table-v1075 td{vertical-align:top;line-height:1.35}
+.assurance-table-v1075 td strong,.assurance-table-v1075 td small,
+.assurance-report-table-v1077 td strong,.assurance-report-table-v1077 td small{display:block;margin:0;line-height:1.35}
+.assurance-table-v1075 td strong+small,.assurance-report-table-v1077 td strong+small{margin-top:3px;color:var(--muted)}
+.assurance-report-tools-v1077{margin-left:auto;justify-content:flex-end;flex-wrap:wrap}
+.standards-sticky-v1077{position:-webkit-sticky!important;position:sticky!important;top:var(--app-sticky-top,72px)!important;z-index:42;background:rgba(244,247,248,.98);backdrop-filter:blur(10px);box-shadow:0 8px 18px rgba(15,42,47,.08);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;padding:10px 12px;display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:10px;align-items:center}
+.standards-sticky-v1077 .standards-chip-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+#std-assurance,#std-process,#std-staff,#std-5s,#std-governance{scroll-margin-top:150px}
+.process-detail-sheet-v1077{border:1px solid var(--line);border-radius:12px;background:var(--surface,#fff);padding:14px;margin:0 0 14px}
+.process-detail-sheet-v1077 h3,.process-detail-sheet-v1077 h4{margin:0 0 6px}
+.process-detail-kpis-v1077{margin-top:12px}
+.process-detail-grid-v1077{margin:12px 0}
+.process-detail-sheet-v1077 ol,.process-detail-sheet-v1077 ul{margin:6px 0 0;padding-left:20px}
+.assurance-internal-profile-v1077{margin-bottom:12px}
+#std-5s .data-table td strong,#std-5s .data-table td small{display:block;line-height:1.35}
+@media(max-width:1000px){.standards-sticky-v1077{grid-template-columns:1fr}.standards-sticky-v1077 .standards-chip-row{justify-content:flex-start}}

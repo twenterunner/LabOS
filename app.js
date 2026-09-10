@@ -4026,6 +4026,169 @@ v1076SmartPlanProposal=function(focusId,contextEvent=null){
   return {proposed:best.state,impacted:best.impacted,results:best.results,useTarget:best.strategy!=='Build-only constrained re-optimization',strategy:best.strategy,directForecast:candidates[0]?.forecast||null,targetForecast:best.forecast,candidates:candidates.map(x=>({strategy:x.strategy,valid:x.valid,meets:x.meets,forecast:x.forecast,externalCount:x.externalCount,externalDelay:x.externalDelay}))};
 };
 
+
+
+/* ============================================================
+   LabOS REV 1.0.77 — sequential review gates, standards UX,
+   assurance reporting, persistent 5S tracking, process detail.
+   ============================================================ */
+function v1077WorkflowReview(r){
+  if(!r.workflowReviewV1077){
+    const advanced=gateAtOrBeyond(r,'LAB TRIAGE')||!!r.triage?.status||!!r.originalCommitmentDate||!!r.currentCommitmentDate;
+    r.workflowReviewV1077={
+      materialsReviewed:advanced,processReviewed:advanced,controlsReviewed:advanced,
+      createdAt:P.now(),migratedFromExistingBuild:advanced
+    };
+  }
+  return r.workflowReviewV1077;
+}
+function v1077ControlsTechnicalReady(r){
+  const profile=P.ensureAssuranceProfile(r),reqs=profile.requires,cp=(App.state.controlPlans||[]).find(x=>x.id===r.controlPlanId),approvals=(App.state.approvals||[]).filter(a=>a.requestId===r.id),cpRequired=reqs.controlPlan===true||(reqs.controlPlan==='special-only'&&((r.specialCharacteristics||[]).length>0||r.productSafety));
+  const cpDefinitionReady=!cpRequired||!!(cp&&cp.characteristics?.length&&cp.characteristics.every(c=>!c.classification||P.controlCharacteristicReady(c)));
+  const cpReady=!cpRequired||!!(cp&&cpDefinitionReady&&(reqs.independentControlPlanApproval?cp.status==='Approved':true));
+  const safetyReady=!r.productSafety||approvals.some(a=>a.type==='Product Safety'&&a.status==='Approved');
+  return {applicable:cpRequired||r.productSafety,ready:cpReady&&safetyReady,cpDefinitionReady,cpReady,safetyReady};
+}
+const _buildGuidedStepsV1077Base=buildGuidedSteps;
+buildGuidedSteps=function(r){
+  let steps=_buildGuidedStepsV1077Base(r),review=v1077WorkflowReview(r),mat=P.materialPlanningAssessment(App.state,r),proc=P.processPlanningAssessment(App.state,r),ctl=v1077ControlsTechnicalReady(r);
+  const m=steps.find(x=>x.id==='materials'),p=steps.find(x=>x.id==='processrisk'),c=steps.find(x=>x.id==='controls'),s=steps.find(x=>x.id==='schedule');
+  if(m){m.done=!!mat.planningReady&&!!review.materialsReviewed;m.next=!mat.planningReady?(mat.issues?.[0]||'Resolve material feasibility.'):!review.materialsReviewed?'Review the inherited / supplied material basis and confirm it for this build.':`${mat.summary||'Material basis confirmed'} · reviewed for this build.`;}
+  if(p){p.done=!!proc.ready&&!!review.processReviewed;p.next=!proc.ready?(proc.issues?.[0]||'Resolve route / method definition.'):!review.processReviewed?'Review the proposed route and released methods, then confirm them for this build.':'Route and methods reviewed for this build.';}
+  if(c){c.done=!!ctl.ready&&!!review.controlsReviewed;c.next=!ctl.ready?c.next:!review.controlsReviewed?'Review the inherited / build-specific controls and confirm them before scheduling.':'Applicable controls reviewed for this build.';}
+  if(s)s.done=r.triage?.status==='Committed';
+  const order=['configuration','materials','processrisk','controls','schedule','readiness','execution','verify','approvals','closeout'];
+  steps.sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id));
+  let currentFound=false;
+  for(let i=0;i<steps.length;i++){
+    const st=steps[i];st.index=i+1;delete st.hasBlocker;delete st.blockerActionId;delete st.blockerTitle;delete st.blockerDetail;delete st.blockerOwner;delete st.blockerActionLabel;delete st.blockerActionAttrs;
+    if(st.done){st.state='complete';st.locked=false;continue}
+    if(!currentFound){currentFound=true;st.state='current';st.locked=false;const issue=v1075StageIssue(r,st);if(issue){st.hasBlocker=true;st.blockerActionId=issue.actionId||null;st.blockerTitle=issue.title;st.blockerDetail=issue.detail;st.blockerOwner=issue.owner;st.blockerActionLabel=issue.actionLabel||null;st.blockerActionAttrs=issue.actionAttrs||null;st.next=`${issue.title}: ${issue.detail}`;}}
+    else{st.state='pending';st.locked=true}
+  }
+  return steps;
+};
+
+submitRequest=async function(id){
+  try{
+    const r=new P.RequestService(App.state).submit(id);
+    r.workflowReviewV1077={materialsReviewed:false,processReviewed:false,controlsReviewed:false,createdAt:P.now(),submittedAt:P.now()};
+    App.workspaceTab='materials';
+    P.audit(App.state,'Sequential guided review started','Request',r.id,'Draft','Material review','Every submitted build must explicitly review material, route/methods and applicable controls before resource planning.');
+    await persist();render();toast('Request submitted. Next: review and confirm the material basis.');
+  }catch(e){toast(e.message,true)}
+};
+function v1077StageConfirmation(r,step){
+  const review=v1077WorkflowReview(r);
+  if(step?.id==='materials'&&P.materialPlanningAssessment(App.state,r).planningReady&&!review.materialsReviewed)return {key:'materials',label:'Confirm material basis & continue'};
+  if(step?.id==='processrisk'&&P.processPlanningAssessment(App.state,r).ready&&!review.processReviewed)return {key:'processrisk',label:'Confirm route & methods & continue'};
+  if(step?.id==='controls'&&v1077ControlsTechnicalReady(r).ready&&!review.controlsReviewed)return {key:'controls',label:'Confirm controls & continue'};
+  return null;
+}
+const _guidedNextDockV1077Base=guidedNextDock;
+guidedNextDock=function(r,steps,step){
+  if(step?.id==='configuration'&&r.status==='DRAFT REQUEST'&&can('request:create'))return btn('Submit request →',`data-submit-request="${esc(r.id)}"`,'button small next-action workflow-dock-button');
+  const conf=v1077StageConfirmation(r,step);if(conf)return btn(`${conf.label} →`,`data-v1077-confirm-stage="${esc(r.id)}|${conf.key}"`,'button small next-action workflow-dock-button');
+  return _guidedNextDockV1077Base(r,steps,step);
+};
+async function v1077ConfirmStage(requestId,key,openControls=false){
+  const r=requestById(requestId);if(!r)return;const review=v1077WorkflowReview(r),before=P.deepClone(review);let label='';
+  if(key==='materials'){
+    const x=P.materialPlanningAssessment(App.state,r);if(!x.planningReady){toast('Material feasibility is not ready to confirm yet.',true);return}review.materialsReviewed=true;review.materialsReviewedAt=P.now();review.materialsReviewedBy=App.state.identity.name;label='Material basis';if(P.GATES.indexOf(r.currentGate)<P.GATES.indexOf('FEASIBILITY'))r.status=r.currentGate='FEASIBILITY';
+  }else if(key==='processrisk'){
+    const x=P.processPlanningAssessment(App.state,r);if(!x.ready){toast('Route and methods are not ready to confirm yet.',true);return}review.processReviewed=true;review.processReviewedAt=P.now();review.processReviewedBy=App.state.identity.name;label='Route & methods';if(P.GATES.indexOf(r.currentGate)<P.GATES.indexOf('PROCESS DEFINITION'))r.status=r.currentGate='PROCESS DEFINITION';
+  }else if(key==='controls'){
+    const x=v1077ControlsTechnicalReady(r);if(!x.ready){toast('Applicable controls are not ready to confirm yet.',true);return}review.controlsReviewed=true;review.controlsReviewedAt=P.now();review.controlsReviewedBy=App.state.identity.name;label='Applicable controls';
+  }else return;
+  P.audit(App.state,`${label} reviewed for build`,'Request',r.id,before,review,'Explicit sequential build-definition confirmation');await persist();
+  if(openControls){App.workspaceTab='controls';render();toast('Route & methods confirmed. Review the applicable controls next.');return}
+  const steps=buildGuidedSteps(r),next=steps.find(s=>!s.done);App.workspaceTab=next?.id||App.workspaceTab;render();toast(`${label} confirmed. ${next?`Next: ${next.title}.`:'Definition complete.'}`);
+}
+const _workspaceFlowV1077Base=workspaceFlow;
+workspaceFlow=function(r){
+  let html=_workspaceFlowV1077Base(r);
+  html=html.replace(/<button type="button" class="([^"]*)" data-workspace-tab="controls">Open Control Plan<\/button>/,()=>btn('Confirm route & open Control Plan →',`data-v1077-confirm-process-controls="${esc(r.id)}"`,'button next-action'));
+  return html;
+};
+const _commitTriageV1077Base=commitTriage;
+commitTriage=async function(id){await _commitTriageV1077Base(id);const r=requestById(id);if(r?.triage?.status==='Committed'&&P.GATES.indexOf(r.currentGate)<P.GATES.indexOf('LAB TRIAGE')){r.status=r.currentGate='LAB TRIAGE';await persist();render();}};
+
+assuranceControlMatrix=function(){
+  const rows=[
+    ['Customer / statutory / product-safety requirements','Always apply where relevant','Always apply where relevant','Always apply where relevant','Always apply where relevant'],
+    ['Competence for assigned work','Required','Required','Required','Required'],
+    ['Suitable monitored / measuring resources','Required where applicable','Required where applicable','Required where applicable','Required where applicable'],
+    ['Calibration / verification & traceability','Required where applicable','Required where applicable','Required where applicable','Required where applicable'],
+    ['Laboratory scope / authorised methods','Required for applicable lab work','Required for applicable lab work','Required for applicable lab work','Required for applicable lab work'],
+    ['Lab sample register','Auto-generated','Auto-generated','Required','Required'],
+    ['Formal serial / unit traceability','Profile does not impose it','Optional unless otherwise required','Required','Required'],
+    ['Released build process / WI','Engineering method may be controlled provisionally','Released baseline preferred; deviations controlled','Released / controlled method required','Released / controlled method required'],
+    ['Control Plan','When required by risk / customer / product safety','Special characteristics / risk / customer as applicable','Required where applicable','Required for applicable production-intent scope'],
+    ['Independent Control Plan approval','Not imposed by profile','Not imposed by profile','LabOS governance rule where configured','LabOS governance rule where configured'],
+    ['Formal LabOS readiness review','Lean confirmation','Lean confirmation','Required','Required'],
+    ['Formal LabOS release sign-off','Not imposed by profile','Not imposed by profile','Required','Required'],
+    ['Customer-specific approvals','As applicable — cannot be waived by profile','As applicable — cannot be waived by profile','As configured','As configured']
+  ];
+  const cell=v=>{const cls=/^Required|Always apply|As applicable/.test(v)?'included':/does not impose|Not imposed/.test(v)?'excluded':'conditional';return `<td class="assurance-cell ${cls}">${esc(v)}</td>`};
+  return `<div class="callout warn assurance-internal-profile-v1077"><strong>LabOS internal control profiles — not IATF 16949 classifications.</strong><p>E0 / E1 / V / P only scale the LabOS workflow. They never waive applicable statutory, customer-specific, product-safety, competence, measurement-resource, calibration or laboratory-scope requirements.</p></div><div class="assurance-control-wrap"><table class="data-table assurance-control-table"><thead><tr><th>Control</th><th>E0 · Rapid Engineering</th><th>E1 · Controlled Engineering</th><th>V · Validation / Customer</th><th>P · Production Intent</th></tr></thead><tbody>${rows.map(r=>`<tr><th>${esc(r[0])}</th>${r.slice(1).map(cell).join('')}</tr>`).join('')}</tbody></table></div><div class="assurance-legend"><span class="included">● Mandatory / applicable control</span><span class="conditional">● Profile / risk dependent</span><span class="excluded">○ Not imposed by LabOS profile — other requirements may still apply</span></div>`;
+};
+
+function v1077AssuranceRows(type='All',mode='full',horizon=90){
+  let rows=resourceAssuranceSetupRowsV1064().filter(x=>type==='All'||x.type===type);
+  if(mode==='callup')rows=rows.filter(x=>Number(x.daysToDue)<=Number(horizon));
+  return rows.sort((a,b)=>Number(a.daysToDue)-Number(b.daysToDue)||String(a.resource||'').localeCompare(String(b.resource||'')));
+}
+function v1077AssuranceReportModal(mode='full'){
+  const title=mode==='callup'?'Resource assurance call-up report':'Resource assurance full overview';
+  openModal(title,`<div class="form-grid"><div class="field"><label>Activity</label><select id="v1077ReportType">${['All','Calibration','Maintenance','Training'].map(v=>`<option>${v}</option>`).join('')}</select></div>${mode==='callup'?`<div class="field"><label>Call-up horizon</label><select id="v1077ReportHorizon">${[30,60,90,180].map(n=>`<option value="${n}" ${n===90?'selected':''}>Due within ${n} days</option>`).join('')}</select></div>`:''}</div><div id="v1077ReportPreview" style="margin-top:14px"></div>`,`${btn('Close','data-modal-close','button')}${btn('Download CSV','data-v1077-report-csv','button secondary')}${btn('Print / save PDF','onclick="window.print()"','button next-action')}`,true);
+  const draw=()=>{const type=$('#v1077ReportType')?.value||'All',h=Number($('#v1077ReportHorizon')?.value||90),rows=v1077AssuranceRows(type,mode,h),dst=$('#v1077ReportPreview');if(!dst)return;dst.innerHTML=`<article class="report"><div class="report-head"><div class="report-title-block">${reportBrand()}<div><h1>${esc(title)}</h1><div>${esc(type)} · ${mode==='callup'?`due within ${h} days · `:''}generated ${P.formatDateTime(P.now())}</div></div></div></div><div class="table-wrap"><table class="data-table assurance-report-table-v1077"><thead><tr><th>Resource</th><th>Activity</th><th>Due</th><th>Status</th><th>Reserved out / return</th><th>Build impact / next use</th></tr></thead><tbody>${rows.map(x=>{const impacts=[...(x.affectedRequestIds||[]),x.nextUseRequestId].filter(Boolean);return `<tr><td><strong>${esc(x.resourceId)} · ${esc(x.resource)}</strong><small>${esc((App.state.equipment||[]).find(e=>e.id===x.equipmentId)?.capability||x.skillName||'')}</small></td><td><strong>${esc(x.type)}</strong><small>${x.daysToDue<0?`${Math.abs(Number(x.daysToDue))} days overdue`:`Due in ${Number(x.daysToDue)} days`}</small></td><td>${P.formatDate(x.dueDate)}</td><td>${x.active?'Pulled now':x.planned?'Scheduled':x.daysToDue<0?'Overdue':'Due'}</td><td>${x.start?`${P.formatDateTime(x.start)} → ${P.formatDateTime(x.end)}`:'Not reserved'}</td><td>${impacts.length?esc([...new Set(impacts)].join(', ')):'No current build impact'}</td></tr>`}).join('')||'<tr><td colspan="6">No matching assurance items.</td></tr>'}</tbody></table></div></article>`;};
+  setTimeout(()=>{draw();$('#v1077ReportType')?.addEventListener('change',draw);$('#v1077ReportHorizon')?.addEventListener('change',draw);$('[data-v1077-report-csv]')?.addEventListener('click',()=>{const type=$('#v1077ReportType')?.value||'All',h=Number($('#v1077ReportHorizon')?.value||90),rows=v1077AssuranceRows(type,mode,h),q=v=>`"${String(v??'').replace(/"/g,'""')}"`,lines=[['resource_id','resource','capability_or_skill','activity','days_to_due','due_date','scheduled_start','scheduled_end','status','affected_or_next_builds'].map(q).join(',')];for(const x of rows){const impacts=[...(x.affectedRequestIds||[]),x.nextUseRequestId].filter(Boolean),cap=(App.state.equipment||[]).find(e=>e.id===x.equipmentId)?.capability||x.skillName||'';lines.push([x.resourceId,x.resource,cap,x.type,x.daysToDue,x.dueDate,x.start||'',x.end||'',x.active?'Pulled now':x.planned?'Scheduled':x.daysToDue<0?'Overdue':'Due',[...new Set(impacts)].join('; ')].map(q).join(','));}downloadTextFile(`LabOS_${mode==='callup'?'call-up':'full'}_${String(type).toLowerCase().replace(/\s+/g,'-')}_${P.todayISO()}.csv`,lines.join('\r\n'),'text/csv');});},0);
+}
+const _v1075AssuranceSectionV1077Base=v1075AssuranceSection;
+v1075AssuranceSection=function(){
+  let html=_v1075AssuranceSectionV1077Base();
+  html=html.replace('<span class="pill">',`<div class="route-toolbar assurance-report-tools-v1077">${btn('Full overview report','data-v1077-assurance-report="full"','button small secondary')}${btn('Call-up report','data-v1077-assurance-report="callup"','button small secondary')}</div><span class="pill">`);
+  return html;
+};
+
+function v1077FiveSOpenActions(){return (App.state.actions||[]).filter(a=>a.fiveSAction&&actionStillOpen(a)).sort((a,b)=>String(a.due||'9999').localeCompare(String(b.due||'9999')))}
+v1075FiveSSection=function(){
+  const zones=(App.state.fiveSZones||[]).map(z=>{const audits=(App.state.fiveSAudits||[]).filter(a=>a.zoneId===z.id).sort((a,b)=>String(b.date).localeCompare(String(a.date))),last=audits[0],open=v1077FiveSOpenActions().filter(a=>a.fiveSAction?.zoneId===z.id).length;return `<article class="five-s-zone-card-v1075" data-v1075-searchable><div><strong>${esc(z.name)}</strong><small>${esc(z.area)} · Owner ${esc(z.owner)}</small></div><div><span class="status ${open?'warn':last&&Number(last.average)>=4?'good':'neutral'}">${open?`${open} open action${open===1?'':'s'}`:last?`${Number(last.average).toFixed(1)}/5 · ${P.formatDate(last.date)}`:'Not checked'}</span></div><div class="route-toolbar">${btn('Run 5S check',`data-run-five-s-check="${esc(z.id)}"`,'button tiny primary')}${can('planning:standards')||currentRole()==='administrator'?btn('Edit zone',`data-edit-five-s-zone-action="${esc(z.id)}"`,'button tiny secondary'):''}</div></article>`}).join('');
+  const actions=v1077FiveSOpenActions(),history=(App.state.fiveSAudits||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,40);
+  return `<details id="std-5s" class="card fold lab-master-section-v1075"><summary><span><b>5S workplace control</b><small>Saved check-ins, zone status and open corrective actions</small></span><span class="status ${actions.length?'warn':'good'}">${actions.length?`${actions.length} open`:'✓ Clear'}</span></summary><div class="section-title-row compact-heading-v1075"><div><h3>Zones</h3><div class="subtle">Every check-in is retained; gaps remain visible until corrected and rechecked.</div></div></div><div class="five-s-zone-grid-v1075">${zones||'<div class="empty">No 5S zones configured.</div>'}</div><div class="section-title-row compact-heading-v1075"><div><h3>Open 5S actions</h3></div><span class="pill">${actions.length}</span></div>${actions.length?`<div class="table-wrap"><table class="data-table"><thead><tr><th>Action</th><th>Zone / criterion</th><th>Owner</th><th>Due</th><th></th></tr></thead><tbody>${actions.map(a=>{const z=(App.state.fiveSZones||[]).find(x=>x.id===a.fiveSAction?.zoneId);return `<tr data-v1075-searchable><td><strong>${esc(a.title)}</strong><small>${esc(a.why||'Correct and recheck the workplace condition.')}</small></td><td>${esc(z?.name||a.fiveSAction?.zoneId||'—')}<small>${esc(a.fiveSAction?.pillarLabel||'')}</small></td><td>${esc(a.owner||z?.owner||'Unassigned')}</td><td>${P.formatDate(a.due)}</td><td>${btn('Resolve','data-resolve-action="'+esc(a.id)+'"','button tiny next-action')}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="callout good"><strong>No open 5S corrective actions.</strong></div>'}<details class="planning-details"><summary>5S check-in history · ${history.length}${(App.state.fiveSAudits||[]).length>history.length?' recent':''}</summary><div class="table-wrap"><table class="data-table"><thead><tr><th>Date</th><th>Zone</th><th>Auditor</th><th>Average</th><th>Evidence / note</th></tr></thead><tbody>${history.map(a=>{const z=(App.state.fiveSZones||[]).find(x=>x.id===a.zoneId);return `<tr><td>${P.formatDateTime(a.date)}</td><td>${esc(z?.name||a.zoneId||'—')}</td><td>${esc(a.auditor||'—')}</td><td><strong>${Number(a.average||0).toFixed(1)}/5</strong></td><td>${esc(a.evidence||'—')}</td></tr>`}).join('')||'<tr><td colspan="5">No 5S check-ins yet.</td></tr>'}</tbody></table></div></details></details>`;
+};
+
+installStandardsNavV1061=function(){
+  if(App.currentView!=='process-library')return;const page=$('#page');if(!page||page.querySelector('.standards-tools-v1061'))return;const head=page.querySelector('.page-header');if(!head)return;
+  const gov=[...page.querySelectorAll('details,.card')].find(x=>/governance|document|standard/i.test(x.querySelector('summary,h2,h3')?.textContent||''));if(gov&&!gov.id)gov.id='std-governance';
+  const sections=[['std-assurance','Resource assurance'],['std-process','Methods & standards'],['std-staff','People & competencies'],['std-5s','5S workplace'],['std-governance','Governance']];
+  head.insertAdjacentHTML('afterend',`<div class="standards-tools-v1061 standards-sticky-v1077"><input id="v1061StandardsSearch" type="search" placeholder="Search assurance work, methods, people, competencies or 5S…"><div class="standards-chip-row">${sections.map(([id,l])=>`<button type="button" class="filter-chip" data-v1077-std-jump="${id}">${l}</button>`).join('')}</div></div>`);
+  const input=$('#v1061StandardsSearch');if(input)input.oninput=()=>{const q=input.value.trim().toLowerCase();page.querySelectorAll('[data-v1075-searchable],.data-table tbody tr').forEach(el=>el.hidden=!!q&&!el.textContent.toLowerCase().includes(q))};
+  $$('[data-v1077-std-jump]').forEach(b=>b.onclick=()=>{const el=document.getElementById(b.dataset.v1077StdJump);if(!el)return;if(el.tagName==='DETAILS')el.open=true;el.scrollIntoView({behavior:'smooth',block:'start'});});
+};
+
+function v1077ProcessDetailMarkup(p,r,s){
+  if(!p)return '<div class="callout warn">No process definition is linked to this route step.</div>';
+  const cap=P.planningCapabilityForProcess?.(App.state,r,p)||p.equipmentCapability||'—',skill=P.planningSkillForProcess?.(p)||p.competency||null,skillName=(App.state.competencies||[]).find(c=>c.id===skill)?.name||skill||'—',assets=(App.state.equipment||[]).filter(e=>(P.equipmentPlanningCapability?.(e)||e.capability)===cap),params=p.params||[],wi=p.workInstruction||{};
+  return `<section class="process-detail-sheet-v1077"><div class="section-title-row"><div><span class="eyebrow">CONTROLLED PROCESS DETAIL</span><h3>${esc(p.id)} · ${esc(p.name)} · Rev ${esc(p.revision||'—')}</h3><div class="subtle">${esc(p.description||'Released process definition used by this route step.')}</div></div>${status(p.status||'Unknown')}</div><div class="grid cols-4 process-detail-kpis-v1077">${metric('Equipment capability',cap)+metric('Required competency',skillName)+metric('Setup time',`${Number(p.setupTime||0)} min`)+metric('Cycle time',`${Number(p.cycleTime||0)} min`)}</div><div class="grid cols-2 process-detail-grid-v1077"><div><h4>Usable equipment</h4><p>${assets.length?assets.map(e=>`${esc(e.id)} · ${esc(e.name)}`).join('<br>'):'No currently registered asset matches this capability.'}</p><h4>Required evidence</h4><ul>${(p.requiredEvidence||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>No extra evidence list configured.</li>'}</ul></div><div><h4>Work instruction</h4><p><strong>${esc(wi.id||'—')} · Rev ${esc(wi.revision||'—')}</strong> · ${esc(wi.status||'')}</p><ol>${(wi.steps||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>No detailed work-instruction steps configured.</li>'}</ol></div></div>${params.length?`<div class="table-wrap"><table class="data-table compact"><thead><tr><th>Controlled parameter / data</th><th>Target / nominal</th><th>Unit</th><th>Capture level</th><th>Source</th></tr></thead><tbody>${params.map(x=>`<tr><td><strong>${esc(x.label||x.name||x.id||'Parameter')}</strong></td><td>${esc(x.target??x.value??'—')}</td><td>${esc(x.unit||'—')}</td><td>${esc(x.captureLevel||x.scope||x.basis||'—')}</td><td>${esc(x.source||x.type||'Process definition')}</td></tr>`).join('')}</tbody></table></div>`:''}</section>`;
+}
+const _editRouteStepModalV1077Base=editRouteStepModal;
+editRouteStepModal=function(stepId){
+  const route=(App.state.routes||[]).find(x=>x.requestId===App.workspaceId),s=route?.steps?.find(x=>x.id===stepId),r=requestById(App.workspaceId);_editRouteStepModalV1077Base(stepId);if(!s||!r)return;
+  setTimeout(()=>{const modal=$('#modalRoot .modal'),form=modal?.querySelector('.form-grid'),sel=modal?.querySelector('#ersProc');if(!modal||!form||!sel)return;const box=document.createElement('div');box.id='v1077ProcessDetail';box.className='process-detail-host-v1077';form.insertAdjacentElement('beforebegin',box);const draw=()=>{const p=(App.state.processes||[]).find(x=>x.id===sel.value);box.innerHTML=v1077ProcessDetailMarkup(p,r,s)};draw();sel.addEventListener('change',draw);},0);
+};
+
+function installV1077Listeners(){
+  if(App._v1077Listeners)return;App._v1077Listeners=true;
+  document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1077-confirm-stage],[data-v1077-confirm-process-controls],[data-v1077-assurance-report]');if(!t)return;
+    if(t.dataset.v1077ConfirmStage){e.preventDefault();const [rid,key]=t.dataset.v1077ConfirmStage.split('|');v1077ConfirmStage(rid,key);return}
+    if(t.dataset.v1077ConfirmProcessControls){e.preventDefault();v1077ConfirmStage(t.dataset.v1077ConfirmProcessControls,'processrisk',true);return}
+    if(t.dataset.v1077AssuranceReport){e.preventDefault();v1077AssuranceReportModal(t.dataset.v1077AssuranceReport);return}
+  },true);
+}
+const _renderV1077Base=render;
+render=function(){_renderV1077Base();installV1077Listeners();};
+
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}const planningModelV1068=P.ensurePlanningCapabilityModelV1068?.(App.state);if(planningModelV1068?.changed)await App.repo.save(App.state);App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
 })();

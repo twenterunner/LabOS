@@ -30,3 +30,6 @@ The sticky build plan now renders every planned activity on its own lane and exp
 
 ## REV 1.0.76
 See `VERIFICATION_v1.0.76.md`. Smart target-first/selective replanning, one-section impact review, staged yellow Re-optimize → Commit workflow, and Audit relocation of detailed equipment scope were regression tested before packaging.
+
+## REV 1.0.77
+Sequential workflow ordering, stage confirmation, assurance reporting/navigation, 5S persistence views, process detail and runtime regression checks were added before packaging.
