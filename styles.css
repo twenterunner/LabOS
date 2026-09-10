@@ -1482,3 +1482,38 @@ html,body,.main,#page{overflow-x:visible}
 .manual-option-card-v1080>small{font-size:9px;line-height:1.35;color:var(--muted)}
 .manual-no-option-v1080{grid-column:1/-1;padding:10px;font-size:10px;color:var(--muted);font-style:italic}
 @media (max-width:860px){.manual-tier-legend-v1080{grid-template-columns:1fr}.manual-current-v1080{grid-template-columns:1fr}.manual-option-grid-v1080{grid-template-columns:1fr}.manual-task-title-v1080{grid-template-columns:1fr}.manual-health-v1080{grid-column:1;grid-row:auto;justify-self:start}}
+
+/* REV 1.0.82 — calendar-rich active swimlanes + guided material resolver */
+.swim-head,.swim-head-track{height:72px!important;min-height:72px!important}
+.swim-head-track .calendar-day-v1082{padding:4px 1px 0!important;display:grid;grid-template-rows:11px 12px 12px 12px 14px;align-content:start;text-align:center;overflow:hidden}
+.calendar-day-v1082 .swim-month-v1082{font-size:8px;line-height:10px;font-weight:800;text-transform:uppercase;color:#6f7d81;white-space:nowrap}
+.calendar-day-v1082 .swim-cw-v1082{font-size:8px;line-height:11px;color:#0c5862;white-space:nowrap}
+.calendar-day-v1082 .swim-weekday-v1082{font-size:9px!important;line-height:11px!important;color:#405a5f}
+.calendar-day-v1082 .swim-date-v1082{font-style:normal;font-size:10px;line-height:11px;font-weight:900;color:#203b40}
+.calendar-day-v1082>span{margin-top:1px!important;font-size:7.5px!important;display:grid!important;grid-template-columns:1fr 1fr!important}
+.calendar-day-v1082.weekend-v1082{background:rgba(75,84,88,.16)!important}
+.swim-weekend-band-v1082,.workspace-weekend-band-v1082{position:absolute;top:0;bottom:0;display:block;background:rgba(75,84,88,.12);border-left:1px solid rgba(75,84,88,.10);border-right:1px solid rgba(75,84,88,.07);pointer-events:none;z-index:0}
+.swim-track.halfday-track-v1066{isolation:isolate}
+.swim-track.halfday-track-v1066 .swim-bar{z-index:3}
+.swim-track.halfday-track-v1066 .swim-due{z-index:4}
+
+.workspace-plan-lane-grid-v1070{grid-template-rows:60px;grid-auto-rows:30px}
+.workspace-plan-lane-corner-v1070,.workspace-plan-lane-axis-v1070{height:60px!important;min-height:60px!important}
+.workspace-calendar-day-v1082{display:grid!important;grid-template-rows:10px 11px 11px 11px 13px!important;align-content:start!important;padding-top:3px;text-align:center;overflow:hidden}
+.workspace-calendar-day-v1082>small{font-size:7px;line-height:9px;font-weight:800;text-transform:uppercase;color:#6f7d81;white-space:nowrap}
+.workspace-calendar-day-v1082>b{font-size:7px!important;line-height:10px!important;color:#0c5862!important}
+.workspace-calendar-day-v1082>strong{font-size:8px;line-height:10px;color:#405a5f;white-space:nowrap}
+.workspace-calendar-day-v1082>em{font-style:normal;font-size:9px;line-height:10px;font-weight:900;color:#203b40}
+.workspace-calendar-day-v1082>span{font-size:6.5px!important;line-height:11px!important}
+.workspace-calendar-day-v1082.weekend-v1082{background:rgba(75,84,88,.16)!important}
+.workspace-plan-lane-track-v1070{isolation:isolate}
+.workspace-plan-lane-track-v1070 .workspace-full-plan-bar-v1069{z-index:3}
+
+.material-resolution-table-v1082 td small{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+.material-resolution-table-v1082 tr.good-row{background:#f1f8f4}.material-resolution-table-v1082 tr.warn-row{background:#fffaf0}
+.material-supply-plan-v1082{margin-top:12px;border:1px solid #d6e1e3;border-radius:12px;padding:12px;background:#f8fbfb}
+.material-supply-plan-v1082 h3{margin:4px 0 4px}.material-supply-plan-v1082 p{margin:0 0 10px}
+.material-shortage-list-v1082{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px;margin-top:10px}
+.material-shortage-list-v1082>span{display:grid;gap:2px;border:1px solid var(--line);border-radius:9px;padding:8px;background:#fff}
+.material-shortage-list-v1082 b{font-size:10px}.material-shortage-list-v1082 small{font-size:9px;color:var(--muted)}
+@media(max-width:820px){.swim-head,.swim-head-track{height:68px!important;min-height:68px!important}.workspace-plan-lane-grid-v1070{grid-template-rows:58px;grid-auto-rows:30px}.workspace-plan-lane-corner-v1070,.workspace-plan-lane-axis-v1070{height:58px!important;min-height:58px!important}.material-shortage-list-v1082{grid-template-columns:1fr}}

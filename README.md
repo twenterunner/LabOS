@@ -1,8 +1,17 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.81
+# LabOS — Laboratory Operations System POC · REV 1.0.82
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
+
+
+## REV 1.0.82 — active swimlane calendar + executable material resolution
+
+Unplanned build swimlanes also show a 14-day calendar skeleton when expanded.
+
+REV 1.0.82 corrects two UI-path defects. The month/CW/weekend code in REV 1.0.80 had been applied to older swimlane renderer definitions that were later overridden by the active REV 1.0.68/1.0.70 renderers. The active portfolio/resource and build-workspace swimlanes now render month, ISO calendar week, weekday and date, with disabled weekends shaded through the full lane height.
+
+The current-workflow material blocker also no longer links back to the already-open Materials tab. It opens a root-cause material resolver. For lab-supplied material the resolver distinguishes reservable stock from true shortage, can reserve exact stock, records a controlled incoming supply plan only for the uncovered quantity, and can convert that plan into physical received stock before issue.
 
 ## REV 1.0.81 — planning-integrity root-cause correction
 

@@ -1,3 +1,7 @@
+## REV 1.0.82 verification
+
+REV 1.0.82 directly tests the final active swimlane renderers and the executable material-resolution path. The regression launches Chromium without external navigation, renders the actual application DOM/scripts, verifies month + CW + weekday + date + AM/PM headers, full-height grey weekend bands and active zoom controls, then executes both exact-stock reservation and a 123-unit-per-line true-shortage supply/receipt/issue flow. See `VERIFICATION_v1.0.82.md` and run `python verification-v182.py`.
+
 ## REV 1.0.75 verification
 
 REV 1.0.75 makes workflow blockers stage-specific, gives route/readiness blockers exact resolution paths, routes 5S corrective actions through a dedicated correction/recheck flow, and consolidates resource assurance into Lab Standards & Resources with manual plus 30/60/90-day bulk scheduling. Capacity wording now calls calibration/maintenance/training time "Resource assurance work" rather than "Readiness load".

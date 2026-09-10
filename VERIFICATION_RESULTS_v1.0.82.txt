@@ -1,0 +1,30 @@
+PASS | Version is REV 1.0.82
+PASS | Main assets cache-busted to 1.0.82
+PASS | Service-worker reset identity updated
+PASS | Active portfolio calendar emits month/CW/weekday/date
+PASS | Active portfolio lanes contain weekend bands
+PASS | Active workspace calendar emits month/CW/weekday/date
+PASS | Weekend CSS is full-height grey lane shading
+PASS | Material stage blocker opens executable resolver
+PASS | Material self-link removed from active stage issue
+PASS | Material resolver diagnoses true shortage
+PASS | Incoming supply requires owner/date/reference
+PASS | Incoming material can be received from Materials screen
+PASS | Physical issue remains separate from planning feasibility
+PASS | Exact reservation consumes available lot quantity
+PASS | Partial incoming receipt keeps the remainder planned
+PASS | REV81 planning-integrity safeguards retained
+PASS | Root cause proof: REV81 contained old calendar code somewhere
+PASS | Root cause proof: REV81 final active planner lacked month/CW
+PASS | Root cause proof: REV81 material resolution was a self-link
+PASS | JavaScript syntax: core.js | OK
+PASS | JavaScript syntax: demo-data.js | OK
+PASS | JavaScript syntax: repository.js | OK
+PASS | JavaScript syntax: services.js | OK
+PASS | JavaScript syntax: app.js | OK
+PASS | JavaScript syntax: service-worker.js | OK
+PASS | Runtime: fresh planning integrity + incoming material semantics | {"integrity":{"equipmentReadinessFailures":0,"staffQualificationFailures":0,"equipmentOverlaps":0,"staffOverlaps":0,"planningEventOverlaps":0,"equipmentCapabilityMismatches":0},"integrityOk":true,"before":{"planningReady":false,"buildReady":false},"after":{"planningReady":true,"buildReady":false,"earliest":"2026-09-15","incoming":[123,123,123,123]}}
+PASS | Chromium UI: calendar/weekend + material resolution end-to-end | {"globalCells":56,"globalFirst7":["SEP\nCW37\nMon\n7\nAM\nPM","SEP\nCW37\nTue\n8\nAM\nPM","SEP\nCW37\nWed\n9\nAM\nPM","SEP\nCW37\nThu\n10\nAM\nPM","SEP\nCW37\nFri\n11\nAM\nPM","SEP\nCW37\nSat\n12\nAM\nPM","SEP\nCW37\nSun\n13\nAM\nPM"],"globalWeekendBands":240,"globalZoomActive":[true,true,true],"workspaceCells":11,"workspaceFirst7":["SEP\nCW38\nTue\n15\nAM\nPM","SEP\nCW38\nWed\n16\nAM\nPM","SEP\nCW38\nThu\n17\nAM\nPM","SEP\nCW38\nFri\n18\nAM\nPM","SEP\nCW38\nSat\n19\nAM\nPM","SEP\nCW38\nSun\n20\nAM\nPM","SEP\nCW39\nMon\n21\nAM\nPM"],"workspaceWeekendBands":16,"workspaceZoomActive":[true,true,true],"unplannedWorkspaceCells":14,"unplannedFirst7":["SEP\nCW37\nMon\n7\nAM\nPM","SEP\nCW37\nTue\n8\nAM\nPM","SEP\nCW37\nWed\n9\nAM\nPM","SEP\nCW37\nThu\n10\nAM\nPM","SEP\nCW37\nFri\n11\nAM\nPM","SEP\nCW37\nSat\n12\nAM\nPM","SEP\nCW37\nSun\n13\nAM\nPM"],"unplannedWeekendBands":4,"unplannedZoomActive":[true,true,true],"exactResolverOpens":true,"exactAfter":{"planningReady":true,"reserved":[4,4,4,4]},"shortageDiagnosed":true,"planAfter":{"planningReady":true,"buildReady":false,"earliest":"2026-09-15","incoming":[123,123,123,123]},"receiveActionVisible":true,"receiveAfter":{"planningReady":true,"buildReady":false,"reserved":[123,123,123,123],"activeIncoming":0},"issueAfter":{"planningReady":true,"buildReady":true,"summary":"Exact BOM material is issued for the full build"},"pageErrors":[]}
+PASS | Required REV82 release files present | all present
+
+SUMMARY | 28/28 passed | 0 failed
