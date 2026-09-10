@@ -17,6 +17,7 @@
 ## Material receiving
 
 - The material resolver now offers **Receive lab stock** even when no supply plan exists. It records actual lot/batch, quantity, supplier/source and a controlled reference, then reserves matching stock to the exact BOM automatically.
+- **Lab Standards & Resources → Lab material stock** is a standalone, persistent inventory register. Use **Receive lab stock** there to add stock before it is associated with any build.
 
 ## Verification
 
