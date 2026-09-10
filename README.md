@@ -1,8 +1,15 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.58
+# LabOS — Laboratory Operations System POC · REV 1.0.59
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
+
+
+## REV 1.0.59 — governed Gage R&R decisions, 5S KPIs and closed-loop audit resolution
+
+REV 1.0.59 makes measurement-system decisions explicit and keeps the authorised user in control. Gage R&R now shows a separate LabOS **APPROVE / REJECT recommendation** using conservative AIAG-style automotive defaults: a balanced crossed study, typically 10 parts, 2–3 operators and 2–3 repeated trials; <10% GR&R is acceptable, 10–30% requires application-specific judgement, >30% is unacceptable, and ndc should be at least 5. These are workflow defaults rather than a claim that IATF 16949 itself imposes universal numeric limits; applicable customer-specific requirements and intended-use risk take precedence. The reviewer must still make and justify the final decision, and controlled overrides remain visible in the audit trail.
+
+The Management KPI cockpit now includes **5S workplace condition and trend** from actual recorded 5S checks, including the current average, zones at standard, open 5S actions, pillar condition and trend by zone. Audit-readiness calibration blockers now open an exact resolution path from scheduling through certificate evidence and independent approval; scheduling alone is explicitly shown as insufficient. Audit evidence-pack mobile/print formatting has been reworked, and release sign-off packages now bind actions to stable approval-record IDs so a visible signer package cannot disappear between render and tap.
 
 ## REV 1.0.58 — fewer approval clicks, clearer ownership
 

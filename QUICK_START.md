@@ -1,4 +1,4 @@
-# LabOS REV 1.0.58 · Quick Start
+# LabOS REV 1.0.59 · Quick Start
 
 1. **Set up a lab** — Administrator → Configuration → **Start / continue setup**. Work through scope, customers/internal use, products, people/competencies, equipment/readiness durations, evidence, released standards and the final integrity check. If there is no historical readiness evidence to migrate, choose the clean-start option so LabOS schedules readiness before first use.
 2. **Migrate existing LIMS data** — Configuration → **Import from existing LIMS**, or use the import actions inside the setup wizard. Download the relevant template, export/map your current data to the recognised columns, validate, then import. Equipment should precede calibration/maintenance; staff and competencies should precede training certificates.
@@ -15,6 +15,15 @@
 
 
 
+
+
+## REV 1.0.59 — Gage R&R, 5S KPIs and blocker resolution
+
+- **Gage R&R:** Quality → MSA / Gage R&R now separates the LabOS recommendation from the authorised reviewer's final decision. Typical automotive defaults are shown in the workflow; customer-specific requirements and intended use still govern. A recommendation can be overridden only with retained rationale.
+- **5S management KPI:** Management → Lab Performance now includes 5S current condition and a selectable-period trend based only on recorded 5S audits. Drill into pillar and zone performance and open corrective actions from the same cockpit.
+- **Calibration blockers:** From Audit Readiness, a calibration finding now opens a concrete path: schedule calibration → record the certificate → obtain required certificate approval → recheck. Scheduling alone does not make the finding green.
+- **Audit evidence PDF:** Evidence-pack rows, certificate links, tables and print layout are mobile-safe and print as a clean evidence pack.
+- **Release sign-off:** Signer actions use the exact pending approval records shown on screen, preventing the stale “Signer package is no longer available” path seen after tapping a visible signer.
 
 ## REV 1.0.58 — approval packages
 
@@ -59,7 +68,7 @@ The Action Centre is personal: it shows only work assigned to the signed-in user
 
 - Open a build and choose **Build Report**. The normal screen shows decision-critical summary tables. Expand measured Control Plan data, supporting process data, sample observations/photos, statistical plots and revision history only when needed. **Print / save PDF** automatically includes the folded evidence.
 - For SC, CC and all other Control Plan characteristics, use **Control Plan execution & measured data**: the summary shows coverage/result and the matrix shows the actual sample-level values required by the approved sampling plan.
-- Open **Management → Lab Performance** for the management cockpit. Start with **Management attention** and the four operating pillars; expand delivery, quality/cost, capacity, process or pipeline analytics when a signal needs investigation.
+- Open **Management → Lab Performance** for the management cockpit. Start with **Management attention** and the five operating pillars; expand delivery, quality/cost, capacity, process or pipeline analytics when a signal needs investigation.
 
 ## REV 1.0.54 — readiness, people and material receipt
 

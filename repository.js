@@ -243,7 +243,7 @@ class MigrationService{
    if(s.schemaVersion===28){
     const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
     s.gageRRStudies=Array.isArray(s.gageRRStudies)?s.gageRRStudies:[];
-    s.gageRRStudies.forEach(study=>{study.standardTestId=study.standardTestId||'';study.studyDate=study.studyDate||String(study.createdAt||P.now()).slice(0,10);study.sourceType=study.sourceType||'LabOS calculated';study.conclusion=study.conclusion||((study.result?.valid&&Number(study.result?.studyPct)<=30)?'Acceptable':'Review required');study.documentUploaded=!!(study.documentUploaded||study.fileData);});
+    s.gageRRStudies.forEach(study=>{study.standardTestId=study.standardTestId||'';study.studyDate=study.studyDate||String(study.createdAt||P.now()).slice(0,10);study.sourceType=study.sourceType||'LabOS calculated';study.conclusion=study.conclusion||(study.result?.valid&&Number(study.result?.studyPct)<10?'Acceptable':study.result?.valid&&Number(study.result?.studyPct)<=30?'Conditionally acceptable':study.result?.valid?'Not acceptable':'Review required');study.documentUploaded=!!(study.documentUploaded||study.fileData);});
     P.audit(s,'Measurement assurance workflow refined','System','LabOS','MSA hidden from process/test context / separate capability workspace / manual-only daily refresh','Process/test/equipment-linked MSA / upload-or-run guided GRR / daily automatic operations check / simplified quality workspace','REV 1.0.57 migration');
     s.dataVersion=wasDemo?'2026.09-demo-32':(s.dataVersion||'migrated');s.schemaVersion=29;continue;
    }

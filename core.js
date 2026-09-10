@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.58-poc';
+  ProtoLab.VERSION = '1.0.59-poc';
   ProtoLab.SCHEMA_VERSION = 29;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -642,7 +642,7 @@
   ProtoLab.ensureEnterpriseModel = state => {
     state=_ensureEnterpriseModel1055(state);
     state.gageRRStudies=Array.isArray(state.gageRRStudies)?state.gageRRStudies:[];
-    state.gageRRStudies.forEach(study=>{study.standardTestId=study.standardTestId||'';study.studyDate=study.studyDate||String(study.createdAt||ProtoLab.now()).slice(0,10);study.sourceType=study.sourceType||'LabOS calculated';study.conclusion=study.conclusion||((study.result?.valid&&Number(study.result?.studyPct)<=30)?'Acceptable':'Review required');study.documentUploaded=!!(study.documentUploaded||study.fileData);});
+    state.gageRRStudies.forEach(study=>{study.standardTestId=study.standardTestId||'';study.studyDate=study.studyDate||String(study.createdAt||ProtoLab.now()).slice(0,10);study.sourceType=study.sourceType||'LabOS calculated';study.conclusion=study.conclusion||(study.result?.valid&&Number(study.result?.studyPct)<10?'Acceptable':study.result?.valid&&Number(study.result?.studyPct)<=30?'Conditionally acceptable':study.result?.valid?'Not acceptable':'Review required');study.documentUploaded=!!(study.documentUploaded||study.fileData);});
     state.adminExceptions=Array.isArray(state.adminExceptions)?state.adminExceptions:[];
     state.processSkipApprovals=Array.isArray(state.processSkipApprovals)?state.processSkipApprovals:[];
     const legacyDoc=(id,title,approved=true)=>({id,title,revision:'A',status:approved?'Approved':'Draft',reference:approved?`${id}-LEGACY-RELEASE`:'',description:approved?'Migrated from a previously released/commissioned controlled definition.':'',approvedBy:approved?'Migration / prior release evidence':'',approvedAt:approved?ProtoLab.now():null,fileName:'',fileData:null,documentUploaded:false});

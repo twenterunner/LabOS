@@ -1,3 +1,22 @@
+# LabOS REV 1.0.59 — governed Gage R&R, 5S KPI trend, closed-loop audit resolution and sign-off stability
+
+## What changed
+
+- Gage R&R now generates an explicit **APPROVE / REJECT system recommendation** while retaining the authorised reviewer as the final decision-maker. The default recommendation uses conservative AIAG-style automotive acceptance guidance and flags application-dependent 10–30% results rather than silently treating them as approved.
+- Calculated crossed studies are checked against a typical 10-part, 2–3-operator, 2–3-repeat design for the automatic recommendation. Uploaded studies retain their controlled document and require the reviewer to verify design/evidence. Customer-specific requirements and intended use take precedence over the default guide.
+- Only an explicit human Approve decision is decision-ready for downstream measurement assurance. A technical rejection remains retained and visible rather than being represented as an approved MSA record.
+- Management → Lab Performance now includes 5S current condition, pillar performance, open corrective actions, zone status and time-window trend from real 5S audit records.
+- Audit Readiness calibration blockers now give the exact resolution chain instead of routing only to scheduling. LabOS distinguishes scheduled work, certificate evidence, pending certificate approval and cleared readiness.
+- The resource-care confirmation message now states that scheduling reserves work but does not itself satisfy readiness evidence.
+- Audit evidence-pack mobile layout and print/PDF CSS have been reworked so certificate links, tables, foldouts and footer actions no longer clip or fall off the page.
+- Release sign-off buttons bind to the exact pending approval-record IDs shown in the package, eliminating the stale role/person grouping lookup that could report “Signer package is no longer available” after tapping a visible signer.
+
+## Verification
+
+REV 1.0.59 adds focused regression checks for Gage R&R thresholds and human override governance, 5S KPI/trend derivation, calibration-resolution state, audit evidence print styling, stable release-signoff record binding and retained core/repository behavior. See `VERIFICATION.md`.
+
+---
+
 # LabOS REV 1.0.58 — streamlined sign-off packages and explicit ownership
 
 ## Approval simplification

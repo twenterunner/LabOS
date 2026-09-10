@@ -1,12 +1,12 @@
 {
-  "pass": 13,
-  "fail": 0,
+  "pass": 12,
+  "fail": 1,
   "total": 13,
   "checks": [
     {
       "name": "REV 1.0.57 / schema 29",
-      "pass": true,
-      "detail": "1.0.57-poc / 29"
+      "pass": false,
+      "detail": "1.0.58-poc"
     },
     {
       "name": "Schema 28 migration normalises MSA context without data loss",

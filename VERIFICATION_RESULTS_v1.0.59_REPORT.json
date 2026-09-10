@@ -1,12 +1,12 @@
 {
-  "pass": 13,
-  "fail": 1,
+  "pass": 14,
+  "fail": 0,
   "total": 14,
   "checks": [
     {
-      "name": "Version is REV 1.0.58 with schema 29",
-      "pass": false,
-      "detail": "version 1.0.59-poc"
+      "name": "Version is REV 1.0.59 with schema 29",
+      "pass": true,
+      "detail": "1.0.59-poc / schema 29"
     },
     {
       "name": "Demo contains governed Control Plan measurement evidence",
@@ -44,9 +44,9 @@
       "detail": "3 classified analytics"
     },
     {
-      "name": "Lab Performance is organised around four LIMS operating pillars",
+      "name": "Lab Performance retains four core pillars and adds 5S as the fifth management pillar",
       "pass": true,
-      "detail": "4 operating pillars"
+      "detail": "4 core pillars + 5S workplace pillar"
     },
     {
       "name": "Management page is exception-first and routes signals to owning workspaces",
