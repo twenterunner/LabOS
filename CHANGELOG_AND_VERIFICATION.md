@@ -1,67 +1,37 @@
-# LabOS REV 1.0.52 — concise Build Report and best-in-class Lab Performance cockpit
+# LabOS REV 1.0.53 — readiness reconciliation, material output limits and mobile workflow hardening
 
-## Purpose
+## Correctness fixes
 
-REV 1.0.52 addresses two usability problems: the Prototype Build Report had become long and repetitive, while the Management KPI page exposed many charts without a sufficiently clear LIMS operating model. This revision applies progressive disclosure: decision-critical information stays visible; supporting detail remains available in foldouts and is automatically included when the Build Report is printed/saved as PDF.
+### Readiness status is live
+A readiness row is no longer allowed to remain yellow after its underlying condition has cleared. Equipment/person reassignment now persists the change, re-evaluates the exact readiness check, closes the resolver, rerenders the workspace and shows the remaining blockers separately. Opening a resolver for a condition that is already satisfied also forces the stale workspace state to reconcile immediately.
 
-## Prototype Build Report redesign
+The people-readiness calculation now evaluates only bookings that actually require a person. Non-staff planning records can no longer keep the Qualified people gate yellow while the resolver reports no failing person.
 
-The report is now organised as a controlled evidence dossier rather than a sequence of repeated cards.
+### Exact staff alternative is retained
+The planning engine now treats a user-selected staff assignment as a hard planning preference for that task. Unavailable people are removed from the normal candidate pool whenever an available associated person exists. The staff resolver only displays candidates whose full simulated plan retains that exact person. This removes the failure mode where the user selected Noah but the subsequent planner error referred to Daan.
 
-- Build definition is a compact table rather than a field-card wall.
-- Process execution is one route execution table; the duplicate process-flow visual was removed from the report.
-- Structured process-step data moves to a foldout.
-- The former separate **Control Plan** and **Control implementation & evidence traceability** sections are consolidated into **Control Plan execution & measured data**.
-- Every governed CP characteristic — SC, CC, product-safety or unclassified — shows specification, sampling rule, actual evidence coverage and result.
-- A sample × characteristic matrix contains the actual latest measured values, pass/action status and sampling applicability.
-- Control methods and reaction plans remain available in a foldout rather than occupying the main report surface.
-- End-of-build tests have a concise summary plus a sample × test measured-value matrix in a foldout.
-- Classified-characteristic statistics use a compact summary table. Distribution/normality plots and interpretation detail are foldouts.
-- Material lots and sample genealogy are proper tables. Large builds therefore no longer produce one prose line per serial number.
-- Sample-specific structured evidence is a matrix, chunked into manageable column groups; observations and photographs are separate foldouts.
-- Quality shows exceptions only; FPY/yield/rework values are not repeated after the report disposition section.
-- Revision history, lessons and other secondary evidence are folded by default.
-- The historical measurement appendix excludes the current governed CP/end-test records already shown in their owning sections; it contains historical/superseded and genuinely supplemental evidence only.
-- Print/PDF CSS automatically expands report foldouts, so concise on-screen presentation never removes audit evidence from the generated document.
+## Material receipt / output control
+Engineering-supplied receipt now defaults Quantity received to the exact remaining BOM need. A larger receipt issues the needed amount and stores the excess on the same lot as available buffer stock. A smaller receipt is accepted as real evidence and recalculates a material-output limiter from all issued BOM lines.
 
-## Lab Performance redesign
+The limiter is persistent only after real material has been issued, is migrated safely from schema 25 to schema 26, appears in the material workspace/report, and caps automatic sample creation. Existing identifiers are never silently deleted.
 
-The Management KPI page is renamed **Lab Performance** and now begins with the questions a laboratory manager actually needs to answer.
+## Android / modal layout
+All dialogs now combine responsive CSS with `window.visualViewport` sizing. The modal backdrop follows the actual visible browser viewport (including Android zoom/keyboard/orientation changes), and modal children are constrained so oversized controls cannot push the dialog off the right edge. Tables remain horizontally scrollable inside the dialog rather than expanding the dialog itself.
 
-### Management Attention
-
-Only current exception signals are surfaced prominently. Signals link to the functional workspace that owns the resolution — Prototype Requests, Quality Workbench, Resource Assurance or Planning.
-
-### Four operating pillars
-
-1. **Delivery & Flow** — on-time delivery to original commitment, throughput, active WIP/overdue work and median request-to-delivery lead time.
-2. **Quality** — first-pass yield, scrap, rework and open release holds/quality cases.
-3. **Readiness & Compliance** — calibration compliance, maintenance compliance, valid training/competency evidence and scheduled readiness work.
-4. **Capacity & Cost** — current utilization, forecast peak/bottleneck, cost per prototype and actual-vs-estimate variance.
-
-Supporting analytics are no longer permanently expanded. Delivery/replan root cause, quality/cost trends, capacity/bottlenecks, process performance, future project pipeline and KPI definitions are separate foldouts.
-
-## Progressive-disclosure UX rule
-
-REV 1.0.52 reinforces the application-wide rule used increasingly across LabOS: show the current decision/action and critical evidence first; put rationale, history, statistical detail, large registers and supporting evidence behind explicit foldouts. This keeps the UI usable without deleting traceability.
+The process-data matrix now uses concise CP/measurement headings. Sample number, permanent Lab Sample ID and formal serial appear on separate lines. Sampling/method/reaction-plan detail remains in the CP summary/foldout rather than being repeated in every column heading.
 
 ## Verification
-
-Current retained automated acceptance: **1,940 passed / 0 failed**.
+Retained current-version acceptance: **1,916 / 1,916 passed** before packaging:
 
 | Suite | Result |
-| --- | ---: |
-| Core domain/planner | 46 / 46 |
-| Persistence/migration | 6 / 6 |
-| UI interaction regression | 23 / 23 |
-| Guided workflow / no-dead-end regression | 15 / 15 |
-| 5S + Process Capability retained regression | 8 / 8 |
-| Governed execution / Control Plan | 18 / 18 |
-| REV 1.0.52 Build Report + Lab Performance | 14 / 14 |
-| Planning/disruption scenarios | 10 / 10 |
+|---|---:|
+| Core domain / planner | 46 / 46 |
+| Persistence / migration | 6 / 6 |
+| Tough planning scenarios | 10 / 10 |
 | Role/build/workspace render stress | 1,783 / 1,783 |
-| Static/mobile/package checks | 17 / 17 |
+| UI interaction regression | 23 / 23 |
+| Build Report + Lab Performance | 14 / 14 |
+| REV 1.0.53 focused behavioral checks | 14 / 14 |
+| REV 1.0.53 static/mobile/source checks | 20 / 20 |
 
-The focused REV 1.0.52 tests explicitly render a complete Build Report, verify actual CP values in the report matrix, verify CP-result de-duplication, exercise the matrix-based sample register/evidence presentation, render Lab Performance, verify all four operating pillars and functional drill-down links, and verify that closed report foldouts expand for print.
-
-A genuine physical-device exploratory browser pass remains recommended before production deployment.
+JavaScript syntax checks for core.js, repository.js, services.js, app.js and service-worker.js also pass.

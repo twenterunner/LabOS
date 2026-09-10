@@ -1,33 +1,16 @@
-# LabOS REV 1.0.52 verification
+# LabOS REV 1.0.53 verification
 
-Current automated acceptance result: **1,940 passed / 0 failed** across the current retained acceptance suites.
+Current retained acceptance run: **1,916 passed / 0 failed**.
 
 - Core domain/planner: 46/46
 - Persistence/migration: 6/6
-- UI interaction regression: 23/23
-- Guided-workflow / no-dead-end regression: 15/15
-- 5S + Process Capability retained regression: 8/8
-- Governed execution / Control Plan regression: 18/18
-- REV 1.0.52 Build Report + Lab Performance tests: 14/14
 - Tough planning/disruption scenarios: 10/10
 - Role/build/workspace render stress: 1,783/1,783
-- REV 1.0.52 static/mobile/package checks: 17/17
+- UI interaction regression: 23/23
+- Build Report + Lab Performance regression: 14/14
+- REV 1.0.53 readiness/material/mobile/staff behavioral checks: 14/14
+- REV 1.0.53 static/mobile/package-source checks: 20/20
 
-## REV 1.0.52 focused acceptance
+The focused REV 1.0.53 tests verify immediate people-readiness state changes, exclusion of irrelevant non-staff bookings, exact retention of a user-selected planning person, exclusion of unavailable staff when an available alternative exists, partial-material output limits, sample-generation caps, schema migration behavior, BOM receipt defaults/excess/shortage handling, concise process-matrix labels and visual-viewport modal containment.
 
-The release adds behavioral/static checks that verify:
-
-- the Prototype Build Report renders without runtime errors;
-- Control Plan measured values are included in the report, including SC/CC/PS/other classifications;
-- the CP summary combines specification, sampling, coverage and actual evidence;
-- a sample-by-characteristic matrix contains the actual governed values;
-- large serial/sample evidence is rendered as tables/matrices rather than repeated sample cards;
-- current governed CP/end-test measurements are shown once in their owning section and not duplicated in the historical appendix;
-- classified-characteristic plots/statistical interpretation are progressive-disclosure foldouts;
-- report foldouts are automatically expanded for print/PDF so evidence is not omitted;
-- Lab Performance is organised around Delivery & Flow, Quality, Readiness & Compliance, and Capacity & Cost;
-- Management Attention links KPI exceptions to the owning functional workspaces;
-- supporting delivery, quality/cost, capacity, process, pipeline and KPI-definition analytics are foldouts;
-- all visible assets/version metadata identify REV 1.0.52.
-
-Physical-device exploratory testing is still recommended before production deployment. The automated UI harness covers mobile-size DOM interaction/render paths but is not a substitute for a real Android/iOS/desktop browser acceptance pass.
+The execution environment still does not provide a reliable end-to-end physical Android/iOS touch test. The release therefore combines actual user-device screenshots with JavaScript behavioral tests, VM-render stress tests, syntax checks and responsive/static checks.

@@ -1,0 +1,77 @@
+{
+  "pass": 14,
+  "fail": 0,
+  "total": 14,
+  "checks": [
+    {
+      "name": "Version is REV 1.0.53 with schema 26",
+      "pass": true,
+      "detail": "1.0.53-poc / schema 26"
+    },
+    {
+      "name": "Demo contains governed Control Plan measurement evidence",
+      "pass": true,
+      "detail": "P26-0042"
+    },
+    {
+      "name": "Build Report Control Plan combines definition, sampling and measured evidence",
+      "pass": true,
+      "detail": "5 characteristics · 4 samples"
+    },
+    {
+      "name": "SC/CC and all CP classifications retain sample-level measured data",
+      "pass": true,
+      "detail": "SC, PS · 12 CP records"
+    },
+    {
+      "name": "Sample evidence uses a matrix instead of one repeated card per serial",
+      "pass": true,
+      "detail": "3 samples in matrix"
+    },
+    {
+      "name": "Sample genealogy is one concise sample register table",
+      "pass": true,
+      "detail": "4 sample rows"
+    },
+    {
+      "name": "Current CP result is not duplicated in supplemental measurement appendix",
+      "pass": true,
+      "detail": "latest CP only in CP matrix"
+    },
+    {
+      "name": "Classified-characteristic plots are progressive-disclosure detail",
+      "pass": true,
+      "detail": "3 classified analytics"
+    },
+    {
+      "name": "Lab Performance is organised around four LIMS operating pillars",
+      "pass": true,
+      "detail": "4 operating pillars"
+    },
+    {
+      "name": "Management page is exception-first and routes signals to owning workspaces",
+      "pass": true,
+      "detail": "request / quality / readiness / planning links"
+    },
+    {
+      "name": "Supporting KPI analytics are foldouts rather than permanently expanded cards",
+      "pass": true,
+      "detail": "6 progressive-disclosure sections"
+    },
+    {
+      "name": "Complete Build Report modal renders the compact evidence structure without runtime error",
+      "pass": true,
+      "detail": "34938 rendered characters"
+    },
+    {
+      "name": "Build Report no longer contains duplicated legacy Control implementation section",
+      "pass": true,
+      "detail": "definition + actual evidence consolidated"
+    },
+    {
+      "name": "Print CSS expands report foldouts so PDF does not omit evidence",
+      "pass": true,
+      "detail": "foldouts expand for print"
+    }
+  ]
+}

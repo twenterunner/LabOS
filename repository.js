@@ -219,6 +219,12 @@ class MigrationService{
     P.audit(s,'UX master-data model upgraded','System','LabOS','Per-asset scope / fixed test families / duplicated execution navigation','Category capability scope / configurable test families / integrated route navigation / 5S zone model','REV 1.0.50 migration');
     s.dataVersion=wasDemo?'2026.09-demo-28':(s.dataVersion||'migrated');s.schemaVersion=25;continue;
    }
+   if(s.schemaVersion===25){
+    const wasDemo=P.isDemoDataset(s);P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    (s.requests||[]).forEach(r=>{const lim=P.materialOutputLimit(s,r),anyIssued=(s.allocations||[]).some(a=>a.requestId===r.id&&a.status==='Issued'&&Number(a.qty||0)>0);r.materialOutputLimit=lim.limited&&anyIssued?{maxBuildQty:lim.maxBuildQty,requestedQty:lim.requestedQty,updatedAt:P.now(),reason:'Issued material quantity'}:null;r.planningPreferences=r.planningPreferences||{staffByTask:{},staffByTaskName:{},staffBySkill:{}};});
+    P.audit(s,'Guided resolution and mobile workflow model upgraded','System','LabOS','Stale readiness state / unforced staff reassignment / fixed receipt quantity / modal overflow risk','Live readiness reconciliation / prevalidated staff choices / partial-material output limiter / viewport-safe modal layout','REV 1.0.53 migration');
+    s.dataVersion=wasDemo?'2026.09-demo-29':(s.dataVersion||'migrated');s.schemaVersion=26;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

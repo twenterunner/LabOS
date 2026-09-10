@@ -1,0 +1,77 @@
+{
+  "pass": 14,
+  "fail": 0,
+  "total": 14,
+  "checks": [
+    {
+      "name": "REV 1.0.53 / schema 26",
+      "pass": true,
+      "detail": "1.0.53-poc / 26"
+    },
+    {
+      "name": "Partial issued BOM material creates an exact output limiter",
+      "pass": true,
+      "detail": "2/6"
+    },
+    {
+      "name": "Sample allocation obeys material output limiter",
+      "pass": true,
+      "detail": "2 samples only"
+    },
+    {
+      "name": "Schema-25 migration does not invent a zero-output limiter before material is issued",
+      "pass": true,
+      "detail": "no false limiter"
+    },
+    {
+      "name": "Schema-25 migration preserves a real partial-output limiter",
+      "pass": true,
+      "detail": "2-unit limiter migrated"
+    },
+    {
+      "name": "Qualified-people readiness ignores bookings that do not require a person",
+      "pass": true,
+      "detail": "non-staff booking ignored"
+    },
+    {
+      "name": "People readiness flips from blocked to green immediately after a valid reassignment",
+      "pass": true,
+      "detail": "Daan Mulder → Mila Jansen"
+    },
+    {
+      "name": "Planner retains the exact user-selected alternative person and does not fall back to unavailable staff",
+      "pass": true,
+      "detail": "Noah retained; Daan excluded"
+    },
+    {
+      "name": "Planner never chooses an unavailable person when an available associated person exists",
+      "pass": true,
+      "detail": "14 bookings free of unavailable staff"
+    },
+    {
+      "name": "Readiness resolver rerenders immediately after a blocker clears",
+      "pass": true,
+      "detail": "live green-state reconciliation"
+    },
+    {
+      "name": "Engineering receipt defaults to exact BOM need but supports excess and shortage",
+      "pass": true,
+      "detail": "needed / excess / partial paths"
+    },
+    {
+      "name": "Process evidence matrix uses concise, separated sample and CP headings",
+      "pass": true,
+      "detail": "compact matrix labels"
+    },
+    {
+      "name": "All modal dialogs are constrained to the actual Android visual viewport",
+      "pass": true,
+      "detail": "visualViewport + CSS containment"
+    },
+    {
+      "name": "Migration initializes persistent task-name staff preferences",
+      "pass": true,
+      "detail": "planning preference schema ready"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": "1.0.53-poc",
+  "schema": 26,
+  "total_passed": 1916,
+  "total_failed": 0,
+  "suites": [
+    {"name":"Core domain/planner","passed":46,"failed":0},
+    {"name":"Persistence/migration","passed":6,"failed":0},
+    {"name":"Tough planning/disruption scenarios","passed":10,"failed":0},
+    {"name":"Role/build/workspace render stress","passed":1783,"failed":0},
+    {"name":"UI interaction regression","passed":23,"failed":0},
+    {"name":"Build Report + Lab Performance regression","passed":14,"failed":0},
+    {"name":"REV 1.0.53 focused behavioral checks","passed":14,"failed":0},
+    {"name":"REV 1.0.53 static/mobile/source checks","passed":20,"failed":0}
+  ],
+  "limitations": "No claim of a physical-device automated Android/iOS touch run; user-device screenshots informed the mobile fixes."
+}

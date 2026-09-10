@@ -34,7 +34,7 @@ class ReadinessService{
   const routeConfirmed=!!((route&&route.steps?.length&&route.confirmed===true)||(profile.formalLevel===0&&(!route?.steps?.length)&&(testReqs||[]).length>0)),processesReleased=!!(route&&route.steps?.length&&route.steps.every(s=>{if(s.type==='standard'){const p=this.state.processes.find(x=>x.id===s.processId);return p?.status==='Released'&&p.revision===s.processRevision;}const dev=this.state.processDevelopments.find(d=>d.requestId===requestId&&(d.libraryCandidate===s.processId||String(d.name).includes(s.name)));return dev?.status==='RELEASED';}));
   const testsReleased=testReqs.every(tr=>tr.standardTestId?this.state.standardTests?.some(t=>t.id===tr.standardTestId&&t.status==='Released'):tr.developmentReleased===true),cpDefinitionReady=!!(cp&&cp.characteristics?.length&&cp.characteristics.every(c=>!c.classification||P.controlCharacteristicReady(c))),bookings=(this.state.bookings||[]).filter(b=>b.requestId===requestId),executionBookings=bookings.filter(b=>['process','test'].includes(b.taskType));
   const equipmentReady=!!(executionBookings.length&&executionBookings.every(b=>{const e=this.state.equipment.find(x=>x.id===b.equipmentId);return e&&P.projectedEquipmentReady(this.state,e,String(b.start||P.todayISO()).slice(0,10));}));
-  const peopleReady=!!(bookings.length&&bookings.every(b=>{const person=this.state.staff.find(x=>x.id===b.staffId);return person&&person.available&&(!b.skillId||P.projectedStaffQualification(this.state,person,b.skillId,String(b.start||P.todayISO()).slice(0,10)).valid);}));
+  const staffBookings=bookings.filter(b=>b.skillId||b.staffId||['process','test','development'].includes(b.taskType)),peopleReady=!!(staffBookings.length&&staffBookings.every(b=>{const person=this.state.staff.find(x=>x.id===b.staffId);return person&&person.available!==false&&(!b.skillId||P.projectedStaffQualification(this.state,person,b.skillId,String(b.start||P.todayISO()).slice(0,10)).valid);}));
   const readinessApprovals=this.state.approvals.filter(a=>a.requestId===requestId&&a.stage==='readiness'&&!['Product Safety','Build Readiness'].includes(a.type));
   const cpRequired=reqs.controlPlan===true||(reqs.controlPlan==='special-only'&&((r.specialCharacteristics||[]).length>0||r.productSafety)),cpApproved=!cpRequired||!!(cp&&cpDefinitionReady&&(reqs.independentControlPlanApproval?cp.status==='Approved':true));
   const materialReady=profile.formalLevel===0?mat.planningReady:mat.buildReady;
@@ -106,7 +106,11 @@ class PlannerService{
   };
   const place=(task,duration,equipmentCapability,skillId,basis,status='Planned',taskType='process')=>{
    duration=Math.max(.25,Number(duration)||1);structuralCheck(equipmentCapability,skillId,task.name);
-   const eqPool=equipmentCapability?(state.equipment||[]).filter(e=>e.capability===equipmentCapability):[null],peopleRaw=skillId?labSkillPool(skillId):(state.staff||[]).filter(st=>st.role==='process_engineer'||st.role==='technician'||st.role==='lab_planner'),peoplePool=peopleRaw.length?peopleRaw:[null];
+   const eqPool=equipmentCapability?(state.equipment||[]).filter(e=>e.capability===equipmentCapability):[null],peopleRaw=skillId?labSkillPool(skillId):(state.staff||[]).filter(st=>st.role==='process_engineer'||st.role==='technician'||st.role==='lab_planner');
+   const preferredStaffId=r.planningPreferences?.staffByTask?.[task.id]||r.planningPreferences?.staffByTaskName?.[task.name]||r.planningPreferences?.staffBySkill?.[skillId]||null,preferredStaff=preferredStaffId?(state.staff||[]).find(st=>st.id===preferredStaffId):null;
+   if(preferredStaffId&&!preferredStaff){const e=new Error(`The selected staff assignment for ${task.name} no longer exists.`);e.code='STAFF_UNAVAILABLE';e.staffId=preferredStaffId;e.skillId=skillId;e.taskName=task.name;throw e;}
+   if(preferredStaff&&!hasSkillAssociation(preferredStaff,skillId)){const e=new Error(`${preferredStaff.name} is not associated with the required competency for ${task.name}.`);e.code='ZERO_REQUIRED_SKILL';e.skillId=skillId;e.skillName=(state.competencies||[]).find(c=>c.id===skillId)?.name||skillId;e.taskName=task.name;throw e;}
+   if(preferredStaff&&preferredStaff.available===false){const e=new Error(`${preferredStaff.name} is currently unavailable for ${task.name}.`);e.code='STAFF_UNAVAILABLE';e.staffId=preferredStaff.id;e.skillId=skillId;e.taskName=task.name;throw e;}const availablePeople=peopleRaw.filter(person=>person?.available!==false),peoplePool=preferredStaff?[preferredStaff]:(availablePeople.length?availablePeople:(peopleRaw.length?peopleRaw:[null]));
    let best=null;
    for(const eq of eqPool)for(const person of peoplePool){let ready=new Date(cursor);if(eq){const on=ready.toISOString().slice(0,10);if(!P.projectedEquipmentReady(state,eq,on)){let h=0;if(eq.calibrationStatus!=='Valid'||(eq.calibrationDue&&eq.calibrationDue<on))h+=Number(eq.calibrationDurationHours||4);if(eq.maintenanceStatus==='Overdue'||(eq.maintenanceDue&&eq.maintenanceDue<on))h+=Number(eq.maintenanceDurationHours||4);ready=addWorkHours(ready,Math.max(1,h));}}
     if(person&&skillId&&!P.projectedStaffQualification(state,person,skillId,ready.toISOString().slice(0,10)).valid){const sk=(state.competencies||[]).find(c=>c.id===skillId);ready=addWorkHours(ready,Number(sk?.trainingDurationHours||4));}
@@ -184,8 +188,9 @@ class SerialService{
  samplesFor(requestId){return (this.state.serials||[]).filter(s=>s.requestId===requestId).sort((a,b)=>String(a.sampleNumber||a.serial).localeCompare(String(b.sampleNumber||b.serial),undefined,{numeric:true}));}
  generate(requestId,count){
   const r=this.state.requests.find(x=>x.id===requestId);if(!r)throw new Error('Request not found');
-  const existing=this.samplesFor(requestId),lots=this.state.allocations.filter(a=>a.requestId===requestId&&a.status==='Issued'&&a.requirementId).map(a=>a.lot),profile=P.ensureAssuranceProfile(r),out=[];
-  for(let i=1;i<=Number(count||0);i++){
+  const existing=this.samplesFor(requestId),lots=this.state.allocations.filter(a=>a.requestId===requestId&&a.status==='Issued'&&a.requirementId).map(a=>a.lot),profile=P.ensureAssuranceProfile(r),out=[],limit=r.materialOutputLimit&&Number.isFinite(Number(r.materialOutputLimit.maxBuildQty))?Math.max(0,Number(r.materialOutputLimit.maxBuildQty)):Number(r.quantity||0),wanted=Math.max(0,Number(count||0));
+  if(r.materialOutputLimit&&existing.filter(s=>s.status!=='Cancelled').length+wanted>limit)throw new Error(`Material currently limits this build to ${limit}/${r.quantity} sample(s). Receive/issue more material before creating additional samples.`);
+  for(let i=1;i<=wanted;i++){
    const n=existing.length+i,labId=`${r.id}-S${String(n).padStart(3,'0')}`,sampleNo=String(n).padStart(2,'0'),formal=profile.requires.serialisation?`${r.id}-${String(n).padStart(3,'0')}`:'';
    if(this.state.serials.some(s=>s.serial===labId))throw new Error(`Duplicate lab sample ID ${labId}`);
    const obj={id:P.uid('SAMPLE'),serial:labId,sampleId:labId,sampleNumber:sampleNo,serialNumber:formal,requestId:r.id,productId:r.productId,configuration:r.configuration,status:'Active',materials:P.deepClone(lots),processHistory:[],description:'',dataFields:[],evidencePhotos:[],includeDescriptionInBuildReport:true,releaseState:'Not released',delivery:null};
@@ -194,7 +199,7 @@ class SerialService{
   if(out.length)P.audit(this.state,'Sample register allocated','Request',requestId,existing.length,existing.length+out.length,`${out.length} lab sample record(s); formal serials ${profile.requires.serialisation?'allocated':'not required'}`);
   return out;
  }
- allocateRequested(requestId){const r=this.state.requests.find(x=>x.id===requestId);if(!r)throw new Error('Request not found');const existing=this.samplesFor(requestId).filter(s=>s.status!=='Cancelled').length,missing=Math.max(0,Number(r.quantity||0)-existing);return this.generate(requestId,missing);}
+ allocateRequested(requestId){const r=this.state.requests.find(x=>x.id===requestId);if(!r)throw new Error('Request not found');const existing=this.samplesFor(requestId).filter(s=>s.status!=='Cancelled').length,target=r.materialOutputLimit&&Number.isFinite(Number(r.materialOutputLimit.maxBuildQty))?Math.min(Number(r.quantity||0),Math.max(0,Number(r.materialOutputLimit.maxBuildQty))):Number(r.quantity||0),missing=Math.max(0,target-existing);return this.generate(requestId,missing);}
 }
 function sampleStdDev(vals){if(vals.length<2)return null;const mean=vals.reduce((n,x)=>n+x,0)/vals.length;const v=vals.reduce((n,x)=>n+(x-mean)**2,0)/(vals.length-1);return Math.sqrt(v);}
 function measurementAnalytics(measurements){

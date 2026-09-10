@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.52-poc';
-  ProtoLab.SCHEMA_VERSION = 25;
+  ProtoLab.VERSION = '1.0.53-poc';
+  ProtoLab.SCHEMA_VERSION = 26;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -322,16 +322,25 @@
     r.testRequirements=(r.characterisation||[]).map((name,i)=>{const old=existing.get(String(name).toLowerCase()),test=ProtoLab.matchStandardTest(state,name);return Object.assign({id:`TESTREQ-${r.id}-${i+1}`,name,standardTestId:test?.id||null,status:test?'Standard test':'Development required',developmentEstimateHours:null,owner:test?.owner||(state.users||[]).find(u=>u.role==='process_engineer')?.name||'Process Engineer'},old||{},test?{standardTestId:test.id,status:'Standard test'}:{});});
     return r.testRequirements;
   };
+  ProtoLab.materialOutputLimit = (state,r) => {
+    ProtoLab.ensureMaterialRequirements(state,r);
+    const requested=Math.max(0,Number(r?.quantity||0)),reqs=r?.materialRequirements||[],alloc=(state.allocations||[]).filter(a=>a.requestId===r.id&&a.status==='Issued');
+    if(!requested||!reqs.length)return {requestedQty:requested,maxBuildQty:requested,limited:false,lines:[]};
+    const lines=reqs.map(req=>{const perUnit=Math.max(0,Number(req.qtyPerUnit||0)),issued=alloc.filter(a=>a.requirementId===req.id).reduce((n,a)=>n+Number(a.qty||0),0),units=perUnit>0?Math.floor((issued+1e-9)/perUnit):requested;return {requirementId:req.id,partNumber:req.partNumber,revision:req.revision,issued,qtyPerUnit:perUnit,maxUnits:Math.min(requested,Math.max(0,units))};});
+    const maxBuildQty=lines.length?Math.min(requested,...lines.map(x=>x.maxUnits)):requested;
+    return {requestedQty:requested,maxBuildQty,limited:maxBuildQty<requested,lines};
+  };
   ProtoLab.materialPlanningAssessment = (state,r) => {
     ProtoLab.ensureMaterialRequirements(state,r); r.materialOwnership=ProtoLab.normaliseMaterialSource(r.materialOwnership);
-    const reqs=r.materialRequirements||[],alloc=(state.allocations||[]).filter(a=>a.requestId===r.id),today=ProtoLab.todayISO();
+    const reqs=r.materialRequirements||[],alloc=(state.allocations||[]).filter(a=>a.requestId===r.id),today=ProtoLab.todayISO(),outputLimit=ProtoLab.materialOutputLimit(state,r);
     const issuedReady=reqs.every(req=>alloc.filter(a=>a.requirementId===req.id&&a.status==='Issued').reduce((n,a)=>n+Number(a.qty||0),0)>=Number(req.requiredQty||0));
     if(r.materialOwnership==='Engineering supplied'){
-      const supply=r.materialSupply||{}; const planningReady=!!(supply.expectedDate&&supply.owner);
-      return {source:r.materialOwnership,planningReady,buildReady:issuedReady,earliestDate:supply.expectedDate||null,owner:supply.owner||r.requester,summary:planningReady?`Engineering supply promised for ${supply.expectedDate}`:'Engineering supply date/owner not yet defined',issues:planningReady?[]:['Record who supplies the BOM material and its expected lab arrival date.']};
+      const supply=r.materialSupply||{}; const planningReady=!!(supply.expectedDate&&supply.owner),partial=outputLimit.maxBuildQty>0&&!issuedReady;
+      return {source:r.materialOwnership,planningReady,buildReady:issuedReady,earliestDate:supply.expectedDate||null,owner:supply.owner||r.requester,summary:issuedReady?'Exact engineering-supplied BOM material is received and issued':partial?`Partial material is issued: current output limit ${outputLimit.maxBuildQty}/${outputLimit.requestedQty} units`:planningReady?`Engineering supply promised for ${supply.expectedDate}`:'Engineering supply date/owner not yet defined',issues:issuedReady?[]:partial?[`Current issued material limits output to ${outputLimit.maxBuildQty}/${outputLimit.requestedQty} requested unit(s). Receive the remaining BOM quantity to remove the limiter.`]:planningReady?[]:['Record who supplies the BOM material and its expected lab arrival date.'],outputLimit};
     }
     const lines=reqs.map(req=>{const reserved=alloc.filter(a=>a.requirementId===req.id&&['Reserved','Issued'].includes(a.status)).reduce((n,a)=>n+Number(a.qty||0),0),available=(state.materials||[]).filter(m=>m.status==='Available'&&m.partNumber===req.partNumber&&m.revision===req.revision).reduce((n,m)=>n+Number(m.quantity||0),0);return {req,reserved,available,ok:reserved+available>=Number(req.requiredQty||0)};});
-    const reservedReady=lines.every(x=>x.reserved>=Number(x.req.requiredQty||0));return {source:'Lab supplied',planningReady:reservedReady,buildReady:issuedReady,earliestDate:today,owner:(state.users||[]).find(u=>u.role==='lab_planner')?.name||'Lab Planner',summary:reservedReady?'Exact BOM material is reserved from lab stock':lines.every(x=>x.ok)?'Exact BOM material is available but must be reserved before planning':'One or more exact BOM items are not available in sufficient quantity',issues:reservedReady?[]:lines.filter(x=>x.reserved<Number(x.req.requiredQty||0)).map(x=>`${x.req.partNumber} Rev ${x.req.revision}: reserve ${x.req.requiredQty}; currently reserved/issued ${x.reserved}, unreserved stock ${x.available}`),lines};
+    const reservedReady=lines.every(x=>x.reserved>=Number(x.req.requiredQty||0)),partial=outputLimit.maxBuildQty>0&&!issuedReady;
+    return {source:'Lab supplied',planningReady:reservedReady,buildReady:issuedReady,earliestDate:today,owner:(state.users||[]).find(u=>u.role==='lab_planner')?.name||'Lab Planner',summary:issuedReady?'Exact BOM material is issued for the full build':partial?`Partial BOM material is issued: current output limit ${outputLimit.maxBuildQty}/${outputLimit.requestedQty} units`:reservedReady?'Exact BOM material is reserved from lab stock':lines.every(x=>x.ok)?'Exact BOM material is available but must be reserved before planning':'One or more exact BOM items are not available in sufficient quantity',issues:issuedReady?[]:partial?[`Current issued material limits output to ${outputLimit.maxBuildQty}/${outputLimit.requestedQty} requested unit(s). Issue/receive the remaining exact BOM quantity to remove the limiter.`]:reservedReady?[]:lines.filter(x=>x.reserved<Number(x.req.requiredQty||0)).map(x=>`${x.req.partNumber} Rev ${x.req.revision}: reserve ${x.req.requiredQty}; currently reserved/issued ${x.reserved}, unreserved stock ${x.available}`),lines,outputLimit};
   };
   ProtoLab.processPlanningAssessment = (state,r) => {
     const profile=ProtoLab.ensureAssuranceProfile(r), route=(state.routes||[]).find(x=>x.requestId===r.id); ProtoLab.ensureTestRequirements(state,r); const issues=[];
