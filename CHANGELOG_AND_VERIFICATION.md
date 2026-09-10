@@ -1,78 +1,67 @@
-# LabOS REV 1.0.50 — UX, route navigation, 5S, audit scope and personal actions
+# LabOS REV 1.0.52 — concise Build Report and best-in-class Lab Performance cockpit
 
-## Release intent
-REV 1.0.50 continues the hard LabOS workflow contract introduced in 1.0.49: a user-facing action must either be executable to a real controlled outcome or guide the user through the complete evidence-backed resolution. This revision focuses on reducing duplicated controls and improving daily usability.
+## Purpose
 
-## Changes
+REV 1.0.52 addresses two usability problems: the Prototype Build Report had become long and repetitive, while the Management KPI page exposed many charts without a sufficiently clear LIMS operating model. This revision applies progressive disclosure: decision-critical information stays visible; supporting detail remains available in foldouts and is automatically included when the Build Report is printed/saved as PDF.
 
-### Build execution navigation
-- Removed the redundant four-button `Process settings + Control Plan measurements` card from the execution page.
-- The primary execution action remains the one guided entry point: `Record required data` when data is missing.
-- CSV download, CSV upload and build-specific-field creation now live inside the data-matrix workflow rather than being repeated on the page.
-- Route operations are now rendered as a second, horizontally scrollable sticky sub-navigation inside the main fixed build cockpit.
-- Route chips show complete / partial / pending state and allow direct inspection of a route step without reintroducing a separate large route list.
+## Prototype Build Report redesign
 
-### Audit capability scope by equipment category
-- Laboratory capability scope is no longer maintained separately for every physical asset.
-- Scope records are maintained by equipment capability/category, with the member equipment list retained underneath the category.
-- Range, resolution, uncertainty/capability reference, method and notes are defined once at the relevant category level.
-- Audit findings and scope CSV exports now use the category model.
-- Existing per-asset scope data is non-destructively consolidated during schema migration when possible.
+The report is now organised as a controlled evidence dossier rather than a sequence of repeated cards.
 
-### Configurable test families
-- Added a controlled `testFamilies` master.
-- Every standard test now references a test-family ID instead of relying on an implicit/free-text grouping.
-- Administrators/Lab Managers can open `Configure test families` from the Standard Test Library.
-- Test-family assignment is editable as part of the planning-standard editor.
+- Build definition is a compact table rather than a field-card wall.
+- Process execution is one route execution table; the duplicate process-flow visual was removed from the report.
+- Structured process-step data moves to a foldout.
+- The former separate **Control Plan** and **Control implementation & evidence traceability** sections are consolidated into **Control Plan execution & measured data**.
+- Every governed CP characteristic — SC, CC, product-safety or unclassified — shows specification, sampling rule, actual evidence coverage and result.
+- A sample × characteristic matrix contains the actual latest measured values, pass/action status and sampling applicability.
+- Control methods and reaction plans remain available in a foldout rather than occupying the main report surface.
+- End-of-build tests have a concise summary plus a sample × test measured-value matrix in a foldout.
+- Classified-characteristic statistics use a compact summary table. Distribution/normality plots and interpretation detail are foldouts.
+- Material lots and sample genealogy are proper tables. Large builds therefore no longer produce one prose line per serial number.
+- Sample-specific structured evidence is a matrix, chunked into manageable column groups; observations and photographs are separate foldouts.
+- Quality shows exceptions only; FPY/yield/rework values are not repeated after the report disposition section.
+- Revision history, lessons and other secondary evidence are folded by default.
+- The historical measurement appendix excludes the current governed CP/end-test records already shown in their owning sections; it contains historical/superseded and genuinely supplemental evidence only.
+- Print/PDF CSS automatically expands report foldouts, so concise on-screen presentation never removes audit evidence from the generated document.
 
-### 5S workplace control
-- Added optional 5S zones under Lab Standards & Resources.
-- Each zone has a named owner and physical area.
-- 5S checks score Sort, Set in order, Shine, Standardize and Sustain on a 1–5 scale.
-- Scores below 4 create a real Action Centre action assigned to the zone owner.
-- The owner gets a guided resolution workflow requiring objective resolution evidence before the action can close.
-- 5S is treated as an operational workplace-control / continuous-improvement mechanism, not as a substitute for product/process quality controls.
+## Lab Performance redesign
 
-### Personal Action Centre
-- Action Centre now shows only the current user's assigned mandatory actions and executable improvement proposals.
-- The redundant `Person` grouping was removed because the queue is already personal.
-- The top action badge and navigation count use the same personal queue.
-- Global build blocker calculations still use all open actions, so another person's blocker cannot incorrectly make a build look clear.
-- Legacy role-labelled action owners are normalized to a concrete user where a matching role user exists.
+The Management KPI page is renamed **Lab Performance** and now begins with the questions a laboratory manager actually needs to answer.
 
-## Migration
-- Application schema: **25**.
-- REV 1.0.49 / schema 24 data is migrated automatically.
-- Existing equipment scope records are retained and used to seed category scope where useful.
-- Standard tests receive a deterministic default family when no family existed.
-- Existing data is not deleted by the migration.
+### Management Attention
+
+Only current exception signals are surfaced prominently. Signals link to the functional workspace that owns the resolution — Prototype Requests, Quality Workbench, Resource Assurance or Planning.
+
+### Four operating pillars
+
+1. **Delivery & Flow** — on-time delivery to original commitment, throughput, active WIP/overdue work and median request-to-delivery lead time.
+2. **Quality** — first-pass yield, scrap, rework and open release holds/quality cases.
+3. **Readiness & Compliance** — calibration compliance, maintenance compliance, valid training/competency evidence and scheduled readiness work.
+4. **Capacity & Cost** — current utilization, forecast peak/bottleneck, cost per prototype and actual-vs-estimate variance.
+
+Supporting analytics are no longer permanently expanded. Delivery/replan root cause, quality/cost trends, capacity/bottlenecks, process performance, future project pipeline and KPI definitions are separate foldouts.
+
+## Progressive-disclosure UX rule
+
+REV 1.0.52 reinforces the application-wide rule used increasingly across LabOS: show the current decision/action and critical evidence first; put rationale, history, statistical detail, large registers and supporting evidence behind explicit foldouts. This keeps the UI usable without deleting traceability.
 
 ## Verification
-The final packaged source was run through the current regression programme:
+
+Current retained automated acceptance: **1,940 passed / 0 failed**.
 
 | Suite | Result |
-|---|---:|
+| --- | ---: |
 | Core domain/planner | 46 / 46 |
 | Persistence/migration | 6 / 6 |
-| Base UI regression | 23 / 23 |
-| Governed execution / CP | 18 / 18 |
-| REV 1.0.49 guided-workflow/UX regression | 15 / 15 |
-| REV 1.0.50 focused UX/master-data tests | 12 / 12 |
-| Tough planning/disruption scenarios | 10 / 10 |
+| UI interaction regression | 23 / 23 |
+| Guided workflow / no-dead-end regression | 15 / 15 |
+| 5S + Process Capability retained regression | 8 / 8 |
+| Governed execution / Control Plan | 18 / 18 |
+| REV 1.0.52 Build Report + Lab Performance | 14 / 14 |
+| Planning/disruption scenarios | 10 / 10 |
 | Role/build/workspace render stress | 1,783 / 1,783 |
-| Static/mobile/package checks | 31 / 31 |
-| **Total** | **1,944 / 1,944** |
+| Static/mobile/package checks | 17 / 17 |
 
-REV 1.0.50 focused tests explicitly cover:
-- category-level equipment scope;
-- integrated sticky route navigation;
-- removal of duplicated execution-data tiles;
-- CSV/field controls inside the data matrix;
-- configurable test-family master and test assignment;
-- 5S zone/action architecture;
-- individual Action Centre isolation;
-- preservation of global blocker status independent of personal action visibility;
-- mobile horizontal route navigation.
+The focused REV 1.0.52 tests explicitly render a complete Build Report, verify actual CP values in the report matrix, verify CP-result de-duplication, exercise the matrix-based sample register/evidence presentation, render Lab Performance, verify all four operating pillars and functional drill-down links, and verify that closed report foldouts expand for print.
 
-## Known validation limitation
-The automated runtime/DOM/state/mobile checks pass, but this execution environment still does not provide a genuine physical Android/iOS/desktop exploratory browser session. Real-device visual/touch validation should therefore remain part of final production acceptance.
+A genuine physical-device exploratory browser pass remains recommended before production deployment.

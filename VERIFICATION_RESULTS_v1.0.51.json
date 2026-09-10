@@ -1,0 +1,47 @@
+{
+  "pass": 8,
+  "fail": 0,
+  "total": 8,
+  "checks": [
+    {
+      "name": "5S run button binds to a real zone id",
+      "pass": true,
+      "detail": "5S-ZONE-PROTOTYPE"
+    },
+    {
+      "name": "5S edit and resolve attributes avoid numeric dataset-key ambiguity",
+      "pass": true,
+      "detail": "alpha-only data attributes"
+    },
+    {
+      "name": "Process Capability is not a duplicate measurement entry screen",
+      "pass": true,
+      "detail": "analytics only"
+    },
+    {
+      "name": "Process Capability provides cross-build actionable analytics",
+      "pass": true,
+      "detail": "29 characteristic views"
+    },
+    {
+      "name": "Process Capability contains governed Control Plan results only",
+      "pass": true,
+      "detail": "270 governed CP results"
+    },
+    {
+      "name": "Capability groups do not mix different product/process/spec contexts",
+      "pass": true,
+      "detail": "29 unique contexts"
+    },
+    {
+      "name": "Capability only claims Cpk when data/specification make it meaningful",
+      "pass": true,
+      "detail": "18 capability-ready"
+    },
+    {
+      "name": "Normality p-value is surfaced only when enough data exist",
+      "pass": true,
+      "detail": "small-n guard retained"
+    }
+  ]
+}

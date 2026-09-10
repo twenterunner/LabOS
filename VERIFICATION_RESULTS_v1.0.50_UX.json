@@ -19,9 +19,9 @@
       "detail": "search + grouped drill-down"
     },
     {
-      "name": "Results & Capability is analytics-only, not a duplicate data-entry route",
+      "name": "Process Capability is analytics-only, not a duplicate data-entry route",
       "pass": true,
-      "detail": "review/analytics only"
+      "detail": "cross-build capability analytics only"
     },
     {
       "name": "Lab Setup Wizard covers the minimum functional lab configuration",

@@ -1,0 +1,67 @@
+{
+  "pass": 12,
+  "fail": 0,
+  "total": 12,
+  "checks": [
+    {
+      "name": "REV 1.0.51 uses schema 25",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Audit capability scope is grouped by equipment category/capability",
+      "pass": true,
+      "detail": "4 categories for 12 assets"
+    },
+    {
+      "name": "Audit category scope is controlled in one category master",
+      "pass": true,
+      "detail": "Joining cell"
+    },
+    {
+      "name": "Execution route navigation is integrated in sticky cockpit",
+      "pass": true,
+      "detail": "10 route chips"
+    },
+    {
+      "name": "Execution page no longer duplicates matrix/CSV/build-field tile block",
+      "pass": true,
+      "detail": "primary action only"
+    },
+    {
+      "name": "CSV and build-specific field controls live inside the data matrix",
+      "pass": true,
+      "detail": "matrix owns secondary data actions"
+    },
+    {
+      "name": "Test families are configurable master data and every standard test references one",
+      "pass": true,
+      "detail": "6 families"
+    },
+    {
+      "name": "5S is implemented as zone checks with guided owner actions",
+      "pass": true,
+      "detail": "2 configured zones"
+    },
+    {
+      "name": "Action Centre shows only actions assigned to current individual",
+      "pass": true,
+      "detail": "Amina Kuiper isolated"
+    },
+    {
+      "name": "Action Centre removes redundant Person grouping and labels queue as personal",
+      "pass": true,
+      "detail": "personal queue"
+    },
+    {
+      "name": "Personal Action Centre does not weaken global build blockers",
+      "pass": true,
+      "detail": "visibility separated from governance"
+    },
+    {
+      "name": "Sticky route submenu is mobile-scrollable",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}
