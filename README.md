@@ -1,8 +1,19 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.82
+# LabOS — Laboratory Operations System POC · REV 1.0.83
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
+
+
+## REV 1.0.83 — controlled requesting teams, guaranteed sticky standards navigation and safer AUTO-PLAN
+
+REV 1.0.83 fixes the Lab Standards & Resources navigation at its actual runtime root cause. The dedicated standards navigator was being inserted correctly and then removed by a later generic section-navigator pass. The final render path now installs one authoritative sticky navigator after all older render hooks have finished. It remains pinned while scrolling and covers Resource assurance, Equipment & scope, Methods & standards, People & competencies, Requesting teams, 5S workplace and Governance.
+
+**Requesting teams are now controlled master data.** The Engineering team field in New prototype request no longer comes from a stale hard-coded sensor-business list. `Lab Standards & Resources → Requesting teams` is the source of truth. Administrators can add, rename, activate and deactivate teams without destroying historical request references. Existing demo states migrate the old ADAS / Powertrain / Thermal / Chassis / Electrification labels to the power-tool-oriented demo model, while non-demo custom team names are preserved. Engineering requesters default to their own active team; Lab/Admin users creating a request on somebody else's behalf must deliberately select a team. Creation/submission is rejected when the team is blank, inactive or outside the controlled master.
+
+**AUTO-PLAN is hardened as an optimizer rather than only an earliest-slot scheduler.** Each plan attempt is transactional: if capability resolution or the final integrity gate fails, the complete pre-plan state is restored so no half-replan remains. Resource choice considers all qualified candidates and ranks near-equivalent slots by readiness interventions, requested-person preference, calibration/maintenance/qualification margin, near-term load and deterministic tie-breaks. A preferred person is therefore a soft preference, not a hidden hard constraint.
+
+At portfolio level, competing plan strategies are now compared with explicit multi-objective damage metrics: requested-date attainment, newly late existing commitments, aggregate commitment delay, number of other builds moved, total external delay, booking churn, avoidable readiness interventions and hard-integrity failures. The review modal includes **Why this plan won** and a comparison of the considered strategies. A candidate with a resource-readiness, qualification, overlap, planning-event or capability integrity failure cannot win.
 
 
 ## REV 1.0.82 — active swimlane calendar + executable material resolution

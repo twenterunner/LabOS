@@ -1,0 +1,24 @@
+PASS | Version is REV 1.0.83
+PASS | Main assets cache-busted to 1.0.83
+PASS | Service-worker reset identity updated
+PASS | Dedicated final standards sticky nav exists
+PASS | Sticky standards CSS is explicit
+PASS | Sticky nav covers full requested master areas
+PASS | Root cause is addressed after generic navigator
+PASS | Engineering-team master is executable
+PASS | New request requires controlled active team
+PASS | Sensor-domain team seed removed from fresh demo
+PASS | AUTO-PLAN transactional safety gate exists
+PASS | AUTO-PLAN resilient resource scoring exists
+PASS | Portfolio optimizer scores commitment damage and churn
+PASS | Plan-review UI explains optimizer decision quality
+PASS | JavaScript syntax: core.js | OK
+PASS | JavaScript syntax: demo-data.js | OK
+PASS | JavaScript syntax: repository.js | OK
+PASS | JavaScript syntax: services.js | OK
+PASS | JavaScript syntax: app.js | OK
+PASS | JavaScript syntax: service-worker.js | OK
+PASS | Runtime: controlled teams + atomic rollback + resilient deterministic resource choice | {"teams":["Power Tool Platform","Motor & Drive","Mechanical Design","Electronics","Advanced Concepts","Systems Engineering"],"userTeams":["Power Tool Platform","Motor & Drive"],"freshIntegrity":{"equipmentReadinessFailures":0,"staffQualificationFailures":0,"equipmentOverlaps":0,"staffOverlaps":0,"planningEventOverlaps":0,"equipmentCapabilityMismatches":0},"blankRejected":true,"activeAccepted":true,"rollbackCode":"ZERO_EQUIPMENT_CAPABILITY","rollbackExact":true,"electricalEq":["EQ-007"],"autoEq8":0,"resilientIntegrity":{"equipmentReadinessFailures":0,"staffQualificationFailures":0,"equipmentOverlaps":0,"staffOverlaps":0,"planningEventOverlaps":0,"equipmentCapabilityMismatches":0},"electricalEq2":["EQ-007"]}
+PASS | Chromium UI: sticky standards + team master + wizard + optimizer quality | {"stickyCount":1,"genericCount":0,"position":"sticky","labels":["Resource assurance","Equipment & scope","Methods & standards","People & competencies","Requesting teams","5S workplace","Governance"],"teamSection":1,"equipmentSection":1,"stickyTopAfterScroll":72,"addedTeam":true,"inactiveTeam":true,"adminWizardDefault":"","engineeringDefault":"Power Tool Platform","wizardOptions":["\u2014 Select engineering team \u2014","Power Tool Platform","Motor & Drive","Mechanical Design","Electronics","Advanced Concepts","Systems Engineering"],"migration":{"changed":true,"teams":["Power Tool Platform","Motor & Drive","Mechanical Design","Electronics","Advanced Concepts","Systems Engineering"],"u01":"Power Tool Platform","legacy":false},"optimizer":{"strategy":"Selective ripple re-optimization","quality":{"meets":true,"focusLateDays":0,"newlyLateCommitments":0,"totalCommitmentDelay":0,"externalCount":13,"externalDelay":1,"bookingChurn":101,"readinessInterventions":1,"integrityIssueCount":0},"candidates":[{"strategy":"Build-only constrained re-optimization","valid":true,"meets":false,"forecast":"2026-09-24","focusLateDays":7,"newlyLateCommitments":0,"totalCommitmentDelay":0,"externalCount":0,"externalDelay":0,"bookingChurn":7,"readinessInterventions":0,"integrityIssueCount":0},{"strategy":"Selective ripple re-optimization","valid":true,"meets":true,"forecast":"2026-09-16","focusLateDays":0,"newlyLateCommitments":0,"totalCommitmentDelay":0,"externalCount":13,"externalDelay":1,"bookingChurn":101,"readinessInterventions":1,"integrityIssueCount":0},{"strategy":"Target-first portfolio re-optimization","valid":true,"meets":true,"forecast":"2026-09-16","focusLateDays":0,"newlyLateCommitments":0,"totalCommitmentDelay":0,"externalCount":20,"externalDelay":65,"bookingChurn":175,"readinessInterventions":3,"integrityIssueCount":0}],"card":"<section class=\"optimizer-quality-v1083\"><div class=\"section-title-row\"><div><span class=\"eyebrow\">AUTO-PLAN DECISION QUALITY</span><h3>Why this plan won</h3><p class=\"subtle\">Every candidate must pass hard resource/readiness integrity first. The optimizer then protects requested timing and existing commitments while minimizing collateral movement and avoidable readiness work.</p></div><span class=\"status good\">0 integrity conflicts</span></div><div class=\"optimizer-score-grid-v1083\"><div class=\"good\"><span>Requested date</span><strong>Met</strong></div><div class=\"good\"><span>Commitments made late</span><strong>0</strong></div><div><span>Other builds moved</span><strong>13</strong></div><div><span>Booking changes</span><strong>
+
+SUMMARY | 22/22 passed | 0 failed
