@@ -1,12 +1,42 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.54-poc';
+  ProtoLab.VERSION = '1.0.55-poc';
   ProtoLab.SCHEMA_VERSION = 27;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
   ProtoLab.deepClone = obj => JSON.parse(JSON.stringify(obj));
+  // Resolve the exact process revision recorded on a governed route. A later library
+  // revision must never invalidate a build that still references a previously
+  // released revision, and an unavailable historical revision must never silently
+  // fall forward to the live definition.
+  ProtoLab.processRevisionDefinition = (state,step) => {
+    const live=(state?.processes||[]).find(p=>p.id===step?.processId);
+    if(!live)return null;
+    const wanted=String(step?.processRevision??'').trim();
+    if(!wanted||String(live.revision??'').trim()===wanted)return live;
+    const hist=[...(live.revisionHistory||[])].reverse().find(h=>String(h.rev??h.revision??'').trim()===wanted&&h.snapshot);
+    return hist?.snapshot||null;
+  };
+  ProtoLab.processRevisionReleaseAssessment = (state,requestId,route) => {
+    const rows=(route?.steps||[]).map((step,index)=>{
+      if(step.type==='standard'){
+        const definition=ProtoLab.processRevisionDefinition(state,step);
+        const wanted=String(step.processRevision??'').trim()||'unspecified revision';
+        const live=(state?.processes||[]).find(p=>p.id===step.processId);
+        const ok=!!definition&&definition.status==='Released';
+        let detail='';
+        if(!definition)detail=`${step.name||step.processId||`Step ${index+1}`} · routed ${wanted} is not available in the controlled revision history${live?.revision?`; current library revision is ${live.revision} (${live.status||'status unknown'})`:''}.`;
+        else if(!ok)detail=`${step.name||step.processId||`Step ${index+1}`} · routed ${wanted} is ${definition.status||'not released'}.`;
+        return {step,ok,type:'standard',definition,detail};
+      }
+      const dev=(state?.processDevelopments||[]).find(d=>d.requestId===requestId&&(d.libraryCandidate===step.processId||String(d.name||'').includes(step.name||'')));
+      const ok=dev?.status==='RELEASED';
+      return {step,ok,type:'development',definition:dev,detail:ok?'':`${step.name||step.processId||`Step ${index+1}`} · development method has not been released.`};
+    });
+    return {rows,ready:!!(route?.steps?.length)&&rows.every(x=>x.ok),unresolved:rows.filter(x=>!x.ok)};
+  };
   ProtoLab.escape = value => String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   ProtoLab.formatDate = iso => { if(!iso) return '—'; const d=new Date(iso); return Number.isNaN(d.getTime())?iso:d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); };
   ProtoLab.formatDateTime = iso => { if(!iso) return '—'; const d=new Date(iso); return Number.isNaN(d.getTime())?iso:d.toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); };

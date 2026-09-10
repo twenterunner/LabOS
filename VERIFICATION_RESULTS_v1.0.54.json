@@ -1,12 +1,12 @@
 {
-  "pass": 14,
-  "fail": 0,
+  "pass": 13,
+  "fail": 1,
   "total": 14,
   "checks": [
     {
       "name": "REV 1.0.54 / schema 27",
-      "pass": true,
-      "detail": "1.0.54-poc / 27"
+      "pass": false,
+      "detail": "1.0.55-poc"
     },
     {
       "name": "Partial issued BOM material creates an exact output limiter",

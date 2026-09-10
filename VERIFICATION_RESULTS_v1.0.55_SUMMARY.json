@@ -1,0 +1,49 @@
+{
+  "version": "1.0.55-poc",
+  "schema": 27,
+  "passed": 1954,
+  "failed": 0,
+  "total": 1954,
+  "suites": [
+    {
+      "name": "Core domain / planner",
+      "passed": 46,
+      "failed": 0
+    },
+    {
+      "name": "Persistence / migration",
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "name": "Retained hard-gate / learning focused",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "name": "REV 1.0.55 revision / menu / capability",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "name": "UI interaction regression",
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "name": "Build Report + Lab Performance regression",
+      "passed": 14,
+      "failed": 0
+    },
+    {
+      "name": "Static / mobile / package-source",
+      "passed": 20,
+      "failed": 0
+    },
+    {
+      "name": "Role / build / workspace render stress",
+      "passed": 1820,
+      "failed": 0
+    }
+  ]
+}

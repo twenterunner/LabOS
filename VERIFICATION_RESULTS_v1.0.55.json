@@ -1,0 +1,62 @@
+{
+  "pass": 11,
+  "fail": 0,
+  "total": 11,
+  "checks": [
+    {
+      "name": "REV 1.0.55 / schema 27",
+      "pass": true,
+      "detail": "1.0.55-poc / 27"
+    },
+    {
+      "name": "Historical routed released process revision remains readiness-valid after library revision",
+      "pass": true,
+      "detail": "Material Receipt A remains valid while live is A-NEXT"
+    },
+    {
+      "name": "Current under-review process revision correctly blocks readiness with exact diagnosis",
+      "pass": true,
+      "detail": "Material Receipt · routed A-NEXT is Under review."
+    },
+    {
+      "name": "Missing historical revision does not silently fall forward to current process",
+      "pass": true,
+      "detail": "controlled mismatch is explicit"
+    },
+    {
+      "name": "Menu reserves Validation and Failure Analysis as future workstreams",
+      "pass": true,
+      "detail": "shared intake + first-class workstream placeholders"
+    },
+    {
+      "name": "Validation future architecture includes method development and shared backbone",
+      "pass": true,
+      "detail": "validation digital thread reserved"
+    },
+    {
+      "name": "Failure Analysis future architecture closes the loop through verification",
+      "pass": true,
+      "detail": "failure-to-learning loop reserved"
+    },
+    {
+      "name": "Process Capability is removed as a standalone nav destination",
+      "pass": true,
+      "detail": "Quality → Capability & SPC"
+    },
+    {
+      "name": "Capability study key prevents pooling across product/config/process/equipment/spec/method",
+      "pass": true,
+      "detail": "comparable populations only"
+    },
+    {
+      "name": "Cpk eligibility requires scoped study, n>=20 and stability screen",
+      "pass": true,
+      "detail": "low-volume prototype data is not overclaimed"
+    },
+    {
+      "name": "Capability filters explicitly include configuration and equipment",
+      "pass": true,
+      "detail": "scope is user-visible"
+    }
+  ]
+}
