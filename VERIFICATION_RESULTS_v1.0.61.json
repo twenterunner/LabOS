@@ -1,0 +1,156 @@
+{
+  "version": "1.0.61",
+  "passed": 37,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "required web release files present",
+      "passed": true
+    },
+    {
+      "name": "web-only package uses IndexedDB repository",
+      "passed": true
+    },
+    {
+      "name": "no API/SQLite storage class retained",
+      "passed": true
+    },
+    {
+      "name": "REV 1.0.61 version",
+      "passed": true
+    },
+    {
+      "name": "all JS/CSS cache busting updated",
+      "passed": true
+    },
+    {
+      "name": "sample register collapsed by default",
+      "passed": true
+    },
+    {
+      "name": "exact missing requester input guidance",
+      "passed": true
+    },
+    {
+      "name": "requester direct action opens controlled request editor",
+      "passed": true
+    },
+    {
+      "name": "generic management navigation not presented as Resolve",
+      "passed": true
+    },
+    {
+      "name": "administrator abort/archive workflow",
+      "passed": true
+    },
+    {
+      "name": "archive manager cutoff deletion",
+      "passed": true
+    },
+    {
+      "name": "archived builds read-only",
+      "passed": true
+    },
+    {
+      "name": "drag feasible-slot planner",
+      "passed": true
+    },
+    {
+      "name": "drag feasibility includes people and equipment",
+      "passed": true
+    },
+    {
+      "name": "drag feasibility includes care and planning situations",
+      "passed": true
+    },
+    {
+      "name": "downstream tasks replan after drop",
+      "passed": true
+    },
+    {
+      "name": "sticky standards navigation",
+      "passed": true
+    },
+    {
+      "name": "standards local search",
+      "passed": true
+    },
+    {
+      "name": "consolidated resource assurance domains",
+      "passed": true
+    },
+    {
+      "name": "six resource assurance filter tiles",
+      "passed": true
+    },
+    {
+      "name": "resource assurance individual equipment scope",
+      "passed": true
+    },
+    {
+      "name": "30/60/90 upcoming assurance buckets",
+      "passed": true
+    },
+    {
+      "name": "configurable due warning weeks/months",
+      "passed": true
+    },
+    {
+      "name": "combined assurance report selectable domains",
+      "passed": true
+    },
+    {
+      "name": "report exposes 0-30 / 31-60 / 61-90 bands",
+      "passed": true
+    },
+    {
+      "name": "default rationale for lesson review",
+      "passed": true
+    },
+    {
+      "name": "default rationale for MSA review",
+      "passed": true
+    },
+    {
+      "name": "default rationale for planning proposal",
+      "passed": true
+    },
+    {
+      "name": "vacation preview explains not saved yet",
+      "passed": true
+    },
+    {
+      "name": "5S good/bad visual examples and expectations",
+      "passed": true
+    },
+    {
+      "name": "mobile CSS covers new sticky/filter controls",
+      "passed": true
+    },
+    {
+      "name": "core.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "demo-data.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "repository.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "services.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "app.js JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "service-worker.js JavaScript syntax",
+      "passed": true
+    }
+  ],
+  "browser_note": "Source, syntax, packaging and feature-path verification completed. A local Chromium navigation pass was attempted but the execution environment blocks localhost navigation by administrator policy; final deployed exploratory acceptance remains recommended."
+}

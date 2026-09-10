@@ -1,9 +1,11 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.60
+# LabOS — Laboratory Operations System POC · REV 1.0.61
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
+## REV 1.0.61 — guided requester action, constrained drag replanning and consolidated Resource Assurance
 
+This is the **static web / GitHub Pages** build. It deliberately uses browser IndexedDB and contains no Python/SQLite server. REV 1.0.61 makes missing requester inputs explicit, adds administrator abort/archive/retention deletion, constrained drag-and-drop replanning, collapsed sample registers, sticky/local search navigation, consolidated Calibration/Maintenance/Training/EHS assurance with 30/60/90-day reporting and configurable due warnings, clearer vacation impact previews, default decision rationales, and visual good/bad 5S examples.
 
 ## REV 1.0.60 — guided blocker resolution
 

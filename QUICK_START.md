@@ -17,7 +17,7 @@
 
 
 
-## REV 1.0.60 — resolve engineering clarifications without hunting
+## REV 1.0.61 — resolve engineering clarifications without hunting
 
 When Action Centre shows a clarification blocker, press **Resolve**. The modal now displays the blocker cause, the exact field/evidence needed, the current owner and the next owner. For a programming/calibration interface blocker, enter the interface definition directly in the Resolve modal, save it, then run **Reassess feasibility now**. LabOS closes that clarification and opens the next real material, process/method or planning step.
 

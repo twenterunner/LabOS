@@ -1,12 +1,12 @@
 {
-  "pass": 21,
-  "fail": 0,
+  "pass": 20,
+  "fail": 1,
   "total": 21,
   "checks": [
     {
       "name": "REV 1.0.60 / schema 29",
-      "pass": true,
-      "detail": "1.0.60-poc / 29"
+      "pass": false,
+      "detail": "1.0.61-poc"
     },
     {
       "name": "Engineering interface clarification opens the exact missing field",
