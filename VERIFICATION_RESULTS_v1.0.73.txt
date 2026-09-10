@@ -1,0 +1,28 @@
+PASS: core version 1.0.73
+PASS: header version 1.0.73
+PASS: cache busting 1.0.73
+PASS: batch engineering material receipt UI
+PASS: completed material rows explicitly green
+PASS: material completion exposes next guided action
+PASS: material guided step uses physical build readiness
+PASS: yellow receive/next actions
+PASS: single consolidated method sheet
+PASS: PE self release, non-PE PE signoff rule
+PASS: process development actions route to consolidated sheet
+PASS: request submit is a handoff and yellow
+PASS: release approvals deferred until engineering review
+PASS: readiness approvals deferred until readiness gate
+PASS: test capability inference present
+PASS: planner can train staff rather than false zero-skill blocker
+PASS: javascript syntax app.js
+PASS: javascript syntax core.js
+PASS: javascript syntax demo-data.js
+PASS: javascript syntax repository.js
+PASS: javascript syntax services.js
+PASS: javascript syntax service-worker.js
+PASS: domain regression: approvals/material/auto-plan/training
+Domain: {"prematureDraft":0,"prematureSubmitted":0,"materialPlanningReady":true,"materialBuildReady":true,"portfolioPlans":14,"portfolioFailed":0,"equipmentMismatches":0,"invariants":0,"noSkillFailed":0,"autoTraining":18}
+PASS: method release authority regression
+Method: {"peSelfRelease":true,"nonPeBlockedUntilPE":true}
+
+24/24 checks passed
