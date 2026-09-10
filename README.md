@@ -1,8 +1,13 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.59
+# LabOS — Laboratory Operations System POC · REV 1.0.60
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
+
+
+## REV 1.0.60 — guided blocker resolution
+
+Engineering clarification blockers can now be completed directly from the Action Centre Resolve modal. The modal shows the blocker cause, required evidence, current owner, next owner and the exact field to complete. Interface-specific requests use a dedicated programming/calibration interface definition rather than treating any non-empty configuration string as sufficient. After the definition is saved, Lab Planning can run the guided feasibility reassessment; LabOS then routes to the next real blocker or planning step.
 
 
 ## REV 1.0.59 — governed Gage R&R decisions, 5S KPIs and closed-loop audit resolution

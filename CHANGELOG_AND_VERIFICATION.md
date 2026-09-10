@@ -1,3 +1,20 @@
+# LabOS REV 1.0.60 — guided clarification resolution with zero guesswork
+
+## What changed
+
+- Action Centre engineering clarifications now expose the exact missing input directly inside the Resolve workflow instead of sending the user to a large generic request form.
+- Interface-specific blockers have a dedicated Programming / calibration interface definition field with concrete guidance on what to enter.
+- Each resolution step names its owner. After engineering supplies the definition, ownership visibly transfers to Lab Planning for feasibility reassessment.
+- Reassessment routes directly to the next real material, process/method or planning step and closes the clarification action; it never silently commits a delivery date.
+- The normal Edit prototype request form also retains the structured interface definition so the evidence remains editable outside the blocker workflow.
+- The blocker cause, impact and closure condition are visible without opening a foldout.
+
+## Verification
+
+REV 1.0.60 adds focused checks for the new guided resolver and retains REV 1.0.59 behavior.
+
+---
+
 # LabOS REV 1.0.59 — governed Gage R&R, 5S KPI trend, closed-loop audit resolution and sign-off stability
 
 ## What changed

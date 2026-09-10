@@ -1,12 +1,12 @@
 {
-  "pass": 13,
-  "fail": 1,
+  "pass": 14,
+  "fail": 0,
   "total": 14,
   "checks": [
     {
-      "name": "Version is REV 1.0.59 with schema 29",
-      "pass": false,
-      "detail": "version 1.0.60-poc"
+      "name": "Version is REV 1.0.60 with schema 29",
+      "pass": true,
+      "detail": "1.0.60-poc / schema 29"
     },
     {
       "name": "Demo contains governed Control Plan measurement evidence",

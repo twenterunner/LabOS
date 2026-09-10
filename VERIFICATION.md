@@ -1,3 +1,23 @@
+# LabOS REV 1.0.60 verification
+
+REV 1.0.60 adds focused regression coverage for zero-guess engineering clarification resolution while retaining the REV 1.0.59 suites. Schema remains **29**.
+
+## Final retained check set
+
+| Suite | Result |
+|---|---:|
+| Core domain / planner | 46 / 46 |
+| Repository / migration | 6 / 6 |
+| REV 1.0.60 focused resolver checks + retained REV 1.0.59 governance | 21 / 21 |
+| Build Report / report rendering | 14 / 14 |
+| UI interaction regression | 26 / 26 |
+| Static/package guards | 33 / 33 |
+| Approval-package regression | 10 / 10 |
+| Role/build/workspace stress | 1,820 / 1,820 |
+| **Total** | **1,976 / 1,976** |
+
+The package is also extracted after ZIP creation and the same release checks are rerun from the extracted copy before delivery.
+
 # LabOS REV 1.0.59 verification
 
 REV 1.0.59 was verified against retained core, repository, approval-package, mobile UI, Build Report/Lab Performance and role/build/workspace stress behavior, plus new focused checks for Gage R&R decision governance, 5S KPI/trend logic, audit calibration resolution, audit evidence print/PDF formatting and stable release sign-off binding. Schema remains **29**; this revision does not require a data-model migration.
