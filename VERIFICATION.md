@@ -1,3 +1,9 @@
+## REV 1.0.75 verification
+
+REV 1.0.75 makes workflow blockers stage-specific, gives route/readiness blockers exact resolution paths, routes 5S corrective actions through a dedicated correction/recheck flow, and consolidates resource assurance into Lab Standards & Resources with manual plus 30/60/90-day bulk scheduling. Capacity wording now calls calibration/maintenance/training time "Resource assurance work" rather than "Readiness load".
+
+See `VERIFICATION_v1.0.75.md` and run `python verification-v175.py` for the current release evidence.
+
 ## REV 1.0.71 verification
 
 REV 1.0.71 consolidates Dashboard and Action Centre into the role-specific My Work view and moves drag alternatives from a separate list onto the swimlane itself. Planning alternatives are classified green/yellow/red according to current-resource feasibility, prevalidated training, or quantified cross-build impact. Red and yellow alternatives require an explicit decision; green no-impact alternatives apply directly.
