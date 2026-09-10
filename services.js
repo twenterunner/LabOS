@@ -107,10 +107,17 @@ class PlannerService{
   const place=(task,duration,equipmentCapability,skillId,basis,status='Planned',taskType='process')=>{
    duration=Math.max(.25,Number(duration)||1);structuralCheck(equipmentCapability,skillId,task.name);
    const eqPool=equipmentCapability?(state.equipment||[]).filter(e=>(P.equipmentPlanningCapability?P.equipmentPlanningCapability(e):e.capability)===equipmentCapability):[null],peopleRaw=skillId?labSkillPool(skillId):(state.staff||[]).filter(st=>st.role==='process_engineer'||st.role==='technician'||st.role==='lab_planner');
-   const preferredStaffId=r.planningPreferences?.staffByTask?.[task.id]||r.planningPreferences?.staffByTaskName?.[task.name]||r.planningPreferences?.staffBySkill?.[skillId]||null,preferredStaff=preferredStaffId?(state.staff||[]).find(st=>st.id===preferredStaffId):null;
-   if(preferredStaffId&&!preferredStaff){const e=new Error(`The selected staff assignment for ${task.name} no longer exists.`);e.code='STAFF_UNAVAILABLE';e.staffId=preferredStaffId;e.skillId=skillId;e.taskName=task.name;throw e;}
-   if(preferredStaff&&!hasSkillAssociation(preferredStaff,skillId)){const e=new Error(`${preferredStaff.name} is not associated with the required competency for ${task.name}.`);e.code='ZERO_REQUIRED_SKILL';e.skillId=skillId;e.skillName=(state.competencies||[]).find(c=>c.id===skillId)?.name||skillId;e.taskName=task.name;throw e;}
-   if(preferredStaff&&preferredStaff.available===false){const e=new Error(`${preferredStaff.name} is currently unavailable for ${task.name}.`);e.code='STAFF_UNAVAILABLE';e.staffId=preferredStaff.id;e.skillId=skillId;e.taskName=task.name;throw e;}const availablePeople=peopleRaw.filter(person=>person?.available!==false),peoplePool=preferredStaff?[preferredStaff]:(availablePeople.length?availablePeople:(peopleRaw.length?peopleRaw:[null]));
+   const preferredStaffId=r.planningPreferences?.staffByTask?.[task.id]||r.planningPreferences?.staffByTaskName?.[task.name]||r.planningPreferences?.staffBySkill?.[skillId]||null;let preferredStaff=preferredStaffId?(state.staff||[]).find(st=>st.id===preferredStaffId):null;
+   // A planning preference is never allowed to turn an otherwise feasible portfolio into a false structural blocker.
+   // If the preferred person was removed, is unavailable, or no longer carries the required competency, ignore the preference
+   // and let the optimizer select a valid associated person. Explicit locks remain represented by locked bookings, not preferences.
+   if(preferredStaffId&&(!preferredStaff||preferredStaff.available===false||!hasSkillAssociation(preferredStaff,skillId))){
+     const why=!preferredStaff?'no longer exists':preferredStaff.available===false?'is unavailable':'does not hold the required competency';
+     riskNotes.push(`${task.name}: preferred person ${preferredStaff?.name||preferredStaffId} ${why}; optimizer ignored the stale preference and selected feasible qualified capacity instead.`);
+     r.planningPreferences=r.planningPreferences||{};if(r.planningPreferences.staffByTask)delete r.planningPreferences.staffByTask[task.id];if(r.planningPreferences.staffByTaskName)delete r.planningPreferences.staffByTaskName[task.name];if(skillId&&r.planningPreferences.staffBySkill?.[skillId]===preferredStaffId)delete r.planningPreferences.staffBySkill[skillId];
+     preferredStaff=null;
+   }
+   const availablePeople=peopleRaw.filter(person=>person?.available!==false),peoplePool=preferredStaff?[preferredStaff]:(availablePeople.length?availablePeople:(peopleRaw.length?peopleRaw:[null]));
    let best=null;
    for(const eq of eqPool)for(const person of peoplePool){let ready=new Date(cursor);if(eq){const on=ready.toISOString().slice(0,10);if(!P.projectedEquipmentReady(state,eq,on)){let h=0;if(eq.calibrationStatus!=='Valid'||(eq.calibrationDue&&eq.calibrationDue<on))h+=Number(eq.calibrationDurationHours||4);if(eq.maintenanceStatus==='Overdue'||(eq.maintenanceDue&&eq.maintenanceDue<on))h+=Number(eq.maintenanceDurationHours||4);ready=addWorkHours(ready,Math.max(1,h));}}
     if(person&&skillId&&!P.projectedStaffQualification(state,person,skillId,ready.toISOString().slice(0,10)).valid){const sk=(state.competencies||[]).find(c=>c.id===skillId);ready=addWorkHours(ready,Number(sk?.trainingDurationHours||4));}
