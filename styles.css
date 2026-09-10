@@ -1380,3 +1380,17 @@ html,body,.main,#page{overflow-x:visible}
 .assurance-internal-profile-v1077{margin-bottom:12px}
 #std-5s .data-table td strong,#std-5s .data-table td small{display:block;line-height:1.35}
 @media(max-width:1000px){.standards-sticky-v1077{grid-template-columns:1fr}.standards-sticky-v1077 .standards-chip-row{justify-content:flex-start}}
+
+/* REV 1.0.78 */
+.manual-plan-table-v1078{min-width:1180px}
+.manual-plan-table-v1078 td:first-child{min-width:260px}
+.manual-plan-table-v1078 input,.manual-plan-table-v1078 select{width:100%;min-width:120px}
+.manual-build-choice-v1078{display:grid;gap:8px}
+.swim-zoom-v1078{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin:0 0 7px;font-size:12px;color:var(--muted)}
+.swim-zoom-v1078 button,.workspace-plan-zoom-v1069 [data-v1078-build-zoom]{border:1px solid var(--line);background:#fff;border-radius:8px;min-width:34px;height:30px;font-weight:800;cursor:pointer;opacity:1!important}
+.swim-zoom-v1078 button:hover,.workspace-plan-zoom-v1069 [data-v1078-build-zoom]:hover{border-color:var(--teal);background:#eef9fa}
+.swim-zoom-v1078 button:disabled,.workspace-plan-zoom-v1069 button:disabled{opacity:1!important;cursor:pointer!important}
+.replan-reason-v1078{display:block;margin-top:4px;color:var(--muted);max-width:780px;white-space:normal}
+.replan-kpi-v1078{margin-top:14px}
+.replan-kpi-v1078 td small{display:block;margin-top:3px;color:var(--muted);max-width:520px;white-space:normal}
+@media(max-width:900px){.manual-plan-table-v1078{min-width:980px}}

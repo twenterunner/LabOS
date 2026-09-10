@@ -33,3 +33,9 @@ See `VERIFICATION_v1.0.76.md`. Smart target-first/selective replanning, one-sect
 
 ## REV 1.0.77
 Sequential workflow ordering, stage confirmation, assurance reporting/navigation, 5S persistence views, process detail and runtime regression checks were added before packaging.
+
+## REV 1.0.78
+- Manual controlled planning added as an alternative to AUTO-PLAN.
+- Main and build swimlanes now expose active − / Fit / + zoom controls.
+- Commitment replan reasons are surfaced in Build Commitment Health and aggregated on the KPI tab.
+- See `VERIFICATION_v1.0.78.md` and `verification-v178.py` for executable evidence.
