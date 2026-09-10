@@ -1,0 +1,46 @@
+{
+  "revision": "1.0.54",
+  "schemaVersion": 27,
+  "passed": 1927,
+  "failed": 0,
+  "total": 1927,
+  "suites": {
+    "core_domain_planner": [
+      46,
+      46
+    ],
+    "persistence_migration": [
+      6,
+      6
+    ],
+    "planning_disruption_scenarios": [
+      10,
+      10
+    ],
+    "role_build_workspace_render_stress": [
+      1783,
+      1783
+    ],
+    "ui_interaction_regression": [
+      23,
+      23
+    ],
+    "readiness_material_mobile_staff": [
+      14,
+      14
+    ],
+    "build_report_lab_performance": [
+      14,
+      14
+    ],
+    "hard_gate_lessons_terminology": [
+      11,
+      11
+    ],
+    "static_mobile_package_source": [
+      20,
+      20
+    ]
+  },
+  "physical_browser_note": "A genuine physical Android/iOS touch-render pass is not automated in this environment; responsive containment and behavior are covered by automated checks and user-device screenshots."
+}

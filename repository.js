@@ -225,6 +225,15 @@ class MigrationService{
     P.audit(s,'Guided resolution and mobile workflow model upgraded','System','LabOS','Stale readiness state / unforced staff reassignment / fixed receipt quantity / modal overflow risk','Live readiness reconciliation / prevalidated staff choices / partial-material output limiter / viewport-safe modal layout','REV 1.0.53 migration');
     s.dataVersion=wasDemo?'2026.09-demo-29':(s.dataVersion||'migrated');s.schemaVersion=26;continue;
    }
+   if(s.schemaVersion===26){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    s.settings=s.settings||{};s.settings.labSetup=s.settings.labSetup||{};
+    // REV 1.0.54: green setup ticks are explicit reviewed milestones, never inferred from pre-existing data.
+    s.settings.labSetup.completedSteps=[];delete s.settings.labSetup.completedAt;delete s.settings.labSetup.completedBy;
+    s.lessonDecisions=Array.isArray(s.lessonDecisions)?s.lessonDecisions:[];s.lessons=Array.isArray(s.lessons)?s.lessons:[];
+    P.audit(s,'Hard-gated workflow and learning model enabled','System','LabOS','Data-presence ticks / implicit closeout learning','Explicit reviewed setup milestones / evidence-based lessons proposals / concise report terminology','REV 1.0.54 migration');
+    s.dataVersion=wasDemo?'2026.09-demo-30':(s.dataVersion||'migrated');s.schemaVersion=27;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

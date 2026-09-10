@@ -1,0 +1,62 @@
+{
+  "pass": 11,
+  "fail": 0,
+  "total": 11,
+  "checks": [
+    {
+      "name": "Setup green ticks require explicit completed milestone, not data presence",
+      "pass": true,
+      "detail": "reviewed milestone + sequential lock"
+    },
+    {
+      "name": "Schema-26 migration resets inferred setup ticks and initializes learning decisions",
+      "pass": true,
+      "detail": "schema 27 explicit review reset"
+    },
+    {
+      "name": "Future build workflow steps are hard locked behind first incomplete step",
+      "pass": true,
+      "detail": "10 guided steps gated"
+    },
+    {
+      "name": "Audit object snapshots are summarized instead of dumping JSON",
+      "pass": true,
+      "detail": "P26-TEST · Example"
+    },
+    {
+      "name": "Build data automatically creates evidence-based lesson proposals",
+      "pass": true,
+      "detail": "2 proposal(s)"
+    },
+    {
+      "name": "Lesson inference consolidates linked evidence and timing churn",
+      "pass": true,
+      "detail": "linked evidence consolidated"
+    },
+    {
+      "name": "Lessons workspace requires explicit accept or reject with rationale flow",
+      "pass": true,
+      "detail": "P26-0050"
+    },
+    {
+      "name": "Build genealogy explains route progress and legacy unmatched material",
+      "pass": true,
+      "detail": "plain-language traceability"
+    },
+    {
+      "name": "Planning KPI exposes commitment movement as an actionable decision queue",
+      "pass": true,
+      "detail": "direct Review action"
+    },
+    {
+      "name": "Build report compact tables cannot expand beyond Android modal",
+      "pass": true,
+      "detail": "viewport-safe compact tables"
+    },
+    {
+      "name": "Build report closeout includes accepted lessons with evidence and rationale",
+      "pass": true,
+      "detail": "learning is part of controlled report"
+    }
+  ]
+}

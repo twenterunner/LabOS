@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.53-poc';
-  ProtoLab.SCHEMA_VERSION = 26;
+  ProtoLab.VERSION = '1.0.54-poc';
+  ProtoLab.SCHEMA_VERSION = 27;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -516,6 +516,10 @@
       ];
     }
     state.improvementProposals=state.improvementProposals||[];
+    state.lessonDecisions=Array.isArray(state.lessonDecisions)?state.lessonDecisions:[];
+    state.lessons=Array.isArray(state.lessons)?state.lessons:[];
+    state.settings.labSetup=state.settings.labSetup||{};
+    state.settings.labSetup.completedSteps=Array.isArray(state.settings.labSetup.completedSteps)?state.settings.labSetup.completedSteps:[];
     (state.actions||[]).forEach(a=>{
       const owner=String(a.owner||'').trim();if(!owner)return;
       const role=ProtoLab.ROLES.find(r=>r.id===owner||r.label===owner);

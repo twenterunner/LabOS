@@ -1,4 +1,4 @@
-# LabOS REV 1.0.53 · Quick Start
+# LabOS REV 1.0.54 · Quick Start
 
 1. **Set up a lab** — Administrator → Configuration → **Start / continue setup**. Work through scope, customers/internal use, products, people/competencies, equipment/readiness durations, evidence, released standards and the final integrity check. If there is no historical readiness evidence to migrate, choose the clean-start option so LabOS schedules readiness before first use.
 2. **Migrate existing LIMS data** — Configuration → **Import from existing LIMS**, or use the import actions inside the setup wizard. Download the relevant template, export/map your current data to the recognised columns, validate, then import. Equipment should precede calibration/maintenance; staff and competencies should precede training certificates.
@@ -13,7 +13,16 @@
 11. **Resource readiness** — Schedule calibration, maintenance or training with an editable duration. LabOS automatically protects affected build schedules or refuses the unresolved slot.
 12. **Improvement Scan** — Only proposals LabOS can implement end-to-end are actionable. Accept means apply + verify, not “go replan manually.”
 
-## REV 1.0.53 — daily-use changes
+
+## REV 1.0.54 — hard setup, learning and commitment decisions
+
+- In **Lab Setup**, a green tick means the setup area was explicitly reviewed and completed. Data merely existing in the database is not enough. **Save & continue** is blocked until the minimum information for the current area is present, and later setup steps stay locked. Missing calibration/maintenance durations can be filled directly in the Equipment setup step.
+- In a build, later guided workflow steps remain locked until the current required step is genuinely complete.
+- At **Engineering handover & close → Lessons & Learning**, LabOS automatically proposes evidence-based lessons from quality/yield exceptions, timing churn, material shortages, process-time overruns, failed Control Plan measurements and method development. Accept or reject every proposal with a required rationale. Accepted lessons become retained learning and appear in the Build Report.
+- In **Visual Resource Planning**, **Commitment decisions** means the latest feasible forecast differs from the date currently promised. Tap the metric, review current commitment → proposed forecast and reason, then explicitly keep or change the commitment.
+- In the Build Report, **11 of 12 operations** means execution evidence exists for 11 of the 12 required route operations for that sample. **Not linked to current BOM** means a historical/migrated material issue is retained for traceability but does not satisfy any requirement in the build's current BOM.
+
+## REV 1.0.54 — daily-use changes
 
 ### Build execution
 The active build workflow now carries a second sticky row for the process-route operations. Select a route operation there. Use the single guided action on the execution card to start work, record required process/Control Plan data, and complete the execution. CSV and build-specific-field tools are inside the data matrix rather than repeated on the page.
@@ -22,18 +31,18 @@ The active build workflow now carries a second sticky row for the process-route 
 Open **Lab Standards & Resources → Standard Test Library → Configure test families** to maintain the controlled test-family list. Each standard test is assigned to one family.
 
 ### 5S
-Open **Lab Standards & Resources → 5S Workplace Control**. Configure zones and owners, tap **Run 5S check**, score Sort / Set in order / Shine / Standardize / Sustain, and record evidence. Any score below the standard creates an owner action that remains open until guided resolution evidence is recorded. REV 1.0.53 fixes the zone-button binding that could make Run 5S check appear unresponsive.
+Open **Lab Standards & Resources → 5S Workplace Control**. Configure zones and owners, tap **Run 5S check**, score Sort / Set in order / Shine / Standardize / Sustain, and record evidence. Any score below the standard creates an owner action that remains open until guided resolution evidence is recorded. REV 1.0.54 fixes the zone-button binding that could make Run 5S check appear unresponsive.
 
 ### Action Centre
 The Action Centre is personal: it shows only work assigned to the signed-in user. Managers can still assess portfolio/workflow status elsewhere; build blockers remain global even when their corrective action belongs to another person.
 
-## REV 1.0.53 — Build Report and Lab Performance
+## REV 1.0.54 — Build Report and Lab Performance
 
 - Open a build and choose **Build Report**. The normal screen shows decision-critical summary tables. Expand measured Control Plan data, supporting process data, sample observations/photos, statistical plots and revision history only when needed. **Print / save PDF** automatically includes the folded evidence.
 - For SC, CC and all other Control Plan characteristics, use **Control Plan execution & measured data**: the summary shows coverage/result and the matrix shows the actual sample-level values required by the approved sampling plan.
 - Open **Management → Lab Performance** for the management cockpit. Start with **Management attention** and the four operating pillars; expand delivery, quality/cost, capacity, process or pipeline analytics when a signal needs investigation.
 
-## REV 1.0.53 — readiness, people and material receipt
+## REV 1.0.54 — readiness, people and material receipt
 
 - When a readiness blocker is resolved, LabOS immediately re-evaluates that specific condition and rerenders the Build Readiness workspace. A cleared item becomes green without refresh.
 - A user-selected staff replacement is retained as a controlled planning preference. AUTO-PLAN no longer selects an unavailable person when an available associated person can do the work.

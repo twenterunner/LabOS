@@ -1,17 +1,20 @@
-# LabOS — Prototype Build Management POC · REV 1.0.53
+# LabOS — Prototype Build Management POC · REV 1.0.54
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
-## REV 1.0.53 — live readiness, material-output control and mobile workflow hardening
+## REV 1.0.54 — hard workflow gates, learning closeout and plain-language reporting
 
-This revision addresses four operational defects found during Android use:
+This revision completes the hard guided-workflow contract introduced in the previous releases:
 
-- a readiness item that has actually been resolved is re-evaluated immediately and the workspace is rerendered, so the item changes to **green / Ready** without requiring a manual refresh;
-- staff planning now honors an explicitly selected replacement person and excludes unavailable people whenever a valid available alternative exists;
-- engineering-material receipt defaults to the exact remaining BOM need, accepts buffer/excess stock, and records a lower receipt as a governed **material output limiter** that caps new sample creation until more material is issued;
-- modal sizing is tied to the browser's real `visualViewport` as well as responsive CSS, and the process-data matrix uses shorter, separated headings and sample identifiers to avoid Android overflow/clutter.
+- **Lab Setup milestones are explicit.** Existing data does not create green ticks. A setup step becomes green only after its minimum required information is present and the step is deliberately saved/completed; later setup steps remain locked until earlier steps are complete.
+- **Build workflow hopping is blocked.** Later lifecycle/workspace steps cannot be opened while an earlier required step remains incomplete.
+- **Lessons & Learning is a real closeout stage.** LabOS derives candidate lessons from quality/yield exceptions, schedule churn, material constraints, process-time overruns, failed controlled measurements and released method development. Duplicate evidence is consolidated. Each proposal must be accepted or rejected with rationale before controlled closeout; accepted learning is included in the Build Report.
+- **Build Report terminology is explicit.** Sample route progress is shown as “11 of 12 operations” rather than a cryptic ratio, and legacy material that does not satisfy a current BOM requirement is labelled “Not linked to current BOM”. Compact report tables are viewport-safe on mobile; complex analytical matrices scroll only within their own container.
+- **Commitment decisions are actionable.** If the latest forecast differs from the date currently promised, Planning shows a direct **Commitment decisions → Review** queue with current date, proposed forecast, movement and reason.
+- **Audit history no longer dumps raw objects/JSON.** Structured snapshots are summarized into readable change/rationale entries.
+- **Setup cannot dead-end on imported equipment durations.** Missing calibration/maintenance durations can be completed directly in the Equipment setup step before continuing.
 
-The REV 1.0.52 concise Build Report and **Lab Performance** cockpit remain intact: actual SC/CC/PS/other Control Plan values appear in the report once, supporting detail uses foldouts, and management KPIs are exception-first across Delivery & Flow, Quality, Readiness & Compliance, and Capacity & Cost.
+The previous live-readiness, deterministic staff substitution, material-output limiting, Android visual-viewport containment, concise Build Report, Lab Performance cockpit, 5S, controlled process execution and LIMS-import features remain retained.
 
 ## Operating contract
 
