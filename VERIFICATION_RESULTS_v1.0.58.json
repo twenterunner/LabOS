@@ -1,0 +1,72 @@
+{
+  "pass": 13,
+  "fail": 0,
+  "total": 13,
+  "checks": [
+    {
+      "name": "REV 1.0.58 / schema 29",
+      "pass": true,
+      "detail": "1.0.58-poc / 29"
+    },
+    {
+      "name": "Schema 28 migration normalises MSA context without data loss",
+      "pass": true,
+      "detail": "2026-09-01 / LabOS calculated"
+    },
+    {
+      "name": "Daily operations review is once per day unless explicitly rerun",
+      "pass": true,
+      "detail": "automatic de-dup + manual rerun"
+    },
+    {
+      "name": "Quality UI removes Capability & SPC and retains MSA",
+      "pass": true,
+      "detail": "Quality is Control Plans + MSA + cases/trends/history"
+    },
+    {
+      "name": "MSA can be uploaded or run in guided Gage R&R",
+      "pass": true,
+      "detail": "two controlled evidence paths"
+    },
+    {
+      "name": "MSA is explicitly linked to process, Standard Test and equipment",
+      "pass": true,
+      "detail": "three-way context links present"
+    },
+    {
+      "name": "MSA retains date, raw data or document, and formal approval",
+      "pass": true,
+      "detail": "future-reusable evidence retained"
+    },
+    {
+      "name": "Missing MSA provides guided next path",
+      "pass": true,
+      "detail": "no dead-end"
+    },
+    {
+      "name": "Governance register is responsive cards and objects are tappable",
+      "pass": true,
+      "detail": "mobile-safe tappable register"
+    },
+    {
+      "name": "Subsection navigation is sticky under the fixed header",
+      "pass": true,
+      "detail": "sticky on long non-workspace pages"
+    },
+    {
+      "name": "Lessons are no longer injected into primary workspace command area",
+      "pass": true,
+      "detail": "single late-workflow learning workbench retained"
+    },
+    {
+      "name": "Replan explanation is pre-populated from originating context",
+      "pass": true,
+      "detail": "planning event / change / constraint explanation inferred"
+    },
+    {
+      "name": "Daily check automatically refreshes on a new active day",
+      "pass": true,
+      "detail": "active-day scheduler + manual rerun"
+    }
+  ]
+}

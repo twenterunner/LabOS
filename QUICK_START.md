@@ -1,4 +1,4 @@
-# LabOS REV 1.0.57 · Quick Start
+# LabOS REV 1.0.58 · Quick Start
 
 1. **Set up a lab** — Administrator → Configuration → **Start / continue setup**. Work through scope, customers/internal use, products, people/competencies, equipment/readiness durations, evidence, released standards and the final integrity check. If there is no historical readiness evidence to migrate, choose the clean-start option so LabOS schedules readiness before first use.
 2. **Migrate existing LIMS data** — Configuration → **Import from existing LIMS**, or use the import actions inside the setup wizard. Download the relevant template, export/map your current data to the recognised columns, validate, then import. Equipment should precede calibration/maintenance; staff and competencies should precede training certificates.
@@ -14,6 +14,11 @@
 12. **Improvement Scan** — Only proposals LabOS can implement end-to-end are actionable. Accept means apply + verify, not “go replan manually.”
 
 
+
+
+## REV 1.0.58 — approval packages
+
+Do not hunt through individual approval records. Open the sign-off package shown in the workflow or Next Action strip. LabOS shows the required signer(s), their role, what each sign-off covers, and progress. One person signs once for related items in the same decision package; genuinely independent roles remain separate signatures.
 
 
 ## REV 1.0.57 — key workflow changes

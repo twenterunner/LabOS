@@ -1,0 +1,57 @@
+{
+  "pass": 10,
+  "fail": 0,
+  "total": 10,
+  "checks": [
+    {
+      "name": "Approval UI uses decision packages rather than one tile per record",
+      "pass": true,
+      "detail": "one package per decision point"
+    },
+    {
+      "name": "Legacy Build Readiness approval is removed from visible sign-off packages",
+      "pass": true,
+      "detail": "readiness remains evidence gate, not duplicate approval"
+    },
+    {
+      "name": "Multiple independent release signers remain explicit",
+      "pass": true,
+      "detail": "2 required signers shown separately"
+    },
+    {
+      "name": "Same signer can cover several related records with one action",
+      "pass": true,
+      "detail": "1 signer action / 2 underlying records"
+    },
+    {
+      "name": "Approval package shows signer progress and covered scope",
+      "pass": true,
+      "detail": "progress + person + role + scope"
+    },
+    {
+      "name": "Workspace exposes current owner and next-step owner",
+      "pass": true,
+      "detail": "owner visible before action"
+    },
+    {
+      "name": "Guided steps name every pending signer when several remain",
+      "pass": true,
+      "detail": "multi-owner next step explicit"
+    },
+    {
+      "name": "Top-level workspaces receive a role-aware next-action strip",
+      "pass": true,
+      "detail": "action + owner + direct route"
+    },
+    {
+      "name": "Quality sign-off queue is consolidated by build decision point",
+      "pass": true,
+      "detail": "decision package queue"
+    },
+    {
+      "name": "Sign-off consolidation preserves audit records",
+      "pass": true,
+      "detail": "one click, underlying records/audit preserved"
+    }
+  ]
+}

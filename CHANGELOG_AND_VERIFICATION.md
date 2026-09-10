@@ -1,3 +1,25 @@
+# LabOS REV 1.0.58 — streamlined sign-off packages and explicit ownership
+
+## Approval simplification
+REV 1.0.58 reduces approval fatigue without weakening governance. LabOS now presents approvals as **decision packages** rather than one visible tile per underlying approval record. Repeated items owned by the same signer at the same decision point are consolidated into one sign-off action, while the underlying records and audit trail are retained. Distinct independent roles are never silently collapsed.
+
+- Build-specific route / Work Instruction / Control Plan deltas are grouped into one definition sign-off package by signer.
+- Release approvals are shown in one release package with explicit progress such as `1/3 signers complete`.
+- When more than one person or role must sign, every required signer is shown by name/role, with covered scope and signed/pending status.
+- The legacy generic **Build Readiness approval** is removed from user-facing approval queues because readiness is already an evidence gate. Genuine Product Safety or explicitly configured independent readiness decisions remain.
+- One signer action can approve that signer's related items in the package, but separate independent roles still require their own signatures.
+
+## Next action and owner everywhere
+Top-level workspaces now receive a compact role-aware **Next action / Next sign-off** strip with the action, owner, context and a direct route. The guided build workspace keeps its fixed workflow cockpit and now explicitly labels the current-step owner, sign-off state, and the owner of the next workflow step. When several signers remain, the workflow states how many remain and names the required roles/persons instead of saying only `approval pending`.
+
+## Governance principle
+The UI is intentionally simpler than the audit model: **one visible decision package, one sign-off per required signer, all underlying evidence retained**. This avoids click-heavy duplicate approvals while preserving separation of duties and traceability.
+
+## Verification
+REV 1.0.58 adds focused regression coverage for package consolidation, multi-signer visibility, duplicate Build Readiness suppression, owner/next-action guidance, Quality sign-off consolidation and audit preservation. See `VERIFICATION.md`.
+
+---
+
 # LabOS REV 1.0.57 — contextual MSA, automatic daily review and mobile navigation
 
 ## Changes

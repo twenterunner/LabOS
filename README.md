@@ -1,7 +1,12 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.57
+# LabOS — Laboratory Operations System POC · REV 1.0.58
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
+
+
+## REV 1.0.58 — fewer approval clicks, clearer ownership
+
+Approvals are now grouped into controlled decision packages. A signer sees one action for related items at that decision point; if two or three independent people must sign, LabOS shows all of them explicitly with `signed / pending` progress and covered scope. Generic Build Readiness approval noise is suppressed because readiness itself remains the governing evidence gate. Every main workspace also exposes the next action and owner; the guided build cockpit shows the current owner, consolidated sign-off progress and next-step owner.
 
 
 ## REV 1.0.57 — governed measurement assurance, safer exceptions and faster navigation
