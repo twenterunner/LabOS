@@ -3261,7 +3261,7 @@ function validatedMoveOptionsV1071(booking,limit=12){
   const reqBookings=(App.state.bookings||[]).filter(b=>b.requestId===booking.requestId).sort((a,b)=>new Date(a.start)-new Date(b.start));
   const idx=reqBookings.findIndex(b=>b.id===booking.id),prev=idx>0?reqBookings[idx-1]:null,from=prev?.end||new Date(),req=bookingRequirementV1062(booking),result=[],used=new Set();
   App.planningMoveProposalsV1071={};App.planningMoveProposalsV1070={};
-  const greenRaw=validatedMoveOptionsV1070(booking,18);
+  const greenRaw=validatedMoveOptionsV1070(booking,10);
   for(const x of greenRaw){
     if(result.length>=6)break;
     const prop=App.planningMoveProposalsV1070?.[x.id];if(!prop?.ok)continue;
@@ -3272,7 +3272,7 @@ function validatedMoveOptionsV1071(booking,limit=12){
     const unqualified=(App.state.staff||[]).filter(s=>s.available!==false&&!(P.projectedStaffQualification?P.projectedStaffQualification(App.state,s,req.skillId,P.todayISO()).valid:(s.competencies||[]).includes(req.skillId))).slice(0,3);
     let y=0,attempts=0;
     outerYellow: for(const d of moveStartCandidatesV1071(from,24)){
-      if(y>=3||attempts>=60)break;
+      if(y>=3||attempts>=18)break;
       const eqs=candidateEquipmentForBookingV1062(booking,d.toISOString().slice(0,10)).slice(0,5);
       for(const eq of eqs){
         for(const st of unqualified){
@@ -3289,7 +3289,7 @@ function validatedMoveOptionsV1071(booking,limit=12){
   let red=0,attempts=0;
   const qualified=(App.state.staff||[]).filter(s=>s.available!==false&&(!req.skillId||(P.projectedStaffQualification?P.projectedStaffQualification(App.state,s,req.skillId,P.todayISO()).valid:(s.competencies||[]).includes(req.skillId)))).slice(0,5);
   outerRed: for(const d of moveStartCandidatesV1071(from,28)){
-    if(red>=4||attempts>=100)break;
+    if(red>=4||attempts>=28)break;
     const eqs=candidateEquipmentForBookingV1062(booking,d.toISOString().slice(0,10)).slice(0,6);
     for(const eq of eqs){
       for(const st of qualified){
@@ -3346,6 +3346,84 @@ function bindPlanningSlotOverlaysV1071(){if(App._v1071OverlayBound)return;App._v
 hideFeasibleSlotsV1061=function(){};
 const _renderV1071Base=render;
 render=function(){if(App.currentView==='action-centre')App.currentView='dashboard';_renderV1071Base();document.querySelectorAll('.global-next-guide').forEach(x=>x.remove());bindPlanningSlotOverlaysV1071()};
+
+
+
+/* ============================================================
+   LabOS REV 1.0.72 — role-focused My Work, capacity horizon,
+   weekend planning setting, clearer required-date markers,
+   and faster/clearer in-lane move interaction.
+   ============================================================ */
+function v1072WeekendsEnabled(){return !!App.state?.settings?.includeWeekendsForBuilds}
+function opsWorkdaysV1072(start,end){let n=0,d=new Date(start);d.setHours(12,0,0,0);while(d<end){const wd=d.getDay();if(v1072WeekendsEnabled()|| (wd!==0&&wd!==6))n++;d.setDate(d.getDate()+1)}return n}
+opsWorkdays=opsWorkdaysV1072;
+planningNextWorkStartV1064=function(input){let d=new Date(input);d.setSeconds(0,0);while(true){const day=d.getDay();if(!v1072WeekendsEnabled()&&day===0){d.setDate(d.getDate()+1);d.setHours(8,0,0,0);continue}if(!v1072WeekendsEnabled()&&day===6){d.setDate(d.getDate()+2);d.setHours(8,0,0,0);continue}if(d.getHours()<8){d.setHours(8,0,0,0);return d}if(d.getHours()>=17){d.setDate(d.getDate()+1);d.setHours(8,0,0,0);continue}return d}};
+nextBusinessDayV1066=function(date){let d=new Date(date);d.setDate(d.getDate()+1);while(!v1072WeekendsEnabled()&&[0,6].includes(d.getDay()))d.setDate(d.getDate()+1);d.setHours(8,0,0,0);return d};
+moveStartCandidatesV1071=function(from,maxDays=35){const out=[],base=planningNextWorkStartV1064(from||new Date());for(let i=0;i<maxDays;i++){const d=planAddDays(base,i);if(!v1072WeekendsEnabled()&&[0,6].includes(d.getDay()))continue;for(const hour of [8,13]){const x=new Date(d);x.setHours(hour,0,0,0);if(x>=base)out.push(x)}}return out};
+
+function myWorkActionTextV1072(a){
+  const r=a.requestId?requestById(a.requestId):null,project=r?`${r.id} · ${r.title}`:(a.category||'Lab operations');
+  let action=a.action||a.nextAction||a.recommendation||a.title||'Review and resolve this item';
+  if(a.resolve==='materials')action='Resolve material availability / receipt so planning can continue';
+  else if(a.resolve==='processrisk')action='Resolve the process or test-method definition';
+  else if(a.resolve==='readiness')action='Complete the required build-readiness evidence';
+  else if(/calibration/i.test(a.title||''))action='Schedule or complete the required calibration';
+  else if(/maintenance/i.test(a.title||''))action='Schedule or complete the required maintenance';
+  else if(/training|competenc/i.test(a.title||''))action='Complete the required training / competency action';
+  else if(/clarif/i.test(a.title||''))action='Provide the missing engineering clarification';
+  return {project,action,owner:a.owner||'Unassigned'};
+}
+function myWorkReadinessRowsV1072(){
+  const role=currentRole(),me=String(App.state.identity?.name||''),now=new Date(),limit=new Date(now.getTime()+21*86400000),rows=[];
+  for(const b of App.state.resourceCareBookings||[]){if(b.status!=='Scheduled')continue;const st=new Date(b.start);if(st<now||st>limit)continue;const target=b.equipmentId?(App.state.equipment||[]).find(e=>e.id===b.equipmentId)?.name:(App.state.staff||[]).find(s=>s.id===b.staffId)?.name;const relevant=role==='administrator'||(role==='lab_manager'&&/Maintenance|Training/i.test(b.type||''))||(role==='metrology'&&/Calibration/i.test(b.type||''))||String(b.owner||'')===me;if(!relevant)continue;rows.push({id:b.id,type:b.type,target:target||b.targetName||'Resource',start:b.start,owner:b.owner||(/Calibration/i.test(b.type||'')?'Metrology':'Lab Manager')})}
+  return rows;
+}
+roleWorkHubV1071=function(){
+  const mine=[...openActions()].sort((a,b)=>(a.severity==='bad'?0:a.severity==='warn'?1:2)-(b.severity==='bad'?0:b.severity==='warn'?1:2)||String(a.due||'').localeCompare(String(b.due||''))),me=String(App.state.identity?.name||'').trim(),proposals=new P.ImprovementService().generate(App.state).filter(x=>String(x.owner||'').trim()===me),readiness=myWorkReadinessRowsV1072();
+  const mandatory=mine.slice(0,10).map(a=>{const m=myWorkActionTextV1072(a);return `<article class="my-work-card-v1072 ${a.severity==='bad'?'bad':a.severity==='warn'?'warn':'neutral'}"><div class="my-work-card-top-v1072"><span>${a.severity==='bad'?'✕':a.severity==='warn'?'●':'•'}</span><strong>${esc(m.project)}</strong></div><div class="my-work-action-v1072"><b>Action</b><span>${esc(m.action)}</span></div><div class="my-work-owner-v1072"><b>Owner</b><span>${esc(m.owner)}</span>${a.due?`<small>Due ${P.formatDate(a.due)}</small>`:''}</div>${btn('Open',a.id?`data-resolve-action="${esc(a.id)}"`:`data-nav="${esc(a.resolve||'dashboard')}"`,'button tiny primary')}</article>`}).join('');
+  const readinessHtml=readiness.slice(0,6).map(x=>`<article class="my-work-card-v1072 readiness"><div class="my-work-card-top-v1072"><span>◷</span><strong>${esc(x.type)} · ${esc(x.target)}</strong></div><div class="my-work-action-v1072"><b>Action</b><span>${esc(/Training/i.test(x.type)?'Ensure the team member completes the planned training before dependent work.':`Complete the planned ${String(x.type||'readiness').toLowerCase()} and return the resource to service.`)}</span></div><div class="my-work-owner-v1072"><b>Owner</b><span>${esc(x.owner)}</span><small>${halfDayLabelV1066(x.start)}</small></div>${btn('Open','data-nav="equipment-master"','button tiny secondary')}</article>`).join('');
+  const improve=proposals.slice(0,4).map(x=>`<article class="my-work-card-v1072 improvement"><div class="my-work-card-top-v1072"><span>↗</span><strong>${esc(x.title)}</strong></div><div class="my-work-action-v1072"><b>Action</b><span>${esc(x.impact||x.proposal||'Review and decide whether to implement this improvement.')}</span></div><div class="my-work-owner-v1072"><b>Owner</b><span>${esc(x.owner||me||'Unassigned')}</span></div>${btn('Review',`data-improvement="${esc(x.id)}"`,'button tiny secondary')}</article>`).join('');
+  const total=mine.length+readiness.length;
+  return `<section id="myWorkHubV1071" class="card my-work-hub-v1071"><div class="section-title-row"><div><span class="eyebrow">MY WORK</span><h2>Actions that require a decision or completion</h2><p class="subtle">This is different from Upcoming Delivery: <b>My Work tells you what must be done, for which build/resource and by whom</b>. Upcoming Delivery only shows when builds are due.</p></div><span class="pill">${total} mandatory</span></div><div class="my-work-cards-v1072">${mandatory||readinessHtml?mandatory+readinessHtml:'<div class="empty compact">✓ No mandatory action is currently assigned to you.</div>'}</div>${improve?`<details class="fold compact"><summary>Improvement opportunities assigned to you (${proposals.length})</summary><div class="my-work-cards-v1072">${improve}</div></details>`:''}</section>`;
+};
+
+function capacityCardV1072(){
+  const mode=App.filters.capacityModeV1072||'weeks',period=App.filters.capacityPeriodV1072||'current',buckets=opsPeriodBuckets(mode),bucket=buckets[period==='past'?0:period==='next'?2:1],rows=operationalRows(),build=rows.filter(x=>x.request&&inWindow(x.start,bucket.start,bucket.end)),care=rows.filter(x=>x.source==='readiness'&&inWindow(x.start,bucket.start,bucket.end)),cap=opsCapacityForPeriod(bucket),peopleLoad=sumHours(build.filter(x=>x.person&&x.person!=='Unassigned')),eqLoad=sumHours(build.filter(x=>x.equipment&&x.equipment!=='Unassigned'&&x.equipment!=='—')),pp=opsPct(peopleLoad,cap.peopleHours),ep=opsPct(eqLoad,cap.equipmentHours),pctClass=v=>v>100?'bad':v>85?'warn':'good';
+  const pMap=new Map(),eMap=new Map();for(const x of build){if(x.person&&x.person!=='Unassigned')pMap.set(x.person,(pMap.get(x.person)||0)+x.duration);if(x.equipment&&x.equipment!=='Unassigned'&&x.equipment!=='—')eMap.set(x.equipment,(eMap.get(x.equipment)||0)+x.duration)}
+  const bottlenecks=[...pMap].map(([name,h])=>({name,h,type:'Person',u:100*h/Math.max(1,Number(App.state.settings?.capacity?.productiveStaffHoursPerWeek||32)*(mode==='months'?4.3:1))})).concat([...eMap].map(([name,h])=>({name,h,type:'Equipment',u:100*h/Math.max(1,Number(App.state.settings?.capacity?.equipmentHoursPerWeek||60)*(mode==='months'?4.3:1))}))).sort((a,b)=>b.u-a.u).slice(0,5);
+  const bar=(label,pct,h,c)=>`<div class="dash-load"><div><strong>${label}</strong><span>${Math.round(pct)}%</span></div><div class="dash-load-track"><i style="width:${Math.min(100,pct)}%" class="${pctClass(pct)}"></i></div><small>${h.toFixed(1)} / ${c.toFixed(1)} h</small></div>`;
+  return `<div class="card dash-cap-card v1072-capacity"><div class="section-title-row"><div><span class="eyebrow">CAPACITY</span><h2>Immediate workload & bottlenecks</h2><div class="subtle">${esc(bucket.label)} · ${esc(bucket.dateLabel)} · ${v1072WeekendsEnabled()?'weekends included':'weekdays only'}</div></div><div class="capacity-period-controls-v1072"><select id="capacityModeV1072"><option value="weeks" ${mode==='weeks'?'selected':''}>Week</option><option value="months" ${mode==='months'?'selected':''}>Month</option></select><select id="capacityPeriodV1072"><option value="past" ${period==='past'?'selected':''}>Last</option><option value="current" ${period==='current'?'selected':''}>Current</option><option value="next" ${period==='next'?'selected':''}>Next</option></select></div></div><div class="capacity-summary-grid-v1072">${bar('People',pp,peopleLoad,cap.peopleHours)}${bar('Equipment',ep,eqLoad,cap.equipmentHours)}<div class="capacity-readiness-v1072"><strong>Readiness load</strong><span>${sumHours(care).toFixed(1)} h</span><small>calibration · maintenance · training</small></div></div><div class="capacity-bottlenecks-v1072"><strong>Key bottlenecks</strong>${bottlenecks.map(x=>`<span class="${pctClass(x.u)}"><b>${esc(x.name)}</b><small>${esc(x.type)} · ${x.h.toFixed(1)} h · ${Math.round(x.u)}%</small></span>`).join('')||'<span><b>No bottleneck</b><small>No assigned workload in this period.</small></span>'}</div></div>`;
+}
+function installMyWorkLayoutV1072(){
+  if(App.currentView!=='dashboard')return;
+  const hub=document.getElementById('myWorkHubV1071'),daily=document.querySelector('.daily-ops-card');if(hub&&daily&&hub.nextElementSibling!==daily)hub.after(daily);
+  document.querySelector('[data-dashboard-kpi]')?.remove();
+  daily?.querySelector('[data-nav="action-centre"]')?.remove();
+  document.querySelector('.dash-action-card')?.remove();
+  const cap=document.querySelector('.dash-cap-card');if(cap)cap.outerHTML=capacityCardV1072();
+  if(currentRole()==='lab_manager'){const potential=[...document.querySelectorAll('.card')].find(c=>/POTENTIAL PROJECTS/i.test(c.textContent||''));potential?.remove()}
+  const up=[...document.querySelectorAll('.card')].find(c=>/UPCOMING DELIVERY/i.test(c.textContent||''));if(up){const h=up.querySelector('.section-title-row .subtle');if(!h){const title=up.querySelector('.section-title-row>div');title?.insertAdjacentHTML('beforeend','<div class="subtle">Due-date awareness only. Actions needed to achieve these dates are shown in My Work above.</div>')}}
+}
+function installCapacityListenersV1072(){if(App._v1072Capacity)return;App._v1072Capacity=true;document.addEventListener('change',e=>{if(e.target.id==='capacityModeV1072'){App.filters.capacityModeV1072=e.target.value;render()}if(e.target.id==='capacityPeriodV1072'){App.filters.capacityPeriodV1072=e.target.value;render()}},true)}
+
+function installWeekendSettingV1072(){
+  if(App.currentView!=='configuration')return;
+  const page=$('#page');if(!page||page.querySelector('[data-v1072-weekends]'))return;
+  const sys=[...page.querySelectorAll('details.card.fold')].find(x=>/System status/i.test(x.querySelector('summary')?.textContent||''));
+  const block=document.createElement('details');block.className='card fold';block.open=true;block.innerHTML=`<summary>Planning calendar</summary><div class="setting-row-v1072"><div><strong>Allow prototype builds on weekends</strong><small>When enabled, AUTO-PLAN, drag/move proposals and capacity calculations may use Saturday and Sunday. Disable for a Monday–Friday lab.</small></div><label class="plan-switch"><input type="checkbox" data-v1072-weekends ${v1072WeekendsEnabled()?'checked':''}><span>${v1072WeekendsEnabled()?'Weekends enabled':'Weekdays only'}</span></label></div>`;if(sys)sys.before(block);else page.append(block)
+}
+function installWeekendListenerV1072(){if(App._v1072Weekend)return;App._v1072Weekend=true;document.addEventListener('change',async e=>{const t=e.target.closest?.('[data-v1072-weekends]');if(!t)return;App.state.settings=App.state.settings||{};App.state.settings.includeWeekendsForBuilds=!!t.checked;P.audit(App.state,'Planning calendar changed','Configuration','Weekend planning',!t.checked?'Weekends':'Weekdays only',t.checked?'Weekends included':'Weekdays only',`${App.state.identity.name} changed build calendar availability.`);await persist();render();toast(t.checked?'Weekend build planning enabled.':'Weekend build planning disabled.')},true)}
+
+function labelRequiredDateMarkersV1072(){if(App.currentView!=='planning')return;document.querySelectorAll('.swim-due').forEach(x=>{x.classList.add('v1072-required-date');if(!x.querySelector('span'))x.innerHTML='<span>Required delivery</span>'});const legend=document.querySelector('.swim-legend');if(legend&&!/Red vertical line/.test(legend.textContent||''))legend.insertAdjacentHTML('beforeend','<span class="required-date-explainer-v1072"><i class="legend-due"></i>Red vertical line = required delivery date</span>')}
+
+function installV1072MovePerf(){
+  if(validatedMoveOptionsV1071._v1072)return;
+  const base=validatedMoveOptionsV1071;
+  validatedMoveOptionsV1071=function(booking,limit=12){const key=`${booking.id}|${limit}|${planningFingerprintV1070(App.state)}|${v1072WeekendsEnabled()}`;if(App.v1072MoveCache?.key===key)return App.v1072MoveCache.options;const t0=performance.now(),options=base(booking,limit);App.v1072MoveCache={key,options};App.v1072LastMoveMs=Math.round(performance.now()-t0);return options};validatedMoveOptionsV1071._v1072=true;
+}
+
+const _renderV1072Base=render;
+render=function(){_renderV1072Base();installCapacityListenersV1072();installWeekendListenerV1072();installMyWorkLayoutV1072();installWeekendSettingV1072();labelRequiredDateMarkersV1072();installV1072MovePerf();};
 
 async function init(){await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();if(!App.state){App.state=P.createDemoState();await App.repo.save(App.state)}else{const loadedSchema=Number(App.state.schemaVersion||0);App.state=P.MigrationService.migrate(App.state);if(loadedSchema!==App.state.schemaVersion)await App.repo.save(App.state);}const planningModelV1068=P.ensurePlanningCapabilityModelV1068?.(App.state);if(planningModelV1068?.changed)await App.repo.save(App.state);App.identity=new P.DemoIdentityProvider(App.state);const lastOps=App.state.settings?.lastOperationsReviewDate;new P.ImprovementService().dailyReview(App.state);if(lastOps!==P.todayISO())await App.repo.save(App.state);populateRoles();bindGlobal();renderNav();renderActionCount();render();const inv=P.validateInvariants(App.state);if(inv.length){console.error('Invariant errors',inv);toast(`Data integrity warning: ${inv[0]}`,true)}window.__PROTOLAB_READY__=true;window.ProtoLabApp=App;}
 window.addEventListener('DOMContentLoaded',init);
