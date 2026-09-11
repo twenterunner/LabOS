@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.87-poc';
+  ProtoLab.VERSION = '1.0.88-poc';
   ProtoLab.SCHEMA_VERSION = 31;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -618,8 +618,10 @@
   };
   ProtoLab.staffQualification = (state,staff,skillId,onDate=ProtoLab.todayISO()) => {
     if(!staff||!skillId)return {valid:!!staff,reason:staff?'No skill required':'No staff'};
-    const cert=(state.trainingCertificates||[]).find(c=>c.staffId===staff.id&&c.skillId===skillId&&c.status==='Valid'&&(!c.expiresAt||c.expiresAt>=onDate));
-    return {valid:!!cert,certificate:cert,reason:cert?`Certificate ${cert.certificateNo} valid to ${cert.expiresAt}`:`No valid training certificate for ${skillId}`};
+    // REV 1.0.88: a certificate is not usable before its effective/completion date.
+    // Previously a future-dated Valid certificate could make a person appear qualified today.
+    const cert=(state.trainingCertificates||[]).find(c=>{if(c.staffId!==staff.id||c.skillId!==skillId||c.status!=='Valid')return false;const effective=String(c.validFrom||c.completedAt||c.issuedAt||'').slice(0,10);return (!effective||effective<=onDate)&&(!c.expiresAt||c.expiresAt>=onDate)});
+    return {valid:!!cert,certificate:cert,reason:cert?`Certificate ${cert.certificateNo||cert.id} valid ${String(cert.validFrom||cert.completedAt||cert.issuedAt||'').slice(0,10)||'from issue'} to ${cert.expiresAt||'no stated expiry'}`:`No effective valid training certificate for ${skillId} on ${onDate}`};
   };
   ProtoLab.validCalibrationCertificate = (state,equipmentId,onDate=ProtoLab.todayISO()) => {
     const certs=(state?.calibrationCertificates||[]).filter(c=>c.equipmentId===equipmentId&&c.result==='Pass'&&c.status==='Valid'&&(c.fileData||c.documentUploaded===true)&&c.completedAt&&c.completedAt<=onDate&&c.nextDue&&c.nextDue>=onDate);
@@ -735,6 +737,7 @@
      capability layer so a process is only scheduled on a technically
      suitable setup rather than any resource in a broad demo category. */
   ProtoLab.equipmentPlanningCapability = e => e?.planningCapability || e?.capability || null;
+  ProtoLab.equipmentOperationalForPlanning = e => !!e&&!/(out\s*of\s*service|broken|failed|unavailable|retired|decommissioned|quarantine|scrap)/i.test(String(e.status||'Available'));
   ProtoLab.planningSkillForProcess = proc => proc?.planningCompetency || proc?.competency || null;
   ProtoLab.planningCapabilityForTest = test => test?.planningCapability || test?.equipmentCapability || null;
   ProtoLab.planningCapabilityForProcess = (state,r,proc) => {

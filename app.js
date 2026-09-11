@@ -2607,7 +2607,7 @@ bookingSlotFeasibleWithResourcesV1062=function(booking,start,equipmentId,staffId
 candidateEquipmentForBookingV1062=function(booking,dateIso){
   const req=bookingRequirementV1062(booking),day=dateIso||P.todayISO(),all=App.state.equipment||[],assigned=all.find(e=>e.id===booking.equipmentId);
   let pool=req.capability?all.filter(e=>capabilityMatchesV1063(e.capability,req.capability)||capabilityMatchesV1063(scopeSpecResolvedV1063(e).activity,req.capability)):all.slice();
-  pool=pool.filter(e=>P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,e,day):P.equipmentReady(e,day,App.state));
+  pool=pool.filter(e=>(!P.equipmentOperationalForPlanning||P.equipmentOperationalForPlanning(e))&&(P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,e,day):P.equipmentReady(e,day,App.state)));
   if(assigned&&(!req.capability||capabilityMatchesV1063(assigned.capability,req.capability))&&!pool.some(e=>e.id===assigned.id)){const ready=P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,assigned,day):P.equipmentReady(assigned,day,App.state);if(ready)pool.unshift(assigned)}
   return pool.slice(0,12);
 };
@@ -2756,7 +2756,7 @@ function nextBusinessDayV1066(date){let d=new Date(date);d.setDate(d.getDate()+1
 function halfDayCandidateStartsV1066(from,maxDays=180){
   const base=new Date(from||new Date()),out=[]; base.setSeconds(0,0);
   for(let k=0;k<maxDays;k++){
-    const day=new Date(base);day.setHours(8,0,0,0);day.setDate(day.getDate()+k);if([0,6].includes(day.getDay()))continue;
+    const day=new Date(base);day.setHours(8,0,0,0);day.setDate(day.getDate()+k);if(!App.state?.settings?.includeWeekendsForBuilds&&[0,6].includes(day.getDay()))continue;
     for(const part of ['AM','PM']){const d=halfDayStartV1066(day,part);if(d>=base)out.push(d)}
   }
   return out;
@@ -2921,9 +2921,12 @@ bookingRequirementV1062=function(booking){
 };
 candidateEquipmentForBookingV1062=function(booking,dateIso){
   const req=bookingRequirementV1062(booking),day=dateIso||P.todayISO(),all=App.state.equipment||[],assigned=all.find(e=>e.id===booking.equipmentId),cap=e=>P.equipmentPlanningCapability?P.equipmentPlanningCapability(e):e.capability;
-  if(!req.capability)return [];
-  let eqs=all.filter(e=>cap(e)===req.capability).filter(e=>P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,e,day):P.equipmentReady(e,day,App.state));
-  if(assigned&&cap(assigned)===req.capability&&!eqs.some(e=>e.id===assigned.id))eqs.unshift(assigned);
+  // A process may legitimately require an operator but no fixed equipment. Keep
+  // one explicit null-equipment candidate so manual planning can still offer
+  // Green/Yellow/Red slots instead of falsely reporting zero feasible options.
+  if(!req.capability)return [{id:'',name:'No equipment required',capability:null,_noEquipment:true}];
+  let eqs=all.filter(e=>(!P.equipmentOperationalForPlanning||P.equipmentOperationalForPlanning(e))&&cap(e)===req.capability).filter(e=>P.projectedEquipmentReady?P.projectedEquipmentReady(App.state,e,day):P.equipmentReady(e,day,App.state));
+  if(assigned&&(!P.equipmentOperationalForPlanning||P.equipmentOperationalForPlanning(assigned))&&cap(assigned)===req.capability&&!eqs.some(e=>e.id===assigned.id))eqs.unshift(assigned);
   return eqs;
 };
 
@@ -3112,13 +3115,22 @@ render=function(){_renderV1069Base();installV1069();if(App.currentView==='worksp
    prevalidated blocker resolution; separate build-plan lanes.
    ============================================================ */
 function planningFingerprintV1070(state=App.state){
+  // REV 1.0.88: include every input that can change slot feasibility. This prevents
+  // a stale Green/Yellow/Red option from surviving a background change to working
+  // policy, resource capability/readiness, qualifications, routes or standards.
   const compact={
-    bookings:(state.bookings||[]).map(b=>[b.id,b.requestId,b.stepId,b.start,b.end,b.equipmentId,b.staffId,b.locked]).sort(),
-    care:(state.resourceCareBookings||[]).filter(x=>x.status==='Scheduled').map(x=>[x.id,x.type,x.start,x.end,x.equipmentId,x.staffId]).sort(),
-    events:(state.planningEvents||[]).filter(x=>x.active!==false).map(x=>[x.id,x.scope,x.start,x.end,x.equipmentId,x.staffId]).sort(),
-    equipment:(state.equipment||[]).map(x=>[x.id,x.status,x.calibrationStatus,x.calibrationDue,x.maintenanceStatus,x.maintenanceDue]).sort(),
-    staff:(state.staff||[]).map(x=>[x.id,x.available,(x.competencies||[]).slice().sort().join(',')]).sort(),
-    certs:(state.trainingCertificates||[]).map(x=>[x.id,x.staffId,x.skillId,x.status,x.expiresAt]).sort()
+    policy:[!!state.settings?.includeWeekendsForBuilds,state.settings?.capacity?.productiveStaffHoursPerWeek||null,state.settings?.capacity?.equipmentHoursPerWeek||null],
+    bookings:(state.bookings||[]).map(b=>[b.id,b.requestId,b.stepId,b.taskType,b.start,b.end,b.durationHours,b.equipmentId,b.staffId,b.skillId,b.planningCapability,b.locked,b.status]).sort(),
+    care:(state.resourceCareBookings||[]).filter(x=>x.status==='Scheduled').map(x=>[x.id,x.type,x.start,x.end,x.equipmentId,x.staffId,x.skillId,x.projectedNextDue,x.status]).sort(),
+    events:(state.planningEvents||[]).filter(x=>x.active!==false).map(x=>[x.id,x.type,x.scope,x.start,x.end,x.equipmentId,x.staffId,x.active]).sort(),
+    equipment:(state.equipment||[]).map(x=>[x.id,x.status,x.capability,x.planningCapability,x.equipmentType,x.calibrationRequired,x.calibrationStatus,x.calibrationDue,x.calibrationDurationHours,x.maintenanceStatus,x.maintenanceDue,x.maintenanceDurationHours,x.governanceStatus]).sort(),
+    staff:(state.staff||[]).map(x=>[x.id,x.role,x.available,(x.competencies||[]).slice().sort().join(',')]).sort(),
+    certs:(state.trainingCertificates||[]).map(x=>[x.id,x.staffId,x.skillId,x.status,x.validFrom,x.expiresAt,x.completedAt,x.issuedAt]).sort(),
+    skills:(state.competencies||[]).map(x=>[x.id,x.trainingDurationHours,x.validMonths,x.status]).sort(),
+    routes:(state.routes||[]).map(r=>[r.requestId,r.revision,r.confirmed,(r.steps||[]).map(x=>[x.id,x.order,x.processId,x.processRevision,x.type,x.parallelGroup,x.status,x.completedAt])]).sort(),
+    processes:(state.processes||[]).map(x=>[x.id,x.revision,x.status,x.equipmentCapability,x.competency,x.setupTime,x.cycleTime,x.basis]).sort(),
+    tests:(state.standardTests||[]).map(x=>[x.id,x.revision,x.status,x.equipmentCapability,x.competency,x.setupTime,x.cycleTime,x.basis]).sort(),
+    requests:(state.requests||[]).map(r=>[r.id,r.quantity,r.requiredDate,r.priority,r.materialOwnership,r.forecastDate,r.currentCommitmentDate,r.planningPreferences||{},(r.testRequirements||[]).map(t=>[t.id,t.standardTestId,t.status,t.completedAt,t.equipmentCapability,t.competency,t.developmentEstimateHours,t.executionEstimateHours])]).sort()
   };
   const txt=JSON.stringify(compact);let h=2166136261;for(let i=0;i<txt.length;i++){h^=txt.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)
 }
@@ -4356,11 +4368,15 @@ function v1080ManualBookingIssues(state,b){
   if(!state.settings?.includeWeekendsForBuilds&&[0,6].includes(new Date(b.start).getDay()))issues.push('Weekend slot while weekend planning is disabled.');
   for(const ev of state.planningEvents||[]){if(ev.active===false)continue;const affects=ev.scope==='lab'||(ev.scope==='equipment'&&ev.equipmentId===b.equipmentId)||(ev.scope==='staff'&&ev.staffId===b.staffId);if(affects&&v1080Overlap(b.start,end,ev.start,ev.end))issues.push(`Blocked by ${planningSituationLabel(ev)}.`)}
   for(const c of state.resourceCareBookings||[]){if(c.status!=='Scheduled')continue;if(((b.equipmentId&&c.equipmentId===b.equipmentId)||(b.staffId&&c.staffId===b.staffId))&&v1080Overlap(b.start,end,c.start,c.end))issues.push(`Resource reserved for ${c.type||'readiness work'}.`)}
-  for(const other of state.bookings||[]){if(other.id===b.id||v1080BookingIsHistorical(other))continue;if(((b.equipmentId&&other.equipmentId===b.equipmentId)||(b.staffId&&other.staffId===b.staffId))&&v1080Overlap(b.start,end,other.start,other.end||planningAddWorkHoursV1064(new Date(other.start),Number(other.durationHours||1))))issues.push(`Resource conflict with ${other.requestId} · ${other.stepName||other.description||'planned work'}.`)}
-  if(eq&&(P.projectedEquipmentReadyAt? !P.projectedEquipmentReadyAt(state,eq,b.start):P.projectedEquipmentReady&&!P.projectedEquipmentReady(state,eq,date)))issues.push(`${eq.name} is not readiness-valid at ${P.formatDateTime(b.start)}.`);
+  for(const other of state.bookings||[]){if(other.id===b.id||v1080BookingIsHistorical(other))continue;if(((b.equipmentId&&other.equipmentId===b.equipmentId)||(b.staffId&&other.staffId===b.staffId))&&v1080Overlap(b.start,end,other.start,other.end||planningAddWorkHoursV1064(new Date(other.start),Number(other.durationHours||1)).toISOString()))issues.push(`Resource conflict with ${other.requestId} · ${other.stepName||other.description||'planned work'}.`)}
   let req=null;try{req=withPlanningStateV1070(state,()=>bookingRequirementV1062(b))}catch(_){}
-  if(req?.skillId){const q=st&&P.projectedStaffQualification?P.projectedStaffQualification(state,st,req.skillId,date):null;if(!st)issues.push('No person is assigned.');else if(q&&!q.valid)issues.push(`${st.name} is not validly qualified for the required skill on this date.`)}
+  if(req?.capability){const actual=eq&&(P.equipmentPlanningCapability?P.equipmentPlanningCapability(eq):eq.capability);if(!eq)issues.push(`No equipment is assigned for required capability ${req.capability}.`);else if(actual!==req.capability)issues.push(`${eq.name} provides ${actual||'no planning capability'}, not required ${req.capability}.`)}else if(b.equipmentId&&!eq)issues.push(`Assigned equipment ${b.equipmentId} no longer exists.`);
+  if(eq&&P.equipmentOperationalForPlanning&&!P.equipmentOperationalForPlanning(eq))issues.push(`${eq.name} is ${eq.status||'unavailable'} and cannot be used for planning.`);
+  if(eq&&(P.projectedEquipmentReadyAt?!P.projectedEquipmentReadyAt(state,eq,b.start):P.projectedEquipmentReady&&!P.projectedEquipmentReady(state,eq,date)))issues.push(`${eq.name} is not readiness-valid at ${P.formatDateTime(b.start)}.`);
+  if(req?.skillId){const q=st&&(P.projectedStaffQualificationAt?P.projectedStaffQualificationAt(state,st,req.skillId,b.start):P.projectedStaffQualification?P.projectedStaffQualification(state,st,req.skillId,date):null);if(!st)issues.push('No person is assigned.');else if(!q?.valid)issues.push(`${st.name} is not validly qualified for the required skill at this exact slot.`)}else if(b.staffId&&!st)issues.push(`Assigned person ${b.staffId} no longer exists.`);
   if(st?.available===false)issues.push(`${st.name} is unavailable.`);
+  const stime=new Date(b.start),etime=new Date(end);if(!Number.isNaN(stime.getTime())&&(stime.getHours()<8||stime.getHours()>=17))issues.push('Start is outside controlled planning hours (08:00–17:00).');if(!Number.isNaN(etime.getTime())&&(etime.getHours()<8||etime.getHours()>17))issues.push('Finish is outside controlled planning hours (08:00–17:00).');
+  if(!(Number(b.durationHours)>0)||Number.isNaN(new Date(b.start).getTime())||Number.isNaN(new Date(end).getTime())||new Date(end)<=new Date(b.start))issues.push('The booking has an invalid start, finish or duration.');
   return [...new Set(issues)];
 }
 function v1080BeginManualDraft(requestId){
@@ -4395,7 +4411,7 @@ function v1080ShowManualOptions(bookingId){
 }
 function v1080StageManualOption(key,approvedRed=false,rationale=''){
   const draft=App.manualPlanningDraftV1080,entry=App.manualPlanningOptionsV1080?.[key];if(!draft||!entry)return;if(planningFingerprintV1070(draft.state)!==entry.sourceDraftFingerprint){toast('The staged draft changed. Alternatives were refreshed before anything was applied.',true);v1080ManualPlanModal(draft.requestId,true);setTimeout(()=>v1080ShowManualOptions(entry.bookingId),30);return}
-  if(entry.kind==='red'&&!approvedRed){v1080ReviewManualRed(key);return}const before=(draft.state.bookings||[]).find(x=>x.id===entry.bookingId),target=entry.prop.newTimes?.find(x=>x.id===entry.bookingId)||entry.prop.newTimes?.[0];draft.state=P.deepClone(entry.prop.nextState);draft.decisions.push({kind:entry.kind,label:`Tier ${entry.kind==='green'?'1 Green':entry.kind==='yellow'?'2 Yellow':'3 Red'} · ${entry.prop.stepName||before?.stepName||'planned work'} → ${target?halfDayLabelV1066(target.start):halfDayLabelV1066(entry.opt.start)}${rationale?` · ${rationale}`:''}`});App.manualPlanningOptionsV1080={};v1080ManualPlanModal(draft.requestId,true);setTimeout(()=>document.querySelector(`[data-v1080-manual-booking="${CSS.escape(entry.bookingId)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),50);
+  if(entry.kind==='red'&&!approvedRed){v1080ReviewManualRed(key);return}if(entry.kind==='red'&&approvedRed&&!String(rationale||'').trim()){toast('Tier 3 requires a retained decision rationale.',true);return}const before=(draft.state.bookings||[]).find(x=>x.id===entry.bookingId),target=entry.prop.newTimes?.find(x=>x.id===entry.bookingId)||entry.prop.newTimes?.[0];draft.state=P.deepClone(entry.prop.nextState);draft.decisions.push({kind:entry.kind,label:`Tier ${entry.kind==='green'?'1 Green':entry.kind==='yellow'?'2 Yellow':'3 Red'} · ${entry.prop.stepName||before?.stepName||'planned work'} → ${target?halfDayLabelV1066(target.start):halfDayLabelV1066(entry.opt.start)}${rationale?` · ${rationale}`:''}`});App.manualPlanningOptionsV1080={};v1080ManualPlanModal(draft.requestId,true);setTimeout(()=>document.querySelector(`[data-v1080-manual-booking="${CSS.escape(entry.bookingId)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'}),50);
 }
 function v1080ReviewManualRed(key){
   const draft=App.manualPlanningDraftV1080,entry=App.manualPlanningOptionsV1080?.[key];if(!draft||!entry)return;const prop=entry.prop,byBuild=[...new Set((prop.externalChanges||[]).map(x=>x.requestId).filter(Boolean))];
@@ -4411,7 +4427,7 @@ async function v1080SaveManualPlan(requestId){
 v1078ManualPlanModal=v1080ManualPlanModal;
 v1078SaveManualPlan=v1080SaveManualPlan;
 function installV1080(){
-  if(App._v1080Installed)return;App._v1080Installed=true;document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1080-manual-options],[data-v1080-stage-manual],[data-v1080-close-options],[data-v1080-refresh-manual],[data-v1080-back-manual],[data-v1080-approve-red]');if(!t)return;e.preventDefault();e.stopPropagation();if(t.dataset.v1080ManualOptions){v1080ShowManualOptions(t.dataset.v1080ManualOptions);return}if(t.dataset.v1080StageManual){v1080StageManualOption(t.dataset.v1080StageManual);return}if(t.hasAttribute('data-v1080-close-options')){const p=$('#v1080ManualOptionPanel');if(p)p.innerHTML='';return}if(t.hasAttribute('data-v1080-refresh-manual')){const rid=App.manualPlanningDraftV1080?.requestId;if(rid)v1080ManualPlanModal(rid,false);return}if(t.hasAttribute('data-v1080-back-manual')){const rid=App.manualPlanningDraftV1080?.requestId;if(rid)v1080ManualPlanModal(rid,true);return}if(t.dataset.v1080ApproveRed){const why=$('#v1080RedRationale')?.value.trim()||'';v1080StageManualOption(t.dataset.v1080ApproveRed,true,why);return}},true)
+  if(App._v1080Installed)return;App._v1080Installed=true;document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1080-manual-options],[data-v1080-stage-manual],[data-v1080-close-options],[data-v1080-refresh-manual],[data-v1080-back-manual],[data-v1080-approve-red]');if(!t)return;e.preventDefault();e.stopPropagation();if(t.dataset.v1080ManualOptions){v1080ShowManualOptions(t.dataset.v1080ManualOptions);return}if(t.dataset.v1080StageManual){v1080StageManualOption(t.dataset.v1080StageManual);return}if(t.hasAttribute('data-v1080-close-options')){const p=$('#v1080ManualOptionPanel');if(p)p.innerHTML='';return}if(t.hasAttribute('data-v1080-refresh-manual')){const rid=App.manualPlanningDraftV1080?.requestId;if(rid)v1080ManualPlanModal(rid,false);return}if(t.hasAttribute('data-v1080-back-manual')){const rid=App.manualPlanningDraftV1080?.requestId;if(rid)v1080ManualPlanModal(rid,true);return}if(t.dataset.v1080ApproveRed){const why=$('#v1080RedRationale')?.value.trim()||'';if(!why){toast('A rationale is required before a Tier 3 portfolio-impact option can be staged.',true);return}v1080StageManualOption(t.dataset.v1080ApproveRed,true,why);return}},true)
 }
 const _renderV1080Base=render;
 render=function(){_renderV1080Base();installV1080();};
@@ -4530,6 +4546,28 @@ function v1081RepairLegacySeedPlanOnLoad(){
   if(!P.repairSeedPlanningIntegrityV1081)return {changed:false,reason:'repair-service-unavailable'};
   try{return P.repairSeedPlanningIntegrityV1081(App.state)}catch(err){console.error('REV 1.0.81 seed-plan repair failed',err);App.state.settings=App.state.settings||{};App.state.settings.planningNeedsReview=true;return {changed:false,reason:'exception',failed:true,error:err.message||String(err)}}
 }
+
+
+/* ============================================================
+   LabOS REV 1.0.88 — planner fault-containment and manual-plan
+   final integrity gates.
+   ============================================================ */
+function v1088PlanningAuditRows(state){const a=P.planningIntegrityAudit?P.planningIntegrityAudit(state):null;return a?Object.entries(a).filter(([,v])=>Array.isArray(v)).flatMap(([kind,v])=>v.map(row=>({kind,...row}))):[]}
+function v1088AuditTouches(row,ids){const set=ids instanceof Set?ids:new Set(ids||[]);return [row.requestId,row.aRequestId,row.bRequestId].some(x=>x&&set.has(x))}
+function v1088ValidatePlanningState(state,ids){const inv=P.validateInvariants(state),rows=v1088PlanningAuditRows(state),touch=ids?.length?rows.filter(x=>v1088AuditTouches(x,new Set(ids))):rows;return {ok:!inv.length&&!touch.length,invariants:inv,issues:touch,allIssues:rows}}
+
+const _simulateBuildMoveV1088=simulateBuildMoveV1070;
+simulateBuildMoveV1070=function(baseState,bookingId,target){const out=_simulateBuildMoveV1088(baseState,bookingId,target);if(!out?.ok)return out;const selected=(baseState.bookings||[]).find(x=>x.id===bookingId),ids=new Set([selected?.requestId,...(out.externalChanges||[]).map(x=>x.requestId)].filter(Boolean)),gate=v1088ValidatePlanningState(out.nextState,[...ids]);if(!gate.ok)return {ok:false,error:`Move rejected by final planning-integrity gate: ${gate.invariants[0]||`${gate.issues[0]?.kind}${gate.issues[0]?.stepName?` · ${gate.issues[0].stepName}`:''}`}`};return out};
+
+const _commitMoveProposalV1088=commitMoveProposalV1070;
+commitMoveProposalV1070=function(prop,rationale=''){if(!prop?.ok)return;const ids=[prop.requestId,...(prop.externalChanges||[]).map(x=>x.requestId)].filter(Boolean),gate=v1088ValidatePlanningState(prop.nextState,ids);if(!gate.ok){toast(`Move is no longer valid: ${gate.invariants[0]||gate.issues[0]?.kind||'planning integrity failure'}. Options were refreshed.`,true);const b=(App.state.bookings||[]).find(x=>x.id===prop.bookingId);if(b)planningMovePanelV1070(b);return}_commitMoveProposalV1088(prop,rationale)};
+
+const _v1080SaveManualPlanV1088=v1080SaveManualPlan;
+v1080SaveManualPlan=async function(requestId){const draft=App.manualPlanningDraftV1080,issue=$('#v1078ManualIssues');if(!draft||draft.requestId!==requestId)return;if(draft.seeded&&draft.decisions.length===0){if(issue){issue.innerHTML='<div class="callout warn"><strong>No manual decision has been made.</strong><p>The displayed scratch baseline came from AUTO-PLAN only. Choose at least one Green / Yellow / Red alternative before saving it as a manual plan, or use AUTO-PLAN directly.</p></div>';issue.scrollIntoView({behavior:'smooth',block:'center'})}return}const allIds=(draft.state.requests||[]).filter(x=>!['DELIVERED','CLOSED','RELEASED'].includes(x.status)).map(x=>x.id),changes=planProposalChanges(draft.originalState,draft.state,allIds),impacted=[...new Set([requestId,...changes.map(x=>x.requestId)].filter(Boolean))],gate=v1088ValidatePlanningState(draft.state,impacted);if(!gate.ok){if(issue){const first=gate.invariants[0]||gate.issues[0];issue.innerHTML=`<div class="callout bad"><strong>Manual plan rejected by the final end-to-end integrity gate.</strong><p>${esc(typeof first==='string'?first:`${first?.kind||'Planning integrity'}${first?.stepName?` · ${first.stepName}`:''}`)}</p><p>No live booking has changed. Refresh alternatives and resolve the highlighted conflict.</p></div>`;issue.scrollIntoView({behavior:'smooth',block:'center'})}return}return _v1080SaveManualPlanV1088(requestId)};
+v1078SaveManualPlan=v1080SaveManualPlan;
+
+const _showPlanProposalV1088=showPlanProposal;
+showPlanProposal=function(args){const results=args?.results||[],blocked=results.filter(x=>!x.ok);if(blocked.length){planningPortfolioBlockedModal(results,args?.contextEvent||null);return}_showPlanProposalV1088(args)};
 
 async function init(){
  await clearLegacyBrowserCache();const vb=$('#versionBadge');if(vb)vb.textContent=`REV ${P.VERSION.replace('-poc','')}`;await App.repo.init();App.state=await App.repo.load();
