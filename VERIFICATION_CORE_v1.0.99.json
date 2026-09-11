@@ -1,0 +1,191 @@
+{
+  "passed": 37,
+  "total": 37,
+  "checks": [
+    {
+      "name": "Version 1.0.99",
+      "passed": true,
+      "detail": "1.0.99-poc"
+    },
+    {
+      "name": "Schema 34",
+      "passed": true,
+      "detail": "34"
+    },
+    {
+      "name": "Four lab master entries",
+      "passed": true,
+      "detail": "LAB-NL,LAB-DE,LAB-US,EXT-EU"
+    },
+    {
+      "name": "Three internal labs",
+      "passed": true,
+      "detail": "3"
+    },
+    {
+      "name": "All baseline requests retain NL home",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "All baseline requests retain NL execution",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Products have all workstream defaults",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Sister equipment exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Sister staff exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Sister material exists",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Initial multi-lab invariants clean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Multi-lab seeding idempotent",
+      "passed": true,
+      "detail": "{\"counts\":[36,24,288,120,36],\"counts2\":[36,24,288,120,36]}"
+    },
+    {
+      "name": "Prototype default routing",
+      "passed": true,
+      "detail": "LAB-NL"
+    },
+    {
+      "name": "Validation default routing",
+      "passed": true,
+      "detail": "LAB-DE"
+    },
+    {
+      "name": "FA default routing",
+      "passed": true,
+      "detail": "LAB-US"
+    },
+    {
+      "name": "Same planner evaluates all internal labs",
+      "passed": true,
+      "detail": "[[\"LAB-NL\",true,\"2026-09-22\"],[\"LAB-DE\",true,\"2026-09-17\"],[\"LAB-US\",true,\"2026-09-17\"]]"
+    },
+    {
+      "name": "At least one sister plan valid",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "External benchmark available",
+      "passed": true,
+      "detail": "13549"
+    },
+    {
+      "name": "Transfer succeeds",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Home site retained",
+      "passed": true,
+      "detail": "LAB-NL"
+    },
+    {
+      "name": "Execution site moved",
+      "passed": true,
+      "detail": "LAB-DE"
+    },
+    {
+      "name": "Transfer audit record correct",
+      "passed": true,
+      "detail": "{\"id\":\"XFER-MTXE2GG2-WPWO\",\"requestId\":\"P26-1001\",\"fromSiteId\":\"LAB-NL\",\"toSiteId\":\"LAB-DE\",\"acceptedAt\":\"2026-09-11T20:08:30.914Z\",\"actor\":\"Mila Jansen\",\"rationale\":\"Automated verification transfer rationale\",\"forecast\":\"2026-09-17\",\"plannedHours\":26.4,\"avoidedExternalCost\":13549,\"status\":\"Accepted\"}"
+    },
+    {
+      "name": "Avoided outsource KPI recorded",
+      "passed": true,
+      "detail": "13549"
+    },
+    {
+      "name": "Transferred state invariants clean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Transferred bookings exist",
+      "passed": true,
+      "detail": "8"
+    },
+    {
+      "name": "No cross-site equipment leakage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No cross-site staff leakage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "DE closure does not block NL planner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Active-site tier engine returns candidate or explicit blockers",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "NL portfolio optimization leaves DE transferred booking unchanged",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Manual mode uses unified site engine",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Manual result invariants clean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "33→34 migration",
+      "passed": true,
+      "detail": "34"
+    },
+    {
+      "name": "Migration preserves request count",
+      "passed": true,
+      "detail": "24"
+    },
+    {
+      "name": "Migration preserves user data",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Migration retains existing work at NL",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Migration invariants clean",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}

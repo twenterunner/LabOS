@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#0c5862" />
   <meta name="description" content="Laboratory Operations System proof-of-concept for automotive prototype, validation and engineering laboratory operations." />
   <title>LabOS — Laboratory Operations System</title>
-  <link rel="manifest" href="manifest.webmanifest?v=1.0.98" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.98" />
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.98" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.98" />
-  <link rel="stylesheet" href="labos-styles-1.0.98.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.98.css')" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.99" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.99" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.99" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.99" />
+  <link rel="stylesheet" href="labos-styles-1.0.99.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.99.css')" />
   <script>
     (function(){
       const bootErrors=[];
@@ -38,7 +38,7 @@
       window.addEventListener('load',function(){
         setTimeout(function(){
           if(!window.__PROTOLAB_READY__ && !bootErrors.length){
-            message('LabOS did not finish starting','The page shell loaded, but the application runtime did not finish initialization. Verify that all six REV 1.0.98 runtime files are present in the repository root. No blank screen is intentionally shown.');
+            message('LabOS did not finish starting','The page shell loaded, but the application runtime did not finish initialization. Verify that all six REV 1.0.99 runtime files are present in the repository root. No blank screen is intentionally shown.');
           }
         },6000);
       });
@@ -51,7 +51,7 @@
     <header class="topbar">
       <div class="brand" role="button" tabindex="0" data-nav="dashboard" aria-label="Go to dashboard">
         <img class="brand-logo" src="labos-wordmark.png" alt="LabOS" />
-        <span id="versionBadge" class="version-badge">REV 1.0.98</span>
+        <span id="versionBadge" class="version-badge">REV 1.0.99</span>
       </div>
       <div class="top-actions">
         <div class="global-search-wrap">
@@ -59,6 +59,7 @@
           <div id="searchResults" class="search-results hidden"></div>
         </div>
         <button id="actionCentreButton" class="icon-button" aria-label="Open My Work"><span class="action-label">My work</span> <span id="actionCount" class="badge">0</span></button>
+        <label class="lab-switcher-v1099"><span>Active lab</span><select id="labSelect" aria-label="Active laboratory"></select></label>
         <label class="role-switcher"><span>Demo role</span><select id="roleSelect" aria-label="Demo role"></select></label>
         <button id="menuButton" class="icon-button mobile-only" aria-label="Open navigation">☰</button>
       </div>
@@ -71,15 +72,15 @@
       </div>
     </aside>
     <main id="main" class="main" tabindex="-1">
-      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.98…</div></div>
+      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.99…</div></div>
     </main>
   </div>
   <div id="modalRoot"></div>
   <div id="toastRoot" aria-live="polite" aria-atomic="true"></div>
-  <script src="labos-core-1.0.98.js" onerror="LabOSBootFail('labos-core-1.0.98.js')"></script>
-  <script src="labos-demo-data-1.0.98.js" onerror="LabOSBootFail('labos-demo-data-1.0.98.js')"></script>
-  <script src="labos-repository-1.0.98.js" onerror="LabOSBootFail('labos-repository-1.0.98.js')"></script>
-  <script src="labos-services-1.0.98.js" onerror="LabOSBootFail('labos-services-1.0.98.js')"></script>
-  <script src="labos-app-1.0.98.js" onerror="LabOSBootFail('labos-app-1.0.98.js')"></script>
+  <script src="labos-core-1.0.99.js" onerror="LabOSBootFail('labos-core-1.0.99.js')"></script>
+  <script src="labos-demo-data-1.0.99.js" onerror="LabOSBootFail('labos-demo-data-1.0.99.js')"></script>
+  <script src="labos-repository-1.0.99.js" onerror="LabOSBootFail('labos-repository-1.0.99.js')"></script>
+  <script src="labos-services-1.0.99.js" onerror="LabOSBootFail('labos-services-1.0.99.js')"></script>
+  <script src="labos-app-1.0.99.js" onerror="LabOSBootFail('labos-app-1.0.99.js')"></script>
 </body>
 </html>

@@ -1,0 +1,152 @@
+{
+  "release": "1.0.99",
+  "schema": 34,
+  "root_flat": true,
+  "files": [
+    {
+      "path": "ARCHITECTURE_PROOF_v1.0.99.md",
+      "size": 2651,
+      "sha256": "977b8c75f086d0534e1cb291ec81059709e85369764e8a20c957b144eee5470f"
+    },
+    {
+      "path": "BROWSER_VERIFICATION_v1.0.99.txt",
+      "size": 3029,
+      "sha256": "b8428c3accc7e95c18dd7a0a6c8e96dca2d8ba628ccacd13ec58fea7ceb5944d"
+    },
+    {
+      "path": "CHANGELOG_v1.0.99.md",
+      "size": 2740,
+      "sha256": "5883db9009af094f2f590d244d7b2dd26eda118b82a39b5e79d84f0208efd72a"
+    },
+    {
+      "path": "README.md",
+      "size": 2749,
+      "sha256": "c134727e46c77ad33382d10b4727bcffbb0dc5467ff2738f8af03d912cf7a222"
+    },
+    {
+      "path": "REV1099_MOBILE_NETWORK_PROOF.png",
+      "size": 82048,
+      "sha256": "01e5fd5e27b4c8a85dbdb6b2a89e08c8c82b6fce98aa883168ab837fd661db44"
+    },
+    {
+      "path": "USER_MANUAL.html",
+      "size": 18365,
+      "sha256": "3cd5b72283a1bd5922ca6bd359f8bd70e3e9e412466b6192354007861b37e58c"
+    },
+    {
+      "path": "VERIFICATION_CORE_v1.0.99.json",
+      "size": 4380,
+      "sha256": "727ba40bb2e67f3661cc4261609ef40091d05f51c98074d865d209120943245e"
+    },
+    {
+      "path": "VERIFICATION_PLANNER_v1.0.99.json",
+      "size": 989,
+      "sha256": "c2c0d066fbd0aff811a04970bc6d21ed3c7601adef4eb161ce7a5d1581809205"
+    },
+    {
+      "path": "VERIFICATION_v1.0.99.md",
+      "size": 1894,
+      "sha256": "250bd6388479b8fa6c49f1a008f289dcfd42a957d82912cbb76af0e3a3d9c58e"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "size": 33773,
+      "sha256": "5d25b868af7fc869502c34bdb277faead91d669fff661ec75a64d1fbc5a90af9"
+    },
+    {
+      "path": "assets/5s/bench-bad.jpg",
+      "size": 107828,
+      "sha256": "be82c3551aacbf4275179a1d8c9b8f14d1ecd8709da027d975c3ebe41f2e4a5d"
+    },
+    {
+      "path": "assets/5s/bench-good.jpg",
+      "size": 118937,
+      "sha256": "23bbfea1d760feffa94b13a7ad9f3a1d39c728b0e89435a075f5f17c78d17ac8"
+    },
+    {
+      "path": "assets/5s/bench-shadow-board.jpg",
+      "size": 140167,
+      "sha256": "91e0de2b11ae526eed6df14aef1d974fa56ef07a1004c552a0f0cdcf49fce3ae"
+    },
+    {
+      "path": "favicon-16.png",
+      "size": 724,
+      "sha256": "06604b90926b11733e5106eb7ffb3a63924eb348684229954891b44675e98191"
+    },
+    {
+      "path": "favicon-32.png",
+      "size": 2051,
+      "sha256": "68e9028a67393e1fa658595f60e10052252c28510efc6e5ef485cb78a515d686"
+    },
+    {
+      "path": "favicon-64.png",
+      "size": 6020,
+      "sha256": "47bfbaf0f2f525ed9e98b80ae3b26776c354724d44d5d0b04a33c520159afaf7"
+    },
+    {
+      "path": "icon-192.png",
+      "size": 37525,
+      "sha256": "b9b321bef9ffc3c390f2379fe2afbac8d1187749d344e62b67de7f6318feffa5"
+    },
+    {
+      "path": "icon-512.png",
+      "size": 134125,
+      "sha256": "efdbb413692e2ca1b47d9d1f4e17f1e676c189fe8d4105d4f5fc48f3aa677c22"
+    },
+    {
+      "path": "index.html",
+      "size": 5668,
+      "sha256": "c6bca1688ac21780d73d30773600341fc4d79db1d1575aec5a26f76da288ce89"
+    },
+    {
+      "path": "labos-app-1.0.99.js",
+      "size": 2138303,
+      "sha256": "233ced5ab98bb26e17eb0266b0cc9ffcf4d962bd40b037307478c37b7501e34e"
+    },
+    {
+      "path": "labos-app-icon.png",
+      "size": 39608,
+      "sha256": "50322680db227afb22ebafade2ecf62a9bea8e2f633d426421838471e89b0337"
+    },
+    {
+      "path": "labos-core-1.0.99.js",
+      "size": 139744,
+      "sha256": "43b0f36d7c4fddbc45e6adf8645712c07e2a92af0e936e1e33e5f6c3027342e5"
+    },
+    {
+      "path": "labos-demo-data-1.0.99.js",
+      "size": 84128,
+      "sha256": "29ffd911955abb5873506a5aa8da4e549edcf33c57d5214ee56ef0606ee95e3b"
+    },
+    {
+      "path": "labos-repository-1.0.99.js",
+      "size": 37542,
+      "sha256": "6bf69be1010ae4c6c7dc3788156b12eff9da5e9d7d83e21be77b47632d0f55b1"
+    },
+    {
+      "path": "labos-services-1.0.99.js",
+      "size": 197157,
+      "sha256": "6612586d2586d34ce1b2640fe0e23cdbfbeb24af7690bdf00af4ed917f2f3ff3"
+    },
+    {
+      "path": "labos-styles-1.0.99.css",
+      "size": 332869,
+      "sha256": "738b202a1a63b07ab73b9feda1fee51b0d584fcfc8673fd49a50f7803ca18287"
+    },
+    {
+      "path": "labos-wordmark.png",
+      "size": 94117,
+      "sha256": "c903d122f09cdbfc7a8500f4116cb586055fcf3e72a47b027b2a0300228e5c36"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "size": 396,
+      "sha256": "cbe1c264775422db009910fad1816afee971da756313addf755efba5906408e5"
+    },
+    {
+      "path": "service-worker.js",
+      "size": 501,
+      "sha256": "f2548ab6a0df0383a32e374f73eca6be973795122d4ed80997e8210ce1aa6396"
+    }
+  ]
+}

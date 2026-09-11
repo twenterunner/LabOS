@@ -1,0 +1,16 @@
+BOOT {"ready": true, "text": "Skip to content\n REV 1.0.99\nMy work 0 Active lab\nNL-TW \u00b7 Twente Prototype Lab\nDE-ST \u00b7 Stuttgart Engineering Lab\nUS-DT \u00b7 Detroit Engineering Lab\n Demo role\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nAuditor / Read-only\nAdministrator\n \u2630\nHome\nMy Work\nDemand\nRequests\nWorkstreams\nPrototype23ValidationFutureFailure An", "ver": "1.0.99-poc", "lab": "LAB-NL", "opts": 3, "inv": 0}
+PLAN {"view": "planning", "network": true, "labname": true, "selector": "LAB-NL", "opps": 8}
+COMPARE {"modal": "Lab network recovery \u00b7 P26-1001\n\u00d7\n\u2713\n1 \u00b7 Home-lab plan evaluatedTwente Prototype Lab\n\u2713\n2 \u00b7 Sister labs solved independentlySame canonical planner \u00b7 site-owned capacity only\n3\nReview timing and external benchmarkSelect a valid sister-lab plan only when it improves the decision.\n4\nAccept controlled execution transferHome site and audit history remain intact.\nHOME LAB\nTwente Prototype Lab\n\nSep 22, 2026 \u00b7 4 d late\n\n41.4 planned h \u00b7 62.2 ms solver\nSISTER LAB\nStuttgart Engineering Lab\n\nSep 17, 2026 \u00b7 on time\n\n26.4 planned h \u00b7 22.6 ms solverReview transfer \u2192\nSISTER LAB\nDetroit Engineering Lab\n\nSep 17, 2026 \u00b7 on time\n\n26.4 planned h \u00b7 14.5 ms solverReview transfer \u2192\nExternal benchmark \u00b7 External Specialist Facility\n\nIndicative forecast Sep 23, 2026 \u00b7 estimated cost \u20ac13,549. This is a benchmark, not an automatically selected planning option.\n\nRecommended internal execution \u00b7 Stuttgart Engineering Lab\n\nMeets the requested date. The recommendation remains a proposal until explicitly accepted.\n\nClo", "transferButtons": 2}
+SWITCH {"selector": "LAB-DE", "labde": true, "view": "planning", "inv": 0, "rows": 0}
+ADMIN {"view": "planning", "networkAdmin": false, "routingSelects": 0, "labs": 4}
+ROLES [['engineering_requester', 'Engineering Requester'], ['engineering_lead', 'Engineering Project Lead'], ['lab_planner', 'Prototype Lab Coordinator / Planner'], ['process_engineer', 'Process Engineer'], ['technician', 'Prototype Technician'], ['quality', 'Quality Engineer'], ['metrology', 'Metrology / Measurement Owner'], ['product_safety', 'Product Safety Representative'], ['lab_manager', 'Lab Manager'], ['approver', 'Approver / Reviewer'], ['auditor', 'Auditor / Read-only'], ['administrator', 'Administrator']]
+SWITCHROLE ['administrator', 'administrator']
+ADMINLINK True
+ADMIN {'view': 'admin', 'networkAdmin': True, 'routing': 36}
+LABNL LAB-NL
+PLANOPP 8
+TRANSBTN 2
+REVIEW Home laboratory cannot meet the required timing; sister lab provides a complete valid internal plan and avoids external outsourcing.
+AFTER {'exec': 'LAB-DE', 'home': 'LAB-NL', 'xfers': 1, 'kpi': 13549, 'inv': 0}
+LABDE LAB-DE
+DEROWS {'rows': 1, 'hasP': True, 'kpi': True}

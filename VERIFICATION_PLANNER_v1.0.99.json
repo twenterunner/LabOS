@@ -1,0 +1,49 @@
+{
+  "passed": 8,
+  "total": 8,
+  "tierMs": 4420,
+  "escalationMs": 1766,
+  "escalationOk": true,
+  "checks": [
+    {
+      "name": "Tier planner site scoped",
+      "passed": true,
+      "detail": "LAB-NL"
+    },
+    {
+      "name": "Tier planner evaluates candidates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Tier candidate no cross-site leakage yellow",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Tier candidate no cross-site leakage red",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Escalation returns valid plan or explicit diagnosis",
+      "passed": true,
+      "detail": "2026-09-17"
+    },
+    {
+      "name": "Escalation no cross-site leakage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Escalation invariants clean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "NL escalation preserves DE plan",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}
