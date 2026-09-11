@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.89-poc';
+  ProtoLab.VERSION = '1.0.91-poc';
   ProtoLab.SCHEMA_VERSION = 32;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -262,7 +262,7 @@
   };
   ProtoLab.beginBuildSpecificControlPlanRevision = (state,r,cp,reason='Build-specific Control Plan adaptation') => {
     if(!state||!r||!cp)throw new Error('Request and Control Plan are required.');if(cp.buildSpecific&&cp.buildRequestId===r.id)return cp;
-    const clone=ProtoLab.deepClone(cp);clone.id=ProtoLab.uid('CP');clone.revision=`${cp.revision}.B1`;clone.status='Draft';clone.approvedBy=null;clone.approvedAt=null;clone.baselineId=cp.id;clone.baselineRevision=cp.revision;clone.buildSpecific=true;clone.buildRequestId=r.id;clone.requestIds=[r.id];clone.name=`${cp.name} · ${r.id} adaptation`;state.controlPlans.push(clone);r.controlPlanId=clone.id;const pack=ProtoLab.ensureReusePackage(r);pack.controlPlan={mode:'modified',baselineId:cp.id,revision:cp.revision,buildSpecificId:clone.id};ProtoLab.markBuildSpecificDelta(state,r,'Control Plan',reason);return clone;
+    const clone=ProtoLab.deepClone(cp);clone.id=ProtoLab.uid('CP');clone.revision=`${cp.revision}.B1`;clone.status='Draft';clone.approvedBy=null;clone.approvedAt=null;clone.baselineId=cp.id;clone.baselineRevision=cp.revision;clone.buildSpecific=true;clone.buildRequestId=r.id;clone.requestIds=[r.id];clone.name=`${cp.name} · ${r.id} adaptation`;state.controlPlans.push(clone);r.controlPlanId=clone.id;r.controlPlanDeferred=false;const pack=ProtoLab.ensureReusePackage(r);pack.controlPlan={mode:'modified',baselineId:cp.id,revision:cp.revision,buildSpecificId:clone.id};ProtoLab.markBuildSpecificDelta(state,r,'Control Plan',reason);return clone;
   };
   ProtoLab.DEFAULT_BOMS = {
     'PRD-001':[['BPS-HSG-3200','Pressure sensor housing','D'],['BPS-PCB-3200','Pressure sensor PCB','C'],['BPS-CON-3200','Connector insert','B']],
@@ -887,6 +887,52 @@
     for(const r of state.requests||[]){if(r.engineeringTeamId&&!ids.has(r.engineeringTeamId))out.push(`${r.id}: requesting team reference ${r.engineeringTeamId} does not exist`);}
     for(const u of state.users||[]){if(u.teamId&&!ids.has(u.teamId))out.push(`${u.id}: user team reference ${u.teamId} does not exist`);}
     return out;
+  };
+
+
+  /* REV 1.0.91 — explicit request completeness and Control Plan strategy. */
+  ProtoLab.reusableControlPlansForRequest = (state,r) => {
+    if(!state||!r)return [];
+    const current=(state.controlPlans||[]).find(x=>x.id===r.controlPlanId&&x.status==='Approved'&&!x.buildSpecific);
+    const compatible=new Set(ProtoLab.sameProductRequests(state,r).map(x=>x.id));
+    const rows=(state.controlPlans||[]).filter(cp=>cp.status==='Approved'&&!cp.buildSpecific&&(cp.requestIds||[]).some(id=>compatible.has(id)));
+    if(current&&!rows.some(x=>x.id===current.id))rows.unshift(current);
+    return rows.filter((x,i,a)=>a.findIndex(y=>y.id===x.id)===i);
+  };
+  const _applyReusePackageV1091=ProtoLab.applyReusePackage;
+  ProtoLab.applyReusePackage=(state,r,opts={})=>{
+    if(!state||!r)return null;
+    if(r.controlPlanDeferred===true&&!r.controlPlanId){
+      r.controlPlanId='__DEFERRED__';
+      const pack=_applyReusePackageV1091(state,r,opts);
+      r.controlPlanId=null;
+      pack.controlPlan={mode:'deferred',source:'Define later in Controls workflow'};
+      return pack;
+    }
+    const pack=_applyReusePackageV1091(state,r,opts);
+    if(r.controlPlanId)r.controlPlanDeferred=false;
+    return pack;
+  };
+  ProtoLab.requestSetupAssessment=(state,r)=>{
+    ProtoLab.ensureRequestingTeamModel?.(state);
+    const team=ProtoLab.requestingTeamByIdOrName?.(state,r?.engineeringTeamId,r?.engineeringTeam),product=(state?.products||[]).find(p=>p.id===r?.productId),customer=(state?.customers||[]).find(c=>c.id===r?.customerId);
+    const q=Number(r?.quantity),dateOk=!!r?.requiredDate&&!Number.isNaN(new Date(`${r.requiredDate}T12:00:00`).getTime());
+    const cpDecision=!!r?.controlPlanId||r?.controlPlanDeferred===true||(r?.status!=='DRAFT REQUEST'&&r?.controlPlanDeferred==null);
+    const checks=[
+      {key:'title',label:'Request title',done:!!String(r?.title||'').trim()},
+      {key:'objective',label:'Engineering objective',done:!!String(r?.objective||'').trim()},
+      {key:'product',label:'Product / device',done:!!product},
+      {key:'quantity',label:'Quantity',done:Number.isInteger(q)&&q>0},
+      {key:'team',label:'Requesting / engineering team',done:!!team&&team.active!==false},
+      {key:'customer',label:'Customer / programme profile',done:!!customer},
+      {key:'requiredDate',label:'Required delivery date',done:dateOk},
+      {key:'configuration',label:'Build configuration',done:!!String(r?.configuration||'').trim()},
+      {key:'bomRef',label:'BOM / configuration reference',done:!!String(r?.bomRef||'').trim()},
+      {key:'purpose',label:'Build purpose & assurance level',done:!!String(r?.purpose||'').trim()&&!!r?.assuranceProfile},
+      {key:'materialOwnership',label:'Material source',done:['Engineering supplied','Lab supplied'].includes(ProtoLab.normaliseMaterialSource(r?.materialOwnership))},
+      {key:'controlPlanDecision',label:'Control Plan strategy',done:cpDecision}
+    ];
+    return {checks,missing:checks.filter(x=>!x.done),ready:checks.every(x=>x.done),team,product,customer,controlPlanDecision:cpDecision};
   };
 
 })();
