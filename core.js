@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.93-poc';
-  ProtoLab.SCHEMA_VERSION = 32;
+  ProtoLab.VERSION = '1.0.94-poc';
+  ProtoLab.SCHEMA_VERSION = 33;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -894,7 +894,7 @@
   ProtoLab.activeRequestingTeams = state => {ProtoLab.ensureRequestingTeamModel(state);return (state.requestingTeams||[]).filter(t=>t.active!==false).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name)));};
   ProtoLab.requestingTeamByIdOrName = (state,id,name='') => {ProtoLab.ensureRequestingTeamModel(state);return (state.requestingTeams||[]).find(t=>id&&t.id===id)||(state.requestingTeams||[]).find(t=>String(t.name).toLowerCase()===String(name||id||'').toLowerCase())||null;};
   const _ensureEnterpriseModelV1089=ProtoLab.ensureEnterpriseModel;
-  ProtoLab.ensureEnterpriseModel=state=>{state=_ensureEnterpriseModelV1089(state);ProtoLab.ensureRequestingTeamModel(state);return state;};
+  ProtoLab.ensureEnterpriseModel=state=>{state=_ensureEnterpriseModelV1089(state);ProtoLab.ensureRequestingTeamModel(state);for(const p of state.pipelineProjects||[]){let v=Number(p.probability??0);if(v>1&&v<=100)v/=100;p.probability=Math.max(0,Math.min(1,Number.isFinite(v)?v:0));}return state;};
   const _validateInvariantsV1089=ProtoLab.validateInvariants;
   ProtoLab.validateInvariants=state=>{
     const out=_validateInvariantsV1089(state);ProtoLab.ensureRequestingTeamModel(state);
@@ -949,6 +949,111 @@
       {key:'controlPlanDecision',label:'Control Plan strategy',done:cpDecision}
     ];
     return {checks,missing:checks.filter(x=>!x.done),ready:checks.every(x=>x.done),team,product,customer,controlPlanDecision:cpDecision};
+  };
+
+
+  /* ============================================================
+     LabOS REV 1.0.94 — provider-neutral Project Team authority.
+     The POC still uses the local user directory, but team records
+     now store stable principal keys, functional roles and explicit
+     approval rights so the same model can later be hydrated from
+     SSO / SCIM / an enterprise identity API without changing the
+     build or approval data model.
+     ============================================================ */
+  ProtoLab.APPROVAL_RIGHT_OPTIONS = [
+    ['controlplan:approve','Control Plan approval'],
+    ['buildchange:approve','Build-specific change approval'],
+    ['product-safety:approve','Product-safety approval'],
+    ['readiness:approve','Build-readiness approval'],
+    ['release:engineering','Engineering approval'],
+    ['release:quality','Quality / customer gate approval'],
+    ['release:lab','Final release approval'],
+    ['report:approve','Build-report approval'],
+    ['plan:commit','Planning / commitment approval']
+  ].map(([id,label])=>({id,label}));
+  ProtoLab.DEFAULT_APPROVAL_RIGHTS_BY_ROLE = {
+    quality:['controlplan:approve','buildchange:approve','readiness:approve','release:quality','report:approve'],
+    process_engineer:['buildchange:approve'],
+    product_safety:['buildchange:approve','product-safety:approve','readiness:approve'],
+    engineering_lead:['release:engineering','report:approve'],
+    lab_manager:['readiness:approve','release:lab','plan:commit'],
+    lab_planner:['plan:commit'],
+    approver:['controlplan:approve','report:approve'],
+    administrator:ProtoLab.APPROVAL_RIGHT_OPTIONS.map(x=>x.id)
+  };
+  const _ensureRequestingTeamModelV1094 = ProtoLab.ensureRequestingTeamModel;
+  ProtoLab.ensureRequestingTeamModel = state => {
+    state=_ensureRequestingTeamModelV1094(state);
+    for(const t of state.requestingTeams||[]){
+      t.identityProvider=String(t.identityProvider||'local-demo');
+      t.externalGroupKey=String(t.externalGroupKey||'');
+      t.roleGovernanceEnabled=t.roleGovernanceEnabled===true;
+      t.projectLeadUserId=t.projectLeadUserId||null;
+      t.roleBindings=Array.isArray(t.roleBindings)?t.roleBindings.filter(Boolean):[];
+      // Migrate legacy team membership into provider-neutral principal bindings,
+      // but do not silently enable governance for an existing team.
+      for(const uid of t.memberUserIds||[]){
+        if(t.roleBindings.some(b=>b.principalId===uid))continue;
+        const u=(state.users||[]).find(x=>x.id===uid);if(!u)continue;
+        t.roleBindings.push({id:ProtoLab.uid('TRB'),principalId:u.id,principalName:u.name,identityProvider:t.identityProvider,externalPrincipalId:'',roleIds:[u.role],approvalRights:[]});
+      }
+      for(const b of t.roleBindings){
+        b.id=b.id||ProtoLab.uid('TRB');b.principalId=b.principalId||null;b.principalName=String(b.principalName||'');b.identityProvider=String(b.identityProvider||t.identityProvider||'local-demo');b.externalPrincipalId=String(b.externalPrincipalId||'');
+        b.roleIds=Array.isArray(b.roleIds)?[...new Set(b.roleIds.filter(Boolean))]:[];
+        b.approvalRights=Array.isArray(b.approvalRights)?[...new Set(b.approvalRights.filter(Boolean))]:[];
+      }
+    }
+    for(const r of state.requests||[]){if(!r.projectTeamId&&r.engineeringTeamId)r.projectTeamId=r.engineeringTeamId;if(!r.engineeringTeamId&&r.projectTeamId)r.engineeringTeamId=r.projectTeamId;}
+    return state;
+  };
+  ProtoLab.projectTeamForRequest = (state,r) => {
+    if(!state||!r)return null;ProtoLab.ensureRequestingTeamModel(state);
+    return (state.requestingTeams||[]).find(t=>t.id===(r.projectTeamId||r.engineeringTeamId))||ProtoLab.requestingTeamByIdOrName(state,r.engineeringTeamId,r.engineeringTeam)||null;
+  };
+  ProtoLab.projectTeamRoleBindings = (state,r) => {
+    const t=ProtoLab.projectTeamForRequest(state,r);return t?.roleBindings||[];
+  };
+  ProtoLab.resolveProjectTeamAssignee = (state,r,roleId,right=null) => {
+    const team=ProtoLab.projectTeamForRequest(state,r),users=state?.users||[];
+    if(team?.roleGovernanceEnabled){
+      const b=(team.roleBindings||[]).find(x=>(x.roleIds||[]).includes(roleId)&&(!right||(x.approvalRights||[]).includes(right)));
+      if(!b)return null;
+      const u=users.find(x=>x.id===b.principalId);return u?{...u,identityProvider:b.identityProvider||team.identityProvider,externalPrincipalId:b.externalPrincipalId||'',projectTeamId:team.id,approvalRight:right}:null;
+    }
+    const u=users.find(x=>x.role===roleId);return u?{...u,identityProvider:'local-demo',externalPrincipalId:'',projectTeamId:team?.id||null,approvalRight:right}:null;
+  };
+  ProtoLab.projectTeamUserCanApprove = (state,r,userId,roleId,right=null) => {
+    const u=(state?.users||[]).find(x=>x.id===userId);if(!u)return false;if(u.role==='administrator')return true;
+    const team=ProtoLab.projectTeamForRequest(state,r);
+    if(!team?.roleGovernanceEnabled)return u.role===roleId||(!roleId&&!!right&&ProtoLab.can(u.role,'approval:perform'));
+    return (team.roleBindings||[]).some(b=>b.principalId===userId&&(b.roleIds||[]).includes(roleId)&&(!right||(b.approvalRights||[]).includes(right)));
+  };
+  ProtoLab.approvalRightForRecord = a => {
+    if(!a)return null;if(a.approvalRight)return a.approvalRight;
+    if(a.stage==='build-change')return 'buildchange:approve';if(a.stage==='report'||a.type==='Build Report Approval')return 'report:approve';
+    if(a.type==='Product Safety')return 'product-safety:approve';if(a.type==='Build Readiness')return 'readiness:approve';
+    if(a.type==='Customer / quality gate')return 'release:quality';if(a.type==='Engineering review')return 'release:engineering';if(a.type==='Lab manager gate')return 'release:lab';
+    return null;
+  };
+  const _teamGovernApprovalV1094=(state,r,a)=>{
+    if(!a||!r||['Approved','Rejected','Superseded'].includes(a.status))return a;
+    const roleId=a.roleId||({'Quality Engineer':'quality','Process Engineer':'process_engineer','Product Safety Representative':'product_safety','Engineering Project Lead':'engineering_lead','Lab Manager':'lab_manager','Approver / Reviewer':'approver'}[a.role]||null),right=ProtoLab.approvalRightForRecord(a),team=ProtoLab.projectTeamForRequest(state,r),u=roleId?ProtoLab.resolveProjectTeamAssignee(state,r,roleId,right):null;
+    if(u){a.assignedUserId=u.id;a.person=u.name;a.identityProvider=u.identityProvider||team?.identityProvider||'local-demo';a.externalPrincipalId=u.externalPrincipalId||'';a.approvalRight=right;a.authorityMissing=false;}
+    else if(team?.roleGovernanceEnabled&&roleId){a.assignedUserId=null;a.person='Unassigned — project team authority required';a.approvalRight=right;a.authorityMissing=true;}
+    return a;
+  };
+  const _ensureBuildReportApprovalV1094=ProtoLab.ensureBuildReportApproval;
+  ProtoLab.ensureBuildReportApproval=(state,r)=>{const a=_ensureBuildReportApprovalV1094(state,r);return _teamGovernApprovalV1094(state,r,a)};
+  const _ensureBuildChangeApprovalsV1094=ProtoLab.ensureBuildChangeApprovals;
+  ProtoLab.ensureBuildChangeApprovals=(state,r,area,reason)=>{const a=_ensureBuildChangeApprovalsV1094(state,r,area,reason);a.forEach(x=>_teamGovernApprovalV1094(state,r,x));return a};
+  const _ensureApprovalRecordsV1094=ProtoLab.ensureApprovalRecords;
+  ProtoLab.ensureApprovalRecords=(state,r)=>{const a=_ensureApprovalRecordsV1094(state,r);a.forEach(x=>_teamGovernApprovalV1094(state,r,x));return a};
+  const _validateInvariantsV1094=ProtoLab.validateInvariants;
+  ProtoLab.validateInvariants=state=>{
+    const out=_validateInvariantsV1094(state);ProtoLab.ensureRequestingTeamModel(state);
+    const rights=new Set(ProtoLab.APPROVAL_RIGHT_OPTIONS.map(x=>x.id)),roles=new Set(ProtoLab.ROLES.map(x=>x.id)),users=new Set((state.users||[]).map(x=>x.id));
+    for(const t of state.requestingTeams||[])for(const b of t.roleBindings||[]){if(b.principalId&&!users.has(b.principalId))out.push(`${t.id}: project-team principal ${b.principalId} does not exist`);for(const r of b.roleIds||[])if(!roles.has(r))out.push(`${t.id}: unknown project-team role ${r}`);for(const a of b.approvalRights||[])if(!rights.has(a))out.push(`${t.id}: unknown approval right ${a}`);}
+    return [...new Set(out)];
   };
 
 })();
