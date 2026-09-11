@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.92-poc';
+  ProtoLab.VERSION = '1.0.93-poc';
   ProtoLab.SCHEMA_VERSION = 32;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
@@ -261,8 +261,24 @@
     ProtoLab.ensureBuildChangeApprovals(state,r,area,reason);ProtoLab.audit(state,'Reused baseline changed for current build','Request',r.id,'Approved/released baseline reused',`Build-specific ${area}`,reason||'Controlled build-specific adaptation');
   };
   ProtoLab.beginBuildSpecificControlPlanRevision = (state,r,cp,reason='Build-specific Control Plan adaptation') => {
-    if(!state||!r||!cp)throw new Error('Request and Control Plan are required.');if(cp.buildSpecific&&cp.buildRequestId===r.id)return cp;
-    const clone=ProtoLab.deepClone(cp);clone.id=ProtoLab.uid('CP');clone.revision=`${cp.revision}.B1`;clone.status='Draft';clone.approvedBy=null;clone.approvedAt=null;clone.baselineId=cp.id;clone.baselineRevision=cp.revision;clone.buildSpecific=true;clone.buildRequestId=r.id;clone.requestIds=[r.id];clone.name=`${cp.name} · ${r.id} adaptation`;state.controlPlans.push(clone);r.controlPlanId=clone.id;r.controlPlanDeferred=false;const pack=ProtoLab.ensureReusePackage(r);pack.controlPlan={mode:'modified',baselineId:cp.id,revision:cp.revision,buildSpecificId:clone.id};ProtoLab.markBuildSpecificDelta(state,r,'Control Plan',reason);return clone;
+    if(!state||!r||!cp)throw new Error('Request and Control Plan are required.');if(cp.buildSpecific&&cp.buildRequestId===r.id&&cp.status!=='Approved')return cp;
+    const clone=ProtoLab.deepClone(cp),revMatch=String(cp.revision||'A').match(/^(.*)\.B(\d+)$/);clone.id=ProtoLab.uid('CP');clone.revision=revMatch?`${revMatch[1]}.B${Number(revMatch[2])+1}`:`${cp.revision}.B1`;clone.status='Draft';clone.approvedBy=null;clone.approvedAt=null;clone.baselineId=cp.id;clone.baselineRevision=cp.revision;clone.buildSpecific=true;clone.buildRequestId=r.id;clone.requestIds=[r.id];clone.name=`${cp.name} · ${r.id} adaptation`;state.controlPlans.push(clone);r.controlPlanId=clone.id;r.controlPlanDeferred=false;const pack=ProtoLab.ensureReusePackage(r);pack.controlPlan={mode:'modified',baselineId:cp.id,revision:cp.revision,buildSpecificId:clone.id};ProtoLab.markBuildSpecificDelta(state,r,'Control Plan',reason);return clone;
+  };
+  // REV 1.0.93 — approval is content-dependent. Any Control Plan content edit after
+  // review/sign-off activity invalidates that approval round and creates a fresh one.
+  // Historical signatures are retained as Superseded rather than silently overwritten.
+  ProtoLab.invalidateControlPlanApproval = (state,cp,reason='Control Plan content edited') => {
+    if(!state||!cp)return {reset:false};
+    const previousStatus=cp.status||'Draft',r=cp.buildRequestId?(state.requests||[]).find(x=>x.id===cp.buildRequestId):null;
+    const active=(state.approvals||[]).filter(a=>r&&a.requestId===r.id&&a.stage==='build-change'&&a.changeArea==='Control Plan'&&a.status!=='Superseded');
+    const hadApprovalActivity=previousStatus==='Review requested'||previousStatus==='Approved'||!!cp.reviewRequestedAt||!!cp.approvedAt||active.some(a=>a.status==='Approved');
+    cp.status='Draft';cp.reviewRequestedAt=null;cp.reviewRequestedBy=null;cp.approvedAt=null;cp.approvedBy=null;cp.approvalInvalidatedAt=ProtoLab.now();cp.approvalInvalidatedBy=state.identity?.name||'System';cp.approvalInvalidatedReason=reason;
+    if(r&&cp.buildSpecific){
+      if(hadApprovalActivity){for(const a of active){a.status='Superseded';a.supersededAt=ProtoLab.now();a.supersededBy=state.identity?.name||'System';a.supersededReason=reason}const pack=ProtoLab.ensureReusePackage(r);for(const d of pack.deltas||[]){if(d.area==='Control Plan'&&d.status==='Open'){d.status='Superseded';d.supersededAt=ProtoLab.now();d.supersededReason=reason}}}
+      ProtoLab.markBuildSpecificDelta(state,r,'Control Plan',reason);
+    }
+    ProtoLab.audit(state,'Control Plan approval reset after edit','Control Plan',cp.id,previousStatus,'Draft',`${reason}${hadApprovalActivity?' · previous approval/sign-off round superseded':' · approval remains incomplete'}`);
+    return {reset:true,previousStatus,hadApprovalActivity};
   };
   ProtoLab.DEFAULT_BOMS = {
     'PRD-001':[['BPS-HSG-3200','Pressure sensor housing','D'],['BPS-PCB-3200','Pressure sensor PCB','C'],['BPS-CON-3200','Connector insert','B']],

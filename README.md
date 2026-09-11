@@ -1,9 +1,13 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.83
+# LabOS — Laboratory Operations System POC · REV 1.0.93
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
 
+## REV 1.0.93 — explicit Control Plan governance and bounded AUTO-PLAN
 
+REV 1.0.93 removes the misleading enabled Continue action when an edited Control Plan is still waiting for approval. The sticky SIGN-OFF and NEXT ACTION areas now name the actual pending signer / Quality Engineering gate, and the Control Plan page shows a three-stage approval path before Resource plan & committed timing. Any Control Plan content edit invalidates the current approval of that revision, preserves prior signatures as superseded audit history, creates fresh pending sign-offs and requires final Quality Engineering approval before the revised Control Plan becomes reusable portfolio content.
+
+AUTO-PLAN now has a date-based planning horizon instead of the legacy 5,000/8,000 iteration bounds that could silently walk through nights and weekends for years. A deterministic reproduction on the untouched REV 1.0.92 planner produced a **13 Jun 2029** forecast for a request due **18 Sep 2026** (999 days late). The same scenario in REV 1.0.93 stops at the controlled horizon with `CAPACITY_UNRESOLVABLE`, leaves live bookings unchanged and writes no false forecast. Slot search also jumps across known blocking intervals rather than scanning each hour. Targeted verification: **22/22 passed**. See `ROOT_CAUSE_PROOF_v1.0.93.md` and `VERIFICATION_v1.0.93.md`.
 
 ## REV 1.0.83 — controlled requesting teams, guaranteed sticky standards navigation and safer AUTO-PLAN
 

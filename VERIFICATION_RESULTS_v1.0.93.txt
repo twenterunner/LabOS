@@ -1,0 +1,24 @@
+PASS | Version is REV 1.0.93
+PASS | Main assets cache-busted to 1.0.93
+PASS | Service-worker reset identity updated
+PASS | CP approval invalidation engine exists
+PASS | CP stale sign-off rows are superseded
+PASS | All CP mutation flows reset approval | 4
+PASS | Sticky sign-off names final Quality action
+PASS | Sticky next action blocks rather than fake-continue
+PASS | Visible CP approval path added
+PASS | Planner has explicit controlled horizon
+PASS | Planner jumps across blocking intervals
+PASS | Planner rejects multi-year fake feasible result
+PASS | JavaScript syntax: core.js | OK
+PASS | JavaScript syntax: demo-data.js | OK
+PASS | JavaScript syntax: repository.js | OK
+PASS | JavaScript syntax: services.js | OK
+PASS | JavaScript syntax: app.js | OK
+PASS | JavaScript syntax: service-worker.js | OK
+PASS | Runtime behaviour regression | {"version":"1.0.93-poc","passed":10,"total":10,"results":[{"name":"demo has request with approved CP","pass":true,"detail":"P26-1007"},{"name":"editing approved CP creates Draft revision","pass":true,"detail":"CP-P26-1007 -> CP-MTWQJUP4-1OK1 Draft"},{"name":"CP returns to Draft after edit","pass":true,"detail":"Draft"},{"name":"formal review metadata cleared","pass":true,"detail":"{\"reviewRequestedAt\":null,\"approvedAt\":null}"},{"name":"old sign-off round retained as Superseded","pass":true,"detail":"Superseded,Superseded,Superseded"},{"name":"fresh required signers created Pending","pass":true,"detail":"Process Engineer:Pending,Quality Engineer:Pending,Product Safety Representative:Pending"},{"name":"normal auto-plan succeeds","pass":true,"detail":"8 bookings"},{"name":"normal plan has forecast","pass":true,"detail":"2026-09-21"},{"name":"normal plan remains inside controlled horizon","pass":true,"detail":"2026-09-21T13:01:12.000Z"},{"name":"normal plan performance","pass":true,"detail":"37 ms"}]}
+PASS | Root cause reproduced on 1.0.92 | {"version":"1.0.92-poc","requestId":"P26-1001","due":"2026-09-18","closureEnd":"2029-06-07","forecast":"2029-06-13","daysLate":999,"first":"2029-06-07T12:00:00.000Z","last":"2029-06-13T09:51:00.000Z","bookings":8,"ms":44}
+PASS | Root cause fixed on 1.0.93 | {"version":"1.0.93-poc","blocked":true,"code":"CAPACITY_UNRESOLVABLE","message":"Material Receipt: no conflict-free slot exists within the controlled planning horizon ending 2027-03-15. LabOS has stopped the proposal instead of presenting a multi-year future date as \u201cbest feasible\u201d.","horizonEnd":"2027-03-15T08:00:00.000Z","requestedDate":"2026-09-18","unchangedBookings":true,"forecastAfterFailure":null,"ms":4}
+PASS | Chromium CP governance UX | 9:14 AM</span></div></div><div class=\"approval-signer-row done\"><div class=\"approval-signer-copy\"><strong>Sofia Bakker</strong><span>Quality Engineer</span><small>Covers: Control Plan</small></div><div class=\"approval-signer-action\"><span class=\"approval-signer-status good\">\u2713 Signed \u00b7 Sep 11, 2026, 09:14 AM</span></div></div><div class=\"approval-signer-row done\"><div class=\"approval-signer-copy\"><strong>Emma Bos</strong><span>Product Safety Representative</span><small>Covers: Control Plan</small></div><div class=\"approval-signer-action\"><span class=\"approval-signer-status good\">\u2713 Signed \u00b7 Sep 11, 2026, 09:14 AM</span></div></div></div></div><div class=\"formal-cp-approval pending\"><div><span class=\"eyebrow\">FINAL CONTROL PLAN APPROVAL</span><h3>Build-specific change reviews complete</h3><p>Final Control Plan approval is waiting for Quality Engineering.</p><div class=\"subtle\">This is separate from the Process Engineering / Quality delta reviews above. The final approval changes the Control Plan itself from Draft to Approved.</div></div><div><button type=\"button\" class=\"button secondary\" data-switch-role=\"quality\">Switch to Sofia Bakker \u2192</button></div></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Characteristic</th><th>Class</th><th>Specification</th><th>Method / gauge</th><th>Sample / frequency</th><th>Reaction / evidence</th></tr></thead><tbody><tr><td><strong>CC-P26-1003-1</strong><br>Functional acceptance</td><td>\u2014</td><td>Target Pass </td><td>Released functional verification</td><td>100%<br><small>Every sample</small></td><td>Stop build, contain affected samples and open quality case<br><small>Sample-level result</small></td></tr></tbody></table></div></div></div>","pageErrors":[]}
+
+SUMMARY | 22/22 passed | 0 failed

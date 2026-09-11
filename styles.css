@@ -1689,3 +1689,15 @@ body,#page,.modal,.report{letter-spacing:normal!important;word-spacing:normal;li
 .workspace-context-v1092 strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:1100px){.workspace-context-v1092{grid-template-columns:repeat(3,minmax(0,1fr))}.workspace-context-v1092 .workspace-context-primary{grid-column:1/-1}}
 @media(max-width:700px){.workspace-context-v1092{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* REV 1.0.93 — explicit governance blocking and Control Plan approval path */
+.v1093-dock-note{display:block;margin-top:5px;font-size:11px;line-height:1.25;color:var(--muted,#60737a)}
+.v1093-governance-blocked{background:#eef2f3!important;border-color:#cfd9dc!important;color:#55676d!important;box-shadow:none!important;cursor:not-allowed!important}
+.v1093-cp-path{border-left:4px solid var(--teal,#0c6c73)}
+.v1093-cp-path-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.v1093-cp-path-grid>div{border:1px solid #d8e1e3;border-radius:10px;padding:11px;background:#f8fafb;display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center}
+.v1093-cp-path-grid>div>span{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#e5ebed;font-weight:800}
+.v1093-cp-path-grid>div>b{font-size:12px}.v1093-cp-path-grid>div>small{grid-column:2;color:var(--muted,#60737a);margin-top:2px}
+.v1093-cp-path-grid>div.done{background:#f0f8f3;border-color:#b8ddc5}.v1093-cp-path-grid>div.done>span{background:#d6efdf;color:#24613a}
+.v1093-cp-path-grid>div.open{background:#fff9ec;border-color:#f0d58d}.v1093-cp-path-grid>div.open>span{background:#fde8aa;color:#795d05}
+@media(max-width:850px){.v1093-cp-path-grid{grid-template-columns:1fr}.v1093-dock-note{font-size:10px}}

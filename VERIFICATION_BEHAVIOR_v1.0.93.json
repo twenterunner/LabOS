@@ -1,0 +1,57 @@
+{
+  "version": "1.0.93-poc",
+  "passed": 10,
+  "total": 10,
+  "results": [
+    {
+      "name": "demo has request with approved CP",
+      "pass": true,
+      "detail": "P26-1007"
+    },
+    {
+      "name": "editing approved CP creates Draft revision",
+      "pass": true,
+      "detail": "CP-P26-1007 -> CP-MTWQJUP4-1OK1 Draft"
+    },
+    {
+      "name": "CP returns to Draft after edit",
+      "pass": true,
+      "detail": "Draft"
+    },
+    {
+      "name": "formal review metadata cleared",
+      "pass": true,
+      "detail": "{\"reviewRequestedAt\":null,\"approvedAt\":null}"
+    },
+    {
+      "name": "old sign-off round retained as Superseded",
+      "pass": true,
+      "detail": "Superseded,Superseded,Superseded"
+    },
+    {
+      "name": "fresh required signers created Pending",
+      "pass": true,
+      "detail": "Process Engineer:Pending,Quality Engineer:Pending,Product Safety Representative:Pending"
+    },
+    {
+      "name": "normal auto-plan succeeds",
+      "pass": true,
+      "detail": "8 bookings"
+    },
+    {
+      "name": "normal plan has forecast",
+      "pass": true,
+      "detail": "2026-09-21"
+    },
+    {
+      "name": "normal plan remains inside controlled horizon",
+      "pass": true,
+      "detail": "2026-09-21T13:01:12.000Z"
+    },
+    {
+      "name": "normal plan performance",
+      "pass": true,
+      "detail": "37 ms"
+    }
+  ]
+}
