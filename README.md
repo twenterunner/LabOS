@@ -1,11 +1,13 @@
 # LabOS — Laboratory Operations System POC · REV 1.0.94
 
+## REV 1.0.94 — decision-grade planning and project authorization
+
+REV 1.0.94 rebuilds the Master Planner calendar into grouped month/year, ISO week-year and weekday/date bands; adds Total days late; turns Build commitment health tiles into live filters; removes the redundant detailed-booking foldout; and makes Yellow manual-plan alternatives explicit controlled decisions.
+
+AUTO-PLAN retains its bounded, transactional integrity gates and adds a scored three-tier decision model. Cross-project worsening is permitted only when the total lab objective improves. Capacity exhaustion opens useful recovery choices rather than raw solver output. Escalation mode gives one selected project first access to unlocked capacity and then replans the remaining portfolio to minimize collateral delay. AUTO-PLAN, the sticky guided flow, build swimlanes and manual planning now share one controlled process/development/test/handover task manifest; a proposal fails closed if an ID, type or label drifts. Configuration supports project-team membership, workflow roles, granular approval rights and provider-neutral identity keys for later SSO/API integration. The missing schema 31→32 migration path and the demo pipeline probability scale were also repaired. Targeted verification: **40/40 passed**, plus browser QA of the grouped calendar, live health filters, stable guided/manual task numbering, role-based escalation, project-team editor and proposal dialogs.
+
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
-
-## REV 1.0.94 — tiered Master Planner and project authority
-
-REV 1.0.94 turns the Master Planner into a decision cockpit: grouped ISO month/CW/day headings, actionable commitment-health filters, Total days late, no Detailed bookings section, Green/Yellow/Red AUTO-PLAN, target-first Escalation Mode, and provider-neutral Project Team roles/approval rights. It also normalises legacy 70/45/60 future-project probabilities to 0.70/0.45/0.60, preventing 100× inflation of probability-weighted capacity. AUTO-PLAN evaluates alternatives without mutating the live plan and never turns a horizon failure into a remote years-away proposal. See `CHANGELOG_v1.0.94.md`, `ROOT_CAUSE_PROOF_v1.0.94.md` and `VERIFICATION_v1.0.94.md`.
 
 ## REV 1.0.93 — explicit Control Plan governance and bounded AUTO-PLAN
 

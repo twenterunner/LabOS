@@ -894,7 +894,7 @@
   ProtoLab.activeRequestingTeams = state => {ProtoLab.ensureRequestingTeamModel(state);return (state.requestingTeams||[]).filter(t=>t.active!==false).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name)));};
   ProtoLab.requestingTeamByIdOrName = (state,id,name='') => {ProtoLab.ensureRequestingTeamModel(state);return (state.requestingTeams||[]).find(t=>id&&t.id===id)||(state.requestingTeams||[]).find(t=>String(t.name).toLowerCase()===String(name||id||'').toLowerCase())||null;};
   const _ensureEnterpriseModelV1089=ProtoLab.ensureEnterpriseModel;
-  ProtoLab.ensureEnterpriseModel=state=>{state=_ensureEnterpriseModelV1089(state);ProtoLab.ensureRequestingTeamModel(state);for(const p of state.pipelineProjects||[]){let v=Number(p.probability??0);if(v>1&&v<=100)v/=100;p.probability=Math.max(0,Math.min(1,Number.isFinite(v)?v:0));}return state;};
+  ProtoLab.ensureEnterpriseModel=state=>{state=_ensureEnterpriseModelV1089(state);ProtoLab.ensureRequestingTeamModel(state);return state;};
   const _validateInvariantsV1089=ProtoLab.validateInvariants;
   ProtoLab.validateInvariants=state=>{
     const out=_validateInvariantsV1089(state);ProtoLab.ensureRequestingTeamModel(state);
@@ -951,109 +951,68 @@
     return {checks,missing:checks.filter(x=>!x.done),ready:checks.every(x=>x.done),team,product,customer,controlPlanDecision:cpDecision};
   };
 
-
-  /* ============================================================
-     LabOS REV 1.0.94 — provider-neutral Project Team authority.
-     The POC still uses the local user directory, but team records
-     now store stable principal keys, functional roles and explicit
-     approval rights so the same model can later be hydrated from
-     SSO / SCIM / an enterprise identity API without changing the
-     build or approval data model.
-     ============================================================ */
-  ProtoLab.APPROVAL_RIGHT_OPTIONS = [
-    ['controlplan:approve','Control Plan approval'],
-    ['buildchange:approve','Build-specific change approval'],
-    ['product-safety:approve','Product-safety approval'],
-    ['readiness:approve','Build-readiness approval'],
-    ['release:engineering','Engineering approval'],
-    ['release:quality','Quality / customer gate approval'],
-    ['release:lab','Final release approval'],
-    ['report:approve','Build-report approval'],
-    ['plan:commit','Planning / commitment approval']
-  ].map(([id,label])=>({id,label}));
-  ProtoLab.DEFAULT_APPROVAL_RIGHTS_BY_ROLE = {
-    quality:['controlplan:approve','buildchange:approve','readiness:approve','release:quality','report:approve'],
-    process_engineer:['buildchange:approve'],
-    product_safety:['buildchange:approve','product-safety:approve','readiness:approve'],
-    engineering_lead:['release:engineering','report:approve'],
-    lab_manager:['readiness:approve','release:lab','plan:commit'],
-    lab_planner:['plan:commit'],
-    approver:['controlplan:approve','report:approve'],
-    administrator:ProtoLab.APPROVAL_RIGHT_OPTIONS.map(x=>x.id)
-  };
-  const _ensureRequestingTeamModelV1094 = ProtoLab.ensureRequestingTeamModel;
-  ProtoLab.ensureRequestingTeamModel = state => {
-    state=_ensureRequestingTeamModelV1094(state);
+  /* REV 1.0.94 — provider-neutral project-team authorization.
+     Local demo users and future SSO/API identities resolve through the same stable
+     principal and rights model; no screen needs to know the identity provider. */
+  ProtoLab.PROJECT_APPROVAL_RIGHTS=[
+    {id:'request',label:'Request & definition'},
+    {id:'control-plan',label:'Control Plan'},
+    {id:'planning',label:'Planning & commitment'},
+    {id:'readiness',label:'Build readiness'},
+    {id:'quality',label:'Quality disposition'},
+    {id:'release',label:'Release approval'},
+    {id:'product-safety',label:'Product safety'}
+  ];
+  ProtoLab.ensureProjectTeamModel=state=>{
+    if(!state)return state;ProtoLab.ensureRequestingTeamModel?.(state);
     for(const t of state.requestingTeams||[]){
-      t.identityProvider=String(t.identityProvider||'local-demo');
-      t.externalGroupKey=String(t.externalGroupKey||'');
-      t.roleGovernanceEnabled=t.roleGovernanceEnabled===true;
-      t.projectLeadUserId=t.projectLeadUserId||null;
-      t.roleBindings=Array.isArray(t.roleBindings)?t.roleBindings.filter(Boolean):[];
-      // Migrate legacy team membership into provider-neutral principal bindings,
-      // but do not silently enable governance for an existing team.
-      for(const uid of t.memberUserIds||[]){
-        if(t.roleBindings.some(b=>b.principalId===uid))continue;
-        const u=(state.users||[]).find(x=>x.id===uid);if(!u)continue;
-        t.roleBindings.push({id:ProtoLab.uid('TRB'),principalId:u.id,principalName:u.name,identityProvider:t.identityProvider,externalPrincipalId:'',roleIds:[u.role],approvalRights:[]});
-      }
-      for(const b of t.roleBindings){
-        b.id=b.id||ProtoLab.uid('TRB');b.principalId=b.principalId||null;b.principalName=String(b.principalName||'');b.identityProvider=String(b.identityProvider||t.identityProvider||'local-demo');b.externalPrincipalId=String(b.externalPrincipalId||'');
-        b.roleIds=Array.isArray(b.roleIds)?[...new Set(b.roleIds.filter(Boolean))]:[];
-        b.approvalRights=Array.isArray(b.approvalRights)?[...new Set(b.approvalRights.filter(Boolean))]:[];
-      }
+      t.identityProvider=t.identityProvider||'local';t.externalGroupId=t.externalGroupId||'';
+      t.assignments=Array.isArray(t.assignments)?t.assignments:[];
+      const legacy=new Set(t.memberUserIds||[]);
+      for(const uid of legacy){if(!t.assignments.some(a=>a.userId===uid)){const u=(state.users||[]).find(x=>x.id===uid);t.assignments.push({id:ProtoLab.uid('PTA'),userId:uid,identity:{provider:'local',subject:uid,email:u?.email||''},roleId:u?.role||'engineering_requester',approvalRights:u?.role==='engineering_lead'?['request','planning','readiness']:['request'],active:true});}}
+      t.assignments=t.assignments.filter(Boolean).map(a=>({id:a.id||ProtoLab.uid('PTA'),userId:a.userId||'',identity:{provider:a.identity?.provider||t.identityProvider||'local',subject:a.identity?.subject||a.userId||'',email:a.identity?.email||''},roleId:a.roleId||'engineering_requester',approvalRights:[...new Set(a.approvalRights||[])],active:a.active!==false}));
+      t.memberUserIds=[...new Set(t.assignments.filter(a=>a.active!==false&&a.userId).map(a=>a.userId))];
     }
-    for(const r of state.requests||[]){if(!r.projectTeamId&&r.engineeringTeamId)r.projectTeamId=r.engineeringTeamId;if(!r.engineeringTeamId&&r.projectTeamId)r.engineeringTeamId=r.projectTeamId;}
+    for(const r of state.requests||[]){if(!r.projectTeamId)r.projectTeamId=r.engineeringTeamId||ProtoLab.requestingTeamByIdOrName?.(state,null,r.engineeringTeam)?.id||'';}
     return state;
   };
-  ProtoLab.projectTeamForRequest = (state,r) => {
-    if(!state||!r)return null;ProtoLab.ensureRequestingTeamModel(state);
-    return (state.requestingTeams||[]).find(t=>t.id===(r.projectTeamId||r.engineeringTeamId))||ProtoLab.requestingTeamByIdOrName(state,r.engineeringTeamId,r.engineeringTeam)||null;
-  };
-  ProtoLab.projectTeamRoleBindings = (state,r) => {
-    const t=ProtoLab.projectTeamForRequest(state,r);return t?.roleBindings||[];
-  };
-  ProtoLab.resolveProjectTeamAssignee = (state,r,roleId,right=null) => {
-    const team=ProtoLab.projectTeamForRequest(state,r),users=state?.users||[];
-    if(team?.roleGovernanceEnabled){
-      const b=(team.roleBindings||[]).find(x=>(x.roleIds||[]).includes(roleId)&&(!right||(x.approvalRights||[]).includes(right)));
-      if(!b)return null;
-      const u=users.find(x=>x.id===b.principalId);return u?{...u,identityProvider:b.identityProvider||team.identityProvider,externalPrincipalId:b.externalPrincipalId||'',projectTeamId:team.id,approvalRight:right}:null;
-    }
-    const u=users.find(x=>x.role===roleId);return u?{...u,identityProvider:'local-demo',externalPrincipalId:'',projectTeamId:team?.id||null,approvalRight:right}:null;
-  };
-  ProtoLab.projectTeamUserCanApprove = (state,r,userId,roleId,right=null) => {
-    const u=(state?.users||[]).find(x=>x.id===userId);if(!u)return false;if(u.role==='administrator')return true;
-    const team=ProtoLab.projectTeamForRequest(state,r);
-    if(!team?.roleGovernanceEnabled)return u.role===roleId||(!roleId&&!!right&&ProtoLab.can(u.role,'approval:perform'));
-    return (team.roleBindings||[]).some(b=>b.principalId===userId&&(b.roleIds||[]).includes(roleId)&&(!right||(b.approvalRights||[]).includes(right)));
-  };
-  ProtoLab.approvalRightForRecord = a => {
-    if(!a)return null;if(a.approvalRight)return a.approvalRight;
-    if(a.stage==='build-change')return 'buildchange:approve';if(a.stage==='report'||a.type==='Build Report Approval')return 'report:approve';
-    if(a.type==='Product Safety')return 'product-safety:approve';if(a.type==='Build Readiness')return 'readiness:approve';
-    if(a.type==='Customer / quality gate')return 'release:quality';if(a.type==='Engineering review')return 'release:engineering';if(a.type==='Lab manager gate')return 'release:lab';
-    return null;
-  };
-  const _teamGovernApprovalV1094=(state,r,a)=>{
-    if(!a||!r||['Approved','Rejected','Superseded'].includes(a.status))return a;
-    const roleId=a.roleId||({'Quality Engineer':'quality','Process Engineer':'process_engineer','Product Safety Representative':'product_safety','Engineering Project Lead':'engineering_lead','Lab Manager':'lab_manager','Approver / Reviewer':'approver'}[a.role]||null),right=ProtoLab.approvalRightForRecord(a),team=ProtoLab.projectTeamForRequest(state,r),u=roleId?ProtoLab.resolveProjectTeamAssignee(state,r,roleId,right):null;
-    if(u){a.assignedUserId=u.id;a.person=u.name;a.identityProvider=u.identityProvider||team?.identityProvider||'local-demo';a.externalPrincipalId=u.externalPrincipalId||'';a.approvalRight=right;a.authorityMissing=false;}
-    else if(team?.roleGovernanceEnabled&&roleId){a.assignedUserId=null;a.person='Unassigned — project team authority required';a.approvalRight=right;a.authorityMissing=true;}
-    return a;
-  };
-  const _ensureBuildReportApprovalV1094=ProtoLab.ensureBuildReportApproval;
-  ProtoLab.ensureBuildReportApproval=(state,r)=>{const a=_ensureBuildReportApprovalV1094(state,r);return _teamGovernApprovalV1094(state,r,a)};
-  const _ensureBuildChangeApprovalsV1094=ProtoLab.ensureBuildChangeApprovals;
-  ProtoLab.ensureBuildChangeApprovals=(state,r,area,reason)=>{const a=_ensureBuildChangeApprovalsV1094(state,r,area,reason);a.forEach(x=>_teamGovernApprovalV1094(state,r,x));return a};
-  const _ensureApprovalRecordsV1094=ProtoLab.ensureApprovalRecords;
-  ProtoLab.ensureApprovalRecords=(state,r)=>{const a=_ensureApprovalRecordsV1094(state,r);a.forEach(x=>_teamGovernApprovalV1094(state,r,x));return a};
+  ProtoLab.resolveProjectPrincipal=(state,teamId,principal={})=>{ProtoLab.ensureProjectTeamModel(state);const t=(state.requestingTeams||[]).find(x=>x.id===teamId);if(!t)return null;const provider=principal.provider||principal.identityProvider||'local',subject=principal.subject||principal.userId||'',email=String(principal.email||'').toLowerCase();return (t.assignments||[]).find(a=>a.active!==false&&((principal.userId&&a.userId===principal.userId)||(subject&&a.identity?.provider===provider&&a.identity?.subject===subject)||(email&&String(a.identity?.email||'').toLowerCase()===email)))||null;};
+  ProtoLab.projectTeamCan=(state,teamId,principal,right)=>{const a=ProtoLab.resolveProjectPrincipal(state,teamId,principal);return !!a&&((a.approvalRights||[]).includes(right)||(a.approvalRights||[]).includes('*'));};
+  const _ensureEnterpriseModelV1094=ProtoLab.ensureEnterpriseModel;
+  ProtoLab.ensureEnterpriseModel=state=>{state=_ensureEnterpriseModelV1094(state);ProtoLab.ensureProjectTeamModel(state);for(const p of state.pipelineProjects||[]){const n=Number(p.probability||0);p.probability=Math.max(0,Math.min(1,n>1?n/100:n));}return state;};
   const _validateInvariantsV1094=ProtoLab.validateInvariants;
-  ProtoLab.validateInvariants=state=>{
-    const out=_validateInvariantsV1094(state);ProtoLab.ensureRequestingTeamModel(state);
-    const rights=new Set(ProtoLab.APPROVAL_RIGHT_OPTIONS.map(x=>x.id)),roles=new Set(ProtoLab.ROLES.map(x=>x.id)),users=new Set((state.users||[]).map(x=>x.id));
-    for(const t of state.requestingTeams||[])for(const b of t.roleBindings||[]){if(b.principalId&&!users.has(b.principalId))out.push(`${t.id}: project-team principal ${b.principalId} does not exist`);for(const r of b.roleIds||[])if(!roles.has(r))out.push(`${t.id}: unknown project-team role ${r}`);for(const a of b.approvalRights||[])if(!rights.has(a))out.push(`${t.id}: unknown approval right ${a}`);}
-    return [...new Set(out)];
+  ProtoLab.validateInvariants=state=>{const out=_validateInvariantsV1094(state);ProtoLab.ensureProjectTeamModel(state);for(const t of state.requestingTeams||[]){const ids=new Set();for(const a of t.assignments||[]){if(ids.has(a.id))out.push(`Duplicate project-team assignment ID ${a.id}`);ids.add(a.id);if(!ProtoLab.ROLES.some(r=>r.id===a.roleId))out.push(`Project team ${t.id} has unknown role ${a.roleId}`);for(const right of a.approvalRights||[])if(!ProtoLab.PROJECT_APPROVAL_RIGHTS.some(r=>r.id===right))out.push(`Project team ${t.id} has unknown approval right ${right}`);}}return [...new Set(out)];};
+
+  /* REV 1.0.94 — one controlled task manifest for planning and guided work.
+     AUTO-PLAN, manual planning and the sticky workflow consume the same IDs,
+     labels, kinds and sequence. */
+  ProtoLab.planningTaskManifest=(state,requestOrId,{includeCompleted=false}={})=>{
+    const r=typeof requestOrId==='string'?(state?.requests||[]).find(x=>x.id===requestOrId):requestOrId;
+    if(!state||!r)return [];
+    ProtoLab.ensureTestRequirements?.(state,r);
+    const route=(state.routes||[]).find(x=>x.requestId===r.id),tasks=[];
+    const completed=x=>!!(x?.completedAt||/complete|completed|done|skipped/i.test(String(x?.status||'')));
+    for(const step of (route?.steps||[]).slice().sort((a,b)=>Number(a.order||0)-Number(b.order||0))){
+      const active=!completed(step);
+      if(step.type!=='standard')tasks.push({id:`DEV-${step.id}`,sourceId:step.id,name:`Develop / validate ${step.name}`,kind:'development',phase:'Process & method readiness',order:tasks.length+1,active,routeStep:step});
+      tasks.push({id:step.id,sourceId:step.id,name:step.name,kind:'process',phase:'Build execution',order:tasks.length+1,active,routeStep:step});
+    }
+    for(const tr of r.testRequirements||[]){
+      const active=!completed(tr);
+      const standard=tr.standardTestId&&(state.standardTests||[]).find(x=>x.id===tr.standardTestId);
+      if(!standard&&!tr.standardTestId)tasks.push({id:`DEV-${tr.id}`,sourceId:tr.id,name:`Develop test · ${tr.name}`,kind:'development',phase:'Test method readiness',order:tasks.length+1,active,testRequirement:tr});
+      tasks.push({id:tr.id,sourceId:tr.id,name:standard?`Test · ${tr.name}`:`Provisional test · ${tr.name}`,kind:'test',phase:'Verification & characterisation',order:tasks.length+1,active,testRequirement:tr,standardTest:standard||null});
+    }
+    tasks.push({id:`FINAL-${r.id}`,sourceId:r.id,name:'Final quality review / release / handover',kind:'closeout',phase:'Release & handover',order:tasks.length+1,active:!['RELEASED','DELIVERED','CLOSED'].includes(r.status)});
+    return includeCompleted?tasks:tasks.filter(x=>x.active);
+  };
+  ProtoLab.planningTaskDrift=(state,requestOrId,bookings=null)=>{
+    const r=typeof requestOrId==='string'?(state?.requests||[]).find(x=>x.id===requestOrId):requestOrId;if(!r)return ['Request does not exist.'];
+    const expected=ProtoLab.planningTaskManifest(state,r),actual=(bookings||state.bookings||[]).filter(x=>x.requestId===r.id&&!/complete|completed|actual|done|cancel|superseded/i.test(String(x.status||''))),issues=[],byId=new Map();
+    for(const b of actual){if(byId.has(b.stepId))issues.push(`Duplicate planned task ${b.stepId}.`);else byId.set(b.stepId,b);}
+    for(const t of expected){const b=byId.get(t.id);if(!b){issues.push(`Missing planned task ${t.order} · ${t.name}.`);continue}if(String(b.taskType||'process')!==t.kind)issues.push(`${t.name}: planned kind ${b.taskType||'process'} does not match ${t.kind}.`);if(String(b.stepName||'')!==t.name)issues.push(`${t.id}: planned label does not match controlled task “${t.name}”.`);}
+    const ids=new Set(expected.map(x=>x.id));for(const b of actual)if(!ids.has(b.stepId))issues.push(`Unexpected planned task ${b.stepId} · ${b.stepName||'unnamed'}.`);
+    return [...new Set(issues)];
   };
 
 })();
