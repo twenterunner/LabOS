@@ -1,0 +1,78 @@
+LabOS REV 1.0.96 verification
+Passed: 73
+Failed: 0
+Total: 73
+
+PASS | Core version is REV 1.0.96
+PASS | HTML badge is REV 1.0.96
+PASS | Cache bust updated: styles.css
+PASS | Cache bust updated: core.js
+PASS | Cache bust updated: demo-data.js
+PASS | Cache bust updated: repository.js
+PASS | Cache bust updated: services.js
+PASS | Cache bust updated: app.js
+PASS | Service-worker reset is REV 1.0.96
+PASS | JavaScript syntax: core.js
+PASS | JavaScript syntax: demo-data.js
+PASS | JavaScript syntax: repository.js
+PASS | JavaScript syntax: services.js
+PASS | JavaScript syntax: app.js
+PASS | JavaScript syntax: service-worker.js
+PASS | Universal semantic timeline renderer exists
+PASS | Horizon picker removed from active render
+PASS | Universal zoom order and semantics encoded
+PASS | Minus reduces date span and plus increases date span
+PASS | Fit is data-derived from selected plans
+PASS | Calendar uses grouped month + ISO week-year + date rows
+PASS | Month format includes year
+PASS | ISO week-year format includes CW and year
+PASS | Universal board is full-width grid
+PASS | Timeline scrolling is disabled in favor of semantic span zoom
+PASS | Sticky build planner uses universal timeline
+PASS | Legacy generic width zoom disabled
+PASS | Legacy grouped-axis mutator disabled
+PASS | All active builds populate portfolio lanes before booking events
+PASS | Unplanned active builds get explicit schedule-unresolved state
+PASS | Health filters feed visible build IDs
+PASS | Six health tiles retained
+PASS | One PlanningEngine facade exists
+PASS | AUTO aliases route into V1096 engine
+PASS | Manual plan routes through same PlannerService.autoPlan
+PASS | Manual constraints are validated by same resource/sequence kernel
+PASS | Protected planner isolates failed build transactions
+PASS | Selectable tiers must be complete
+PASS | Red tier requires whole-lab improvement plus a worsened project
+PASS | Escalation is target-first and replans remaining portfolio
+PASS | Final integrity audits remain hard gates
+PASS | Canonical task model remains source for planning
+PASS | Capacity search remains bounded
+PASS | Raw multi-year legacy error is absent
+PASS | Guided recovery has root-cause workflow
+PASS | Guided recovery offers operational actions
+PASS | AUTO PLAN isolates blockers and keeps portfolio planning
+PASS | Provider-neutral project teams retained
+PASS | REV 1.0.96 browser verification exists
+PASS | Browser: no horizon input
+PASS | Browser: no legacy zoom controls
+PASS | Browser: toolbar order is minus / Fit / plus
+PASS | Browser: main swimlane has no horizontal overflow | {'scrollClient': 1560, 'scrollWidth': 1560, 'boardClient': 1560, 'boardWidth': 1560, 'parent': 1562, 'overflow': 'hidden'}
+PASS | Browser: minus zooms in, plus zooms out, Fit restores | {'fit': 77, 'minus1': 56, 'minus2': 28, 'plus': 56, 'fitRestored': 77}
+PASS | Browser: grouped header has valid month-year labels
+PASS | Browser: grouped header has valid ISO CW-year labels
+PASS | Browser: daily detail row appears at day-scale
+PASS | Browser: ISO year boundary is correct | {'year': 2026, 'week': 53}
+PASS | Browser: all six tiles filter the swimlane population | {'all': {'tile': True, 'active': 'all', 'actual': 21, 'expected': 21}, 'onTime': {'tile': True, 'active': 'onTime', 'actual': 13, 'expected': 13}, 'late': {'tile': True, 'active': 'late', 'actual': 0, 'expected': 0}, 'lateDays': {'tile': True, 'active': 'lateDays', 'actual': 0, 'expected': 0}, 'movement': {'tile': True, 'active': 'movement', 'actual': 13, 'expected': 13}, 'unplanned': {'tile': True, 'active': 'unplanned', 'actual': 8, 'expected': 8}}
+PASS | Browser: active committed unplanned build remains visible | {'id': 'P26-1001', 'visible': True, 'unresolved': True}
+PASS | Browser: build page and sticky menu share universal timeline | {'id': 'P26-1001', 'buildUniversal': 1, 'stickyUniversal': 1, 'buildToolbar': ['−', 'Fit', '+'], 'stickyToolbar': ['−', 'Fit', '+'], 'oldStickyZoom': 0, 'horizon': 0}
+PASS | Browser: canonical tasks align with manual/sticky/process UI | {'manualIdsEqual': True, 'stickyNamesEqual': True, 'flowTestsPresent': True, 'hasFinal': True, 'count': 8}
+PASS | Browser: AUTO PLAN returns complete selectable candidate | {'elapsed': 3448.5, 'recommended': 'yellow', 'rows': [{'tier': 'green', 'eligible': False, 'ok': True, 'complete': False, 'blocked': 7, 'score': 7000001, 'worsened': 0}, {'tier': 'yellow', 'eligible': True, 'ok': True, 'complete': True, 'blocked': 0, 'score': 143108, 'worsened': 0}, {'tier': 'red', 'eligible': False, 'ok': True, 'complete': True, 'blocked': 0, 'score': 143121, 'worsened': 9}], 'eligible': ['yellow'], 'allSelectableComplete': True, 'redRule': True, 'blockers': 7}
+PASS | Browser: AUTO PLAN portfolio benchmark under 8 s | 3448.5
+PASS | Browser: protected planner isolates one failed build and continues | {'ok': True, 'partial': True, 'blocked': 1, 'planned': 3, 'selected': 4, 'victimBlocked': True, 'liveUnchanged': True}
+PASS | Browser: manual constraints use unified solver with zero conflicts | {'ok': True, 'constraints': 1, 'coverage': True, 'manualMarked': True, 'collisions': 0, 'readiness': 0, 'quality': 'Manual · unified solver'}
+PASS | Browser: escalation produces valid target-first recovered portfolio | {'ok': True, 'elapsed': 1280.8, 'target': 'P26-1001', 'before': '2026-09-18', 'after': '2026-09-17', 'worsened': 10, 'alternatives': 6, 'invariants': 0, 'collisions': 0, 'readiness': 0}
+PASS | Browser: escalation benchmark under 8 s | 1280.8
+PASS | Browser: extreme-horizon guard does not invent remote plan or mutate live data | {'recommended': None, 'eligible': [], 'codes': ['CAPACITY_UNRESOLVABLE', 'CAPACITY_UNRESOLVABLE'], 'rawRemote': False, 'unchanged': True}
+PASS | Browser: blocked plan presents guided actions, not Close-only | ['×', 'Close', 'Add / borrow capacity', 'Manual plan · same solver', 'Escalation mode']
+PASS | Browser: live AUTO PLAN modal is actionable | ['×', 'Resolve blocker →', 'Review recommended plan →', 'Not justified by whole-lab objective', 'Start guided recovery →', 'Start guided recovery →', 'Start guided recovery →', 'Start guided recovery →', 'Start guided recovery →', 'Start guided recovery →', 'Start guided recovery →', 'Close']
+PASS | Browser: zero page errors | []
+PASS | Universal timeline visual proof exists | 318759

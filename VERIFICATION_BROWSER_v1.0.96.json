@@ -1,0 +1,238 @@
+{
+  "timelineMainCount": 1,
+  "horizonInput": 0,
+  "legacyGenericZoom": 0,
+  "legacyStickyZoom": 0,
+  "toolbarButtons": [
+    "\u2212",
+    "Fit",
+    "+"
+  ],
+  "toolbarLayout": {
+    "justify": "flex-start",
+    "left": 291,
+    "buttons": [
+      291,
+      335,
+      380.515625
+    ]
+  },
+  "fullWidth": {
+    "scrollClient": 1560,
+    "scrollWidth": 1560,
+    "boardClient": 1560,
+    "boardWidth": 1560,
+    "parent": 1562,
+    "overflow": "hidden"
+  },
+  "fitInitial": true,
+  "zoomSemantics": {
+    "fit": 77,
+    "minus1": 56,
+    "minus2": 28,
+    "plus": 56,
+    "fitRestored": 77
+  },
+  "calendarMonths": [
+    "OCT 2026",
+    "NOV 2026"
+  ],
+  "calendarWeeks": [
+    "CW 41 \u00b7 2026",
+    "CW 42 \u00b7 2026",
+    "CW 43 \u00b7 2026",
+    "CW 44 \u00b7 2026",
+    "CW 45 \u00b7 2026"
+  ],
+  "calendarDayCount": 29,
+  "calendarDaySamples": [
+    "MON\n5\nAM\nPM",
+    "TUE\n6\nAM\nPM",
+    "WED\n7\nAM\nPM",
+    "THU\n8\nAM\nPM",
+    "FRI\n9\nAM\nPM"
+  ],
+  "calendarAxisRows": 3,
+  "widthAtDetailedZoom": {
+    "c": 1560,
+    "sw": 1560,
+    "b": 1560,
+    "bw": 1560
+  },
+  "isoBoundary": {
+    "year": 2026,
+    "week": 53
+  },
+  "filters": {
+    "all": {
+      "tile": true,
+      "active": "all",
+      "actual": 21,
+      "expected": 21
+    },
+    "onTime": {
+      "tile": true,
+      "active": "onTime",
+      "actual": 13,
+      "expected": 13
+    },
+    "late": {
+      "tile": true,
+      "active": "late",
+      "actual": 0,
+      "expected": 0
+    },
+    "lateDays": {
+      "tile": true,
+      "active": "lateDays",
+      "actual": 0,
+      "expected": 0
+    },
+    "movement": {
+      "tile": true,
+      "active": "movement",
+      "actual": 13,
+      "expected": 13
+    },
+    "unplanned": {
+      "tile": true,
+      "active": "unplanned",
+      "actual": 8,
+      "expected": 8
+    }
+  },
+  "unplannedCommittedVisible": {
+    "id": "P26-1001",
+    "visible": true,
+    "unresolved": true
+  },
+  "otherTimelineContexts": {
+    "id": "P26-1001",
+    "buildUniversal": 1,
+    "stickyUniversal": 1,
+    "buildToolbar": [
+      "\u2212",
+      "Fit",
+      "+"
+    ],
+    "stickyToolbar": [
+      "\u2212",
+      "Fit",
+      "+"
+    ],
+    "oldStickyZoom": 0,
+    "horizon": 0
+  },
+  "canonicalAlignment": {
+    "manualIdsEqual": true,
+    "stickyNamesEqual": true,
+    "flowTestsPresent": true,
+    "hasFinal": true,
+    "count": 8
+  },
+  "autoEngine": {
+    "elapsed": 3448.5,
+    "recommended": "yellow",
+    "rows": [
+      {
+        "tier": "green",
+        "eligible": false,
+        "ok": true,
+        "complete": false,
+        "blocked": 7,
+        "score": 7000001,
+        "worsened": 0
+      },
+      {
+        "tier": "yellow",
+        "eligible": true,
+        "ok": true,
+        "complete": true,
+        "blocked": 0,
+        "score": 143108,
+        "worsened": 0
+      },
+      {
+        "tier": "red",
+        "eligible": false,
+        "ok": true,
+        "complete": true,
+        "blocked": 0,
+        "score": 143121,
+        "worsened": 9
+      }
+    ],
+    "eligible": [
+      "yellow"
+    ],
+    "allSelectableComplete": true,
+    "redRule": true,
+    "blockers": 7
+  },
+  "failureIsolation": {
+    "ok": true,
+    "partial": true,
+    "blocked": 1,
+    "planned": 3,
+    "selected": 4,
+    "victimBlocked": true,
+    "liveUnchanged": true
+  },
+  "manualUnified": {
+    "ok": true,
+    "constraints": 1,
+    "coverage": true,
+    "manualMarked": true,
+    "collisions": 0,
+    "readiness": 0,
+    "quality": "Manual \u00b7 unified solver"
+  },
+  "escalation": {
+    "ok": true,
+    "elapsed": 1280.8,
+    "target": "P26-1001",
+    "before": "2026-09-18",
+    "after": "2026-09-17",
+    "worsened": 10,
+    "alternatives": 6,
+    "invariants": 0,
+    "collisions": 0,
+    "readiness": 0
+  },
+  "horizonGuard": {
+    "recommended": null,
+    "eligible": [],
+    "codes": [
+      "CAPACITY_UNRESOLVABLE",
+      "CAPACITY_UNRESOLVABLE"
+    ],
+    "rawRemote": false,
+    "unchanged": true
+  },
+  "guidedRecovery": "P26-1001",
+  "guidedRecoveryText": "Guided planning recovery \u00b7 P26-1001\n\u00d7\nONE PLANNING ENGINE \u00b7 GUIDED RECOVERY\nProgramming / Flashing\n\nProgramming / Flashing cannot be placed inside the useful planning window with the currently available Programming capacity. No valid end-to-end resource combination remains inside the evaluated window.\n\n\u2713\n1 \u00b7 Root cause isolated\nCAPACITY_UNRESOLVABLE\n2\nChoose a controlled recovery\nOnly actions relevant to this blocker are offered below.\n3\nSame solver recalculates end-to-end\nNo partial schedule is accepted.\n4\nReview impact & accept\nCommitment movement remains explicit and audited.\nREQUESTED\nSep 18, 2026\nUSEFUL PLANNING HORIZON\nOct 11, 2026\nCAPABILITY\nProgramming\nQUALIFIED PEOPLE FOUND\n0\nWhat is consuming the constrained capacity?\nNo single conflicting booking explains the issue; the constrained combination is structural/readiness based.\nClose\nAdd / borrow capacity\nManual plan \u00b7 same solver\nEscalation mode",
+  "guidedRecoveryActions": [
+    "\u00d7",
+    "Close",
+    "Add / borrow capacity",
+    "Manual plan \u00b7 same solver",
+    "Escalation mode"
+  ],
+  "autoModalTierCount": 3,
+  "autoModalActions": [
+    "\u00d7",
+    "Resolve blocker \u2192",
+    "Review recommended plan \u2192",
+    "Not justified by whole-lab objective",
+    "Start guided recovery \u2192",
+    "Start guided recovery \u2192",
+    "Start guided recovery \u2192",
+    "Start guided recovery \u2192",
+    "Start guided recovery \u2192",
+    "Start guided recovery \u2192",
+    "Start guided recovery \u2192",
+    "Close"
+  ],
+  "autoModalText": "AUTO PLAN \u00b7 PORTFOLIO\n\u00d7\nWhole-lab optimization \u00b7 9 deterministic strategies\nGreen protects other projects. Yellow may schedule controlled recovery. Red is only reviewable when moving another project improves the quantified whole-lab objective. All modes use the same scheduling kernel and final integrity gates.\n1\nGREEN\nGreen \u00b7 protected plan\n\nUses currently released capability and does not move another project.\n\nResolve blocker \u2192\nTOTAL DAYS LATE\n0 d\nunchanged\nMAX PROJECT DELAY\n0 d\nunchanged\nUNPLANNED\n7\n8 \u2192 7\nCOMMITMENT WORSENING\n0 d\nunchanged\nSolver strategy priorityDue\n1/8 selected builds solved\n7 blockers isolated\n\u2713 No other project becomes later.\n2\nRECOMMENDED \u00b7 YELLOW\nYellow \u00b7 controlled recovery\n\nMay schedule training, calibration or maintenance while preserving other project plans.\n\nReview recommended plan \u2192\nTOTAL DAYS LATE\n3 d\n0 \u2192 3 d\nMAX PROJECT DELAY\n1 d\n0 \u2192 1 d\nUNPLANNED\n0\n8 \u2192 0\nCOMMITMENT WORSENING\n0 d\nunchanged\nSolver strategy leastSlack\n8/8 selected builds solved\nComplete candidate\n\u2713 No other project becomes later.\n3\nRED\nRed \u00b7 portfolio trade-off\n\nMay move other projects only when the quantified whole-lab objective improves.\n\nNot justified by whole-lab objective\nTOTAL DAYS LATE\n3 d\n0 \u2192 3 d\nMAX PROJECT DELAY\n1 d\n0 \u2192 1 d\nUNPLANNED\n0\n8 \u2192 0\nCOMMITMENT WORSENING\n0 d\nunchanged\nSolver strategy duePriority\n21/21 selected builds solved\nComplete candidate\n9 projects become later\nWhole-lab objective does not improve enough to justify worsening another project.\nGUIDED RECOVERY\nBlocked builds do not stop the rest of the portfolio\n\nFeasible builds can still be planned and reviewed. Each blocked build remains visible in the Master Planner and has its own guided recovery path.\n\nP26-1003 \u00b7 Equipment readiness\nEquipment readiness needs Calibration before the protected plan can proceed.\nStart guided recovery \u2192\nP26-1019 \u00b7 Equipment readiness\nEquipment readiness needs Maintenance before the protected plan can proceed.\nStart guided recovery \u2192\nP26-1002 \u00b7 Equipment readiness\nEquipment readiness needs Calibration before the protected plan can proceed.\nStart guided recovery \u2192\nP26-1018 \u00b7 Equipment readiness\nEquipment readiness needs Maintenance before the protected plan can proceed.\nStart guided recovery \u2192\nP26-1001 \u00b7 Equipment readiness\nEquipment readiness needs Calibration before the protected plan can proceed.\nStart guided recovery \u2192\nP26-1004 \u00b7 Equipment readiness\nEquipment readiness needs Calibration before the protected plan can proceed.\nStart guided recovery \u2192\nP26-1017 \u00b7 Equipment readiness\nEquipment readiness needs Maintenance before the protected plan can proceed.\nStart guided recovery \u2192\nClose",
+  "pageErrors": []
+}

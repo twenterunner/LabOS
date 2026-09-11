@@ -1,6 +1,14 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.95
+# LabOS — Laboratory Operations System POC · REV 1.0.96
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
+
+## REV 1.0.96 — single planning engine + universal full-width timeline
+
+REV 1.0.96 converges planning onto one architecture. AUTO PLAN, MANUAL PLAN, Green/Yellow/Red portfolio optimization and target-first Escalation all use one `PlanningEngineV1096` facade over the same scheduling kernel, canonical build-task graph and integrity gates. Manual placement is a set of solver constraints rather than a separate booking algorithm; blocked builds are isolated without aborting feasible portfolio work; and only complete candidates are selectable.
+
+The Master Planner, build-specific planning page and sticky build cockpit now use the same full-width semantic timeline. The fixed Horizon input and legacy pixel-width zooms are removed. Controls are leading **− · Fit · +**: − reduces the displayed date duration, + increases it, and Fit derives and displays the full selected-plan range across the available width. Calendar headings are aligned as **MONTH YEAR → ISO CW + ISO week-year → weekday/date**, with AM/PM detail at day scale and weekend shading when weekends are disabled. Active builds are populated independently of bookings, so an ongoing committed build without a current valid schedule remains visible as **Schedule unresolved**. The six commitment-health tiles filter the actual swimlane population.
+
+Verification: **73/73 passed, 0 failed**, including Chromium with **0 page errors**, all six filter-to-lane checks, ISO week-year boundary testing, full-width/no-overflow zoom tests, single-engine manual constraints, failure isolation, target-first escalation integrity and a 900-day closure horizon guard. See `CHANGELOG_v1.0.96.md`, `ROOT_CAUSE_PROOF_v1.0.96.md` and `VERIFICATION_v1.0.96.md`.
 
 ## REV 1.0.95 — canonical build task graph
 

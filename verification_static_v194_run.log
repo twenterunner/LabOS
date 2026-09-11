@@ -1,0 +1,81 @@
+PASS | Core version is REV 1.0.94
+PASS | HTML badge is REV 1.0.94
+PASS | Cache bust updated: styles.css
+PASS | Cache bust updated: core.js
+PASS | Cache bust updated: demo-data.js
+PASS | Cache bust updated: repository.js
+PASS | Cache bust updated: services.js
+PASS | Cache bust updated: app.js
+PASS | Service-worker cache reset is 1.0.94
+PASS | JavaScript syntax: core.js
+PASS | JavaScript syntax: demo-data.js
+PASS | JavaScript syntax: repository.js
+PASS | JavaScript syntax: services.js
+PASS | JavaScript syntax: app.js
+PASS | JavaScript syntax: service-worker.js
+PASS | ISO-week formatter exists
+PASS | Grouped live calendar-axis formatter exists
+PASS | Month, ISO week-year and day layers styled
+PASS | Total days late filter tile is present
+PASS | All commitment-health tile is present
+PASS | Commitment movement tile is a filter
+PASS | Build commitment health refresh honors filters
+PASS | Detailed bookings rendered section removed
+PASS | Tiered AUTO PLAN control is active
+PASS | Escalation Mode control is active
+PASS | Planner function exists: planningPortfolioScoreV1094
+PASS | Planner function exists: planningWorsenedProjectsV1094
+PASS | Planner function exists: planningImprovementSuggestionsV1094
+PASS | Planner function exists: buildAutoPlanTiersV1094
+PASS | Planner function exists: buildEscalationPlanV1094
+PASS | Planner function exists: planPortfolioCandidateV1094
+PASS | Green policy can forbid recovery
+PASS | Recovery-required path is explicit
+PASS | Capacity failure is bounded and recoverable
+PASS | Legacy multi-year raw horizon message removed
+PASS | UI explicitly refuses remote multi-year best-feasible output
+PASS | Red tier requires whole-lab objective improvement
+PASS | Red tier trade-off requires actual worsened project
+PASS | Newly planned request is not falsely classified as worsened project
+PASS | Escalation is target-first
+PASS | Escalation evaluates multiple portfolio orderings
+PASS | Planner candidate runs final invariant audit
+PASS | Capability-improvement suggestions include training
+PASS | Provider-neutral team identity source exists
+PASS | Provider-neutral principal identity key exists
+PASS | Project-team role bindings exist
+PASS | Project-team approval rights exist
+PASS | Project-team approval enforcement helper exists
+PASS | Project-team assignee resolution helper exists
+PASS | Project team UI exposes roles and approval rights
+PASS | Project team UI exposes identity source
+PASS | Demo future-project probabilities use fractions
+PASS | Legacy whole-percent probability migration normalizes to fractions
+PASS | REV 1.0.93 control-plan approval invalidation retained
+PASS | Control-plan approval path UI retained
+PASS | Final closeout is an explicit planned booking
+PASS | Browser verification JSON exists
+PASS | Browser: ISO year boundary correct | {'year': 2026, 'week': 53}
+PASS | Browser: Detailed bookings absent
+PASS | Browser: pipeline probabilities normalized | 0.7
+PASS | Browser: All filter tile rendered
+PASS | Browser: Total days late tile rendered
+PASS | Browser: grouped month axis rendered | ['SEP 2026', 'OCT 2026', 'NOV']
+PASS | Browser: ISO week-year axis rendered | ['CW 37 · 2026', 'CW 38 · 2026']
+PASS | Browser: Commitment movement tile filters
+PASS | Browser: tier cards rendered | 3
+PASS | Browser: no raw horizon leak
+PASS | Browser: no multi-year best-feasible leak
+PASS | Browser: Project Team authority positive/negative check | {'ok': True, 'assignee': 'Sofia Bakker'}
+PASS | Engine: tier analysis returned recommendation | red
+PASS | Engine: Red gate passed only under rule | True
+PASS | Engine: no forecast beyond near-term test year | 2026
+PASS | Adversarial horizon guard returns no fake recommendation | {'recommended': None, 'eligible': [], 'errors': [{'code': 'CAPACITY_UNRESOLVABLE', 'error': 'Material Receipt: current protected capacity cannot place this activity in a useful planning window. LabOS will evaluate recovery and portfolio alternatives instead.', 'horizon': '2026-10-31T08:00:00.000Z'}, {'code': 'CAPACITY_UNRESOLVABLE', 'error': 'Material Receipt: current protected capacity cannot place this activity in a useful planning window. LabOS will evaluate recovery and portfolio alternatives instead.', 'horizon': '2026-10-31T08:00:00.000Z'}], 'rawLeak': False, 'maxYear': 2026, 'liveBookingsUnchanged': True}
+PASS | Adversarial horizon guard does not mutate live plan
+PASS | Adversarial horizon guard does not leak raw legacy message
+PASS | Escalation produces valid target-first alternative | {'ok': True, 'elapsed': 742.8, 'targetId': 'P26-1001', 'targetBefore': '2026-09-18', 'targetAfter': '2026-09-17', 'worsened': 10, 'alternatives': 3, 'invariants': 0, 'collisions': 0, 'readiness': 0}
+PASS | Escalation result has zero invariants/collisions/readiness failures | {'ok': True, 'elapsed': 742.8, 'targetId': 'P26-1001', 'targetBefore': '2026-09-18', 'targetAfter': '2026-09-17', 'worsened': 10, 'alternatives': 3, 'invariants': 0, 'collisions': 0, 'readiness': 0}
+PASS | Browser page completed without JS page errors
+PASS | Master Planner visual proof exists | 204815
+
+SUMMARY 79/79 passed; 0 failed

@@ -60,7 +60,7 @@
     "assignee": "Sofia Bakker"
   },
   "engine": {
-    "elapsed": 838.4,
+    "elapsed": 824.5,
     "eligible": [
       "yellow",
       "red"
@@ -127,7 +127,7 @@
   },
   "escalationEngine": {
     "ok": true,
-    "elapsed": 742.8,
+    "elapsed": 697.6,
     "targetId": "P26-1001",
     "targetBefore": "2026-09-18",
     "targetAfter": "2026-09-17",

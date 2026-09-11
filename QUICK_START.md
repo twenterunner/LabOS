@@ -1,11 +1,11 @@
-# LabOS REV 1.0.59 · Quick Start
+# LabOS REV 1.0.96 · Quick Start
 
 1. **Set up a lab** — Administrator → Configuration → **Start / continue setup**. Work through scope, customers/internal use, products, people/competencies, equipment/readiness durations, evidence, released standards and the final integrity check. If there is no historical readiness evidence to migrate, choose the clean-start option so LabOS schedules readiness before first use.
 2. **Migrate existing LIMS data** — Configuration → **Import from existing LIMS**, or use the import actions inside the setup wizard. Download the relevant template, export/map your current data to the recognised columns, validate, then import. Equipment should precede calibration/maintenance; staff and competencies should precede training certificates.
 3. **Create/define a build** — Select customer, product/configuration, quantity, date and engineering purpose. Use the controlled product/BOM and customer masters where applicable.
 4. **Define the route** — Open the build → **Use or adapt engineering route & methods**. Reuse released process revisions where possible; guided development is used only for genuine gaps.
 5. **Approve the Control Plan** — Link formal characteristics to the relevant process step and define method, specification/reaction plan and executable sampling rule.
-6. **Plan resources** — AUTO-PLAN considers equipment, staff/competency, calibration, maintenance, training, material readiness, planning situations, dependencies and priority. A structural blocker opens its guided resolver; the plan retries automatically after resolution.
+6. **Plan resources** — AUTO PLAN, MANUAL PLAN and Escalation use the same controlled planning engine. Use the leading **− · Fit · +** timeline controls to change the date span; Fit shows the complete selected plan range. AUTO PLAN evaluates Green / Yellow / Red strategies, isolates blocked builds, and opens guided recovery when capability/readiness is missing. Manual choices are constraints validated by that same solver.
 7. **Execute a process step** — For large quantities the execution group is folded by default. All pending samples are selected; open the foldout only to search/change the group. Enter recipe/setup controls, start the real execution group, capture the governed matrix/CSV data, then complete when required evidence exists.
 8. **Review samples** — The build Sample Register is folded for large batches and searchable. Use the batch/sample matrix as the primary capture surface; individual sample records are for identity or exceptional evidence.
 9. **Find genealogy** — **Serial History** supports search across sample/Lab ID/formal serial/build/product/customer/lot/process/operator/equipment and groups results in foldouts.
