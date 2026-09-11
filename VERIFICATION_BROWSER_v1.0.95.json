@@ -1,0 +1,349 @@
+{
+  "isoBoundary": {
+    "year": 2026,
+    "week": 53
+  },
+  "syntheticLateDays": 5,
+  "planningText": "Visual Resource Planning\n\nOne controlled planning decision: optimize resource assignments, forecasts and any resulting movement of already-committed dates together. Original commitments remain permanently in history.\n\nCalendar settings\n+ Planning situation\nMANUAL PLAN\nAUTO PLAN \u00b7 TIERED\nESCALATION MODE\nSwimlanes\nCapacity situations\nCommitment health\nTiered AUTO-PLAN.\nGreen protects existing projects; Yellow may schedule local readiness/training; Red may worsen another project only when the quantified whole-lab plan improves. Escalation is a separate target-first mode.\nALL\n21\nAll open builds\nON TIME\n13\nForecast on / before requested date\nLATE BUILDS\n0\nForecast later than requested date\nTOTAL DAYS LATE\n0\nSum of positive forecast lateness\nCOMMITMENT MOVEMENT\n13\nForecast differs from current commitment\nUNPLANNED\n8\nNo current forecast\nSWIMLANE PLANNER\nOverall portfolio\nResource lanes now use the technical capability required by each process/test. A technically invalid legacy assignment is moved to \u201cUnassigned / resource gap\u201d instead of being displayed on the wrong machine. Click an item to decide whether to open its build; drag it to move.\nOptimizer active\nOverall\nPer build\nPer equipment\nPer person\nHorizon\n4 weeks\n8 weeks\n13 weeks\nShow potential projects\nTimeline zoom\n\u2212\nFit\n+\nBuild / project\n8-week horizon \u00b7 Morning / Afternoon\nSEP 2026\nOCT 2026\nNOV\nCW 37 \u00b7 2026\nCW 38 \u00b7 2026\nCW 39 \u00b7 2026\nCW 40 \u00b7 2026\nCW 41 \u00b7 2026\nCW 42 \u00b7 2026\nCW 43 \u00b7 2026\nCW 44 \u00b7 2026\nMO\n07\nAM\nPM\nTU\n08\nAM\nPM\nWE\n09\nAM\nPM\nTH\n10\nAM\nPM\nFR\n11\nAM\nPM\nSA\n12\nAM\nPM\nSU\n13\nAM\nPM\nMO\n14\nAM\nPM\nTU\n15\nAM\nPM\nWE\n16\nAM\nPM\nTH\n17\nAM\nPM\nFR\n18\nAM\nPM\nSA\n19\nAM\nPM\nSU\n20\nAM\nPM\nMO\n21\nAM\nPM\nTU\n22\nAM\nPM\nWE\n23\nAM\nPM\nTH\n24\nAM\nPM\nFR\n25\nAM\nPM\nSA\n26\nAM\nPM\nSU\n27\nAM\nPM\nMO\n28\nAM\nPM\nTU\n29\nAM\nPM\nWE\n30\nAM\nPM\nTH\n01\nAM\nPM\nFR\n02\nAM\nPM\nSA\n03\nAM\nPM\nSU\n04\nAM\nPM\nMO\n05\nAM\nPM\nTU\n06\nAM\nPM\nWE\n07\nAM\nPM\nTH\n08\nAM\nPM\nFR\n09\nAM\nPM\nSA\n10\nAM\nPM\nSU\n11\nAM\nPM\nMO\n12\nAM\nPM\nTU\n13\nAM\nPM\nWE\n14\nAM\nPM\nTH\n15\nAM\nPM\nFR\n16\nAM\nPM\nSA\n17\nAM\nPM\nSU\n18\nAM\nPM\nMO\n19\nAM\nPM\nTU\n20\nAM\nPM\nWE\n21\nAM\nPM\nTH\n22\nAM\nPM\nFR\n23\nAM\nPM\nSA\n24\nAM\nPM\nSU\n25\nAM\nPM\nMO\n26\nAM\nPM\nTU\n27\nAM\nPM\nWE\n28\nAM\nPM\nTH\n29\nAM\nPM\nFR\n30\nAM\nPM\nSA\n31\nAM\nPM\nSU\n01\nAM\nPM\nP26-1007 \u00b7 Reciprocating Saw\nDue Oct 6, 2026\nRequired delivery\nP26-1007 \u00b7 Material Receipt\n\u283f\nP26-1007 \u00b7 Incoming Inspection\n\u283f\nP26-1007 \u00b7 Mechanical Assembly\n\u283f\nP26-1007 \u00b7 Fastening / Torque\n\u283f\nP26-1007 \u00b7 Electrical Test\n\u283f\nP26-1007 \u00b7 Functional Verification\n\u283f\nP26-1007 \u00b7 Final Inspection\n\u283f\nP26-1007 \u00b7 Packaging\n\u283f\nP26-1007 \u00b7 Test \u00b7 Load endurance\n\u283f\nP26-1007 \u00b7 Test \u00b7 Thermal rise\n\u283f\nP26-1007 \u00b7 Final quality review / release / handover\n\u283f\nP26-1011 \u00b7 Heat Gun\nDue Oct 18, 2026\nRequired delivery\nP26-1011 \u00b7 Mechanical Assembly\n\u283f\nP26-1011 \u00b7 Electrical Test\n\u283f\nP26-1011 \u00b7 Thermal Soak\n\u283f\nP26-1011 \u00b7 Functional Verification\n\u283f\nP26-1011 \u00b7 Final Inspection\n\u283f\nP26-1011 \u00b7 Packaging\n\u283f\nP26-1011 \u00b7 Test \u00b7 Torque output\n\u283f\nP26-1011 \u00b7 Test \u00b7 No-load speed\n\u283f\nP26-1011 \u00b7 Final quality review / release / handover\n\u283f\nP26-1023 \u00b7 Heat Gun\nDue Nov 23, 2026\nRequired delivery\nP26-1023 \u00b7 Mechanical Assembly\n\u283f\nP26-1023 \u00b7 Electrical Test\n\u283f\nP26-1023 \u00b7 Thermal Soak\n\u283f\nP26-1023 \u00b7 Functional Verification\n\u283f\nP26-1023 \u00b7 Final Inspection\n\u283f\nP26-1023 \u00b7 Packaging\n\u283f\nP26-1023 \u00b7 Test \u00b7 Load endurance\n\u283f\nP26-1023 \u00b7 Test \u00b7 Thermal rise\n\u283f\nP26-1023 \u00b7 Final quality review / release / handover\n\u283f\nP26-1006 \u00b7 Jigsaw\nDue Oct 3, 2026\nRequired delivery\nP26-1006 \u00b7 Material Receipt\n\u283f\nP26-1006 \u00b7 Incoming Inspection\n\u283f\nP26-1006 \u00b7 Mechanical Assembly\n\u283f\nP26-1006 \u00b7 Electrical Test\n\u283f\nP26-1006 \u00b7 Functional Verification\n\u283f\nP26-1006 \u00b7 Final Inspection\n\u283f\nP26-1006 \u00b7 Test \u00b7 Guard and visual inspection\n\u283f\nP26-1006 \u00b7 Test \u00b7 Functional verification\n\u283f\nP26-1006 \u00b7 Final quality review / release / handover\n\u283f\nP26-1010 \u00b7 Compact Router\nDue Oct 15, 2026\nRequired delivery\nP26-1010 \u00b7 Mechanical Assembly\n\u283f\nP26-1010 \u00b7 Programming / Flashing\n\u283f\nP26-1010 \u00b7 Electrical Test\n\u283f\nP26-1010 \u00b7 Functional Verification\n\u283f\nP26-1010 \u00b7 Final Inspection\n\u283f\nP26-1010 \u00b7 Test \u00b7 Functional verification\n\u283f\nP26-1010 \u00b7 Test \u00b7 Operating current\n\u283f\nP26-1010 \u00b7 Final quality review / release / handover\n\u283f\nP26-1022 \u00b7 Compact Router\nDue Nov 20, 2026\nRequired delivery\nP26-1022 \u00b7 Material Receipt\n\u283f\nP26-1022 \u00b7 Incoming Inspection\n\u283f\nP26-1022 \u00b7 Mechanical Assembly\n\u283f\nP26-1022 \u00b7 Programming / Flashing\n\u283f\nP26-1022 \u00b7 Electrical Test\n\u283f\nP26-1022 \u00b7 Functional Verification\n\u283f\nP26-1022 \u00b7 Final Inspection\n\u283f\nP26-1022 \u00b7 Test \u00b7 Guard and visual inspection\n\u283f\nP26-1022 \u00b7 Test \u00b7 Functional verification\n\u283f\nP26-1022 \u00b7 Final quality review / release / handover\n\u283f\nP26-1005 \u00b7 Circular Saw\nDue Sep 30, 2026\nRequired delivery\nP26-1005 \u00b7 Material Receipt\n\u283f\nP26-1005 \u00b7 Mechanical Assembly\n\u283f\nP26-1005 \u00b7 Electrical Test\n\u283f\nP26-1005 \u00b7 Functional Verification\n\u283f\nP26-1005 \u00b7 Final Inspection\n\u283f\nP26-1005 \u00b7 Test \u00b7 Thermal rise\n\u283f\nP26-1005 \u00b7 Test \u00b7 Operating current\n\u283f\nP26-1005 \u00b7 Final quality review / release / handover\n\u283f\nP26-1008 \u00b7 Oscillating Multi-Tool\nDue Oct 9, 2026\nRequired delivery\nP26-1008 \u00b7 Mechanical Assembly\n\u283f\nP26-1008 \u00b7 Programming / Flashing\n\u283f\nP26-1008 \u00b7 Electrical Test\n\u283f\nP26-1008 \u00b7 Functional Verification\n\u283f\nP26-1008 \u00b7 Final Inspection\n\u283f\nP26-1008 \u00b7 Packaging\n\u283f\nP26-1008 \u00b7 Test \u00b7 Electrical safety screening\n\u283f\nP26-1008 \u00b7 Test \u00b7 Functional verification\n\u283f\nP26-1008 \u00b7 Final quality review / release / handover\n\u283f\nP26-1009 \u00b7 Rotary Hammer\nDue Oct 12, 2026\nRequired delivery\nP26-1009 \u00b7 Mechanical Assembly\n\u283f\nP26-1009 \u00b7 Electrical Test\n\u283f\nP26-1009 \u00b7 Functional Verification\n\u283f\nP26-1009 \u00b7 Final Inspection\n\u283f\nP26-1009 \u00b7 Test \u00b7 No-load speed\n\u283f\nP26-1009 \u00b7 Test \u00b7 Operating current\n\u283f\nP26-1009 \u00b7 Final quality review / release / handover\n\u283f\nP26-1012 \u00b7 Cordless Planer\nDue Oct 21, 2026\nRequired delivery\nP26-1012 \u00b7 Mechanical Assembly\n\u283f\nP26-1012 \u00b7 Fastening / Torque\n\u283f\nP26-1012 \u00b7 Electrical Test\n\u283f\nP26-1012 \u00b7 Functional Verification\n\u283f\nP26-1012 \u00b7 Final Inspection\n\u283f\nP26-1012 \u00b7 Packaging\n\u283f\nP26-1012 \u00b7 Test \u00b7 Interface dimensions\n\u283f\nP26-1012 \u00b7 Test \u00b7 Functional verification\n\u283f\nP26-1012 \u00b7 Final quality review / release / handover\n\u283f\nP26-1020 \u00b7 Oscillating Multi-Tool\nDue Nov 14, 2026\nRequired delivery\nP26-1020 \u00b7 Material Receipt\n\u283f\nP26-1020 \u00b7 Incoming Inspection\n\u283f\nP26-1020 \u00b7 Mechanical Assembly\n\u283f\nP26-1020 \u00b7 Programming / Flashing\n\u283f\nP26-1020 \u00b7 Electrical Test\n\u283f\nP26-1020 \u00b7 Functional Verification\n\u283f\nP26-1020 \u00b7 Final Inspection\n\u283f\nP26-1020 \u00b7 Packaging\n\u283f\nP26-1020 \u00b7 Test \u00b7 Interface dimensions\n\u283f\nP26-1020 \u00b7 Test \u00b7 Functional verification\n\u283f\nP26-1020 \u00b7 Final quality review / release / handover\n\u283f\nP26-1021 \u00b7 Rotary Hammer\nDue Nov 17, 2026\nRequired delivery\nP26-1021 \u00b7 Material Receipt\n\u283f\nP26-1021 \u00b7 Mechanical Assembly\n\u283f\nP26-1021 \u00b7 Electrical Test\n\u283f\nP26-1021 \u00b7 Functional Verification\n\u283f\nP26-1021 \u00b7 Final Inspection\n\u283f\nP26-1021 \u00b7 Test \u00b7 Thermal rise\n\u283f\nP26-1021 \u00b7 Test \u00b7 Operating current\n\u283f\nP26-1021 \u00b7 Final quality review / release / handover\n\u283f\nP26-1024 \u00b7 Cordless Planer\nDue Nov 26, 2026\nRequired delivery\nP26-1024 \u00b7 Mechanical Assembly\n\u283f\nP26-1024 \u00b7 Fastening / Torque\n\u283f\nP26-1024 \u00b7 Electrical Test\n\u283f\nP26-1024 \u00b7 Functional Verification\n\u283f\nP26-1024 \u00b7 Final Inspection\n\u283f\nP26-1024 \u00b7 Packaging\n\u283f\nP26-1024 \u00b7 Test \u00b7 Electrical safety screening\n\u283f\nP26-1024 \u00b7 Test \u00b7 Functional verification\n\u283f\nP26-1024 \u00b7 Final quality review / release / handover\n\u283f\nPotential \u00b7 Next-generation 18 V drill platform\n70% \u00b7 \u20ac5,541\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nNext-generation 18 V drill platform \u00b7 70%\nBuild work\nCalibration / maintenance / training\nUnavailable capacity\nPotential project\nRequired delivery\nRed vertical line = required delivery date\nCAPACITY SITUATIONS\nVacations, outages & closures\n+ Add situation\nNo vacations, outages or lab closures entered.\nBUILD COMMITMENT HEALTH\nBuild commitment health\nThe Master Planner tiles above are filters. Original commitments remain immutable history; forecasts show the latest feasible timing.\n21 shown\nP26-1001 \u00b7 Cordless Drill / Driver\nRequested Sep 18, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1002 \u00b7 Impact Driver\nRequested Sep 21, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1003 \u00b7 Angle Grinder\nRequested Sep 24, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1004 \u00b7 Random Orbital Sander\nRequested Sep 27, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1005 \u00b7 Circular Saw\nRequested Sep 30, 2026 \u00b7 original Sep 30, 2026 \u00b7 current Sep 30, 2026\nSep 24, 2026\nCommitment movement \u00b7 Best feasible\nP26-1006 \u00b7 Jigsaw\nRequested Oct 3, 2026 \u00b7 original Oct 3, 2026 \u00b7 current Oct 3, 2026\nSep 16, 2026\nCommitment movement \u00b7 Best feasible\nP26-1007 \u00b7 Reciprocating Saw\nRequested Oct 6, 2026 \u00b7 original Oct 6, 2026 \u00b7 current Oct 6, 2026\nSep 15, 2026\nCommitment movement \u00b7 Best feasible\nP26-1008 \u00b7 Oscillating Multi-Tool\nRequested Oct 9, 2026 \u00b7 original Oct 9, 2026 \u00b7 current Oct 9, 2026\nSep 24, 2026\nCommitment movement \u00b7 Best feasible\nP26-1009 \u00b7 Rotary Hammer\nRequested Oct 12, 2026 \u00b7 original Oct 12, 2026 \u00b7 current Oct 12, 2026\nSep 28, 2026\nCommitment movement \u00b7 Best feasible\nP26-1010 \u00b7 Compact Router\nRequested Oct 15, 2026 \u00b7 original Oct 15, 2026 \u00b7 current Oct 15, 2026\nSep 21, 2026\nCommitment movement \u00b7 Best feasible\nP26-1011 \u00b7 Heat Gun\nRequested Oct 18, 2026 \u00b7 original Oct 18, 2026 \u00b7 current Oct 18, 2026\nSep 15, 2026\nCommitment movement \u00b7 Provisional / recoverable\nP26-1012 \u00b7 Cordless Planer\nRequested Oct 21, 2026 \u00b7 original Oct 21, 2026 \u00b7 current Oct 21, 2026\nSep 28, 2026\nCommitment movement \u00b7 Best feasible\nP26-1016 \u00b7 Random Orbital Sander\nRequested Nov 2, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1017 \u00b7 Circular Saw\nRequested Nov 5, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1018 \u00b7 Jigsaw\nRequested Nov 8, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1019 \u00b7 Reciprocating Saw\nRequested Nov 11, 2026 \u00b7 original \u2014 \u00b7 current \u2014\nNot planned\nNo current plan \u00b7 Not planned\nP26-1020 \u00b7 Oscillating Multi-Tool\nRequested Nov 14, 2026 \u00b7 original Nov 14, 2026 \u00b7 current Nov 14, 2026\nOct 1, 2026\nCommitment movement \u00b7 Best feasible\nP26-1021 \u00b7 Rotary Hammer\nRequested Nov 17, 2026 \u00b7 original Nov 17, 2026 \u00b7 current Nov 17, 2026\nSep 29, 2026\nCommitment movement \u00b7 Best feasible\nP26-1022 \u00b7 Compact Router\nRequested Nov 20, 2026 \u00b7 original Nov 20, 2026 \u00b7 current Nov 20, 2026\nSep 21, 2026\nCommitment movement \u00b7 Best feasible\nP26-1023 \u00b7 Heat Gun\nRequested Nov 23, 2026 \u00b7 original Nov 23, 2026 \u00b7 current Nov 23, 2026\nSep 17, 2026\nCommitment movement \u00b7 Provisional / recoverable\nP26-1024 \u00b7 Cordless Planer\nRequested Nov 26, 2026 \u00b7 original Nov 26, 2026 \u00b7 current Nov 26, 2026\nOct 2, 2026\nCommitment movement \u00b7 Best feasible",
+  "maxPipelineProbability": 0.7,
+  "hasDetails": false,
+  "totalLateTile": 1,
+  "allTile": 1,
+  "allTileValue": "21",
+  "modelOpenCount": "21",
+  "calendarMonths": [
+    "SEP 2026",
+    "OCT 2026",
+    "NOV"
+  ],
+  "calendarWeeks": [
+    "CW 37 \u00b7 2026",
+    "CW 38 \u00b7 2026",
+    "CW 39 \u00b7 2026",
+    "CW 40 \u00b7 2026",
+    "CW 41 \u00b7 2026",
+    "CW 42 \u00b7 2026",
+    "CW 43 \u00b7 2026",
+    "CW 44 \u00b7 2026"
+  ],
+  "calendarDates": [
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16"
+  ],
+  "calendarGroupedLayer": 1,
+  "calendarTodayHeaders": 56,
+  "movementTile": 1,
+  "activeFilter": "movement",
+  "movementActiveClass": true,
+  "healthText": "BUILD COMMITMENT HEALTH\nBuild commitment health\nThe Master Planner tiles above are filters. Original commitments remain immutable history; forecasts show the latest feasible timing.\n13 shown\nP26-1005 \u00b7 Circular Saw\nRequested Sep 30, 2026 \u00b7 original Sep 30, 2026 \u00b7 current Sep 30, 2026\nSep 24, 2026\nCommitment movement \u00b7 Best feasible\nP26-1006 \u00b7 Jigsaw\nRequested Oct 3, 2026 \u00b7 original Oct 3, 2026 \u00b7 current Oct 3, 2026\nSep 16, 2026\nCommitment movement \u00b7 Best feasible\nP26-1007 \u00b7 Reciprocating Saw\nRequested Oct 6, 2026 \u00b7 original Oct 6, 2026 \u00b7 current Oct 6, 2026\nSep 15, 2026\nCommitment movement \u00b7 Best feasible\nP26-1008 \u00b7 Oscillating Multi-Tool\nRequested Oct 9, 2026 \u00b7 original Oct 9, 2026 \u00b7 current Oct 9, 2026\nSep 24, 2026\nCommitment movement \u00b7 Best feasible\nP26-1009 \u00b7 Rotary Hammer\nRequested Oct 12, 2026 \u00b7 original Oct 12, 2026 \u00b7 current Oct 12, 2026\nSep 28, 2026\nCommitment movement \u00b7 Best feasible\nP26-1010 \u00b7 Compact Router\nRequested Oct 15, 2026 \u00b7 original Oct 15, 2026 \u00b7 current Oct 15, 2026\nSep 21, 2026\nCommitment movement \u00b7 Best feasible\nP26-1011 \u00b7 Heat Gun\nRequested Oct 18, 2026 \u00b7 original Oct 18, 2026 \u00b7 current Oct 18, 2026\nSep 15, 2026\nCommitment movement \u00b7 Provisional / recoverable\nP26-1012 \u00b7 Cordless Planer\nRequested Oct 21, 2026 \u00b7 original Oct 21, 2026 \u00b7 current Oct 21, 2026\nSep 28, 2026\nCommitment movement \u00b7 Best feasible\nP26-1020 \u00b7 Oscillating Multi-Tool\nRequested Nov 14, 2026 \u00b7 original Nov 14, 2026 \u00b7 current Nov 14, 2026\nOct 1, 2026\nCommitment movement \u00b7 Best feasible\nP26-1021 \u00b7 Rotary Hammer\nRequested Nov 17, 2026 \u00b7 original Nov 17, 2026 \u00b7 current Nov 17, 2026\nSep 29, 2026\nCommitment movement \u00b7 Best feasible\nP26-1022 \u00b7 Compact Router\nRequested Nov 20, 2026 \u00b7 original Nov 20, 2026 \u00b7 current Nov 20, 2026\nSep 21, 2026\nCommitment movement \u00b7 Best feasible\nP26-1023 \u00b7 Heat Gun\nRequested Nov 23, 2026 \u00b7 original Nov 23, 2026 \u00b7 current Nov 23, 2026\nSep 17, 2026\nCommitment movement \u00b7 Provisional / recoverable\nP26-1024 \u00b7 Cordless Planer\nRequested Nov 26, 2026 \u00b7 original Nov 26, 2026 \u00b7 current Nov 26, 2026\nOct 2, 2026\nCommitment movement \u00b7 Best feasible",
+  "autoButtonText": "AUTO PLAN \u00b7 TIERED",
+  "escalationButton": 1,
+  "plannerModal": "AUTO PLAN \u00b7 PORTFOLIO\n\u00d7\nWhole-lab optimization\nRed is selectable only when a quantified whole-lab objective improves. No candidate is allowed to convert a capacity failure into a years-away \u201cbest\u201d date.\n1\nGREEN\nGreen \u00b7 protected plan\n\nUses currently valid capability and preserves other project plans.\n\nUnavailable\nNot available in this tier\n\nCurrent released capability needs a controlled readiness or qualification action for Equipment readiness. Yellow can schedule that recovery without moving another project.\n\n2\nYELLOW\nYellow \u00b7 controlled recovery\n\nMay schedule calibration, maintenance or training, while preserving other project plans.\n\nReview this tier \u2192\nTOTAL DAYS LATE\n16 d\n0 \u2192 16 d\nMAX PROJECT DELAY\n8 d\n0 \u2192 8 d\nUNPLANNED\n0\n8 \u2192 0\nCOMMITMENT WORSENING\n0 d\nunchanged\n\u2713 No other project becomes later.\n3\nRECOMMENDED \u00b7 RED\nRed \u00b7 portfolio trade-off\n\nMay move other projects only when the quantified whole-lab objective improves.\n\nReview recommended plan \u2192\nTOTAL DAYS LATE\n0 d\nunchanged\nMAX PROJECT DELAY\n0 d\nunchanged\nUNPLANNED\n0\n8 \u2192 0\nCOMMITMENT WORSENING\n0 d\nunchanged\n10 projects become later\nIMPROVE BEYOND THE PROPOSAL\nCapability suggestions\nCross-train Mila Jansen in Environmental test\n9.4 planned h use this skill in the next 8 weeks with 1 currently qualified available person. Training another person would reduce the single-person dependency.\nClose",
+  "tierCards": 3,
+  "rawHorizonLeak": false,
+  "multiYearBestLeak": false,
+  "teamConfig": "Project Teams, Roles & Approval RightsProvider-neutral authority model for Prototype, Validation and Failure Analysis6 active\nPROJECT AUTHORITY MASTER DATA\nProject Teams, Roles & Approval Rights\nA Project Team is assigned to each build. Members receive functional roles and explicit approval rights here. Local demo identities are used now; stable provider / principal keys allow SSO, SCIM or another identity API to populate the same model later.\n+ Add project team\nTEAM\tBUSINESS UNIT\tDEFAULT SITE\tPROJECT LEAD\tPRINCIPALS / ROLES\tAPPROVAL RIGHTS\tAUTHORITY SOURCE\t\nAdvanced ConceptsTEAM-005\tPower Tools\t\u2014\t\u2014\t0No role bindings\t0No explicit rights\tFallbacklocal-demo\tEditDeactivate\nElectronicsTEAM-004\tPower Tools\t\u2014\t\u2014\t0No role bindings\t0No explicit rights\tFallbacklocal-demo\tEditDeactivate\nMechanical DesignTEAM-003\tPower Tools\t\u2014\t\u2014\t0No role bindings\t0No explicit rights\tFallbacklocal-demo\tEditDeactivate\nMotor & DriveTEAM-002\tPower Tools\t\u2014\t\u2014\t1Engineering Project Lead\t0No explicit rights\tFallbacklocal-demo\tEditDeactivate\nPower Tool PlatformTEAM-001\tPower Tools\t\u2014\t\u2014\t1Engineering Requester\t0No explicit rights\tFallbacklocal-demo\tEditDeactivate\nSystems EngineeringTEAM-006\tPower Tools\t\u2014\t\u2014\t0No role bindings\t0No explicit rights\tFallbacklocal-demo\tEditDeactivate",
+  "teamModal": "Edit Project Team\n\u00d7\nProvider-neutral project authority\n\nRoles and approval rights are stored against stable principals, not hard-coded screen roles. A future SSO / SCIM / API adapter only needs to map its principal IDs to these bindings.\n\nProject Team name\nBusiness unit / department\nDefault site optional\nIdentity source\nLocal POC directory\nEnterprise SSO\nSCIM directory sync\nExternal identity API\nExternal group key optional\nProject lead\n\u2014 Not assigned \u2014\nEva de Vries \u00b7 Engineering Requester\nJonas Meijer \u00b7 Engineering Project Lead\nMila Jansen \u00b7 Prototype Lab Coordinator / Planner\nNoah Visser \u00b7 Process Engineer\nLiam Smit \u00b7 Prototype Technician\nSofia Bakker \u00b7 Quality Engineer\nDaan Mulder \u00b7 Metrology / Measurement Owner\nEmma Bos \u00b7 Product Safety Representative\nLucas Vos \u00b7 Lab Manager\nNora Dekker \u00b7 Approver / Reviewer\nAmina Kuiper \u00b7 Administrator\n Enforce Project Team roles and approval rights for this team's builds\nWhen enabled, missing authority remains visibly unassigned instead of silently falling back to a global role.\n Active for new requests\nProject principals \u00b7 roles \u00b7 approval rights\nEva de Vries\nEngineering Requester \u00b7 local principal U01\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nJonas Meijer\nEngineering Project Lead \u00b7 local principal U02\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nMila Jansen\nPrototype Lab Coordinator / Planner \u00b7 local principal U03\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nNoah Visser\nProcess Engineer \u00b7 local principal U04\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nLiam Smit\nPrototype Technician \u00b7 local principal U05\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nSofia Bakker\nQuality Engineer \u00b7 local principal U06\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nDaan Mulder\nMetrology / Measurement Owner \u00b7 local principal U07\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nEmma Bos\nProduct Safety Representative \u00b7 local principal U08\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nLucas Vos\nLab Manager \u00b7 local principal U09\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nNora Dekker\nApprover / Reviewer \u00b7 local principal U10\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nAmina Kuiper\nAdministrator \u00b7 local principal U12\nExternal principal key SSO / directory stable ID\nFunctional roles\nEngineering Requester\nEngineering Project Lead\nPrototype Lab Coordinator / Planner\nProcess Engineer\nPrototype Technician\nQuality Engineer\nMetrology / Measurement Owner\nProduct Safety Representative\nLab Manager\nApprover / Reviewer\nApproval rights\nControl Plan approval\nBuild-specific change approval\nProduct-safety approval\nBuild-readiness approval\nEngineering approval\nQuality / customer gate approval\nFinal release approval\nBuild-report approval\nPlanning / commitment approval\nCancel\nSave Project Team",
+  "identitySourceSelect": 1,
+  "principalKeyFields": 11,
+  "approvalRightBoxes": 99,
+  "teamAuthority": {
+    "ok": true,
+    "assignee": "Sofia Bakker"
+  },
+  "engine": {
+    "elapsed": 819.9,
+    "eligible": [
+      "yellow",
+      "red"
+    ],
+    "recommended": "red",
+    "allCandidates": [
+      {
+        "tier": "green",
+        "ok": false,
+        "eligible": false,
+        "score": null,
+        "worsened": 0,
+        "fail": "RECOVERY_REQUIRED"
+      },
+      {
+        "tier": "yellow",
+        "ok": true,
+        "eligible": true,
+        "score": 396808,
+        "worsened": 0,
+        "fail": null
+      },
+      {
+        "tier": "red",
+        "ok": true,
+        "eligible": true,
+        "score": 21,
+        "worsened": 10,
+        "fail": null
+      }
+    ],
+    "redRule": true,
+    "maxYear": 2026,
+    "suggestions": 1,
+    "baseline": {
+      "score": 8000000,
+      "unplanned": 8,
+      "totalLateDays": 0,
+      "weightedLateDays": 0,
+      "maxLateDays": 0,
+      "commitmentWorseningDays": 0,
+      "churn": 0,
+      "openBuilds": 21
+    }
+  },
+  "horizonGuard": {
+    "recommended": null,
+    "eligible": [],
+    "errors": [
+      {
+        "code": "CAPACITY_UNRESOLVABLE",
+        "error": "Material Receipt: current protected capacity cannot place this activity in a useful planning window. LabOS will evaluate recovery and portfolio alternatives instead.",
+        "horizon": "2026-10-31T08:00:00.000Z"
+      },
+      {
+        "code": "CAPACITY_UNRESOLVABLE",
+        "error": "Material Receipt: current protected capacity cannot place this activity in a useful planning window. LabOS will evaluate recovery and portfolio alternatives instead.",
+        "horizon": "2026-10-31T08:00:00.000Z"
+      }
+    ],
+    "rawLeak": false,
+    "maxYear": 2026,
+    "liveBookingsUnchanged": true
+  },
+  "escalationEngine": {
+    "ok": true,
+    "elapsed": 775.7,
+    "targetId": "P26-1001",
+    "targetBefore": "2026-09-18",
+    "targetAfter": "2026-09-17",
+    "worsened": 10,
+    "alternatives": 3,
+    "invariants": 0,
+    "collisions": 0,
+    "readiness": 0
+  },
+  "canonicalAlignment": {
+    "canonical": [
+      {
+        "id": "P26-1001-S1",
+        "name": "Material Receipt",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S2",
+        "name": "Mechanical Assembly",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S3",
+        "name": "Electrical Test",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S4",
+        "name": "Functional Verification",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S5",
+        "name": "Final Inspection",
+        "kind": "process"
+      },
+      {
+        "id": "TESTREQ-P26-1001-TST-PT01",
+        "name": "Test \u00b7 No-load speed",
+        "kind": "test"
+      },
+      {
+        "id": "TESTREQ-P26-1001-TST-PT02",
+        "name": "Test \u00b7 Operating current",
+        "kind": "test"
+      },
+      {
+        "id": "FINAL-P26-1001",
+        "name": "Final quality review / release / handover",
+        "kind": "closeout"
+      }
+    ],
+    "manual": [
+      {
+        "id": "P26-1001-S1",
+        "name": "Material Receipt",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S2",
+        "name": "Mechanical Assembly",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S3",
+        "name": "Electrical Test",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S4",
+        "name": "Functional Verification",
+        "kind": "process"
+      },
+      {
+        "id": "P26-1001-S5",
+        "name": "Final Inspection",
+        "kind": "process"
+      },
+      {
+        "id": "TESTREQ-P26-1001-TST-PT01",
+        "name": "Test \u00b7 No-load speed",
+        "kind": "test"
+      },
+      {
+        "id": "TESTREQ-P26-1001-TST-PT02",
+        "name": "Test \u00b7 Operating current",
+        "kind": "test"
+      },
+      {
+        "id": "FINAL-P26-1001",
+        "name": "Final quality review / release / handover",
+        "kind": "closeout"
+      }
+    ],
+    "sticky": [
+      "Material Receipt \u00b7 Not scheduled",
+      "Mechanical Assembly \u00b7 Not scheduled",
+      "Electrical Test \u00b7 Not scheduled",
+      "Functional Verification \u00b7 Not scheduled",
+      "Final Inspection \u00b7 Not scheduled",
+      "Test \u00b7 No-load speed \u00b7 Not scheduled",
+      "Test \u00b7 Operating current \u00b7 Not scheduled",
+      "Final quality review / release / handover \u00b7 Not scheduled"
+    ],
+    "manualIdsEqual": true,
+    "stickyNamesEqual": true,
+    "flowTestsPresent": true,
+    "hasFinal": true,
+    "testNames": [
+      "No-load speed",
+      "Operating current"
+    ]
+  },
+  "testIdentity": {
+    "before": [
+      {
+        "id": "TESTREQ-P26-1001-TST-PT01",
+        "name": "No-load speed"
+      },
+      {
+        "id": "TESTREQ-P26-1001-TST-PT02",
+        "name": "Operating current"
+      }
+    ],
+    "after": [
+      {
+        "id": "TESTREQ-P26-1001-TST-PT02",
+        "name": "Operating current"
+      },
+      {
+        "id": "TESTREQ-P26-1001-TST-PT05",
+        "name": "Thermal rise"
+      }
+    ],
+    "retainedId": true,
+    "removedIdReused": false,
+    "unique": true
+  },
+  "staleLockGuard": {
+    "sameId": false,
+    "staleKept": false,
+    "error": null,
+    "coverage": {
+      "ok": true,
+      "missing": 0,
+      "mismatched": 0,
+      "orphan": 0
+    },
+    "currentTest": "Operating current",
+    "bookedTests": [
+      "Test \u00b7 Operating current"
+    ]
+  },
+  "autoPlanCoverage": {
+    "err": null,
+    "ok": true,
+    "expected": 8,
+    "booked": 8,
+    "idsEqual": true,
+    "allDefinitionKeys": true,
+    "testIdsEqual": true,
+    "hasCloseout": true
+  },
+  "coverageSabotage": {
+    "before": true,
+    "after": false,
+    "missing": [
+      "TESTREQ-P26-1001-TST-PT01"
+    ],
+    "victim": "TESTREQ-P26-1001-TST-PT01"
+  },
+  "developmentDefinition": {
+    "before": [
+      {
+        "id": "DEV-TESTREQ-P26-1001-CUSTOM-IMPOSSIBLE-TEST-ZZ-1C74UDV",
+        "kind": "development",
+        "subkind": "test-development"
+      },
+      {
+        "id": "TESTREQ-P26-1001-CUSTOM-IMPOSSIBLE-TEST-ZZ-1C74UDV",
+        "kind": "test",
+        "subkind": null
+      },
+      {
+        "id": "FINAL-P26-1001",
+        "kind": "closeout",
+        "subkind": null
+      }
+    ],
+    "after": [
+      {
+        "id": "TESTREQ-P26-1001-CUSTOM-IMPOSSIBLE-TEST-ZZ-1C74UDV",
+        "kind": "test",
+        "subkind": null
+      },
+      {
+        "id": "FINAL-P26-1001",
+        "kind": "closeout",
+        "subkind": null
+      }
+    ],
+    "hadDevelopment": true,
+    "releasedDropsDevelopment": true
+  },
+  "optionalDefinition": {
+    "found": true,
+    "optionalId": "P26-1001-S1",
+    "inCanonical": false,
+    "requiredRouteCount": 4,
+    "processTaskCount": 4
+  },
+  "uiCoverage": {
+    "completeText": true,
+    "coverageText": true,
+    "stickyAllDone": true,
+    "stickyMatches": true
+  },
+  "pageErrors": []
+}

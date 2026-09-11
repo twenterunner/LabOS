@@ -1,0 +1,129 @@
+LabOS REV 1.0.95 static + browser verification
+Passed: 124
+Failed: 0
+Total: 124
+
+PASS | Core version is REV 1.0.95
+PASS | HTML badge is REV 1.0.95
+PASS | Cache bust updated: styles.css
+PASS | Cache bust updated: core.js
+PASS | Cache bust updated: demo-data.js
+PASS | Cache bust updated: repository.js
+PASS | Cache bust updated: services.js
+PASS | Cache bust updated: app.js
+PASS | Service-worker cache reset is 1.0.95
+PASS | JavaScript syntax: core.js
+PASS | JavaScript syntax: demo-data.js
+PASS | JavaScript syntax: repository.js
+PASS | JavaScript syntax: services.js
+PASS | JavaScript syntax: app.js
+PASS | JavaScript syntax: service-worker.js
+PASS | ISO-week formatter exists
+PASS | Grouped live calendar-axis formatter exists
+PASS | Month, ISO week-year and day layers styled
+PASS | Total days late filter tile is present
+PASS | All commitment-health tile is present
+PASS | Commitment movement tile is a filter
+PASS | Build commitment health refresh honors filters
+PASS | Detailed bookings rendered section removed
+PASS | Tiered AUTO PLAN control is active
+PASS | Escalation Mode control is active
+PASS | Planner function exists: planningPortfolioScoreV1094
+PASS | Planner function exists: planningWorsenedProjectsV1094
+PASS | Planner function exists: planningImprovementSuggestionsV1094
+PASS | Planner function exists: buildAutoPlanTiersV1094
+PASS | Planner function exists: buildEscalationPlanV1094
+PASS | Planner function exists: planPortfolioCandidateV1094
+PASS | Green policy can forbid recovery
+PASS | Recovery-required path is explicit
+PASS | Capacity failure is bounded and recoverable
+PASS | Legacy multi-year raw horizon message removed
+PASS | UI explicitly refuses remote multi-year best-feasible output
+PASS | Red tier requires whole-lab objective improvement
+PASS | Red tier trade-off requires actual worsened project
+PASS | Newly planned request is not falsely classified as worsened project
+PASS | Escalation is target-first
+PASS | Escalation evaluates multiple portfolio orderings
+PASS | Planner candidate runs final invariant audit
+PASS | Capability-improvement suggestions include training
+PASS | Provider-neutral team identity source exists
+PASS | Provider-neutral principal identity key exists
+PASS | Project-team role bindings exist
+PASS | Project-team approval rights exist
+PASS | Project-team approval enforcement helper exists
+PASS | Project-team assignee resolution helper exists
+PASS | Project team UI exposes roles and approval rights
+PASS | Project team UI exposes identity source
+PASS | Demo future-project probabilities use fractions
+PASS | Legacy whole-percent probability migration normalizes to fractions
+PASS | REV 1.0.93 control-plan approval invalidation retained
+PASS | Control-plan approval path UI retained
+PASS | Final closeout is an explicit planned booking
+PASS | Canonical planning-task builder exists
+PASS | Stable semantic test-requirement identity exists
+PASS | Booking/task semantic compatibility guard exists
+PASS | Stale planning-booking reconciliation exists
+PASS | Task coverage invariant exists
+PASS | Canonical route excludes optional process operations
+PASS | Canonical closeout task is explicit
+PASS | Released custom test drops development prerequisite
+PASS | Released process development drops development prerequisite
+PASS | AUTO-PLAN reconciles stale bookings before resource search
+PASS | AUTO-PLAN iterates canonical planTasks
+PASS | AUTO-PLAN no longer has independent test-requirement loop
+PASS | AUTO-PLAN bookings carry task definition fingerprints
+PASS | Locked booking requires semantic task compatibility
+PASS | AUTO-PLAN has hard task-coverage failure code
+PASS | Transactional AUTO-PLAN rechecks task coverage
+PASS | Manual planner reads canonical task definitions
+PASS | Manual planner carries task definition fingerprint
+PASS | Manual plan no longer adds hidden extra 4h after closeout booking
+PASS | Sticky schedule reads canonical task coverage
+PASS | Build planning step exposes plan coverage
+PASS | End-test edits retain semantic requirement history rather than clearing IDs
+PASS | End-test edits reconcile obsolete bookings
+PASS | Startup migration reconciles legacy task-definition drift
+PASS | Route definition edits invalidate stale future planning
+PASS | Root-cause before/after reproduction exists
+PASS | Root proof: REV 1.0.94 reused a test ID for a different test | {'version': '1.0.94-poc', 'old': {'id': 'TESTREQ-P26-1001-1', 'name': 'No-load speed'}, 'current': {'id': 'TESTREQ-P26-1001-1', 'name': 'Operating current'}, 'sameId': True, 'plannerError': None, 'staleLockKept': True, 'keptName': 'Test · No-load speed', 'forecast': '2026-10-01', 'coverage': None}
+PASS | Root proof: REV 1.0.94 planner preserved the stale locked test | Test · No-load speed
+PASS | Fix proof: REV 1.0.95 does not reuse the removed test ID | {'version': '1.0.95-poc', 'old': {'id': 'TESTREQ-P26-1001-TST-PT01', 'name': 'No-load speed'}, 'current': {'id': 'TESTREQ-P26-1001-TST-PT02', 'name': 'Operating current'}, 'sameId': False, 'plannerError': None, 'staleLockKept': False, 'keptName': None, 'forecast': '2026-09-16', 'coverage': {'ok': True, 'missing': 0, 'mismatched': 0, 'orphan': 0}}
+PASS | Fix proof: REV 1.0.95 removes stale lock and ends with exact task coverage | {'version': '1.0.95-poc', 'old': {'id': 'TESTREQ-P26-1001-TST-PT01', 'name': 'No-load speed'}, 'current': {'id': 'TESTREQ-P26-1001-TST-PT02', 'name': 'Operating current'}, 'sameId': False, 'plannerError': None, 'staleLockKept': False, 'keptName': None, 'forecast': '2026-09-16', 'coverage': {'ok': True, 'missing': 0, 'mismatched': 0, 'orphan': 0}}
+PASS | Browser verification JSON exists
+PASS | Browser: ISO year boundary correct | {'year': 2026, 'week': 53}
+PASS | Browser: Detailed bookings absent
+PASS | Browser: pipeline probabilities normalized | 0.7
+PASS | Browser: All filter tile rendered
+PASS | Browser: Total days late tile rendered
+PASS | Browser: grouped month axis rendered | ['SEP 2026', 'OCT 2026', 'NOV']
+PASS | Browser: ISO week-year axis rendered | ['CW 37 · 2026', 'CW 38 · 2026']
+PASS | Browser: Commitment movement tile filters
+PASS | Browser: tier cards rendered | 3
+PASS | Browser: no raw horizon leak
+PASS | Browser: no multi-year best-feasible leak
+PASS | Browser: canonical tasks equal manual planner tasks
+PASS | Browser: sticky task names equal canonical task names
+PASS | Browser: process/test definition view contains the same requested tests
+PASS | Browser: canonical task graph contains explicit final closeout
+PASS | Browser: unchanged test preserves its ID across selection edits
+PASS | Browser: removed test ID is not reassigned to another test
+PASS | Browser: stale semantic lock is removed before AUTO-PLAN | {'sameId': False, 'staleKept': False, 'error': None, 'coverage': {'ok': True, 'missing': 0, 'mismatched': 0, 'orphan': 0}, 'currentTest': 'Operating current', 'bookedTests': ['Test · Operating current']}
+PASS | Browser: stale-lock scenario replans current test with full coverage | {'sameId': False, 'staleKept': False, 'error': None, 'coverage': {'ok': True, 'missing': 0, 'mismatched': 0, 'orphan': 0}, 'currentTest': 'Operating current', 'bookedTests': ['Test · Operating current']}
+PASS | Browser: AUTO-PLAN schedules exactly one booking per canonical task | {'err': None, 'ok': True, 'expected': 8, 'booked': 8, 'idsEqual': True, 'allDefinitionKeys': True, 'testIdsEqual': True, 'hasCloseout': True}
+PASS | Browser: all planned bookings have definition fingerprints
+PASS | Browser: exact test set and explicit closeout are scheduled
+PASS | Browser: missing-test sabotage is detected by task coverage | {'before': True, 'after': False, 'missing': ['TESTREQ-P26-1001-TST-PT01'], 'victim': 'TESTREQ-P26-1001-TST-PT01'}
+PASS | Browser: development prerequisite exists only until method release
+PASS | Browser: optional route operation is not silently scheduled as required work | {'found': True, 'optionalId': 'P26-1001-S1', 'inCanonical': False, 'requiredRouteCount': 4, 'processTaskCount': 4}
+PASS | Browser: planning UI reports complete canonical coverage | {'completeText': True, 'coverageText': True, 'stickyAllDone': True, 'stickyMatches': True}
+PASS | Browser: Project Team authority positive/negative check | {'ok': True, 'assignee': 'Sofia Bakker'}
+PASS | Engine: tier analysis returned recommendation | red
+PASS | Engine: Red gate passed only under rule | True
+PASS | Engine: no forecast beyond near-term test year | 2026
+PASS | Adversarial horizon guard returns no fake recommendation | {'recommended': None, 'eligible': [], 'errors': [{'code': 'CAPACITY_UNRESOLVABLE', 'error': 'Material Receipt: current protected capacity cannot place this activity in a useful planning window. LabOS will evaluate recovery and portfolio alternatives instead.', 'horizon': '2026-10-31T08:00:00.000Z'}, {'code': 'CAPACITY_UNRESOLVABLE', 'error': 'Material Receipt: current protected capacity cannot place this activity in a useful planning window. LabOS will evaluate recovery and portfolio alternatives instead.', 'horizon': '2026-10-31T08:00:00.000Z'}], 'rawLeak': False, 'maxYear': 2026, 'liveBookingsUnchanged': True}
+PASS | Adversarial horizon guard does not mutate live plan
+PASS | Adversarial horizon guard does not leak raw legacy message
+PASS | Escalation produces valid target-first alternative | {'ok': True, 'elapsed': 775.7, 'targetId': 'P26-1001', 'targetBefore': '2026-09-18', 'targetAfter': '2026-09-17', 'worsened': 10, 'alternatives': 3, 'invariants': 0, 'collisions': 0, 'readiness': 0}
+PASS | Escalation result has zero invariants/collisions/readiness failures | {'ok': True, 'elapsed': 775.7, 'targetId': 'P26-1001', 'targetBefore': '2026-09-18', 'targetAfter': '2026-09-17', 'worsened': 10, 'alternatives': 3, 'invariants': 0, 'collisions': 0, 'readiness': 0}
+PASS | Browser page completed without JS page errors | []
+PASS | Master Planner visual proof exists | 204815

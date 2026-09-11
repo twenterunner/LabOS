@@ -1,13 +1,17 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.94
-
-## REV 1.0.94 — decision-grade planning and project authorization
-
-REV 1.0.94 rebuilds the Master Planner calendar into grouped month/year, ISO week-year and weekday/date bands; adds Total days late; turns Build commitment health tiles into live filters; removes the redundant detailed-booking foldout; and makes Yellow manual-plan alternatives explicit controlled decisions.
-
-AUTO-PLAN retains its bounded, transactional integrity gates and adds a scored three-tier decision model. Cross-project worsening is permitted only when the total lab objective improves. Capacity exhaustion opens useful recovery choices rather than raw solver output. Escalation mode gives one selected project first access to unlocked capacity and then replans the remaining portfolio to minimize collateral delay. AUTO-PLAN, the sticky guided flow, build swimlanes and manual planning now share one controlled process/development/test/handover task manifest; a proposal fails closed if an ID, type or label drifts. Configuration supports project-team membership, workflow roles, granular approval rights and provider-neutral identity keys for later SSO/API integration. The missing schema 31→32 migration path and the demo pipeline probability scale were also repaired. Targeted verification: **40/40 passed**, plus browser QA of the grouped calendar, live health filters, stable guided/manual task numbering, role-based escalation, project-team editor and proposal dialogs.
+# LabOS — Laboratory Operations System POC · REV 1.0.95
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
+## REV 1.0.95 — canonical build task graph
+
+REV 1.0.95 fixes a proven semantic planning defect: test-requirement IDs were positional, so changing selected tests could reuse the old ID for a different test. The sticky workflow rendered bookings while the controlled process/test definition rendered current requirements, and AUTO-PLAN could preserve a stale locked booking under the reused ID. The exact REV 1.0.94 failure is reproduced in `ROOT_CAUSE_REPRO_v1.0.95.json`.
+
+There is now one canonical controlled planning graph (`planningTasksForRequest`) consumed by the sticky workflow, manual planner and AUTO-PLAN. Test identities are stable and semantic; bookings carry a task-definition fingerprint; stale future bookings are reconciled; route/test edits invalidate affected planning; an explicit final closeout is part of the task graph; and AUTO-PLAN cannot be accepted unless task coverage is exact. Existing saved states are migrated on load while completed/historical evidence is retained. Verification: **124/124 passed, 0 failed**, with the dedicated Chromium suite reporting **0 page errors**. See `CHANGELOG_v1.0.95.md`, `ROOT_CAUSE_PROOF_v1.0.95.md` and `VERIFICATION_v1.0.95.md`.
+
+
+## REV 1.0.94 — tiered Master Planner and project authority
+
+REV 1.0.94 turns the Master Planner into a decision cockpit: grouped ISO month/CW/day headings, actionable commitment-health filters, Total days late, no Detailed bookings section, Green/Yellow/Red AUTO-PLAN, target-first Escalation Mode, and provider-neutral Project Team roles/approval rights. It also normalises legacy 70/45/60 future-project probabilities to 0.70/0.45/0.60, preventing 100× inflation of probability-weighted capacity. AUTO-PLAN evaluates alternatives without mutating the live plan and never turns a horizon failure into a remote years-away proposal. See `CHANGELOG_v1.0.94.md`, `ROOT_CAUSE_PROOF_v1.0.94.md` and `VERIFICATION_v1.0.94.md`.
 
 ## REV 1.0.93 — explicit Control Plan governance and bounded AUTO-PLAN
 

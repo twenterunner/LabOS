@@ -262,16 +262,6 @@ class MigrationService{
     P.audit(s,'Planning integrity model upgraded','System','Planning','REV 1.0.80 schedule state','REV 1.0.81 resource-valid schedule state',repair.changed?`Legacy demo seed repaired: ${repair.moved||0} active booking(s) replanned; ${repair.removedFinal||0} obsolete final-state booking(s) removed.`:'Planning integrity validation enabled; no legacy seed repair required at migration time.');
     s.dataVersion=wasDemo?'2026.09-demo-34-planning-integrity':(s.dataVersion||'migrated');s.schemaVersion=31;continue;
    }
-   if(s.schemaVersion===31){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);P.ensureRequestingTeamModel?.(s);
-    P.audit(s,'Organization team model upgraded','System','Organization','Free-text engineering teams','Stable requesting-team IDs and user membership','REV 1.0.89 migration');
-    s.dataVersion=wasDemo?'2026.09-demo-35-requesting-teams':(s.dataVersion||'migrated');s.schemaVersion=32;continue;
-   }
-   if(s.schemaVersion===32){
-    const wasDemo=P.isDemoDataset(s);P.ensureProjectTeamModel?.(s);
-    P.audit(s,'Project authorization model upgraded','System','Authorization','Team membership only','Provider-neutral principals, workflow roles and granular approval rights','REV 1.0.94 migration');
-    s.dataVersion=wasDemo?'2026.09-demo-36-project-authorization':(s.dataVersion||'migrated');s.schemaVersion=33;continue;
-   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
   P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;

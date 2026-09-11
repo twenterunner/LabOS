@@ -1,0 +1,42 @@
+{
+  "rootCause": "REV 1.0.94 reused ordinal test requirement IDs after test-selection changes. A locked booking for the former test could therefore have the same stepId as a different new test; because the planner validated resources but not task semantics, it could preserve the stale booking as if it represented the new test. Sticky planning rendered bookings while process/test setup rendered current testRequirements, so the two views diverged.",
+  "before": {
+    "version": "1.0.94-poc",
+    "old": {
+      "id": "TESTREQ-P26-1001-1",
+      "name": "No-load speed"
+    },
+    "current": {
+      "id": "TESTREQ-P26-1001-1",
+      "name": "Operating current"
+    },
+    "sameId": true,
+    "plannerError": null,
+    "staleLockKept": true,
+    "keptName": "Test \u00b7 No-load speed",
+    "forecast": "2026-10-01",
+    "coverage": null
+  },
+  "after": {
+    "version": "1.0.95-poc",
+    "old": {
+      "id": "TESTREQ-P26-1001-TST-PT01",
+      "name": "No-load speed"
+    },
+    "current": {
+      "id": "TESTREQ-P26-1001-TST-PT02",
+      "name": "Operating current"
+    },
+    "sameId": false,
+    "plannerError": null,
+    "staleLockKept": false,
+    "keptName": null,
+    "forecast": "2026-09-16",
+    "coverage": {
+      "ok": true,
+      "missing": 0,
+      "mismatched": 0,
+      "orphan": 0
+    }
+  }
+}
