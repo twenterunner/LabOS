@@ -6,11 +6,44 @@
   <meta name="theme-color" content="#0c5862" />
   <meta name="description" content="Laboratory Operations System proof-of-concept for automotive prototype, validation and engineering laboratory operations." />
   <title>LabOS — Laboratory Operations System</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <link rel="stylesheet" href="styles.css?v=1.0.96" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.97" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.97" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.97" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.97" />
+  <link rel="stylesheet" href="labos-styles-1.0.97.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.97.css')" />
+  <script>
+    (function(){
+      const bootErrors=[];
+      function message(title,detail){
+        const p=document.getElementById('page');
+        if(!p)return;
+        p.innerHTML='<div style="max-width:760px;margin:28px auto;padding:18px;border:1px solid #e1a7a7;border-radius:12px;background:#fff7f7;color:#23343a;font:14px/1.45 system-ui,sans-serif"><strong style="display:block;font-size:18px;margin-bottom:6px">'+title+'</strong><div>'+detail+'</div></div>';
+      }
+      window.LabOSBootFail=function(file){
+        bootErrors.push(file);
+        message('LabOS deployment is incomplete','Required runtime file <b>'+file+'</b> could not be loaded. Upload every file from the root of the LabOS deployment ZIP to the GitHub Pages repository root, then refresh.');
+      };
+      window.addEventListener('error',function(e){
+        if(e && e.target && (e.target.tagName==='SCRIPT'||e.target.tagName==='LINK')) return;
+        if(!window.__PROTOLAB_READY__ && e && e.message) message('LabOS could not start','Runtime error: <b>'+String(e.message).replace(/[<>&]/g,'')+'</b>. The previous working data remains untouched.');
+      });
+      window.addEventListener('unhandledrejection',function(e){
+        if(!window.__PROTOLAB_READY__) message('LabOS could not start','Startup failed before the application rendered. '+String(e.reason&&e.reason.message||e.reason||'Unknown startup error').replace(/[<>&]/g,''));
+      });
+      // Proactively retire any legacy PWA worker/cache. This is best-effort and never blocks startup.
+      try{
+        if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister()))).catch(()=>{});
+        if('caches' in window) caches.keys().then(ks=>Promise.all(ks.filter(k=>/protolab|labos/i.test(k)).map(k=>caches.delete(k)))).catch(()=>{});
+      }catch(_e){}
+      window.addEventListener('load',function(){
+        setTimeout(function(){
+          if(!window.__PROTOLAB_READY__ && !bootErrors.length){
+            message('LabOS did not finish starting','The page shell loaded, but the application runtime did not finish initialization. Verify that all six REV 1.0.97 runtime files are present in the repository root. No blank screen is intentionally shown.');
+          }
+        },6000);
+      });
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -18,7 +51,7 @@
     <header class="topbar">
       <div class="brand" role="button" tabindex="0" data-nav="dashboard" aria-label="Go to dashboard">
         <img class="brand-logo" src="labos-wordmark.png" alt="LabOS" />
-        <span id="versionBadge" class="version-badge">REV 1.0.96</span>
+        <span id="versionBadge" class="version-badge">REV 1.0.97</span>
       </div>
       <div class="top-actions">
         <div class="global-search-wrap">
@@ -30,27 +63,23 @@
         <button id="menuButton" class="icon-button mobile-only" aria-label="Open navigation">☰</button>
       </div>
     </header>
-
     <aside id="sidebar" class="sidebar" aria-label="Primary navigation">
       <nav id="mainNav"></nav>
       <div class="sidebar-footer">
         <div class="compliance-note">IATF 16949-aligned control support<br><small>POC — organisation configuration required</small></div>
-        <button class="nav-link" data-nav="help">? Help & Manual</button>
+        <button class="nav-link" data-nav="help">? Help &amp; Manual</button>
       </div>
     </aside>
-
     <main id="main" class="main" tabindex="-1">
-      <div id="page"></div>
+      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.97…</div></div>
     </main>
   </div>
-
   <div id="modalRoot"></div>
   <div id="toastRoot" aria-live="polite" aria-atomic="true"></div>
-
-  <script src="core.js?v=1.0.96"></script>
-  <script src="demo-data.js?v=1.0.96"></script>
-  <script src="repository.js?v=1.0.96"></script>
-  <script src="services.js?v=1.0.96"></script>
-  <script src="app.js?v=1.0.96"></script>
+  <script src="labos-core-1.0.97.js" onerror="LabOSBootFail('labos-core-1.0.97.js')"></script>
+  <script src="labos-demo-data-1.0.97.js" onerror="LabOSBootFail('labos-demo-data-1.0.97.js')"></script>
+  <script src="labos-repository-1.0.97.js" onerror="LabOSBootFail('labos-repository-1.0.97.js')"></script>
+  <script src="labos-services-1.0.97.js" onerror="LabOSBootFail('labos-services-1.0.97.js')"></script>
+  <script src="labos-app-1.0.97.js" onerror="LabOSBootFail('labos-app-1.0.97.js')"></script>
 </body>
 </html>

@@ -1,0 +1,131 @@
+{
+  "version": "1.0.97",
+  "generatedFor": "GitHub Pages root deployment",
+  "files": [
+    {
+      "path": "CHANGELOG_v1.0.97.md",
+      "bytes": 567,
+      "sha256": "80a539e710161f58d75d5b435228ecfb6871b8e0fb1f098a43607d6d5b07bf0b"
+    },
+    {
+      "path": "README.md",
+      "bytes": 782,
+      "sha256": "f0802cccb2935a943d9e71c5b31bbe06feb141d585a5bd652a80c7f60fb96f2c"
+    },
+    {
+      "path": "ROOT_CAUSE_PROOF_v1.0.97.md",
+      "bytes": 2175,
+      "sha256": "dd7f580771e0d16b43f6a99502bad14f25d2caf8897f949d476d6a6f40a3fe59"
+    },
+    {
+      "path": "USER_MANUAL.html",
+      "bytes": 17028,
+      "sha256": "de194fa18963d29027b0bf12d0213ef197b976aaa6b6c00ecabd445df7aa12bd"
+    },
+    {
+      "path": "VERIFICATION_v1.0.97.md",
+      "bytes": 1378,
+      "sha256": "bd0905e8ed304132e3192de37f896084d8c017bccaf24402c7c7f9b7fdc64fe7"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "bytes": 33773,
+      "sha256": "5d25b868af7fc869502c34bdb277faead91d669fff661ec75a64d1fbc5a90af9"
+    },
+    {
+      "path": "assets/5s/bench-bad.jpg",
+      "bytes": 107828,
+      "sha256": "be82c3551aacbf4275179a1d8c9b8f14d1ecd8709da027d975c3ebe41f2e4a5d"
+    },
+    {
+      "path": "assets/5s/bench-good.jpg",
+      "bytes": 118937,
+      "sha256": "23bbfea1d760feffa94b13a7ad9f3a1d39c728b0e89435a075f5f17c78d17ac8"
+    },
+    {
+      "path": "assets/5s/bench-shadow-board.jpg",
+      "bytes": 140167,
+      "sha256": "91e0de2b11ae526eed6df14aef1d974fa56ef07a1004c552a0f0cdcf49fce3ae"
+    },
+    {
+      "path": "favicon-16.png",
+      "bytes": 724,
+      "sha256": "06604b90926b11733e5106eb7ffb3a63924eb348684229954891b44675e98191"
+    },
+    {
+      "path": "favicon-32.png",
+      "bytes": 2051,
+      "sha256": "68e9028a67393e1fa658595f60e10052252c28510efc6e5ef485cb78a515d686"
+    },
+    {
+      "path": "favicon-64.png",
+      "bytes": 6020,
+      "sha256": "47bfbaf0f2f525ed9e98b80ae3b26776c354724d44d5d0b04a33c520159afaf7"
+    },
+    {
+      "path": "icon-192.png",
+      "bytes": 37525,
+      "sha256": "b9b321bef9ffc3c390f2379fe2afbac8d1187749d344e62b67de7f6318feffa5"
+    },
+    {
+      "path": "icon-512.png",
+      "bytes": 134125,
+      "sha256": "efdbb413692e2ca1b47d9d1f4e17f1e676c189fe8d4105d4f5fc48f3aa677c22"
+    },
+    {
+      "path": "index.html",
+      "bytes": 5531,
+      "sha256": "e808922c3b45906c8e1c577089ba8fad2041d4b05ef8200b3cc2c9b8e1d03bfa"
+    },
+    {
+      "path": "labos-app-1.0.97.js",
+      "bytes": 2120110,
+      "sha256": "bcf010a9db8ea6524aa8e0a16e04f5bd3dccc8b9f64701c3dd598594e4e80e9e"
+    },
+    {
+      "path": "labos-app-icon.png",
+      "bytes": 39608,
+      "sha256": "50322680db227afb22ebafade2ecf62a9bea8e2f633d426421838471e89b0337"
+    },
+    {
+      "path": "labos-core-1.0.97.js",
+      "bytes": 125867,
+      "sha256": "b57ef9f5a6a2c1b756cb98629d28e5842a99299a2ede3f44f4d10065acf14ae1"
+    },
+    {
+      "path": "labos-demo-data-1.0.97.js",
+      "bytes": 84092,
+      "sha256": "d18692f8aebec16d5037bf869c287a8ca0c0edf60f677e15f778ffc8295531d9"
+    },
+    {
+      "path": "labos-repository-1.0.97.js",
+      "bytes": 33397,
+      "sha256": "40579a5721da8dccfbb22496f0f93d8da918147248fb7e5cf790b22283ab4a4a"
+    },
+    {
+      "path": "labos-services-1.0.97.js",
+      "bytes": 187379,
+      "sha256": "17600252602c3de40e216ff2a949b23df96d32567beeea80156e9c088154e367"
+    },
+    {
+      "path": "labos-styles-1.0.97.css",
+      "bytes": 331670,
+      "sha256": "24738c5cd0a7028bc8aaf932277a8b4f66e960207d225e090e8d7441ae942848"
+    },
+    {
+      "path": "labos-wordmark.png",
+      "bytes": 94117,
+      "sha256": "c903d122f09cdbfc7a8500f4116cb586055fcf3e72a47b027b2a0300228e5c36"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 396,
+      "sha256": "cbe1c264775422db009910fad1816afee971da756313addf755efba5906408e5"
+    },
+    {
+      "path": "service-worker.js",
+      "bytes": 501,
+      "sha256": "740278b661abe9e10c67b3dbd14ee249319348da2bcd5078f3310d82c025b15c"
+    }
+  ]
+}
