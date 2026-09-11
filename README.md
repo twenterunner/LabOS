@@ -1,7 +1,11 @@
-# LabOS — Laboratory Operations System POC · REV 1.0.93
+# LabOS — Laboratory Operations System POC · REV 1.0.94
 
 LabOS is a static GitHub-Pages proof-of-concept for controlled automotive prototype-build operations. It connects requests, products/BOMs, customers, released process routes, Control Plans, sample execution, resource readiness, quality/release evidence, reporting, audit readiness and closed-loop planning/improvement.
 
+
+## REV 1.0.94 — tiered Master Planner and project authority
+
+REV 1.0.94 turns the Master Planner into a decision cockpit: grouped ISO month/CW/day headings, actionable commitment-health filters, Total days late, no Detailed bookings section, Green/Yellow/Red AUTO-PLAN, target-first Escalation Mode, and provider-neutral Project Team roles/approval rights. It also normalises legacy 70/45/60 future-project probabilities to 0.70/0.45/0.60, preventing 100× inflation of probability-weighted capacity. AUTO-PLAN evaluates alternatives without mutating the live plan and never turns a horizon failure into a remote years-away proposal. See `CHANGELOG_v1.0.94.md`, `ROOT_CAUSE_PROOF_v1.0.94.md` and `VERIFICATION_v1.0.94.md`.
 
 ## REV 1.0.93 — explicit Control Plan governance and bounded AUTO-PLAN
 
