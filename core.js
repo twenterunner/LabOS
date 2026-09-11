@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   const ProtoLab = window.ProtoLab = window.ProtoLab || {};
-  ProtoLab.VERSION = '1.0.88-poc';
-  ProtoLab.SCHEMA_VERSION = 31;
+  ProtoLab.VERSION = '1.0.89-poc';
+  ProtoLab.SCHEMA_VERSION = 32;
   ProtoLab.now = () => new Date().toISOString();
   ProtoLab.todayISO = () => new Date().toISOString().slice(0,10);
   ProtoLab.uid = (prefix='ID') => `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
@@ -828,6 +828,65 @@
     if(q.valid)return q;
     const planned=(state?.resourceCareBookings||[]).filter(x=>x.status==='Scheduled'&&x.type==='Training'&&x.staffId===staff.id&&x.skillId===skillId&&new Date(x.end||x.start)<=t&&(!x.projectedNextDue||x.projectedNextDue>=onDate)).sort((a,b)=>String(b.end||b.start).localeCompare(String(a.end||a.start)))[0];
     return {valid:!!planned,planned:planned||null,reason:planned?`Training completed before planned use; projected valid to ${planned.projectedNextDue||'future due date'}`:`No valid qualification completed before planned use`};
+  };
+
+
+  /* REV 1.0.89 — requesting / engineering teams are organisation master data.
+     Keep request snapshots as names for readable audit history, while stable IDs
+     support renames, deactivation and user defaults without hard-coded lists. */
+  ProtoLab.ensureRequestingTeamModel = state => {
+    state=state||{};
+    const oldNames=Array.isArray(state.teams)?state.teams.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim()):[];
+    const legacyDemo=['ADAS Sensors','Powertrain Electronics','Thermal Systems','Chassis Controls','Electrification','Advanced Engineering'];
+    const powerToolDemo=['Power Tool Platform','Mechanical Design','Motor & Drive Systems','Electronics & Controls','Battery Systems','Advanced Engineering'];
+    const isDemo=!!state.settings?.demoDataset;
+    let seedNames=oldNames;
+    if(isDemo && oldNames.length && oldNames.every(x=>legacyDemo.includes(x))) seedNames=powerToolDemo;
+    state.requestingTeams=Array.isArray(state.requestingTeams)?state.requestingTeams:[];
+    const demoMap={'ADAS Sensors':'Power Tool Platform','Powertrain Electronics':'Motor & Drive Systems','Thermal Systems':'Mechanical Design','Chassis Controls':'Mechanical Design','Electrification':'Electronics & Controls'};
+    if(isDemo){
+      for(const u of state.users||[]){if(demoMap[u.team])u.team=demoMap[u.team];}
+      for(const r of state.requests||[]){if(demoMap[r.engineeringTeam])r.engineeringTeam=demoMap[r.engineeringTeam];}
+    }
+    if(!state.requestingTeams.length){
+      const engUserTeams=(state.users||[]).filter(u=>['engineering_requester','engineering_lead'].includes(u.role)).map(u=>u.team);
+      let used=[...new Set([...(seedNames||[]),...(state.requests||[]).map(r=>r.engineeringTeam),...engUserTeams].filter(Boolean).map(x=>String(x).trim()).filter(Boolean))];
+      if(isDemo)used=used.filter(x=>!Object.prototype.hasOwnProperty.call(demoMap,x));
+      const source=used.length?used:(isDemo?powerToolDemo:[]);
+      state.requestingTeams=source.map((name,i)=>({id:`TEAM-${String(i+1).padStart(3,'0')}`,name,businessUnit:isDemo?'Power Tools':'',defaultSite:state.settings?.auditProfile?.site||'',teamLead:'',active:true,memberUserIds:[]}));
+    }
+    const seenIds=new Set(),seenNames=new Set();
+    state.requestingTeams=state.requestingTeams.filter(Boolean).map((t,i)=>{
+      if(typeof t==='string')t={name:t};
+      let id=String(t.id||`TEAM-${String(i+1).padStart(3,'0')}`).trim(),n=2;while(seenIds.has(id)){id=`${id}-${n++}`;}seenIds.add(id);
+      const name=String(t.name||`Requesting Team ${i+1}`).trim();
+      const key=name.toLowerCase();if(seenNames.has(key)){let j=2,nn=name;while(seenNames.has(nn.toLowerCase()))nn=`${name} ${j++}`;t.name=nn;}else t.name=name;seenNames.add(String(t.name).toLowerCase());
+      t.id=id;t.businessUnit=String(t.businessUnit||'').trim();t.defaultSite=String(t.defaultSite||'').trim();t.teamLead=String(t.teamLead||'').trim();t.active=t.active!==false;t.memberUserIds=Array.isArray(t.memberUserIds)?[...new Set(t.memberUserIds.filter(Boolean))]:[];return t;
+    });
+    const byId=new Map(state.requestingTeams.map(t=>[t.id,t])),byName=new Map(state.requestingTeams.map(t=>[t.name.toLowerCase(),t]));
+    for(const u of state.users||[]){
+      let team=(u.teamId&&byId.get(u.teamId))||byName.get(String(u.team||'').toLowerCase());
+      if(team){u.teamId=team.id;u.team=team.name;if(!team.memberUserIds.includes(u.id))team.memberUserIds.push(u.id);}
+    }
+    for(const r of state.requests||[]){
+      let team=(r.engineeringTeamId&&byId.get(r.engineeringTeamId))||byName.get(String(r.engineeringTeam||'').toLowerCase());
+      if(team){r.engineeringTeamId=team.id;r.engineeringTeam=r.engineeringTeam||team.name;}
+    }
+    state.teams=state.requestingTeams.filter(t=>t.active!==false).map(t=>t.name);
+    return state;
+  };
+  ProtoLab.activeRequestingTeams = state => {ProtoLab.ensureRequestingTeamModel(state);return (state.requestingTeams||[]).filter(t=>t.active!==false).slice().sort((a,b)=>String(a.name).localeCompare(String(b.name)));};
+  ProtoLab.requestingTeamByIdOrName = (state,id,name='') => {ProtoLab.ensureRequestingTeamModel(state);return (state.requestingTeams||[]).find(t=>id&&t.id===id)||(state.requestingTeams||[]).find(t=>String(t.name).toLowerCase()===String(name||id||'').toLowerCase())||null;};
+  const _ensureEnterpriseModelV1089=ProtoLab.ensureEnterpriseModel;
+  ProtoLab.ensureEnterpriseModel=state=>{state=_ensureEnterpriseModelV1089(state);ProtoLab.ensureRequestingTeamModel(state);return state;};
+  const _validateInvariantsV1089=ProtoLab.validateInvariants;
+  ProtoLab.validateInvariants=state=>{
+    const out=_validateInvariantsV1089(state);ProtoLab.ensureRequestingTeamModel(state);
+    const ids=new Set(),names=new Set();
+    for(const t of state.requestingTeams||[]){if(!t.id)out.push('Requesting team missing stable ID');else if(ids.has(t.id))out.push(`Duplicate requesting team ID ${t.id}`);else ids.add(t.id);const key=String(t.name||'').trim().toLowerCase();if(!key)out.push(`Requesting team ${t.id||'unknown'} has no name`);else if(names.has(key))out.push(`Duplicate requesting team name ${t.name}`);else names.add(key);}
+    for(const r of state.requests||[]){if(r.engineeringTeamId&&!ids.has(r.engineeringTeamId))out.push(`${r.id}: requesting team reference ${r.engineeringTeamId} does not exist`);}
+    for(const u of state.users||[]){if(u.teamId&&!ids.has(u.teamId))out.push(`${u.id}: user team reference ${u.teamId} does not exist`);}
+    return out;
   };
 
 })();

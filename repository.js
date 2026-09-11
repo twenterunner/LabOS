@@ -262,9 +262,14 @@ class MigrationService{
     P.audit(s,'Planning integrity model upgraded','System','Planning','REV 1.0.80 schedule state','REV 1.0.81 resource-valid schedule state',repair.changed?`Legacy demo seed repaired: ${repair.moved||0} active booking(s) replanned; ${repair.removedFinal||0} obsolete final-state booking(s) removed.`:'Planning integrity validation enabled; no legacy seed repair required at migration time.');
     s.dataVersion=wasDemo?'2026.09-demo-34-planning-integrity':(s.dataVersion||'migrated');s.schemaVersion=31;continue;
    }
+   if(s.schemaVersion===31){
+    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);P.ensureRequestingTeamModel?.(s);
+    P.audit(s,'Requesting team master data enabled','System','Configuration','Hard-coded engineering-team strings','Stable organisation-level requesting team master data','REV 1.0.89 configuration migration');
+    s.dataVersion=wasDemo?'2026.09-demo-35-organisation-teams':(s.dataVersion||'migrated');s.schemaVersion=32;continue;
+   }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);P.ensureRequestingTeamModel?.(s);(s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
  }
 }
 
