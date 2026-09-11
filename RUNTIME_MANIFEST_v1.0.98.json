@@ -1,0 +1,141 @@
+{
+  "version": "1.0.98",
+  "schemaVersion": 33,
+  "files": [
+    {
+      "path": "CHANGELOG_v1.0.98.md",
+      "size": 1347,
+      "sha256": "aebfc46459dcd99bd98f735b3a464b11b959c7548cff30eebdc791e3e91cbe76"
+    },
+    {
+      "path": "README.md",
+      "size": 782,
+      "sha256": "272886d8eb771373be4bac2575ed7e9b06ec38374967771115fdd3366d7ba312"
+    },
+    {
+      "path": "REV1098_SCHEMA32_MIGRATION_PROOF.png",
+      "size": 225620,
+      "sha256": "a827ce6c0a9ffdd25f726ff50ce811a139e02253705387cd6125b683e3d52bba"
+    },
+    {
+      "path": "ROOT_CAUSE_PROOF_v1.0.98.md",
+      "size": 1610,
+      "sha256": "242157edc8f2af1bd40c51d9e2b1bbac778aa76fd1fa2a9661c7f4710dab3c62"
+    },
+    {
+      "path": "ROOT_CAUSE_REPRO_v1.0.98.json",
+      "size": 850,
+      "sha256": "e21f128bc58d1ecaacabd2f1da25c2971a4b4566f0a6c0d2c84f8710c65ffc54"
+    },
+    {
+      "path": "USER_MANUAL.html",
+      "size": 17032,
+      "sha256": "05a8a52e5764101397081f3fc469ee9b69818c1073ed28e1c8b74b549175bd9f"
+    },
+    {
+      "path": "VERIFICATION_v1.0.98.md",
+      "size": 1141,
+      "sha256": "2cb229b9e0575c1d8ce22fd474fca6122923cfa08b6f459e99c4131863e5f431"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "size": 33773,
+      "sha256": "5d25b868af7fc869502c34bdb277faead91d669fff661ec75a64d1fbc5a90af9"
+    },
+    {
+      "path": "assets/5s/bench-bad.jpg",
+      "size": 107828,
+      "sha256": "be82c3551aacbf4275179a1d8c9b8f14d1ecd8709da027d975c3ebe41f2e4a5d"
+    },
+    {
+      "path": "assets/5s/bench-good.jpg",
+      "size": 118937,
+      "sha256": "23bbfea1d760feffa94b13a7ad9f3a1d39c728b0e89435a075f5f17c78d17ac8"
+    },
+    {
+      "path": "assets/5s/bench-shadow-board.jpg",
+      "size": 140167,
+      "sha256": "91e0de2b11ae526eed6df14aef1d974fa56ef07a1004c552a0f0cdcf49fce3ae"
+    },
+    {
+      "path": "favicon-16.png",
+      "size": 724,
+      "sha256": "06604b90926b11733e5106eb7ffb3a63924eb348684229954891b44675e98191"
+    },
+    {
+      "path": "favicon-32.png",
+      "size": 2051,
+      "sha256": "68e9028a67393e1fa658595f60e10052252c28510efc6e5ef485cb78a515d686"
+    },
+    {
+      "path": "favicon-64.png",
+      "size": 6020,
+      "sha256": "47bfbaf0f2f525ed9e98b80ae3b26776c354724d44d5d0b04a33c520159afaf7"
+    },
+    {
+      "path": "icon-192.png",
+      "size": 37525,
+      "sha256": "b9b321bef9ffc3c390f2379fe2afbac8d1187749d344e62b67de7f6318feffa5"
+    },
+    {
+      "path": "icon-512.png",
+      "size": 134125,
+      "sha256": "efdbb413692e2ca1b47d9d1f4e17f1e676c189fe8d4105d4f5fc48f3aa677c22"
+    },
+    {
+      "path": "index.html",
+      "size": 5531,
+      "sha256": "a69d2812e2946bfb0e0a4008f6317a15c4de9c6d6d12a1308cf6fa680da50760"
+    },
+    {
+      "path": "labos-app-1.0.98.js",
+      "size": 2120110,
+      "sha256": "bcf010a9db8ea6524aa8e0a16e04f5bd3dccc8b9f64701c3dd598594e4e80e9e"
+    },
+    {
+      "path": "labos-app-icon.png",
+      "size": 39608,
+      "sha256": "50322680db227afb22ebafade2ecf62a9bea8e2f633d426421838471e89b0337"
+    },
+    {
+      "path": "labos-core-1.0.98.js",
+      "size": 125867,
+      "sha256": "101e2a4734c4ff2093e4bbbabe0cab2eb37d65ceaaa4857378550d446dd55195"
+    },
+    {
+      "path": "labos-demo-data-1.0.98.js",
+      "size": 84092,
+      "sha256": "d18692f8aebec16d5037bf869c287a8ca0c0edf60f677e15f778ffc8295531d9"
+    },
+    {
+      "path": "labos-repository-1.0.98.js",
+      "size": 36163,
+      "sha256": "ca89f148ec22c1b98a07f74f2ec56d984e66ce24f0ada32d8836069b8dfcf488"
+    },
+    {
+      "path": "labos-services-1.0.98.js",
+      "size": 187379,
+      "sha256": "029c9b7db2de351147c04f94dfb8bb59e876c5f6f86580319a6cc273b25efcba"
+    },
+    {
+      "path": "labos-styles-1.0.98.css",
+      "size": 331670,
+      "sha256": "24738c5cd0a7028bc8aaf932277a8b4f66e960207d225e090e8d7441ae942848"
+    },
+    {
+      "path": "labos-wordmark.png",
+      "size": 94117,
+      "sha256": "c903d122f09cdbfc7a8500f4116cb586055fcf3e72a47b027b2a0300228e5c36"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "size": 396,
+      "sha256": "cbe1c264775422db009910fad1816afee971da756313addf755efba5906408e5"
+    },
+    {
+      "path": "service-worker.js",
+      "size": 501,
+      "sha256": "0846ea4ca714471b2a704fc9129a75d84c6a22d0c0d0025d0800c714a251347a"
+    }
+  ]
+}
