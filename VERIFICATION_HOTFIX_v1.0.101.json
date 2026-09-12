@@ -1,0 +1,167 @@
+{
+  "release": "1.0.101",
+  "purpose": "startup regression hotfix",
+  "summary": {
+    "passed": 31,
+    "failed": 0,
+    "total": 31
+  },
+  "checks": [
+    {
+      "name": "Runtime asset exists: labos-core-1.0.101.js",
+      "passed": true,
+      "detail": "142639"
+    },
+    {
+      "name": "Runtime asset exists: labos-demo-data-1.0.101.js",
+      "passed": true,
+      "detail": "84266"
+    },
+    {
+      "name": "Runtime asset exists: labos-repository-1.0.101.js",
+      "passed": true,
+      "detail": "39036"
+    },
+    {
+      "name": "Runtime asset exists: labos-services-1.0.101.js",
+      "passed": true,
+      "detail": "205153"
+    },
+    {
+      "name": "Runtime asset exists: labos-app-1.0.101.js",
+      "passed": true,
+      "detail": "2140002"
+    },
+    {
+      "name": "Runtime asset exists: labos-styles-1.0.101.css",
+      "passed": true,
+      "detail": "333356"
+    },
+    {
+      "name": "JavaScript syntax: labos-core-1.0.101.js",
+      "passed": true,
+      "detail": "node --check passed"
+    },
+    {
+      "name": "JavaScript syntax: labos-demo-data-1.0.101.js",
+      "passed": true,
+      "detail": "node --check passed"
+    },
+    {
+      "name": "JavaScript syntax: labos-repository-1.0.101.js",
+      "passed": true,
+      "detail": "node --check passed"
+    },
+    {
+      "name": "JavaScript syntax: labos-services-1.0.101.js",
+      "passed": true,
+      "detail": "node --check passed"
+    },
+    {
+      "name": "JavaScript syntax: labos-app-1.0.101.js",
+      "passed": true,
+      "detail": "node --check passed"
+    },
+    {
+      "name": "enablePlanningDragV1065 restored",
+      "passed": true,
+      "detail": "1622408"
+    },
+    {
+      "name": "Planning-drag definition precedes alias",
+      "passed": true,
+      "detail": "def=1622408, alias=1623523"
+    },
+    {
+      "name": "Restored compatibility symbol: resourceAssuranceIntegratedHtmlV1065",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "Restored compatibility symbol: planningMovePanelV1065",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "Restored compatibility symbol: enablePlanningDragV1065",
+      "passed": true,
+      "detail": "1"
+    },
+    {
+      "name": "Restored block matches REV 1.0.99 source",
+      "passed": true,
+      "detail": "sha256=1a3c18b544abb9b17c1a11273726c0880dbafc217722b0e09f944a2664b0edf7"
+    },
+    {
+      "name": "Released REV 1.0.100 reproduces startup failure",
+      "passed": true,
+      "detail": "['FAIL top-level evaluation /mnt/data/labos_fix/labos-app-1.0.100.js', '/mnt/data/labos_fix/labos-app-1.0.100.js:2708', 'enablePlanningDragV1064=enablePlanningDragV1065;', '^']"
+    },
+    {
+      "name": "REV 1.0.101 top-level runtime evaluation passes",
+      "passed": true,
+      "detail": "PASS top-level evaluation /mnt/data/labos_fix101/labos-app-1.0.101.js"
+    },
+    {
+      "name": "Multi-lab demo seeding preserved",
+      "passed": true,
+      "detail": "seedMultiLabDemoPortfolioV1100"
+    },
+    {
+      "name": "Sister-lab service preserved",
+      "passed": true,
+      "detail": "MultiLabPlanningV1099"
+    },
+    {
+      "name": "Exact delivery health preserved",
+      "passed": true,
+      "detail": "requestDeliveryHealthV1100"
+    },
+    {
+      "name": "17:00 delivery cutoff preserved",
+      "passed": true,
+      "detail": "T17:00:00"
+    },
+    {
+      "name": "Timeline pan left/right preserved",
+      "passed": true,
+      "detail": "data-v1100-timeline-pan"
+    },
+    {
+      "name": "Planning pan handler preserved",
+      "passed": true,
+      "detail": "v1100PanTimeline"
+    },
+    {
+      "name": "Lab network UX preserved",
+      "passed": true,
+      "detail": "v1099OpenComparison"
+    },
+    {
+      "name": "Core product version is 1.0.101-poc",
+      "passed": true,
+      "detail": "1.0.101-poc"
+    },
+    {
+      "name": "Header displays REV 1.0.101",
+      "passed": true,
+      "detail": "index.html"
+    },
+    {
+      "name": "All index runtime/static references resolve",
+      "passed": true,
+      "detail": "12 references checked"
+    },
+    {
+      "name": "No REV 1.0.100 runtime filename remains in index",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "No schema bump in hotfix",
+      "passed": true,
+      "detail": "35"
+    }
+  ],
+  "browser_note": "Managed Chromium navigation to localhost/file is blocked by organization policy. Full rendered browser click-through is therefore not claimed. Exact top-level JavaScript evaluation regression is covered by the runtime smoke harness."
+}
