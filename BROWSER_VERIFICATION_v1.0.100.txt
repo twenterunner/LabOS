@@ -1,0 +1,17 @@
+LabOS REV 1.0.100 browser-verification note
+
+A Chromium process was launched and made available through the Chrome DevTools Protocol. The execution environment's administrator policy blocks both http://127.0.0.1/localhost and file:// navigation (ERR_BLOCKED_BY_ADMINISTRATOR), so a current browser click-through cannot be executed here.
+
+No browser pass is claimed.
+
+Compensating verification performed:
+- JavaScript syntax checks for all runtime files.
+- Node execution of the real core/demo/repository/services runtime.
+- Fresh schema-35 demo creation through the production PlannerService.
+- 240/240 functional/data/planning checks passed.
+- Actual REV 1.0.99 demo state migrated 34→35 and revalidated.
+- Planning integrity: 0 issues after fresh seed and migration.
+- Data invariants: 0 errors after fresh seed, migration and sister-lab transfer.
+- Static index asset-reference validation.
+- Visual/icon assets hash-equal to REV 1.0.99 (unrelated visuals unchanged).
+- Final ZIP integrity checked after packaging.

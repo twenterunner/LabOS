@@ -1,0 +1,51 @@
+{
+  "release": "1.0.100",
+  "schema": 35,
+  "runtime": [
+    {
+      "name": "index.html",
+      "size": 5687,
+      "sha256": "db9c5730eb4d2443d0a0b7ff25534488f9f43d38aaf2dcaef2ce668dea632788"
+    },
+    {
+      "name": "labos-core-1.0.100.js",
+      "size": 142639,
+      "sha256": "5fa28b4b42362e40d4fc28f28aa13d1934e57134cf937e1fb4651c22cedfe465"
+    },
+    {
+      "name": "labos-demo-data-1.0.100.js",
+      "size": 84266,
+      "sha256": "e89c2724cb3d03c498a3640cd5f2dfbf8455e6524bde16bbacf472b3d50084bf"
+    },
+    {
+      "name": "labos-repository-1.0.100.js",
+      "size": 39036,
+      "sha256": "b96153de2a2c445de0f438542da5956f0f64ff557439fac1404a1ce0e720b859"
+    },
+    {
+      "name": "labos-services-1.0.100.js",
+      "size": 205153,
+      "sha256": "bdfab75a7046fbe0d4d515b28669f1ce7c4b6e3daa004337b053ef94e945a753"
+    },
+    {
+      "name": "labos-app-1.0.100.js",
+      "size": 2132851,
+      "sha256": "085967203a8d28a03314bb36702e184ceef0b323720b3e53f1455e3796a367a2"
+    },
+    {
+      "name": "labos-styles-1.0.100.css",
+      "size": 333356,
+      "sha256": "b6496fde6fab28ae1e284c6b89afff0c4aab99471099498a3dcf8e0b6439974c"
+    },
+    {
+      "name": "manifest.webmanifest",
+      "size": 396,
+      "sha256": "cbe1c264775422db009910fad1816afee971da756313addf755efba5906408e5"
+    },
+    {
+      "name": "service-worker.js",
+      "size": 502,
+      "sha256": "2eff1b7df694573b36efc963a428b3856dc24da664d0b3f848bc52fc01cc6cdb"
+    }
+  ]
+}
