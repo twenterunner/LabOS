@@ -1,26 +1,23 @@
-# LabOS REV 1.0.101 — startup hotfix
+# LabOS REV 1.0.102 — planning/network consistency update
 
-REV 1.0.101 repairs the REV 1.0.100 startup regression while preserving the REV 1.0.100 multi-lab/planning changes and the REV 1.0.98 protected functional baseline.
+REV 1.0.102 is based on the working REV 1.0.101 package and preserves the protected REV 1.0.98 functional baseline while changing only planning/network behavior requested after REV 1.0.101.
 
-## Deploy to GitHub Pages
-1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.101_WEB.zip`.
-2. Upload **all files from the ZIP root** to the repository root, replacing files with the same names where applicable.
-3. Do not upload the ZIP itself as the website.
-4. Refresh the GitHub Pages site. If Android Chrome still has the old page open, close that tab and reopen the site once.
-5. Confirm the header shows **REV 1.0.101**.
+## Deploy
+1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.102_WEB.zip`.
+2. Upload **all files from the ZIP root** to the GitHub Pages repository root, replacing the previous runtime files.
+3. Hard refresh the page once after GitHub Pages finishes deploying.
+4. Confirm the header shows **REV 1.0.102**.
 
-The package deliberately uses new REV 1.0.101 runtime filenames and the deployment-reset worker clears legacy LabOS caches, preventing the broken REV 1.0.100 JavaScript asset from being reused.
+## REV 1.0.102 changes
+- Lab Network Recovery now contains only active builds whose canonical plan is **unplanned, incomplete/unresolved, or genuinely late**.
+- A forecast is no longer considered reliable for an active build unless every current canonical planning task is scheduled exactly once. Stale forecast fields are cleared during reconciliation.
+- The network comparison now explicitly separates **Current accepted plan finish** from **Replan now at home/current lab**. A current reserved plan can legitimately finish earlier than a fresh replan from today.
+- Any active project can be compared/routed to a sister lab, even if its current plan is on time.
+- Accepted sister-lab moves are classified as **Recovery** or **Elective routing**. Both are shown in network KPI; elective moves receive no outsourcing-avoidance credit.
+- Planning timelines use **day-level UI resolution**. AM/PM labels and manual AM/PM constraint windows have been removed; exact timestamps remain internal for collision, readiness and dependency validation.
+- Timeline navigation is direct: **swipe left/right on touch** or **click-drag left/right with a mouse**. The arrow buttons are removed. Zoom − / Fit / + remains.
 
-## What was fixed
-REV 1.0.100 referenced `enablePlanningDragV1065` at top level but the function body had accidentally been removed. That caused an immediate `ReferenceError` before LabOS could initialize. REV 1.0.101 restores that implementation plus the adjacent compatibility block removed in the same edit. See `HOTFIX_ROOT_CAUSE_v1.0.101.md`.
+## Data safety
+Schema remains **35**. REV 1.0.102 does not reset IndexedDB or replace user-entered build data. Existing active plans are reconciled against the canonical task definition; only unreliable stale forecast fields are cleared when the current plan is incomplete.
 
-## What remains from REV 1.0.100
-- Demo work is distributed across all internal labs.
-- Several demo projects span multiple months.
-- Selected Twente demo builds are intentionally late so sister-lab recovery can be exercised.
-- Planning waterfall controls include **← · − · Fit · + · →**.
-- Required-delivery red lines and commitment health use one exact 17:00 deadline definition and the exact final canonical booking end.
-- Sister-lab planning remains site-isolated and controlled.
-
-## Verification
-`VERIFICATION_v1.0.101.md` and `VERIFICATION_HOTFIX_v1.0.101.json` contain the targeted hotfix evidence. `VERIFICATION_BASELINE_v1.0.100.json` is retained as the prior data/planning verification evidence; it is intentionally not presented as proof of browser startup because that earlier verification did not evaluate top-level runtime references.
+See `CHANGELOG_v1.0.102.md` and `VERIFICATION_v1.0.102.md` for details.
