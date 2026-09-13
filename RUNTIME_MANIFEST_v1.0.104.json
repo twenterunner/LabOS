@@ -1,0 +1,140 @@
+{
+  "revision": "1.0.104",
+  "schema": 35,
+  "generated_utc": "2026-09-13T08:30:03.899834+00:00",
+  "runtime_files": [
+    "labos-core-1.0.104.js",
+    "labos-demo-data-1.0.104.js",
+    "labos-repository-1.0.104.js",
+    "labos-services-1.0.104.js",
+    "labos-app-1.0.104.js",
+    "labos-styles-1.0.104.css"
+  ],
+  "files": [
+    {
+      "path": "CHANGELOG_v1.0.104.md",
+      "size": 1620,
+      "sha256": "88a15b8a49d201b4a16ee625f710cea0a861718b71fe406f2e0bb74ea6db101a"
+    },
+    {
+      "path": "README.md",
+      "size": 1596,
+      "sha256": "fa96317c3c3e3fa7939f3b246422a85b449466c0300b67fc084331025f34ce96"
+    },
+    {
+      "path": "USER_MANUAL.html",
+      "size": 22431,
+      "sha256": "1574aca5bc94f10e9d644e58bc4549a955de5f7691c97c3ce905442023da7253"
+    },
+    {
+      "path": "VERIFICATION_v1.0.104.json",
+      "size": 4391,
+      "sha256": "d92bd42007ece8f5cff2b209e57ae8aa3bb96ffe0a7cc02c2132847d7c3f22fd"
+    },
+    {
+      "path": "VERIFICATION_v1.0.104.md",
+      "size": 1099,
+      "sha256": "0e1790438615f6710a998bdfd02064b9a7c378a5420d7b14b30f330d8b477ac9"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "size": 33773,
+      "sha256": "5d25b868af7fc869502c34bdb277faead91d669fff661ec75a64d1fbc5a90af9"
+    },
+    {
+      "path": "assets/5s/bench-bad.jpg",
+      "size": 107828,
+      "sha256": "be82c3551aacbf4275179a1d8c9b8f14d1ecd8709da027d975c3ebe41f2e4a5d"
+    },
+    {
+      "path": "assets/5s/bench-good.jpg",
+      "size": 118937,
+      "sha256": "23bbfea1d760feffa94b13a7ad9f3a1d39c728b0e89435a075f5f17c78d17ac8"
+    },
+    {
+      "path": "assets/5s/bench-shadow-board.jpg",
+      "size": 140167,
+      "sha256": "91e0de2b11ae526eed6df14aef1d974fa56ef07a1004c552a0f0cdcf49fce3ae"
+    },
+    {
+      "path": "favicon-16.png",
+      "size": 724,
+      "sha256": "06604b90926b11733e5106eb7ffb3a63924eb348684229954891b44675e98191"
+    },
+    {
+      "path": "favicon-32.png",
+      "size": 2051,
+      "sha256": "68e9028a67393e1fa658595f60e10052252c28510efc6e5ef485cb78a515d686"
+    },
+    {
+      "path": "favicon-64.png",
+      "size": 6020,
+      "sha256": "47bfbaf0f2f525ed9e98b80ae3b26776c354724d44d5d0b04a33c520159afaf7"
+    },
+    {
+      "path": "icon-192.png",
+      "size": 37525,
+      "sha256": "b9b321bef9ffc3c390f2379fe2afbac8d1187749d344e62b67de7f6318feffa5"
+    },
+    {
+      "path": "icon-512.png",
+      "size": 134125,
+      "sha256": "efdbb413692e2ca1b47d9d1f4e17f1e676c189fe8d4105d4f5fc48f3aa677c22"
+    },
+    {
+      "path": "index.html",
+      "size": 5687,
+      "sha256": "9fffc8704fc77fb74a66dca539f18bb85ee523dca3e99e087df894e8b603dab0"
+    },
+    {
+      "path": "labos-app-1.0.104.js",
+      "size": 2178950,
+      "sha256": "3d12f39c3bf9eb16c353f99f78364027a8bebe202cb077bc26ccdbea04a5e181"
+    },
+    {
+      "path": "labos-app-icon.png",
+      "size": 39608,
+      "sha256": "50322680db227afb22ebafade2ecf62a9bea8e2f633d426421838471e89b0337"
+    },
+    {
+      "path": "labos-core-1.0.104.js",
+      "size": 147612,
+      "sha256": "51d32cdd3b6dd58c7936d34a687afe65e0aa100628b1e043755dca9681f83e18"
+    },
+    {
+      "path": "labos-demo-data-1.0.104.js",
+      "size": 84266,
+      "sha256": "e89c2724cb3d03c498a3640cd5f2dfbf8455e6524bde16bbacf472b3d50084bf"
+    },
+    {
+      "path": "labos-repository-1.0.104.js",
+      "size": 39036,
+      "sha256": "b96153de2a2c445de0f438542da5956f0f64ff557439fac1404a1ce0e720b859"
+    },
+    {
+      "path": "labos-services-1.0.104.js",
+      "size": 226644,
+      "sha256": "cb055356459c8987ea402399c97ab60a658409013747fa722f15567ebca66076"
+    },
+    {
+      "path": "labos-styles-1.0.104.css",
+      "size": 340065,
+      "sha256": "f75fda630bc8f273c7b9b4f042ee0bf7b8987632ffd3db738cfc34550b1c5d77"
+    },
+    {
+      "path": "labos-wordmark.png",
+      "size": 94117,
+      "sha256": "c903d122f09cdbfc7a8500f4116cb586055fcf3e72a47b027b2a0300228e5c36"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "size": 396,
+      "sha256": "cbe1c264775422db009910fad1816afee971da756313addf755efba5906408e5"
+    },
+    {
+      "path": "service-worker.js",
+      "size": 502,
+      "sha256": "9bc1e1b19758ee5a55994509540cb9a5fb32690bc1cbd99bccb5e45ef6c67e22"
+    }
+  ]
+}

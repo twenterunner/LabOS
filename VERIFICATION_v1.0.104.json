@@ -1,0 +1,179 @@
+{
+  "revision": "1.0.104",
+  "schema": 35,
+  "passed": 34,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "JavaScript syntax: labos-core-1.0.104.js",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "JavaScript syntax: labos-demo-data-1.0.104.js",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "JavaScript syntax: labos-repository-1.0.104.js",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "JavaScript syntax: labos-services-1.0.104.js",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "JavaScript syntax: labos-app-1.0.104.js",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "JavaScript syntax: service-worker.js",
+      "passed": true,
+      "detail": "ok"
+    },
+    {
+      "name": "index references labos-styles-1.0.104.css",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-core-1.0.104.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-demo-data-1.0.104.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-repository-1.0.104.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-services-1.0.104.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-app-1.0.104.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Header revision is REV 1.0.104",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No stale 1.0.103 runtime reference in index",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Schema remains 35",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Core runtime version is 1.0.104-poc",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario current-risk copy explains no dates",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Current-risk config hides resource/start/end",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Priority config hides resource/start/end",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Material delay uses material-available date label",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Material delay does not use a start date in v1103Spec",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Lab closure asks only for date range",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Equipment outage asks resource + date range",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Person absence asks resource + date range",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario builder hidden fields forced hidden by CSS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario builder dynamic-field unit harness",
+      "passed": true,
+      "detail": "UI FIELD RULES PASS"
+    },
+    {
+      "name": "Scenario engine runtime: scan/priority/material + no LIVE mutation",
+      "passed": true,
+      "detail": "version 1.0.104-poc schema 35 requests 24 bookings 117\nscan options 8 recommended sister-LAB-DE\npriority options 8 recommended sister-LAB-DE\nmaterial options 8 recommended external-EXT-EU\nSCENARIO PASS"
+    },
+    {
+      "name": "Package file exists: README.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Package file exists: CHANGELOG_v1.0.104.md",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Package file exists: USER_MANUAL.html",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Package file exists: manifest.webmanifest",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Package file exists: apple-touch-icon.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Package file exists: icon-192.png",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Package file exists: icon-512.png",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "browser_note": "A full Chromium browser smoke test was attempted but local HTTP navigation is blocked by the execution environment with net::ERR_BLOCKED_BY_ADMINISTRATOR. No physical-device/browser-runtime pass is claimed."
+}

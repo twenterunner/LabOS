@@ -1,23 +1,29 @@
-# LabOS REV 1.0.103 — Scenario Lab Stage 2
+# LabOS REV 1.0.104 — Scenario Lab Stage 2 input clarity
 
-REV 1.0.103 is an additive update to REV 1.0.102 and preserves the REV 1.0.98 working baseline while adding optimization and recovery to the operational digital twin.
+REV 1.0.104 is a narrow update to REV 1.0.103. It preserves the complete Scenario Lab Stage 2 recovery engine and fixes the scenario-builder inputs so users only see assumptions that actually affect the selected simulation.
 
 ## Deploy
-1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.103_WEB.zip`.
+1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.104_WEB.zip`.
 2. Upload **all files and folders from the ZIP root** to the GitHub Pages repository root, replacing files with the same names.
 3. Refresh the page.
-4. Confirm the header shows **REV 1.0.103**.
+4. Confirm the header shows **REV 1.0.104**.
 
-## Scenario Lab
-Open **Planning → Scenario Lab**. Choose an active build, optionally introduce an equipment outage, staff absence, lab closure, priority escalation or material delay, and choose the optimization objective. **Generate & rank recovery options** runs the existing canonical planning engine on a disposable clone.
+## Scenario Lab input rules
+Open **Planning → Scenario Lab**.
 
-The engine evaluates same-lab resequencing and alternative controlled resources, readiness/training recovery, portfolio trade-offs, target-first escalation, weekend capacity, sister labs, external facilities, selected-process split-route review and commitment movement. Nothing changes LIVE until an option is explicitly applied with rationale.
+- **Current risk / recovery scan:** no resource or dates; evaluates current LIVE conditions.
+- **Equipment outage:** equipment + unavailable-from + unavailable-through.
+- **Person absence:** person + unavailable-from + unavailable-through.
+- **Lab closure:** unavailable-from + unavailable-through.
+- **Priority escalation:** no dates; target becomes Critical in the scenario only.
+- **Material delay:** one date, **Material available on**.
+
+**Generate & rank recovery options** still runs the existing canonical planning engine on a disposable clone. Nothing changes LIVE until an option is explicitly applied with rationale.
 
 ## Safety / governance
 - Scenario mode is marked **NOT LIVE**.
-- Applying a scenario records an audit entry and retains a one-click undo snapshot.
-- Split-route is a governed review proposal only; LabOS does not fabricate a mixed-site schedule in the current single-execution-site model.
-- Saved scenarios store compact definitions/results and are rerun against current LIVE data.
+- Apply records an audit entry and retains a one-click undo snapshot.
+- Split-route remains a governed review proposal rather than fabricated mixed-site bookings.
 - Schema remains **35** and existing browser data is preserved.
 
-See `CHANGELOG_v1.0.103.md` and `VERIFICATION_v1.0.103.md`.
+See `CHANGELOG_v1.0.104.md` and `VERIFICATION_v1.0.104.md`.
