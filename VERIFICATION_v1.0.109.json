@@ -1,0 +1,225 @@
+{
+  "revision": "1.0.109",
+  "schema": 35,
+  "generated_utc": "2026-09-13T19:11:37.986947+00:00",
+  "passed": 43,
+  "failed": 0,
+  "browser_note": "Headless Chromium regression exercised request/date/quantity boundaries, serial boundaries, exact sister-lab shared-readiness transfer, fault-injected invalid transfer rejection, Scenario Lab LIVE-baseline qualification/apply gates, responsive breakpoint boundaries, all 12 mobile demo roles, and page-error monitoring. Static release checks cover runtime wiring, syntax, parsing and deployment assets. A physical Android-device qualification and authentic historical schema 0\u201330 production fixtures are not claimed.",
+  "checks": [
+    {
+      "name": "Header/runtime identifies REV 1.0.109",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-core-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-demo-data-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-repository-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-services-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-app-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-styles-1.0.109.css",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "IndexedDB schema remains 35",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Service worker identifies 1.0.109",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Strict ISO calendar-date validator present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Prototype quantity limit present and enforced",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Serial generation whole-number boundary guard present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Portfolio-owned readiness preservation present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario LIVE-baseline qualification present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario stale-LIVE fingerprint gate present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario apply whole-portfolio integrity gate present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Request-filter responsive containment rules present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario-builder responsive containment rules present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Android drawer role selector preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "AUTO PLAN optimization/recovery separation preserved",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-core-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-demo-data-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-repository-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-services-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-app-1.0.109.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: service-worker.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON parses: manifest.webmanifest",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "HTML shell parses",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "All local index asset references exist",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: BOOT",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: REQ_DATE_BOUNDARIES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: REQ_QTY_BOUNDARIES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: SERIAL_BOUNDARIES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: TRANSFER_SHARED_READINESS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: TRANSFER_FAULT_INJECTION",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: SCENARIO_LIVE_BASELINE",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: SCENARIO_APPLY_GATES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: RESPONSIVE_BOUNDARIES",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: ANDROID_ROLE_MATRIX",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic regression: PAGE_ERRORS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Baseline domain invariants clean",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Baseline planning integrity clean across 15 audited categories",
+      "passed": true,
+      "detail": "{\"equipmentReadinessFailures\": 0, \"staffQualificationFailures\": 0, \"equipmentOverlaps\": 0, \"staffOverlaps\": 0, \"planningEventOverlaps\": 0, \"equipmentCapabilityMismatches\": 0, \"missingAssignments\": 0, \"orphanAssignments\": 0, \"resourceCareOverlaps\": 0, \"bookingShapeFailures\": 0, \"workingCalendarFailures\": 0, \"duplicateTaskBookings\": 0, \"sequenceFailures\": 0, \"equipmentOperationalFailures\": 0, \"durationConsistencyFailures\": 0}"
+    },
+    {
+      "name": "AUTO PLAN does not recommend recovery trade-off as optimization",
+      "passed": true,
+      "detail": "{\"optimization\": [], \"recovery\": [{\"tier\": \"red\", \"isOptimization\": false, \"losses\": 3}], \"recommended\": null}"
+    }
+  ]
+}

@@ -1,34 +1,27 @@
-# LabOS REV 1.0.108
+# LabOS REV 1.0.109
 
-Static GitHub Pages proof-of-concept for prototype laboratory operations. REV 1.0.108 preserves REV 1.0.107 planning/scenario behavior and restores reliable role switching on Android and other compact screens.
+Static GitHub Pages proof-of-concept for prototype laboratory operations. This release hardens planning integrity, Scenario Lab qualification, input boundaries and responsive layouts after a broad REV 1.0.108 fault-injection campaign.
 
 ## Deploy
-1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.108_WEB.zip`.
-2. Upload **all files and folders from the ZIP root** to the GitHub Pages repository root, replacing older LabOS runtime files.
-3. Refresh the page.
-4. Confirm the header shows **REV 1.0.108**.
+1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.109_WEB.zip`.
+2. Upload **all files and folders from the ZIP root** to the GitHub Pages repository root, replacing the older LabOS runtime files.
+3. Refresh the browser.
+4. Confirm the header shows **REV 1.0.109**.
 
-The deployment uses versioned JS/CSS filenames and a reset service worker so stale GitHub Pages caches do not mask the new revision.
+Versioned JS/CSS filenames and the reset service worker are retained to avoid stale GitHub Pages assets.
 
-## What changed in REV 1.0.108
+## Main safety changes
+- Sister-lab moves preserve shared calibration/readiness dependencies and must pass a whole-portfolio integrity gate before acceptance.
+- Scenario Lab compares optimization candidates to the untouched LIVE plan; the disrupted Scenario-as-is state is displayed separately.
+- Worse-than-LIVE scenario recoveries are not called optimizations or Recommended.
+- Scenario application rejects stale twins and performs a final whole-portfolio integrity audit.
+- Impossible calendar dates are rejected.
+- Prototype quantity defaults to a controlled maximum of 5,000 unless explicitly configured otherwise.
+- Fractional/negative sample-generation counts are rejected and requested quantity cannot be exceeded.
+- Request filters and Scenario Lab controls are width-contained across Android/desktop breakpoint boundaries.
+- Compact-screen role switching from REV 1.0.108 remains available via the hamburger drawer.
 
-### Android / compact-screen role selector
-At compact widths the header role selector stays hidden so the LabOS logo, My Work counter and active-lab selector remain usable. The **same Demo role selector is now available at the top of the hamburger navigation drawer**.
+## Data compatibility
+IndexedDB schema remains **35**. Existing browser data is retained; no reset is required.
 
-- Tap the hamburger menu.
-- Choose a role from **Demo role**.
-- LabOS persists the role, refreshes role-based navigation/content and closes the drawer.
-- The hidden header selector and the mobile selector remain synchronized.
-- The drawer control uses a native 46 px touch target for Android reliability.
-
-### Preserved from REV 1.0.107
-- AUTO PLAN only labels non-worsening improvements as optimization proposals.
-- Feasible-but-worse schedules are clearly separated as recovery trade-offs and can never be Recommended.
-- Scenario Lab only proposes options that beat its scenario baseline and includes a baseline-versus-options comparison surface.
-- Compact desktop/tablet navigation keeps the hamburger reachable and protects text from narrow-column wrapping.
-
-## Governance
-- IndexedDB schema remains **35**; existing browser data is retained.
-- No existing role permission definitions were changed; this release only restores access to the role-switching control on compact screens.
-
-See `CHANGELOG_v1.0.108.md` and `VERIFICATION_v1.0.108.md`.
+See `CHANGELOG_v1.0.109.md`, `QA_REPORT_v1.0.109.md`, and `VERIFICATION_v1.0.109.md`.

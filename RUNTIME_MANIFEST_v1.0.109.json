@@ -1,0 +1,147 @@
+{
+  "product": "LabOS Prototype Build POC",
+  "revision": "1.0.109",
+  "schema": 35,
+  "generated_utc": "2026-09-13T19:11:37.992871+00:00",
+  "entrypoint": "index.html",
+  "runtime_files": [
+    "labos-core-1.0.109.js",
+    "labos-demo-data-1.0.109.js",
+    "labos-repository-1.0.109.js",
+    "labos-services-1.0.109.js",
+    "labos-app-1.0.109.js",
+    "labos-styles-1.0.109.css"
+  ],
+  "files": [
+    {
+      "path": "CHANGELOG_v1.0.109.md",
+      "bytes": 2966,
+      "sha256": "2246d226ac6280814c1cf8aa291766819f1d24a2273ea1407526a9ce4f4e8619"
+    },
+    {
+      "path": "QA_REPORT_v1.0.109.md",
+      "bytes": 6958,
+      "sha256": "625eea4e621889273dc5078e536babe45a3fa57c0105ac5c2ad7ea72124e8b92"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1763,
+      "sha256": "b04c062737228b7cb1e233dabc648c39557a0fde4fa2f8c74f5ef94d42241f8f"
+    },
+    {
+      "path": "USER_MANUAL.html",
+      "bytes": 26918,
+      "sha256": "41b1868660e5c34d1bcf66319f6aa758c6f3a44e4ab35321ed81de0eee3c3a8c"
+    },
+    {
+      "path": "VERIFICATION_v1.0.109.json",
+      "bytes": 6147,
+      "sha256": "65f60d694ddb370b82975a0d460c49ffd149086b48228182997cfa0ac5cbea5e"
+    },
+    {
+      "path": "VERIFICATION_v1.0.109.md",
+      "bytes": 4478,
+      "sha256": "ba58347f9267d1a3381abd344443f76c7382eb4da00ef10332f107cc2fd68c1c"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "bytes": 33773,
+      "sha256": "5d25b868af7fc869502c34bdb277faead91d669fff661ec75a64d1fbc5a90af9"
+    },
+    {
+      "path": "assets/5s/bench-bad.jpg",
+      "bytes": 107828,
+      "sha256": "be82c3551aacbf4275179a1d8c9b8f14d1ecd8709da027d975c3ebe41f2e4a5d"
+    },
+    {
+      "path": "assets/5s/bench-good.jpg",
+      "bytes": 118937,
+      "sha256": "23bbfea1d760feffa94b13a7ad9f3a1d39c728b0e89435a075f5f17c78d17ac8"
+    },
+    {
+      "path": "assets/5s/bench-shadow-board.jpg",
+      "bytes": 140167,
+      "sha256": "91e0de2b11ae526eed6df14aef1d974fa56ef07a1004c552a0f0cdcf49fce3ae"
+    },
+    {
+      "path": "favicon-16.png",
+      "bytes": 724,
+      "sha256": "06604b90926b11733e5106eb7ffb3a63924eb348684229954891b44675e98191"
+    },
+    {
+      "path": "favicon-32.png",
+      "bytes": 2051,
+      "sha256": "68e9028a67393e1fa658595f60e10052252c28510efc6e5ef485cb78a515d686"
+    },
+    {
+      "path": "favicon-64.png",
+      "bytes": 6020,
+      "sha256": "47bfbaf0f2f525ed9e98b80ae3b26776c354724d44d5d0b04a33c520159afaf7"
+    },
+    {
+      "path": "icon-192.png",
+      "bytes": 37525,
+      "sha256": "b9b321bef9ffc3c390f2379fe2afbac8d1187749d344e62b67de7f6318feffa5"
+    },
+    {
+      "path": "icon-512.png",
+      "bytes": 134125,
+      "sha256": "efdbb413692e2ca1b47d9d1f4e17f1e676c189fe8d4105d4f5fc48f3aa677c22"
+    },
+    {
+      "path": "index.html",
+      "bytes": 5925,
+      "sha256": "8f099c2e0c703ebe51b88eab5353cac36fc1bb154cbc65eed16469bde04ae16c"
+    },
+    {
+      "path": "labos-app-1.0.109.js",
+      "bytes": 2195040,
+      "sha256": "d7099f8775f27204360b1efe1f4845e64c6bfa091e0450e94b2c119c86346f2c"
+    },
+    {
+      "path": "labos-app-icon.png",
+      "bytes": 39608,
+      "sha256": "50322680db227afb22ebafade2ecf62a9bea8e2f633d426421838471e89b0337"
+    },
+    {
+      "path": "labos-core-1.0.109.js",
+      "bytes": 149300,
+      "sha256": "cdd6aa55c8eb0b6777bc0f02f2bdfef80cd3faaaf8a588949efa6c4805d27675"
+    },
+    {
+      "path": "labos-demo-data-1.0.109.js",
+      "bytes": 84266,
+      "sha256": "e89c2724cb3d03c498a3640cd5f2dfbf8455e6524bde16bbacf472b3d50084bf"
+    },
+    {
+      "path": "labos-repository-1.0.109.js",
+      "bytes": 39036,
+      "sha256": "b96153de2a2c445de0f438542da5956f0f64ff557439fac1404a1ce0e720b859"
+    },
+    {
+      "path": "labos-services-1.0.109.js",
+      "bytes": 243015,
+      "sha256": "ac73969197712ad2a61b79b6be76fb8b8af57b859d747db57eb8616c65c5761f"
+    },
+    {
+      "path": "labos-styles-1.0.109.css",
+      "bytes": 352448,
+      "sha256": "953a753841138689fdf3aac6955d603a1516f749dc9a5d82075154e2e91da122"
+    },
+    {
+      "path": "labos-wordmark.png",
+      "bytes": 94117,
+      "sha256": "c903d122f09cdbfc7a8500f4116cb586055fcf3e72a47b027b2a0300228e5c36"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 396,
+      "sha256": "cbe1c264775422db009910fad1816afee971da756313addf755efba5906408e5"
+    },
+    {
+      "path": "service-worker.js",
+      "bytes": 502,
+      "sha256": "e9fd737e5d3c6ad1de99c6beec0bb9d2087487542542eae7cdcf32570d7e7a6b"
+    }
+  ]
+}
