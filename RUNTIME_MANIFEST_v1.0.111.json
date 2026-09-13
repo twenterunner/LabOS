@@ -1,0 +1,30 @@
+{
+  "version": "1.0.111",
+  "schemaVersion": 35,
+  "files": {
+    "labos-core-1.0.111.js": {
+      "sha256": "f67d72856b573611ee13957855bd104c1edd0feaaaf2001efeae53008fc77f0b",
+      "bytes": 149639
+    },
+    "labos-demo-data-1.0.111.js": {
+      "sha256": "e89c2724cb3d03c498a3640cd5f2dfbf8455e6524bde16bbacf472b3d50084bf",
+      "bytes": 84266
+    },
+    "labos-repository-1.0.111.js": {
+      "sha256": "b96153de2a2c445de0f438542da5956f0f64ff557439fac1404a1ce0e720b859",
+      "bytes": 39036
+    },
+    "labos-services-1.0.111.js": {
+      "sha256": "ac73969197712ad2a61b79b6be76fb8b8af57b859d747db57eb8616c65c5761f",
+      "bytes": 243015
+    },
+    "labos-app-1.0.111.js": {
+      "sha256": "abedd5ff3c6ab240160ab97e2e3c44f4e696e4846a7a4eb9ef3923b84b149f5a",
+      "bytes": 2205894
+    },
+    "labos-styles-1.0.111.css": {
+      "sha256": "953a753841138689fdf3aac6955d603a1516f749dc9a5d82075154e2e91da122",
+      "bytes": 352448
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "version": "1.0.111-poc",
+  "schemaVersion": 35,
+  "passed": true,
+  "checks": [
+    {
+      "name": "P26-1011 Thermal Soak removal survives reuse-package render",
+      "passed": true
+    },
+    {
+      "name": "P26-1011 route becomes process-planning ready after removal + confirm",
+      "passed": true
+    },
+    {
+      "name": "Processes released blocker clears after removal + confirm",
+      "passed": true
+    },
+    {
+      "name": "Exact governed process revision fails closed when unavailable",
+      "passed": true
+    },
+    {
+      "name": "Per-build due-date source uses selected request",
+      "passed": true
+    },
+    {
+      "name": "Direct manual move action wired to current move engine",
+      "passed": true
+    },
+    {
+      "name": "Route/method edits reopen sequential review",
+      "passed": true
+    },
+    {
+      "name": "Baseline invariants",
+      "passed": true,
+      "detail": "0 findings"
+    },
+    {
+      "name": "Planning integrity",
+      "passed": true,
+      "detail": "15 audited categories clean"
+    },
+    {
+      "name": "AUTO PLAN semantics",
+      "passed": true,
+      "detail": "9 strategies; 0 verified optimizations; 1 recovery trade-off; no recommendation; baseline 4 unplanned / 9 late days / 6 d max delay"
+    },
+    {
+      "name": "JavaScript syntax",
+      "passed": true
+    },
+    {
+      "name": "Runtime manifest generated",
+      "passed": true
+    }
+  ],
+  "browserNote": "No physical Android-device qualification claimed; deterministic core/service and source/package regressions executed."
+}
