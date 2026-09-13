@@ -1,0 +1,205 @@
+{
+  "revision": "1.0.110",
+  "schema": 35,
+  "generated_utc": "2026-09-13T20:22:03.638532+00:00",
+  "passed": 39,
+  "failed": 0,
+  "browser_note": "Isolated Chromium loaded the actual REV 1.0.110 runtime with an in-memory repository and exercised Active lab switching at 1366 px and 360 px, local KPI values, Commitment Health membership and late filtering. Local network navigation was not used; production IndexedDB/server authorization are outside this focused regression.",
+  "checks": [
+    {
+      "name": "Core runtime identifies 1.0.110",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "IndexedDB schema remains 35",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-core-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-demo-data-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-repository-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-services-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-app-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Index references labos-styles-1.0.110.css",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Header shows REV 1.0.110",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Service worker identifies 1.0.110",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No old 1.0.109 runtime asset references in index",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Planning health default uses explicit active-lab scope guard",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Post-render planning enhancements re-enter active-lab scope",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Explicit empty row lists stay empty",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-core-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-demo-data-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-repository-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-services-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-app-1.0.110.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: service-worker.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JSON parses: manifest.webmanifest",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "HTML parses: index.html",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "HTML parses: USER_MANUAL.html",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "All local index asset references exist",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Dynamic: LAB-NL tile metrics @ 1366px",
+      "passed": true,
+      "detail": "{\"got\": [\"8\", \"2\", \"2\", \"9\", \"4\", \"4\"], \"expected\": [\"8\", \"2\", \"2\", \"9\", \"4\", \"4\"]}"
+    },
+    {
+      "name": "Dynamic: LAB-DE tile metrics @ 1366px",
+      "passed": true,
+      "detail": "{\"got\": [\"5\", \"4\", \"0\", \"0\", \"4\", \"1\"], \"expected\": [\"5\", \"4\", \"0\", \"0\", \"4\", \"1\"]}"
+    },
+    {
+      "name": "Dynamic: LAB-US tile metrics @ 1366px",
+      "passed": true,
+      "detail": "{\"got\": [\"8\", \"5\", \"0\", \"0\", \"5\", \"3\"], \"expected\": [\"8\", \"5\", \"0\", \"0\", \"5\", \"3\"]}"
+    },
+    {
+      "name": "Dynamic: No page errors @ 1366px",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Dynamic: LAB-NL tile metrics @ 360px",
+      "passed": true,
+      "detail": "{\"got\": [\"8\", \"2\", \"2\", \"9\", \"4\", \"4\"], \"expected\": [\"8\", \"2\", \"2\", \"9\", \"4\", \"4\"]}"
+    },
+    {
+      "name": "Dynamic: LAB-DE tile metrics @ 360px",
+      "passed": true,
+      "detail": "{\"got\": [\"5\", \"4\", \"0\", \"0\", \"4\", \"1\"], \"expected\": [\"5\", \"4\", \"0\", \"0\", \"4\", \"1\"]}"
+    },
+    {
+      "name": "Dynamic: LAB-US tile metrics @ 360px",
+      "passed": true,
+      "detail": "{\"got\": [\"8\", \"5\", \"0\", \"0\", \"5\", \"3\"], \"expected\": [\"8\", \"5\", \"0\", \"0\", \"5\", \"3\"]}"
+    },
+    {
+      "name": "Dynamic: No page errors @ 360px",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "name": "Dynamic: LAB-NL commitment list count",
+      "passed": true,
+      "detail": "[\"P26-1001\", \"P26-1002\", \"P26-1003\", \"P26-1004\", \"P26-1005\", \"P26-1006\", \"P26-1007\", \"P26-1008\"]"
+    },
+    {
+      "name": "Dynamic: LAB-NL late filter count",
+      "passed": true,
+      "detail": "2"
+    },
+    {
+      "name": "Dynamic: LAB-DE commitment list count",
+      "passed": true,
+      "detail": "[\"P26-1009\", \"P26-1010\", \"P26-1011\", \"P26-1012\", \"P26-1016\"]"
+    },
+    {
+      "name": "Dynamic: LAB-DE late filter count",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "Dynamic: LAB-US commitment list count",
+      "passed": true,
+      "detail": "[\"P26-1017\", \"P26-1018\", \"P26-1019\", \"P26-1020\", \"P26-1021\", \"P26-1022\", \"P26-1023\", \"P26-1024\"]"
+    },
+    {
+      "name": "Dynamic: LAB-US late filter count",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "Dynamic: No uncaught page errors",
+      "passed": true,
+      "detail": "[]"
+    }
+  ]
+}

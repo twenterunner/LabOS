@@ -1,0 +1,131 @@
+{
+  "product": "LabOS",
+  "revision": "1.0.110",
+  "schema": 35,
+  "generated_utc": "2026-09-13T20:22:10.614312+00:00",
+  "runtime_assets": [
+    "labos-core-1.0.110.js",
+    "labos-demo-data-1.0.110.js",
+    "labos-repository-1.0.110.js",
+    "labos-services-1.0.110.js",
+    "labos-app-1.0.110.js",
+    "labos-styles-1.0.110.css"
+  ],
+  "files": [
+    {
+      "path": "CHANGELOG_v1.0.110.md",
+      "size_bytes": 1615,
+      "sha256": "f2eca8270db9a545fd09531189589d99b6ba29603c5ea9af53db1ef6e2b4348d"
+    },
+    {
+      "path": "QA_REPORT_v1.0.110.md",
+      "size_bytes": 2177,
+      "sha256": "3db5c655a54bd2fb902bb12553853fd6fd5a98b412742f62c4b654ef235d768d"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 1842,
+      "sha256": "c92b2ee6fd69eacb75c8ef0c01dd2dca5c3d86b63219da7acd7f3bcf954a6fc0"
+    },
+    {
+      "path": "USER_MANUAL.html",
+      "size_bytes": 27772,
+      "sha256": "edcf3a08d7e3965c814d257a9f7ea20f73fe432d1c5ad2ebb4fbf60dbab7db11"
+    },
+    {
+      "path": "VERIFICATION_v1.0.110.json",
+      "size_bytes": 5732,
+      "sha256": "5dba043729efed08aa8a8440c3077131d9ab451cd60f87266e41871f51bb9df8"
+    },
+    {
+      "path": "VERIFICATION_v1.0.110.md",
+      "size_bytes": 3170,
+      "sha256": "066c7ab9c4b927de065a5aec4522897c80dc3648a53ef6621497e5f780457b58"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "size_bytes": 33773,
+      "sha256": "5d25b868af7fc869502c34bdb277faead91d669fff661ec75a64d1fbc5a90af9"
+    },
+    {
+      "path": "favicon-16.png",
+      "size_bytes": 724,
+      "sha256": "06604b90926b11733e5106eb7ffb3a63924eb348684229954891b44675e98191"
+    },
+    {
+      "path": "favicon-32.png",
+      "size_bytes": 2051,
+      "sha256": "68e9028a67393e1fa658595f60e10052252c28510efc6e5ef485cb78a515d686"
+    },
+    {
+      "path": "favicon-64.png",
+      "size_bytes": 6020,
+      "sha256": "47bfbaf0f2f525ed9e98b80ae3b26776c354724d44d5d0b04a33c520159afaf7"
+    },
+    {
+      "path": "icon-192.png",
+      "size_bytes": 37525,
+      "sha256": "b9b321bef9ffc3c390f2379fe2afbac8d1187749d344e62b67de7f6318feffa5"
+    },
+    {
+      "path": "icon-512.png",
+      "size_bytes": 134125,
+      "sha256": "efdbb413692e2ca1b47d9d1f4e17f1e676c189fe8d4105d4f5fc48f3aa677c22"
+    },
+    {
+      "path": "index.html",
+      "size_bytes": 5925,
+      "sha256": "3edaf3a28916f75c6156c066c21bc203bad1c377053488064f52a9aed5bdc13c"
+    },
+    {
+      "path": "labos-app-1.0.110.js",
+      "size_bytes": 2196051,
+      "sha256": "58a41606f2c83a219e87ce5b1fe964dc4b992fdc0df72ae130e7b1dbaf720256"
+    },
+    {
+      "path": "labos-app-icon.png",
+      "size_bytes": 39608,
+      "sha256": "50322680db227afb22ebafade2ecf62a9bea8e2f633d426421838471e89b0337"
+    },
+    {
+      "path": "labos-core-1.0.110.js",
+      "size_bytes": 149300,
+      "sha256": "a463042fac566f892ea3dc885066b840272fc8759e18075ec3a817788f9031cc"
+    },
+    {
+      "path": "labos-demo-data-1.0.110.js",
+      "size_bytes": 84266,
+      "sha256": "e89c2724cb3d03c498a3640cd5f2dfbf8455e6524bde16bbacf472b3d50084bf"
+    },
+    {
+      "path": "labos-repository-1.0.110.js",
+      "size_bytes": 39036,
+      "sha256": "b96153de2a2c445de0f438542da5956f0f64ff557439fac1404a1ce0e720b859"
+    },
+    {
+      "path": "labos-services-1.0.110.js",
+      "size_bytes": 243015,
+      "sha256": "ac73969197712ad2a61b79b6be76fb8b8af57b859d747db57eb8616c65c5761f"
+    },
+    {
+      "path": "labos-styles-1.0.110.css",
+      "size_bytes": 352448,
+      "sha256": "953a753841138689fdf3aac6955d603a1516f749dc9a5d82075154e2e91da122"
+    },
+    {
+      "path": "labos-wordmark.png",
+      "size_bytes": 94117,
+      "sha256": "c903d122f09cdbfc7a8500f4116cb586055fcf3e72a47b027b2a0300228e5c36"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "size_bytes": 396,
+      "sha256": "cbe1c264775422db009910fad1816afee971da756313addf755efba5906408e5"
+    },
+    {
+      "path": "service-worker.js",
+      "size_bytes": 502,
+      "sha256": "4cbafe2bc1c4deacb422359d696017d15ed33d89cc8162756f0f4f26831dae98"
+    }
+  ]
+}

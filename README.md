@@ -1,27 +1,34 @@
-# LabOS REV 1.0.109
+# LabOS REV 1.0.110
 
-Static GitHub Pages proof-of-concept for prototype laboratory operations. This release hardens planning integrity, Scenario Lab qualification, input boundaries and responsive layouts after a broad REV 1.0.108 fault-injection campaign.
+Static GitHub Pages proof-of-concept for prototype laboratory operations. REV 1.0.110 is a focused multi-lab scoping correction built on REV 1.0.109.
 
 ## Deploy
-1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.109_WEB.zip`.
-2. Upload **all files and folders from the ZIP root** to the GitHub Pages repository root, replacing the older LabOS runtime files.
+1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.110_WEB.zip`.
+2. Upload **all files from the ZIP root** to the GitHub Pages repository root, replacing the older LabOS runtime files.
 3. Refresh the browser.
-4. Confirm the header shows **REV 1.0.109**.
+4. Confirm the header shows **REV 1.0.110**.
 
-Versioned JS/CSS filenames and the reset service worker are retained to avoid stale GitHub Pages assets.
+Versioned JS/CSS filenames and the reset service worker are retained to prevent stale GitHub Pages assets from masking the update.
 
-## Main safety changes
-- Sister-lab moves preserve shared calibration/readiness dependencies and must pass a whole-portfolio integrity gate before acceptance.
-- Scenario Lab compares optimization candidates to the untouched LIVE plan; the disrupted Scenario-as-is state is displayed separately.
-- Worse-than-LIVE scenario recoveries are not called optimizations or Recommended.
-- Scenario application rejects stale twins and performs a final whole-portfolio integrity audit.
-- Impossible calendar dates are rejected.
-- Prototype quantity defaults to a controlled maximum of 5,000 unless explicitly configured otherwise.
-- Fractional/negative sample-generation counts are rejected and requested quantity cannot be exceeded.
-- Request filters and Scenario Lab controls are width-contained across Android/desktop breakpoint boundaries.
-- Compact-screen role switching from REV 1.0.108 remains available via the hamburger drawer.
+## REV 1.0.110 correction
+The Master Planner health tiles were being rendered correctly in an active-lab planning context, then overwritten by a later post-render enhancement after the enterprise state had been restored. That caused every laboratory to show the same enterprise totals.
+
+REV 1.0.110 makes the planning-health model explicitly active-lab scoped whenever no explicit request subset is supplied, and the post-render planning experience re-enters the active-lab state before rebuilding KPI tiles, Commitment Health and grouped timeline headers.
+
+With the shipped demo dataset the expected local metrics are:
+
+| Metric | NL-TW | DE-ST | US-DT |
+|---|---:|---:|---:|
+| All open | 8 | 5 | 8 |
+| On time | 2 | 4 | 5 |
+| Late builds | 2 | 0 | 0 |
+| Total days late | 9 | 0 | 0 |
+| Commitment movement | 4 | 4 | 5 |
+| Unplanned | 4 | 1 | 3 |
+
+A controlled sister-lab transfer changes the request `executionSiteId`; therefore the build leaves the source lab's operational metrics and enters the receiving lab's metrics, while home-site transfer history remains retained.
 
 ## Data compatibility
 IndexedDB schema remains **35**. Existing browser data is retained; no reset is required.
 
-See `CHANGELOG_v1.0.109.md`, `QA_REPORT_v1.0.109.md`, and `VERIFICATION_v1.0.109.md`.
+See `CHANGELOG_v1.0.110.md`, `QA_REPORT_v1.0.110.md`, and `VERIFICATION_v1.0.110.md`.
