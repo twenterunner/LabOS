@@ -1,0 +1,257 @@
+{
+  "revision": "1.0.106",
+  "schema": 35,
+  "generated_utc": "2026-09-13T09:39:34.202240+00:00",
+  "passed": true,
+  "summary": {
+    "passed": 44,
+    "failed": 0,
+    "total": 44
+  },
+  "runtime_evidence": {
+    "version": "1.0.106-poc",
+    "schema": 35,
+    "baseline": {
+      "target": "P26-1005",
+      "evaluated": 9,
+      "shown": 5,
+      "filtered": 4,
+      "ok": true
+    },
+    "outage": {
+      "ok": true,
+      "summary": {
+        "conflicts": 4,
+        "evaluated": 7,
+        "shown": 4,
+        "filtered": 3
+      }
+    },
+    "guardOK": true,
+    "requests": 24,
+    "bookings": 117
+  },
+  "checks": [
+    {
+      "name": "Runtime file present: labos-core-1.0.106.js",
+      "passed": true,
+      "detail": "147612"
+    },
+    {
+      "name": "Runtime file present: labos-demo-data-1.0.106.js",
+      "passed": true,
+      "detail": "84266"
+    },
+    {
+      "name": "Runtime file present: labos-repository-1.0.106.js",
+      "passed": true,
+      "detail": "39036"
+    },
+    {
+      "name": "Runtime file present: labos-services-1.0.106.js",
+      "passed": true,
+      "detail": "230571"
+    },
+    {
+      "name": "Runtime file present: labos-app-1.0.106.js",
+      "passed": true,
+      "detail": "2182610"
+    },
+    {
+      "name": "Runtime file present: labos-styles-1.0.106.css",
+      "passed": true,
+      "detail": "347183"
+    },
+    {
+      "name": "index references labos-core-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-demo-data-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-repository-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-services-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-app-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "index references labos-styles-1.0.106.css",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Header version is REV 1.0.106",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Core VERSION is 1.0.106-poc",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "IndexedDB schema remains 35",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-core-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-demo-data-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-repository-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-services-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JavaScript syntax: labos-app-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "HTML parses",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Manifest JSON parses",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Collapsed sidebar breakpoint protects hamburger",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Hamburger is first topbar element",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Compact topbar hides lower-priority controls",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Daily Operations cards use responsive minimum width",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Daily Operations actions cannot squeeze proposal copy",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Daily Operations becomes one column on narrow screens",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario comparison table implemented",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario UI says only better options are shown",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario engine computes explicit comparison baseline",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario engine filters options against baseline",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unresolved target options are suppressed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Residual scenario conflicts are suppressed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Apply guard rejects non-improving options",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Comparison table includes requested impact dimensions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario comparison CSS present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unrelated runtime unchanged: labos-demo-data-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unrelated runtime unchanged: labos-repository-1.0.106.js",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Scenario runtime: comparison baseline + better-only filter",
+      "passed": true,
+      "detail": "{\"evaluated\": 9, \"filtered\": 4, \"ok\": true, \"shown\": 5, \"target\": \"P26-1005\"}"
+    },
+    {
+      "name": "Scenario runtime: disruption baseline conflicts resolved by shown options",
+      "passed": true,
+      "detail": "{\"ok\": true, \"summary\": {\"conflicts\": 4, \"evaluated\": 7, \"filtered\": 3, \"shown\": 4}}"
+    },
+    {
+      "name": "Scenario runtime: apply guard blocks non-improving option",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "No stale REV 1.0.105 runtime references",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CSS braces balanced",
+      "passed": true,
+      "detail": "open=4235 close=4235"
+    }
+  ],
+  "browser_note": "Source-level responsive geometry, JavaScript syntax, HTML/manifest parsing, runtime Scenario Lab filtering, schema/version wiring and byte-equivalence of unrelated demo/repository assets were verified. No physical-device browser-runtime pass is claimed."
+}
