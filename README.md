@@ -1,42 +1,26 @@
-# LabOS REV 1.0.112
+# LabOS REV 1.0.113
 
-Static GitHub Pages proof-of-concept for prototype laboratory operations. REV 1.0.112 is a focused multi-lab scoping correction built on REV 1.0.109.
+Static GitHub Pages proof-of-concept for prototype laboratory operations.
 
 ## Deploy
-1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.112_WEB.zip`.
-2. Upload **all files from the ZIP root** to the GitHub Pages repository root, replacing the older LabOS runtime files.
+
+1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.113_WEB.zip`.
+2. Upload **every file from the ZIP root** to the GitHub Pages repository root, replacing the previous LabOS files.
 3. Refresh the browser.
-4. Confirm the header shows **REV 1.0.112**.
+4. Confirm the header shows **REV 1.0.113**.
 
-Versioned JS/CSS filenames and the reset service worker are retained to prevent stale GitHub Pages assets from masking the update.
+The runtime uses versioned JS/CSS filenames and a reset service worker so stale GitHub Pages/browser assets do not mask the update.
 
-## REV 1.0.112 correction
-The Master Planner health tiles were being rendered correctly in an active-lab planning context, then overwritten by a later post-render enhancement after the enterprise state had been restored. That caused every laboratory to show the same enterprise totals.
+## REV 1.0.113 correction
 
-REV 1.0.112 makes the planning-health model explicitly active-lab scoped whenever no explicit request subset is supplied, and the post-render planning experience re-enters the active-lab state before rebuilding KPI tiles, Commitment Health and grouped timeline headers.
+The controls stage could become non-actionable for Product-Safety-relevant B/C builds. A Control Plan-specific cockpit override displayed **Control Plan approved** and returned before checking the still-pending Product Safety approval. The yellow Next Action then degraded to a generic scroll button.
 
-With the shipped demo dataset the expected local metrics are:
+REV 1.0.113 explicitly surfaces the pending Product Safety approval in both the SIGN-OFF and NEXT ACTION areas. The authorised Product Safety Representative receives a direct approval action; other roles receive a direct role switch. Once safety approval is complete, the normal explicit **Confirm controls & continue** action becomes available.
 
-| Metric | NL-TW | DE-ST | US-DT |
-|---|---:|---:|---:|
-| All open | 8 | 5 | 8 |
-| On time | 2 | 4 | 5 |
-| Late builds | 2 | 0 | 0 |
-| Total days late | 9 | 0 | 0 |
-| Commitment movement | 4 | 4 | 5 |
-| Unplanned | 4 | 1 | 3 |
-
-A controlled sister-lab transfer changes the request `executionSiteId`; therefore the build leaves the source lab's operational metrics and enters the receiving lab's metrics, while home-site transfer history remains retained.
+The stale wording around an earlier Control Plan approval reset is also corrected after the edited revision has already been re-approved.
 
 ## Data compatibility
+
 IndexedDB schema remains **35**. Existing browser data is retained; no reset is required.
 
-See `CHANGELOG_v1.0.112.md`, `QA_REPORT_v1.0.112.md`, and `VERIFICATION_v1.0.112.md`.
-
-
-## REV 1.0.112
-- Per-build swimlanes again show the selected build required-delivery red line on every task lane.
-- Tapping/clicking a future planned task exposes **Move / replan this step**, which opens the existing Green / Yellow / Red validated manual-move flow. Completed/historical work remains locked.
-- Build-specific route changes are preserved: automatic reuse no longer restores a removed operation on the next render. After an unnecessary method (for example Thermal Soak) is removed, one confirmation records both route confirmation and the explicit route/method review when the remaining definition is technically ready, then advances to the next controlled stage.
-- Route/test edits reopen process and controls review, preventing stale review state.
-- Process planning and guided resolution now evaluate the exact governed process revision recorded on the route.
+See `CHANGELOG_v1.0.113.md`, `QA_REPORT_v1.0.113.md`, and `VERIFICATION_v1.0.113.md`.
