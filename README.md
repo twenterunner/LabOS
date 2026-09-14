@@ -1,19 +1,21 @@
-# LabOS REV 1.0.118
+# LabOS REV 1.0.119
 
-This build fixes the mobile swimlane tap/drag conflict while preserving the qualified REV 1.0.117 planning and single-test sister-lab engine. IndexedDB schema remains 35.
+Static GitHub Pages proof-of-concept for LabOS prototype-build operations. No backend or npm installation is required.
 
 ## Deploy
+1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.119_WEB.zip`.
+2. Copy all files to the root of the GitHub Pages repository.
+3. Commit/push and hard-refresh the page.
+4. Confirm the header shows **REV 1.0.119**.
 
-1. Extract `ProtoLabOS_Prototype_Build_POC_v1.0.118_WEB.zip`.
-2. Upload **all files and the assets folder** to the same GitHub Pages repository/folder.
-3. Replace the prior release files.
-4. Reload the site and confirm the header shows **REV 1.0.118**.
+## REV 1.0.119 focus
+- Manual replanning now stays **inside the swimlane** in both the main Planning tab and the specific Build workspace.
+- The complete visible timeline width is evaluated at **calendar-day resolution**.
+- **Green** highlights are complete feasible days using current controlled readiness with no other build moved.
+- **Yellow** highlights are complete feasible days after validated calibration / maintenance / training readiness actions; acceptance is explicit.
+- If the next valid solution is outside the visible range, the timeline expands to it and rescans the displayed width.
+- Structural capability/skill gaps route to guided recovery.
+- Normal mobile taps still open Planned Task; replanning requires the explicit move action or desktop grip.
+- Single-test sister-lab routing remains independent of whole-build routing and is preserved by downstream replanning.
 
-## REV 1.0.118 focus
-
-Manual planning is now date-based rather than hour/minute based. Tapping a future process/test and choosing **Move / replan this step** opens a date-level search through the same constrained planning engine as AUTO-PLAN. The visible chart range is not a planning horizon. LabOS searches beyond it and surfaces the next complete feasible day; controlled readiness creates Yellow options, while structural equipment/skill blockers route into guided recovery.
-
-No schema reset is required (schema 35).
-
-### Mobile planning hotfix
-Tap a planning bar to open Planned Task. On phones/tablets, movement is started explicitly from the dialog; on desktop only the small grip is draggable. Tests expose **Send only this test to a sister lab →**.
+IndexedDB schema remains 35; existing browser data is retained.
