@@ -1,9 +1,17 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.132**  
+**Current prototype release: REV 1.0.133**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores the current POC data locally in the browser.
+
+## REV 1.0.133 highlights
+### Prototype-build planning coherence
+- Material already received/issued for the full exact BOM now satisfies the Material Receipt route prerequisite. AUTO PLAN no longer creates or demands a duplicate Material Receipt booking, and execution treats the evidence-backed receipt step as complete.
+- Accepted lab closures, vacations, outages and other planning situations remain hard operating constraints that AUTO PLAN searches around. The finite planning horizon now extends beyond active finite events (within the browser-safe cap) instead of turning the event itself into a recovery action.
+- Calibration logic now distinguishes an expired calibration interval from missing controlled certificate evidence. A valid interval with incomplete evidence guides to the exact equipment in Resource Assurance; a genuinely due calibration may be auto-reserved before the planned-use date.
+- Guided recovery reports the exact task/resource/use date/due date where available and no longer offers removal of accepted planning situations as the recovery path.
+- Final planning-task coverage failures identify the concrete missing/mismatched task rather than falling back to a generic “Planned activity” dead end.
 
 ## REV 1.0.132 highlights
 ### Capacity situations are facts, not prerequisite blockers
@@ -51,7 +59,7 @@ REV 1.0.128 fixes a manual move failure caused by regenerated booking IDs. The t
 1. Extract the ZIP.
 2. Upload **all files from the ZIP root** to the root of the GitHub repository used for GitHub Pages.
 3. Keep `index.html` at repository root.
-4. Refresh the site. The header must show **REV 1.0.132**.
+4. Refresh the site. The header must show **REV 1.0.133**.
 
 If the live site still shows REV 1.0.122/1.0.124, it is still serving the older deployment.
 
