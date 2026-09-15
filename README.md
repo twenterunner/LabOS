@@ -1,9 +1,19 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.130**  
+**Current prototype release: REV 1.0.131**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores the current POC data locally in the browser.
+
+## REV 1.0.131 highlights
+### Capacity situations are facts, not prerequisite blockers
+- Adding or tightening a vacation, whole-lab closure, equipment outage or similar capacity event now always produces the **best feasible portfolio** around that constraint. A build that cannot obtain a complete schedule is left explicitly **unplanned / at risk** rather than blocking the event itself.
+- Calibration, maintenance and training reservations follow the same principle: the reservation is accepted, affected builds are replanned where feasible, and any build that still cannot be placed is surfaced as an unplanned consequence for later recovery.
+- Planning-event previews show consequences and retain an explicit accept/cancel decision; they no longer force users through a circular “complete resolution required” loop.
+
+### Build-specific approval blocker corrected
+- Pending reused-document / build-specific change approvals are now shown at the actual definition or control step that owns them instead of allowing every earlier step to appear green and then failing at Build Readiness.
+- The yellow resolution action opens the real consolidated build-change sign-off package, with the correct signers and executable sign-off controls, rather than a generic approvals view that cannot clear the blocker.
 
 ## REV 1.0.130 highlights
 ### Planning-situation revocation and capacity release
@@ -41,7 +51,7 @@ REV 1.0.128 fixes a manual move failure caused by regenerated booking IDs. The t
 1. Extract the ZIP.
 2. Upload **all files from the ZIP root** to the root of the GitHub repository used for GitHub Pages.
 3. Keep `index.html` at repository root.
-4. Refresh the site. The header must show **REV 1.0.130**.
+4. Refresh the site. The header must show **REV 1.0.131**.
 
 If the live site still shows REV 1.0.122/1.0.124, it is still serving the older deployment.
 
