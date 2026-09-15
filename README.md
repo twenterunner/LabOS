@@ -6,6 +6,15 @@
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores the current POC data locally in the browser.
 
 ## REV 1.0.130 highlights
+### Planning-situation revocation and capacity release
+- Revoking a lab closure, person absence, equipment outage/shutdown or other temporary capacity block is now a **non-blocking capacity release**. Unrelated portfolio blockers can no longer prevent the constraint from being removed.
+- Shortening an existing event is treated the same way when the new blocked interval is a strict subset of the old interval.
+- Existing accepted bookings are protected: revocation/relaxation does not silently move work back. The user chooses **Revoke/Apply only** or **Revoke/Apply & preview optimization**.
+- If optional re-optimization hits unrelated blockers, LabOS clearly states that the constraint change is already live and the current schedule remains unchanged.
+- Planning-situation cards and the edit dialog now expose an explicit **Revoke** action. Revoke is distinct from Undo and remains audit-trailed.
+- Metadata-only edits (reason/owner/reference/type where the blocking footprint is unchanged) no longer force a portfolio replan.
+- Existing planning-event `siteId` is preserved while editing so multi-lab constraints cannot silently move to the currently selected lab.
+
 ### Development-time learning
 REV 1.0.130 fixes Daily Operations ownership and lab scoping. Executable improvement cards are now generated for the active lab only, explicitly assigned to actionable roles, and filtered by the logged-in role. Quality/technician roles no longer receive Prototype Lab Planner or Lab Manager actions; planners/managers/admins see only the actions they are authorized to execute. Accept/Reject/Defer is re-authorized at action time, and automatic load balancing cannot silently move work to a sister lab. Daily review snapshots are now retained per lab so role/lab switching cannot leave stale cards.
 

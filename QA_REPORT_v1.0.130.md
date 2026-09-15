@@ -46,3 +46,35 @@ PASS Daily review completion tracked per lab
 PASS Second lab receives independent daily review
 PASS First lab daily review retained after reviewing another lab
 ```
+
+## Planning-situation revocation regression
+
+Additional checks for the capacity-release patch:
+
+- JavaScript syntax checks after patch: **PASS** for core, services, repository, demo-data and app assets.
+- Local `index.html` asset references: **PASS**.
+- Same-lab booking is blocked by a site-scoped lab closure: **PASS**.
+- Sister-lab booking is not blocked by that closure: **PASS**.
+- Full revocation is classified as a relaxation: **PASS**.
+- Shortening a closure is classified as a relaxation: **PASS**.
+- Shortening releases only bookings that fall outside the new blocked interval: **PASS**.
+- Metadata-only edit is detected without planning churn: **PASS**.
+- Moving the constraint to another lab is not misclassified as a relaxation: **PASS**.
+- Revocation applies with synthetic unrelated blocker state present: **PASS**.
+- Revoke-only path performs no portfolio optimizer call: **PASS**.
+- Stale pending planning-situation retry is cleared: **PASS**.
+- Revocation audit record is created: **PASS**.
+- Revoke action no longer routes through the blocking `previewPlanningSituationChange` transaction: **PASS**.
+
+Browser automation could not be used in the build container because local/file navigation is administrator-blocked in the installed Chromium policy, so the regression was exercised through source-backed Node harnesses plus static asset/syntax checks.
+
+
+## Corrective hotfix QA — My Work role scoping
+- **PASS — JavaScript syntax:** `node --check` on `labos-app-1.0.130.js` and `labos-services-1.0.130.js`.
+- **PASS — training governance unit test:** scheduling a Training resource-care item whose competency technical owner is Noah Visser now creates both booking and action with operational owner Lucas Vos / `lab_manager`, while retaining `technicalOwner = Noah Visser`.
+- **PASS — calibration governance unit test:** scheduling Calibration creates booking/action owner Daan Mulder / `metrology` with the governed role set.
+- **PASS — stale-data migration present:** existing scheduled care bookings/actions are normalized to care-type operational ownership and persisted automatically.
+- **PASS — duplicate suppression:** My Work readiness rows skip a care reservation when its governed open action already represents the same `careItemKey`.
+- **PASS — Process Engineer scope:** the Process Engineer dashboard no longer contains the generic whole-lab capacity/readiness/potential-project panels; it uses a role-specific process/method work view.
+- **PASS — Process Engineer action gate:** non-process resource-care and unrelated personally-named actions are excluded from Process Engineer My Work; process/method/route actions remain eligible.
+- **Environment note:** container Chromium is organization-policy blocked from opening local test URLs/files, so browser automation could not be used in this environment. Static syntax and executable service-level ownership tests were completed instead.
