@@ -1,11 +1,11 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.131**  
+**Current prototype release: REV 1.0.132**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores the current POC data locally in the browser.
 
-## REV 1.0.131 highlights
+## REV 1.0.132 highlights
 ### Capacity situations are facts, not prerequisite blockers
 - Adding or tightening a vacation, whole-lab closure, equipment outage or similar capacity event now always produces the **best feasible portfolio** around that constraint. A build that cannot obtain a complete schedule is left explicitly **unplanned / at risk** rather than blocking the event itself.
 - Calibration, maintenance and training reservations follow the same principle: the reservation is accepted, affected builds are replanned where feasible, and any build that still cannot be placed is surfaced as an unplanned consequence for later recovery.
@@ -51,7 +51,7 @@ REV 1.0.128 fixes a manual move failure caused by regenerated booking IDs. The t
 1. Extract the ZIP.
 2. Upload **all files from the ZIP root** to the root of the GitHub repository used for GitHub Pages.
 3. Keep `index.html` at repository root.
-4. Refresh the site. The header must show **REV 1.0.131**.
+4. Refresh the site. The header must show **REV 1.0.132**.
 
 If the live site still shows REV 1.0.122/1.0.124, it is still serving the older deployment.
 
