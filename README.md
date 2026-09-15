@@ -1,13 +1,13 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.129**  
+**Current prototype release: REV 1.0.130**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores the current POC data locally in the browser.
 
-## REV 1.0.129 highlights
+## REV 1.0.130 highlights
 ### Development-time learning
-REV 1.0.129 tracks method-development effort separately from normal process/test execution. Each development can retain planned and measured actual engineering hours, dates, development type, trials and outcome. Future development allowances are recommended from completed measured history, with recent exact-method evidence weighted most strongly. Standard Test dossiers and Lab Performance show planned-versus-actual development trends over time.
+REV 1.0.130 fixes Daily Operations ownership and lab scoping. Executable improvement cards are now generated for the active lab only, explicitly assigned to actionable roles, and filtered by the logged-in role. Quality/technician roles no longer receive Prototype Lab Planner or Lab Manager actions; planners/managers/admins see only the actions they are authorized to execute. Accept/Reject/Defer is re-authorized at action time, and automatic load balancing cannot silently move work to a sister lab. Daily review snapshots are now retained per lab so role/lab switching cannot leave stale cards.
 
 
 - Fixes the Business Unit upgrade migration: existing demo data upgraded from pre-BU releases is diversified in-place across the controlled BU master data instead of collapsing to Professional Power Tools.
@@ -32,7 +32,7 @@ REV 1.0.128 fixes a manual move failure caused by regenerated booking IDs. The t
 1. Extract the ZIP.
 2. Upload **all files from the ZIP root** to the root of the GitHub repository used for GitHub Pages.
 3. Keep `index.html` at repository root.
-4. Refresh the site. The header must show **REV 1.0.129**.
+4. Refresh the site. The header must show **REV 1.0.130**.
 
 If the live site still shows REV 1.0.122/1.0.124, it is still serving the older deployment.
 
