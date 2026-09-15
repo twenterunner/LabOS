@@ -1,24 +1,34 @@
-# LabOS Prototype Build POC — REV 1.0.124
+# LabOS — Laboratory Operations System
 
-Static HTML/CSS/JavaScript proof-of-concept for GitHub Pages. Upload **all files from the root of this ZIP to the repository root**. `index.html` must remain at root.
+**Current prototype release: REV 1.0.125**  
+**Data schema: 35**
 
-## What changed in REV 1.0.124
+LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores the current POC data locally in the browser.
 
-This is a stabilization release following deeper fault-injection of REV 1.0.122/1.0.123. It fixes stale task-routing state, incoming/home sister-lab planning visibility, inactive sister-lab overrides, and validity/provenance issues in test-specific external commercial evidence.
+## REV 1.0.125 highlights
 
-### Test-specific external sourcing cost & evidence
-Open **Lab Standards & Resources → Standard Test Library → Edit standard & external cost**. Each Standard Test can maintain supplier/test house, pricing basis (fixed/test, per sample, per batch), price, setup/admin, transport/handling, nominal lead time, quote/invoice reference, validity dates and an optional supporting file up to 8 MB in this browser POC.
+### One reporting period for KPI
+The Lab Performance page has one selected reporting period. Delivery, quality, readiness, capacity/utilization, cost, 5S, replan causes and internal-network utilization are calculated from evidence that falls inside that period. The user can choose the last 13 weeks, 12 months, 8 quarters, one week, one month, or a custom date range.
 
-A currently valid test-specific price takes precedence over the generic external-facility benchmark. Expired or future-dated commercial evidence remains auditable but is excluded from active sourcing economics. If commercial terms change, the old quote/invoice revision is retained in history and its attachment is not silently reused as proof for the new terms.
+### Business-unit allocation
+The KPI page contains a pie chart and detail table showing how selected-period lab demand is allocated across Project Team business units. The chart can be switched between booked lab time and direct resource cost (labour + equipment master rates).
 
-### Single-operation sister-lab routing
-Any active canonical **process, formal test, development, or final quality/release/handover** task can be evaluated independently at an active internal sister lab. Build ownership remains at the home lab. Transfer lead time, downstream replanning, task coverage, invariants and whole-portfolio planning integrity are revalidated before acceptance.
+### Reason-coded replanning
+Manual replanning always asks why the move is being made. Green/Yellow swimlane moves and the full Manual Planner require a reason category plus explanation. Accepted AUTO-PLAN/portfolio replans also capture the category in addition to their mandatory decision rationale. Task-level changes are retained even when the delivery commitment stays unchanged.
 
-The Planning view now shows a routed operation in both useful contexts: as part of the complete home-lab build and as incoming work in the receiving lab. This display-only network scope does **not** relax the lab-isolated planning-engine scope.
+### Manual-move transaction repair
+REV 1.0.125 fixes a manual move failure caused by regenerated booking IDs. The transaction now verifies the stable canonical task (`request + step`) against the already validated target and preserves the full integrity/fingerprint checks.
 
-If a previously selected sister lab becomes inactive, the planner stops with a governed `TASK_SITE_UNAVAILABLE` blocker rather than scheduling there. Guided recovery lets the planner choose another active sister lab or return only the affected operation to the build lab.
+## Deployment
+1. Extract the ZIP.
+2. Upload **all files from the ZIP root** to the root of the GitHub repository used for GitHub Pages.
+3. Keep `index.html` at repository root.
+4. Refresh the site. The header must show **REV 1.0.125**.
 
-## Data and deployment
-LabOS remains a browser-local POC using IndexedDB/JSON persistence with schema **35**. Production deployment should store binary evidence in governed object/document storage while retaining immutable metadata and references in the LabOS domain model.
+If the live site still shows REV 1.0.122/1.0.124, it is still serving the older deployment.
 
-See `CHANGELOG_v1.0.124.md`, `QA_REPORT_v1.0.124.md`, and `VERIFICATION_v1.0.124.md`.
+## Data and evidence
+The current POC uses IndexedDB/local browser persistence and JSON export/import. Quote/invoice evidence attached to Standard Test external sourcing is stored in the browser-local record in this POC. A future shared deployment should move evidence bytes to governed document/object storage while retaining immutable references in the LabOS transactional model.
+
+## Compliance boundary
+LabOS supports IATF 16949-aligned controls and audit-ready workflow concepts. Software alone does not make an organisation IATF 16949 certified; customer-specific requirements, product-safety controls, retention rules, approval matrices and controlled organisational procedures must be configured and governed by the deploying organisation.
