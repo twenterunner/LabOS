@@ -1,13 +1,24 @@
-# LabOS Prototype Build POC — REV 1.0.122
+# LabOS Prototype Build POC — REV 1.0.124
 
-Static HTML/CSS/JavaScript proof-of-concept for GitHub Pages. Upload **all files from the root of this ZIP to the repository root**.
+Static HTML/CSS/JavaScript proof-of-concept for GitHub Pages. Upload **all files from the root of this ZIP to the repository root**. `index.html` must remain at root.
 
-REV 1.0.122 removes the remaining artificial sister-lab routing restriction from individual planned work. Every active canonical planning step can now be evaluated at a sister lab: **process**, **formal test**, **method/process development**, and **final quality review / release / handover**. Completed/historical work remains locked, and non-booking planning-situation markers are not transferable.
+## What changed in REV 1.0.124
 
-The correction is end-to-end rather than UI-only. REV 1.0.121 still restricted remote work in four places: the Planned Task popup, `MultiLabPlanningV1170._taskContext`, the cross-site planning-integrity invariant, and a closeout-planner branch that hard-coded the final booking to the build's home lab. REV 1.0.122 aligns all four layers with the canonical task model.
+This is a stabilization release following deeper fault-injection of REV 1.0.122/1.0.123. It fixes stale task-routing state, incoming/home sister-lab planning visibility, inactive sister-lab overrides, and validity/provenance issues in test-specific external commercial evidence.
 
-For a remote final closeout step, build ownership and approval authority remain unchanged. Only the planned execution location changes. Transfer lead time to the sister lab is included, the complete request is replanned, and the whole portfolio must pass the existing coverage, invariant and planning-integrity gates before the option can be accepted.
+### Test-specific external sourcing cost & evidence
+Open **Lab Standards & Resources → Standard Test Library → Edit standard & external cost**. Each Standard Test can maintain supplier/test house, pricing basis (fixed/test, per sample, per batch), price, setup/admin, transport/handling, nominal lead time, quote/invoice reference, validity dates and an optional supporting file up to 8 MB in this browser POC.
 
-The existing full-width Green/Yellow in-swimlane manual replanning remains available in both Planning and Build > Schedule. Browser data schema remains **35**, so upgrading does not require a data reset.
+A currently valid test-specific price takes precedence over the generic external-facility benchmark. Expired or future-dated commercial evidence remains auditable but is excluded from active sourcing economics. If commercial terms change, the old quote/invoice revision is retained in history and its attachment is not silently reused as proof for the new terms.
 
-See `CHANGELOG_v1.0.122.md`, `QA_REPORT_v1.0.122.md`, and `VERIFICATION_v1.0.122.md` for details.
+### Single-operation sister-lab routing
+Any active canonical **process, formal test, development, or final quality/release/handover** task can be evaluated independently at an active internal sister lab. Build ownership remains at the home lab. Transfer lead time, downstream replanning, task coverage, invariants and whole-portfolio planning integrity are revalidated before acceptance.
+
+The Planning view now shows a routed operation in both useful contexts: as part of the complete home-lab build and as incoming work in the receiving lab. This display-only network scope does **not** relax the lab-isolated planning-engine scope.
+
+If a previously selected sister lab becomes inactive, the planner stops with a governed `TASK_SITE_UNAVAILABLE` blocker rather than scheduling there. Guided recovery lets the planner choose another active sister lab or return only the affected operation to the build lab.
+
+## Data and deployment
+LabOS remains a browser-local POC using IndexedDB/JSON persistence with schema **35**. Production deployment should store binary evidence in governed object/document storage while retaining immutable metadata and references in the LabOS domain model.
+
+See `CHANGELOG_v1.0.124.md`, `QA_REPORT_v1.0.124.md`, and `VERIFICATION_v1.0.124.md`.
