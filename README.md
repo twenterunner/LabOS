@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.144**  
+**Current prototype release: REV 1.0.145**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,16 +9,24 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.144**.
+4. Refresh the page and confirm the header shows **REV 1.0.145**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.144.js`, `labos-services-1.0.144.js`, `labos-repository-1.0.144.js`, `labos-demo-data-1.0.144.js`, `labos-app-1.0.144.js` — application runtime.
-- `labos-styles-1.0.144.css` — application styling.
+- `labos-core-1.0.145.js`, `labos-services-1.0.145.js`, `labos-repository-1.0.145.js`, `labos-demo-data-1.0.145.js`, `labos-app-1.0.145.js` — application runtime.
+- `labos-styles-1.0.145.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
+
+## REV 1.0.145 — self-healing Daily Operations actions
+- Daily Operations load-balancing cards are now treated as **live executable commands**, not cached advice. Every card is revalidated when opened and again immediately before acceptance.
+- The service retains the exact displayed proposal snapshot and compares it with the current plan. If assignments changed, LabOS refreshes the proposal for review instead of letting a stale card fail.
+- If the opportunity has already disappeared because load dropped, LabOS explains that no action is required and removes the card from the executable queue.
+- If the resource remains overloaded but no complete same-lab automatic rebalance exists anymore, the dead proposal is removed and the user gets a guided route to Planning rather than an error-only "proposal withdrawn" toast.
+- Daily Operations review metadata is refreshed from the same live executable set so the headline count and cards cannot intentionally reference different proposal populations.
+- Acceptance remains atomic: qualifications/readiness, conflicts, current bookings and lab ownership are checked again before any controlled booking or route owner is changed.
 
 ## REV 1.0.144 — product-safe request and network-aware planning
 - **Control Plan selection is product-scoped.** The new-request and Controls decision dropdowns show only approved reusable baselines whose controlled provenance resolves to the same product. A current/legacy Control Plan from another product cannot bypass the filter. Different revisions of the same product may still be proposed as a baseline; build-specific deltas and approvals remain controlled later.
