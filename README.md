@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.140**  
+**Current prototype release: REV 1.0.141**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,14 +9,14 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.140**.
+4. Refresh the page and confirm the header shows **REV 1.0.141**.
 
 The deployment package intentionally contains only the files needed for this revision plus the current user manual. Historical changelogs, QA reports and verification reports are not bundled into each application ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.140.js`, `labos-services-1.0.140.js`, `labos-repository-1.0.140.js`, `labos-demo-data-1.0.140.js`, `labos-app-1.0.140.js` — application runtime.
-- `labos-styles-1.0.140.css` — application styling.
+- `labos-core-1.0.141.js`, `labos-services-1.0.141.js`, `labos-repository-1.0.141.js`, `labos-demo-data-1.0.141.js`, `labos-app-1.0.141.js` — application runtime.
+- `labos-styles-1.0.141.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
@@ -26,7 +26,7 @@ The POC uses browser-local persistence and JSON export/import. A production shar
 ## Compliance boundary
 LabOS provides IATF 16949- and ISO/IEC 17025-oriented workflow/evidence support. Its Audit Readiness page is an internal readiness aid, not a certification result. The deploying organisation remains responsible for its QMS, customer-specific requirements, controlled procedures, auditor judgement, retention rules and approval authorities.
 
-## REV 1.0.140 current behavior
+## REV 1.0.141 current behavior
 - The Prototype build workflow uses one visual rule: green = complete, exactly one yellow stage/action = do this now, grey = future/locked.
 - The fixed yellow action bar always names both the next action and its owner; role hand-offs keep the same build open and point to the executable action.
 - A-, B- and C-sample workflow contracts are explicit. B/C retain the formal-release stage; A-sample closes without an unnecessary release gate.
@@ -34,3 +34,11 @@ LabOS provides IATF 16949- and ISO/IEC 17025-oriented workflow/evidence support.
 - Sample registration is a visible execution prerequisite rather than hidden in a foldout; future stages cannot appear green before it is satisfied.
 - Detailed purpose/checklist text is folded by default so the primary workflow remains compact.
 - Existing planning, direct manual-plan commit, Control Plan governance, sister-lab transfer evidence and planning-around-constraints behavior are preserved.
+
+
+## REV 1.0.141 current behavior
+
+- Audit build population is now **completed/CLOSED builds only**.
+- In-progress builds with nonconformities remain visible in an **Operational watch** panel, but are excluded from audit findings, score, findings CSV and printed audit evidence pack.
+- Build-linked audit findings now cite the **specific build, deliverable, owner and record reference**.
+- Build-related evidence counts in the printed audit pack are scoped to completed builds.
