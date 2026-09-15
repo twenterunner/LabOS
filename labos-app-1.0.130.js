@@ -5967,21 +5967,21 @@ function v1116ManualPlanModal(requestId,reuse=false){
   let draft=reuse&&App.manualPlanningDraftV1080?.requestId===requestId?App.manualPlanningDraftV1080:v1080BeginManualDraft(requestId);if(!draft)return;const r=(draft.state.requests||[]).find(x=>x.id===requestId),rows=v1080ManualRows(draft);
   const cards=rows.map((x,i)=>{const b=x.booking,eq=(draft.state.equipment||[]).find(e=>e.id===b?.equipmentId),st=(draft.state.staff||[]).find(s=>s.id===b?.staffId),movable=b&&!v1080BookingIsHistorical(b),kind=x.def.kind==='test'?'TEST':x.def.kind==='development'?'DEVELOPMENT':'PROCESS',health=!b?'unplanned':x.issues.length?'conflict':'valid';return `<article class="manual-task-v1080 ${health}" data-v1080-manual-booking="${esc(b?.id||'')}"><div class="manual-task-title-v1080"><span class="eyebrow">${kind} · ${x.def.order||i+1}</span><strong>${esc(x.def.name||b?.stepName||'Planned work')}</strong><span class="manual-health-v1080 ${health}">${health==='valid'?'✓ Conflict-free':health==='conflict'?`✕ ${x.issues.length} conflict${x.issues.length===1?'':'s'}`:'Not planned'}</span></div>${b?`<div class="manual-current-v1080"><div><small>Current planned day</small><b>${esc(v1116DateOnlyLabel(b.start))}</b><span>Exact working time is assigned internally by the solver.</span></div><div><small>Equipment</small><b>${esc(eq?.name||'No equipment')}</b><span>${esc(b.equipmentId||'—')}</span></div><div><small>Person</small><b>${esc(st?.name||'Unassigned')}</b><span>${Number(b.durationHours||0).toFixed(2)} h effort</span></div></div>`:`<div class="callout warn compact"><strong>No draft day exists.</strong><p>${esc(draft.seedError||'The activity is not currently represented by a booking.')}</p></div>`}${x.issues.length?`<div class="manual-conflicts-v1080">${x.issues.map(v=>`<span>✕ ${esc(v)}</span>`).join('')}</div>`:''}<div class="manual-task-actions-v1080">${movable?btn('Find next feasible days',`data-v1080-manual-options="${esc(b.id)}"`,'button small primary'):b?'<span class="subtle">Historical/completed work is locked.</span>':'<span class="subtle">Resolve the planning definition before alternatives can be generated.</span>'}</div></article>`}).join('');
   const decisions=draft.decisions.length?`<div class="manual-decisions-v1080"><strong>Staged decisions</strong>${draft.decisions.map(d=>`<span class="${d.kind}">${esc(d.label)}</span>`).join('')}</div>`:'';
-  openModal(`Manual plan · ${r.id}`,`<div class="manual-plan-v1080"><div class="callout info"><strong>Plan by day, not by clock time</strong><p>Choose the calendar day. LabOS uses the same constrained planning engine as AUTO-PLAN to assign the exact working time, equipment and qualified person. The search is independent of the visible swimlane window and continues beyond it when required.</p></div>${v1080ManualTierLegend()}${decisions}<div class="manual-task-list-v1080">${cards}</div><div id="v1080ManualOptionPanel"></div><div id="v1078ManualIssues"></div></div>`,`${btn('Cancel · discard staged changes','data-modal-close','button')}${btn('Refresh from live plan','data-v1080-refresh-manual','button secondary')}${btn('Save manual plan →',`data-v1078-save-manual="${esc(r.id)}"`,'button next-action')}`,true);
+  openModal(`Manual plan · ${r.id}`,`<div class="manual-plan-v1080"><div class="callout info"><strong>Plan by day from material readiness</strong><p>Choose the calendar day. LabOS searches from the earliest material / operational readiness date — not from the current clock time — and uses the same constrained planning engine as AUTO-PLAN to assign exact working time, equipment and a qualified person. Closures, dependencies, readiness and occupied capacity are still enforced end-to-end.</p></div>${v1080ManualTierLegend()}${decisions}<div class="manual-task-list-v1080">${cards}</div><div id="v1080ManualOptionPanel"></div><div id="v1078ManualIssues"></div></div>`,`${btn('Cancel · discard staged changes','data-modal-close','button')}${btn('Refresh from live plan','data-v1080-refresh-manual','button secondary')}${btn('Save manual plan →',`data-v1078-save-manual="${esc(r.id)}"`,'button next-action')}`,true);
 }
 v1080ManualPlanModal=v1116ManualPlanModal;v1078ManualPlanModal=v1116ManualPlanModal;
 
 function v1116ShowManualOptions(bookingId){
   const draft=App.manualPlanningDraftV1080,b=(draft?.state.bookings||[]).find(x=>x.id===bookingId);if(!draft||!b)return;const panel=$('#v1080ManualOptionPanel');if(!panel)return;
-  panel.innerHTML='<div class="callout info"><strong>Searching the controlled calendar…</strong><p>LabOS is finding the next end-to-end feasible calendar days. The visible chart range is not a search limit.</p></div>';
+  panel.innerHTML='<div class="callout info"><strong>Searching the controlled calendar…</strong><p>LabOS is checking feasible calendar days from the earliest material / operational readiness date. The current clock time is not the lower bound for manual scenario planning, and the visible chart range is not a search limit.</p></div>';
   setTimeout(()=>{
     const found=v1116ManualDayOptions(draft,b,6);App.manualPlanningOptionsV1080={};
     if(found.stale){panel.innerHTML=`<div class="callout warn"><strong>This tile is no longer part of the current controlled route/test definition.</strong><p>Refresh the build definition or re-run planning. LabOS will not search indefinitely for an obsolete activity.</p></div>`;return}
     if(found.failure){App.pendingPlannerFailureV1096=found.failure;panel.innerHTML=`<div class="callout bad"><strong>A structural resource blocker prevents a valid date.</strong><p>${esc(found.failure.diagnosis?.summary||found.failure.error)}</p>${btn('Start guided resolution →',`data-v1116-guided-blocker="${esc(b.requestId)}"`,'button primary')}</div>`;return}
     const source=planningFingerprintV1070(draft.state),groups={green:[],yellow:[],red:[]};
     for(const item of found.options){const key=`M116-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;App.manualPlanningOptionsV1080[key]={kind:item.opt.kind,opt:item.opt,prop:item.prop,sourceDraftFingerprint:source,bookingId};groups[item.opt.kind].push({key,...item})}
-    const tier=(kind,title,subtitle)=>`<section class="manual-option-tier-v1080 ${kind}"><div class="manual-option-tier-head-v1080"><span>${kind==='green'?'1':kind==='yellow'?'2':'3'}</span><div><strong>${title}</strong><small>${subtitle}</small></div><b>${groups[kind].length}</b></div><div class="manual-option-grid-v1080">${groups[kind].length?groups[kind].map((x,i)=>`<button type="button" class="manual-option-card-v1080 ${kind}" data-v1080-stage-manual="${x.key}"><span class="manual-option-rank-v1080">${i===0?'Next feasible day':`Alternative ${i+1}`}</span><strong>${esc(v1116DateOnlyLabel(x.opt.date))}</strong><span>${esc(x.opt.equipmentName)} · ${esc(x.opt.staffName)}</span><small>${kind==='yellow'?`${x.opt.care.length} controlled readiness action${x.opt.care.length===1?'':'s'} inserted before execution.`:'No other build moves. Exact clock time is solver-assigned.'}</small></button>`).join(''):`<div class="manual-no-option-v1080">${kind==='red'?'Not required for the next-feasible-day search. Use Escalation only if you deliberately want to move another programme.':`No validated ${title.toLowerCase()} option is required before the next available tier.`}</div>`}</div></section>`;
-    panel.innerHTML=`<div class="manual-option-panel-v1080"><div class="section-title-row"><div><span class="eyebrow">DAY OPTIONS · ${esc(b.requestId)}</span><h2>${esc(b.stepName||'Selected planned work')}</h2><p class="subtle">Dates are the user decision. Exact start/finish times stay internal to the scheduling engine.</p></div>${btn('Close options','data-v1080-close-options','button tiny secondary')}</div>${tier('green','Green · next feasible day','Current released capability/readiness; no other build moves.')}${tier('yellow','Yellow · feasible after controlled readiness','Training, calibration or maintenance is inserted and validated first.')}${tier('red','Red · portfolio trade-off','Only use Escalation when deliberately accepting impact to another build.')}</div>`;panel.scrollIntoView({behavior:'smooth',block:'start'});
+    const tier=(kind,title,subtitle)=>`<section class="manual-option-tier-v1080 ${kind}"><div class="manual-option-tier-head-v1080"><span>${kind==='green'?'1':kind==='yellow'?'2':'3'}</span><div><strong>${title}</strong><small>${subtitle}</small></div><b>${groups[kind].length}</b></div><div class="manual-option-grid-v1080">${groups[kind].length?groups[kind].map((x,i)=>`<button type="button" class="manual-option-card-v1080 ${kind}" data-v1080-stage-manual="${x.key}"><span class="manual-option-rank-v1080">${i===0?'Earliest feasible day':`Alternative ${i+1}`}</span><strong>${esc(v1116DateOnlyLabel(x.opt.date))}</strong><span>${esc(x.opt.equipmentName)} · ${esc(x.opt.staffName)}</span><small>${kind==='yellow'?`${x.opt.care.length} controlled readiness action${x.opt.care.length===1?'':'s'} inserted before execution.`:'No other build moves. Exact clock time is solver-assigned.'}</small></button>`).join(''):`<div class="manual-no-option-v1080">${kind==='red'?'Not required for the next-feasible-day search. Use Escalation only if you deliberately want to move another programme.':`No validated ${title.toLowerCase()} option is required before the next available tier.`}</div>`}</div></section>`;
+    panel.innerHTML=`<div class="manual-option-panel-v1080"><div class="section-title-row"><div><span class="eyebrow">DAY OPTIONS · ${esc(b.requestId)}</span><h2>${esc(b.stepName||'Selected planned work')}</h2><p class="subtle">Dates are the user decision. Exact start/finish times stay internal to the scheduling engine.</p></div>${btn('Close options','data-v1080-close-options','button tiny secondary')}</div>${tier('green','Green · earliest feasible day','Search begins at material / operational readiness; current released capability/readiness; no other build moves.')}${tier('yellow','Yellow · feasible after controlled readiness','Training, calibration or maintenance is inserted and validated first.')}${tier('red','Red · portfolio trade-off','Only use Escalation when deliberately accepting impact to another build.')}</div>`;panel.scrollIntoView({behavior:'smooth',block:'start'});
   },20);
 }
 v1080ShowManualOptions=v1116ShowManualOptions;
@@ -6585,6 +6585,163 @@ window.__LABOS_V130_ROLE_SCOPE_TEST__={
  normalize:()=>normalizeResourceCareOwnershipV130(App.state),
  processData:()=>v130ProcessEngineerData(),
  actionVisible:a=>actionOwnedByCurrentUser(a)
+};
+
+
+/* ============================================================
+   LabOS REV 1.0.130 — material-floor manual planning + complete
+   review/commit transaction.
+
+   1) Manual planning searches from material / operational readiness,
+      not from the wall clock. Completed history stays immutable and
+      the canonical solver still validates sequence, closures, resource
+      care, qualification, capacity and sister-lab scope.
+   2) A reviewed proposal is fingerprinted AFTER all render-time planning
+      migrations. This prevents the Commit action from disappearing
+      immediately after an accepted preview.
+   3) Focused build proposals also offer an atomic "Accept & commit"
+      path while retaining "Accept plan only" for deliberate two-step use.
+   ============================================================ */
+function v130ManualFloorIso(state,requestOrBooking){
+ const r=typeof requestOrBooking==='string'?(state.requests||[]).find(x=>x.id===requestOrBooking):requestOrBooking?.requestId?(state.requests||[]).find(x=>x.id===requestOrBooking.requestId):requestOrBooking;
+ if(!r)return P.todayISO();
+ if(P.manualPlanningFloorV130)return P.manualPlanningFloorV130(state,r.id);
+ const mat=P.materialPlanningAssessment(state,r),dates=[mat?.earliestDate,r.planningNotBefore,r.networkTransferAvailableDate].map(x=>String(x||'').slice(0,10)).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort();
+ return dates.length?dates[dates.length-1]:P.todayISO();
+}
+
+// Full manual planner date generation: start at readiness, then let the unified solver
+// reject dates that violate predecessor/dependency constraints. Do not pre-cut the search
+// at "now" or at the predecessor's current booking because the whole build may reflow.
+v1116CandidateDates=function(state,booking){
+ const floorIso=v130ManualFloorIso(state,booking),base=v1116NextWorkDay(new Date(`${floorIso}T08:00:00`),0),currentDay=v1116DayIso(booking.start),set=new Set();
+ // Exact day-by-day coverage from the readiness floor. 140 working days covers the
+ // normal planning horizon while the boundary/tail logic below reaches farther when needed.
+ let d=new Date(base);for(let i=0;i<140;i++){d=v1116NextWorkDay(d,i===0?0:1);set.add(v1116DayIso(d))}
+ const relevant=[];for(const x of state.bookings||[])if(!v1080BookingIsHistorical(x)&&x.end)relevant.push(x.end);for(const x of state.resourceCareBookings||[])if(x.status==='Scheduled'&&x.end)relevant.push(x.end);for(const x of state.planningEvents||[])if(x.active!==false&&x.end)relevant.push(x.end);
+ let latest=+base;for(const end of relevant){const t=+new Date(end);if(!Number.isFinite(t))continue;latest=Math.max(latest,t);const b=v1116NextWorkDay(new Date(t),0);set.add(v1116DayIso(b));set.add(v1116DayIso(v1116NextWorkDay(b,1)))}
+ let tail=v1116NextWorkDay(new Date(latest),1);for(let i=0;i<20;i++){set.add(v1116DayIso(tail));tail=v1116NextWorkDay(tail,1)}
+ return [...set].filter(Boolean).filter(x=>x!==currentDay&&x>=floorIso).sort();
+};
+
+// In-lane overlays use the same readiness floor. If the displayed swimlane starts before
+// the floor we begin at the floor; if it starts after, the rendered start remains the limit
+// for that overlay and Full manual planner still searches the complete calendar.
+v1190WorkDaysAcrossRange=function(state,booking,start,end){
+ const current=v1116DayIso(booking.start),out=[],floorIso=v130ManualFloorIso(state,booking),floor=v1096DayStart(new Date(`${floorIso}T08:00:00`));let d=v1096DayStart(start);if(d<floor)d=v1096DayStart(floor);
+ while(d<end){const wd=d.getDay();if((v1072WeekendsEnabled()||![0,6].includes(wd))&&v1116DayIso(d)!==current)out.push(v1116DayIso(d));d=planAddDays(d,1)}return out;
+};
+
+// Stamp the review fingerprint only after the complete wrapped acceptance path has
+// returned. v126 can migrate legacy manual hard locks during render; stamping before that
+// migration made a freshly accepted review instantly stale and hid the Commit button.
+const _acceptPlanProposalV130PlanningBase=acceptPlanProposal;
+acceptPlanProposal=async function(){
+ const pp=App.pendingPlanProposal,focusId=pp?.focusRequestId||null,note=$('#planProposalNote')?.value.trim()||'',category=$('#v125ProposalReasonCategory')?.value||'Capacity / congestion';
+ const out=await _acceptPlanProposalV130PlanningBase();
+ if(focusId){const r=(App.state.requests||[]).find(x=>x.id===focusId);if(r?.triage?.status==='Reviewed'){
+   r.triage.reviewedForecast=r.forecastDate;r.triage.reviewedAt=r.triage.reviewedAt||P.now();if(note)r.triage.reviewRationale=note;r.triage.reviewedPlanFingerprint=planningFingerprintV1070(App.state);
+   if(r.currentCommitmentDate&&r.forecastDate&&r.currentCommitmentDate!==r.forecastDate){const latest=(r.planningReplanHistory||[]).slice().sort((x,y)=>String(y.at||'').localeCompare(String(x.at||'')))[0];r.pendingReplanContext={...(r.pendingReplanContext||{}),eventId:latest?.id||r.pendingReplanContext?.eventId||null,reasonCategory:category,reason:note||r.triage.reviewRationale||'Accepted reviewed planning proposal.',eventAction:'accepted re-optimized plan',createdAt:P.now()}}
+   await persist();render();
+ }}
+ return out;
+};
+
+// Manual-plan save also ends in Reviewed state. Older paths did not stamp the post-save
+// fingerprint, so a valid manually reviewed plan could never expose Commit forecast.
+const _v1080SaveManualPlanV130PlanningBase=v1080SaveManualPlan;
+v1080SaveManualPlan=async function(requestId){
+ const out=await _v1080SaveManualPlanV130PlanningBase(requestId);
+ if(!App.manualPlanningDraftV1080){const r=(App.state.requests||[]).find(x=>x.id===requestId);if(r?.triage?.status==='Reviewed'){
+   r.triage.reviewedForecast=r.forecastDate;r.triage.reviewedAt=r.triage.reviewedAt||P.now();r.triage.reviewedPlanFingerprint=planningFingerprintV1070(App.state);await persist();render();
+ }}return out;
+};
+v1078SaveManualPlan=v1080SaveManualPlan;
+
+async function v130AcceptAndCommitPlanProposal(){
+ const pp=App.pendingPlanProposal,focusId=pp?.focusRequestId||null;if(!focusId){toast('This proposal is portfolio-wide. Accept the reviewed plan first, then commit individual programme timing where required.',true);return}
+ if(!can('triage')&&currentRole()!=='administrator'){toast('Prototype Lab Coordinator / Planner permission is required to commit timing.',true);return}
+ const note=$('#planProposalNote')?.value.trim()||'',category=$('#v125ProposalReasonCategory')?.value||'Capacity / congestion';if(!note){toast('A planning decision rationale is required.',true);return}
+ const proposed=(pp.proposedState?.requests||[]).find(x=>x.id===focusId);if(!proposed){toast('The selected build is missing from the proposal.',true);return}
+ const mat=P.materialPlanningAssessment(pp.proposedState,proposed),proc=P.processPlanningAssessment(pp.proposedState,proposed);if(!mat.planningReady||!proc.ready){toast('The plan can be reviewed, but timing cannot be committed until material feasibility and process/test definition are complete.',true);return}
+ await acceptPlanProposal();
+ const r=(App.state.requests||[]).find(x=>x.id===focusId);if(!r||r.triage?.status!=='Reviewed'){toast('The proposal was not left in a commit-ready reviewed state.',true);return}
+ const latest=(r.planningReplanHistory||[]).slice().sort((x,y)=>String(y.at||'').localeCompare(String(x.at||'')))[0];if(r.currentCommitmentDate&&r.forecastDate&&r.currentCommitmentDate!==r.forecastDate)r.pendingReplanContext={...(r.pendingReplanContext||{}),eventId:latest?.id||r.pendingReplanContext?.eventId||null,reasonCategory:category,reason:note,eventAction:'accepted and committed re-optimized plan',createdAt:P.now()};
+ // Re-stamp immediately before commit in case an acceptance-side normalization changed
+ // planning inputs. commitTriage still performs its normal material/process and stale-plan checks.
+ r.triage.reviewedForecast=r.forecastDate;r.triage.reviewRationale=note;r.triage.reviewedPlanFingerprint=planningFingerprintV1070(App.state);
+ await commitTriage(focusId);
+}
+
+const _showPlanProposalV130PlanningBase=showPlanProposal;
+showPlanProposal=function(args){
+ _showPlanProposalV130PlanningBase(args);setTimeout(()=>{
+   const pp=App.pendingPlanProposal,accept=$('[data-accept-plan-proposal]');if(!pp?.focusRequestId||pp.contextEvent||!accept||$('[data-v130-accept-commit-plan]'))return;
+   accept.textContent='Accept plan only';accept.classList.remove('next-action');accept.classList.add('secondary');
+   const holder=accept.parentElement;if(!holder)return;accept.insertAdjacentHTML('afterend',btn('Accept & commit forecast →','data-v130-accept-commit-plan','button next-action'));
+   const both=$('[data-v130-accept-commit-plan]');if(both)both.onclick=v130AcceptAndCommitPlanProposal;
+ },15)
+};
+
+
+
+// A no-change AUTO PLAN result is still a valid planning decision. Earlier builds showed
+// "Keep the current baseline" but supplied no route to review that baseline, leaving the
+// schedule stage Provisional forever. Give a focused build a governed review/commit path
+// even when optimization correctly finds zero better alternatives.
+function v130CurrentBaselineStatus(requestId){
+ const r=(App.state.requests||[]).find(x=>x.id===requestId);if(!r)return {ok:false,reason:'Build not found.'};
+ const coverage=P.planningTaskCoverage(App.state,r),mat=P.materialPlanningAssessment(App.state,r),proc=P.processPlanningAssessment(App.state,r),future=(coverage.scheduled||[]).filter(b=>!P.isHistoricalPlanningBooking(b));
+ if(!r.forecastDate||!r.triage?.forecastDate)return {ok:false,r,coverage,mat,proc,reason:'The current baseline does not yet contain a calculated timing forecast.'};
+ if(!coverage.ok||!coverage.expected?.length||future.length!==coverage.expected.length)return {ok:false,r,coverage,mat,proc,reason:'The current baseline does not contain one complete current booking for every required planning task.'};
+ return {ok:true,r,coverage,mat,proc,canCommit:!!(mat.planningReady&&proc.ready),needsDecision:!(r.triage?.status==='Committed'&&r.currentCommitmentDate===r.forecastDate)};
+}
+function v130ReviewCurrentBaselineModal(requestId){
+ if(!can('triage')&&currentRole()!=='administrator'){toast('Prototype Lab Coordinator / Planner permission is required to review timing.',true);return}
+ const st=v130CurrentBaselineStatus(requestId);if(!st.ok){toast(st.reason||'The current plan is not reviewable yet.',true);return}
+ const r=st.r,current=r.currentCommitmentDate||r.originalCommitmentDate||null,delta=current&&r.forecastDate?P.daysBetween(current,r.forecastDate):null;
+ App.pendingBaselineReviewV130={requestId,sourceFingerprint:planningFingerprintV1070(App.state)};
+ const defaultCategory=r.pendingReplanContext?.reasonCategory||'Capacity / congestion',defaultNote=r.triage?.reviewRationale||`AUTO PLAN tested the available protected, recovery and portfolio strategies for ${r.id} and found no verified improvement over the current LIVE baseline. The existing solver-validated resource plan is therefore retained and reviewed.`;
+ const readiness=st.canCommit?`<div class="callout good"><strong>Current baseline is commit-ready.</strong><p>Material feasibility, process/test definition and planning-task coverage are complete. Accepting this review can commit the forecast in the same transaction.</p></div>`:`<div class="callout warn"><strong>Plan can be reviewed, but not committed yet.</strong><p>${!st.mat.planningReady?esc(st.mat.summary||'Material feasibility is incomplete.'):'Material feasibility is complete.'} ${!st.proc.ready?esc(st.proc.issues?.[0]||'Process/test definition is incomplete.'):'Process/test definition is complete.'}</p></div>`;
+ openModal(`Review current baseline · ${r.id}`,`<div class="resolution-focus"><span class="eyebrow">AUTO PLAN · NO BETTER VERIFIED ALTERNATIVE</span><h2>Accept the current plan as the planning decision</h2><p>AUTO PLAN did not recommend a change because the current baseline already wins the tested strategies. That result must not block the workflow: this screen records the review of the plan that is already live.</p></div>${readiness}<div class="impact-grid"><div><span>Current commitment</span><strong>${esc(P.formatDate(current))}</strong></div><div><span>Current forecast</span><strong>${esc(P.formatDate(r.forecastDate))}</strong></div><div><span>Movement</span><strong>${delta==null?'—':`${delta>0?'+':''}${delta} d`}</strong></div><div><span>Plan coverage</span><strong>${st.coverage.expected.length}/${st.coverage.expected.length} tasks</strong></div></div><div class="form-grid" style="margin-top:12px"><div class="field"><label>Planning decision category</label><select id="v130BaselineCategory">${v125ReasonOptions(defaultCategory)}</select></div><div class="field full"><label>Planning review rationale <small>required · retained in audit history</small></label><textarea id="v130BaselineReason">${esc(defaultNote)}</textarea></div></div>`,`${btn('Cancel','data-modal-close','button')}${btn('Accept plan only','data-v130-accept-baseline-review','button secondary')}${st.canCommit?btn('Accept & commit forecast →','data-v130-accept-baseline-commit','button next-action'):''}`,true);
+ setTimeout(()=>{const review=$('[data-v130-accept-baseline-review]'),commit=$('[data-v130-accept-baseline-commit]');if(review)review.onclick=()=>v130ApplyCurrentBaselineReview(requestId,false);if(commit)commit.onclick=()=>v130ApplyCurrentBaselineReview(requestId,true)},0);
+}
+async function v130ApplyCurrentBaselineReview(requestId,commit=false){
+ const pending=App.pendingBaselineReviewV130;if(!pending||pending.requestId!==requestId){toast('The baseline review context is no longer available. Re-open AUTO PLAN.',true);return}
+ if(pending.sourceFingerprint!==planningFingerprintV1070(App.state)){App.pendingBaselineReviewV130=null;toast('The plan changed while this review was open. Re-run AUTO PLAN before accepting it.',true);return}
+ const st=v130CurrentBaselineStatus(requestId);if(!st.ok){toast(st.reason||'The current baseline is no longer reviewable.',true);return}if(commit&&!st.canCommit){toast('The plan can be reviewed, but timing cannot be committed until material feasibility and process/test definition are complete.',true);return}
+ const note=$('#v130BaselineReason')?.value.trim()||'',category=$('#v130BaselineCategory')?.value||'Capacity / congestion';if(!note){toast('A planning review rationale is required.',true);return}
+ let r=st.r;r.triage=r.triage||{};r.triage.status='Reviewed';r.triage.reviewedForecast=r.forecastDate;r.triage.reviewedAt=P.now();r.triage.reviewRationale=note;r.triage.reviewedPlanFingerprint=planningFingerprintV1070(App.state);
+ if(r.currentCommitmentDate&&r.forecastDate&&r.currentCommitmentDate!==r.forecastDate)r.pendingReplanContext={...(r.pendingReplanContext||{}),reasonCategory:category,reason:note,eventAction:'reviewed current baseline after AUTO PLAN found no verified improvement',createdAt:P.now()};
+ P.audit(App.state,'Current AUTO PLAN baseline reviewed','Planning',requestId,'Provisional','Reviewed',`${category} · ${note}`);App.pendingBaselineReviewV130=null;await persist();closeModal();render();
+ // Render-time normalization can migrate legacy planning metadata. Re-stamp after that
+ // normalization so a plan accepted one millisecond ago is not incorrectly considered stale.
+ r=(App.state.requests||[]).find(x=>x.id===requestId);if(!r?.triage)return;r.triage.reviewedForecast=r.forecastDate;r.triage.reviewedPlanFingerprint=planningFingerprintV1070(App.state);await persist();
+ if(commit){await commitTriage(requestId);return}render();toast(`Current resource plan reviewed. Commit forecast for ${requestId} is now available.`);
+}
+
+// Decorate only the final no-improvement tiered-planner result. The core optimizer remains
+// unchanged: this adds the missing decision route after it has legitimately chosen baseline.
+const _v1094OpenTieredPlannerV130BaselineBase=v1094OpenTieredPlanner;
+v1094OpenTieredPlanner=function(targetRequestId=null,contextEvent=null){
+ _v1094OpenTieredPlannerV130BaselineBase(targetRequestId,contextEvent);if(!targetRequestId)return;
+ let tries=0;const attach=()=>{const pending=App.pendingTieredPlannerV1094,escBtn=$('[data-v1094-escalation-from-tier]');if((!pending||pending.targetRequestId!==targetRequestId||!escBtn)&&tries++<600){setTimeout(attach,50);return}if(!pending||pending.targetRequestId!==targetRequestId||!escBtn)return;
+   const improvements=pending.pack?.optimizationCandidates||[];if(improvements.length||$('[data-v130-review-current-plan]'))return;const st=v130CurrentBaselineStatus(targetRequestId);if(!st.ok||!st.needsDecision)return;
+   escBtn.insertAdjacentHTML('beforebegin',btn(st.canCommit?'Review / commit current plan →':'Review current plan →','data-v130-review-current-plan','button next-action'));const action=$('[data-v130-review-current-plan]');if(action)action.onclick=()=>v130ReviewCurrentBaselineModal(targetRequestId);
+   const keep=[...document.querySelectorAll('.callout.good')].find(x=>/Keep the current baseline/i.test(x.textContent||''));if(keep&&!keep.querySelector('.v130-baseline-decision-note')){const note=document.createElement('p');note.className='v130-baseline-decision-note';note.innerHTML=st.canCommit?'<strong>This is a valid planning decision.</strong> Review the current plan below and commit it; no schedule change is required.':'<strong>This is still a reviewable planning decision.</strong> Accept the current plan now; commitment becomes available when the remaining feasibility prerequisite is complete.';keep.appendChild(note)}
+ };setTimeout(attach,40);
+};
+autoPlan=async function(id,contextEvent=null){v1094OpenTieredPlanner(id,contextEvent)};
+optimizePortfolio=async function(opts={}){v1094OpenTieredPlanner(null,opts?.contextEvent||null)};
+
+window.__LABOS_V130_PLANNING_FIX_TEST__={
+ version:'1.0.130',
+ manualFloor:rid=>v130ManualFloorIso(App.state,rid),
+ candidateDates:bid=>{const b=(App.state.bookings||[]).find(x=>x.id===bid);return b?v1116CandidateDates(App.state,b):[]},
+ inLaneDates:(bid,start,end)=>{const b=(App.state.bookings||[]).find(x=>x.id===bid);return b?v1190WorkDaysAcrossRange(App.state,b,new Date(start),new Date(end)):[]},
+ commitReady:rid=>{const r=(App.state.requests||[]).find(x=>x.id===rid);return !!(r?.triage?.status==='Reviewed'&&r.triage.reviewedForecast===r.forecastDate&&r.triage.reviewedPlanFingerprint===planningFingerprintV1070(App.state))},
+ fingerprint:()=>planningFingerprintV1070(App.state),
+ baselineStatus:rid=>{const st=v130CurrentBaselineStatus(rid);return {ok:st.ok,canCommit:!!st.canCommit,needsDecision:!!st.needsDecision,reason:st.reason||null,coverage:st.coverage?.expected?.length||0}}
 };
 
 /* REV 1.0.130 — regression hook for Daily Operations role/site governance. */

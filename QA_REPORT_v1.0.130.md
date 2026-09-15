@@ -78,3 +78,13 @@ Browser automation could not be used in the build container because local/file n
 - **PASS — Process Engineer scope:** the Process Engineer dashboard no longer contains the generic whole-lab capacity/readiness/potential-project panels; it uses a role-specific process/method work view.
 - **PASS — Process Engineer action gate:** non-process resource-care and unrelated personally-named actions are excluded from Process Engineer My Work; process/method/route actions remain eligible.
 - **Environment note:** container Chromium is organization-policy blocked from opening local test URLs/files, so browser automation could not be used in this environment. Static syntax and executable service-level ownership tests were completed instead.
+
+## Corrective hotfix QA — readiness-floor planning and commit continuity
+- **PASS — JavaScript syntax:** `node --check` on the patched app and services assets.
+- **PASS — material-readiness floor:** seeded build P26-1005 reports manual planning floor `2026-09-15` while its existing Material Receipt booking is `2026-09-29T09:12:00.000Z`.
+- **PASS — earlier feasible slot:** the canonical manual planner accepts Material Receipt on `2026-09-15T08:00:00.000Z`.
+- **PASS — constraints still enforced:** `2026-09-16` is rejected with `MANUAL_CONSTRAINT_INVALID` because the seeded Twente whole-lab closure covers 16–27 Sep; `2026-09-28` and `2026-09-29` remain feasible.
+- **PASS — browser UI candidate range:** the manual planning helper exposes `2026-09-15` at the start of the candidate range rather than cutting the search at the existing booking/current-clock boundary.
+- **PASS — no-improvement AUTO PLAN path:** browser automation produced `0` verified optimization candidates and the **Keep the current baseline** result for P26-1005; the new **Review / commit current plan →** action was present.
+- **PASS — commit transaction:** from that no-improvement result, **Accept & commit forecast →** changed P26-1005 from `Provisional` to `Committed`, moved the current commitment to the reviewed forecast, retained the original commitment, and appended commitment history.
+- **Browser harness note:** organization policy blocks direct local/file navigation, so the same REV 1.0.130 HTML and scripts were loaded into headless Chromium through an injected document harness. This exercised the rendered modal/button workflow and app event handlers, not only static source assertions.

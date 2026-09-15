@@ -85,7 +85,15 @@ class PlannerService{
   P.ensureResourceCareOwnershipV1109?.(state);state.resourceCareBookings=state.resourceCareBookings.filter(b=>b.sourceRequestId!==requestId||b.portfolioOwned===true||b.locked||/complete|completed|actual|done/i.test(String(b?.status||'')));
   const bookings=state.bookings,changes=[];
   const eventOverlaps=(ev,start,end)=>overlaps(start,end,ev.start,ev.end),labBlocked=(start,end,siteId)=>planningEvents.some(ev=>ev.scope==='lab'&&(!ev.siteId||!siteId||ev.siteId===siteId)&&eventOverlaps(ev,start,end));
-  let startBase=new Date(Date.now()+30*60000);startBase.setSeconds(0,0);startBase.setMinutes(Math.ceil(startBase.getMinutes()/15)*15);
+  // REV 1.0.130: AUTO-PLAN remains forward-looking from the live clock, but the
+  // manual planner may deliberately evaluate an earlier calendar day back to the
+  // request's material/readiness floor. This is a scenario-planning override only;
+  // completed/historical execution remains immutable and all normal dependencies,
+  // closures, qualifications and capacity checks still apply.
+  const manualEarliest=state.settings?._manualPlanningEarliestV130||null;
+  let startBase=manualEarliest?new Date(`${manualEarliest}T08:00:00`):new Date(Date.now()+30*60000);
+  if(Number.isNaN(startBase.getTime()))startBase=new Date(Date.now()+30*60000);
+  if(!manualEarliest){startBase.setSeconds(0,0);startBase.setMinutes(Math.ceil(startBase.getMinutes()/15)*15)}
   if(mat.earliestDate){const m=new Date(`${mat.earliestDate}T08:00:00`);if(m>startBase)startBase=m;}if(r.planningNotBefore||r.networkTransferAvailableDate){const nb=new Date(`${r.planningNotBefore||r.networkTransferAvailableDate}T08:00:00`);if(!Number.isNaN(nb.getTime())&&nb>startBase)startBase=nb;}
   if(!mat.planningReady)riskNotes.push(`Material feasibility is incomplete. Forecast uses the best currently known material date and remains provisional: ${mat.issues?.join(' ')||mat.summary}.`);
   if(!procAssess.ready)riskNotes.push(`Process/test definition is incomplete. AUTO-PLAN used released candidates and explicit provisional assumptions where available: ${procAssess.issues?.join(' ')||'definition pending'}.`);
@@ -785,6 +793,28 @@ P.buildEscalationPlanV1096=(state,id)=>P.PlanningEngineV1099.buildEscalation(sta
 P.planPortfolioCandidateV1094=P.planPortfolioCandidateV1096;P.buildAutoPlanTiersV1094=P.buildAutoPlanTiersV1096;P.buildEscalationPlanV1094=P.buildEscalationPlanV1096;
 const _diagnoseV1099=P.planningFailureDiagnosisV1096;
 P.planningFailureDiagnosisV1096=(state,failure)=>{const f=(failure?.failure||failure||{}),id=f.requestId,siteId=f.details?.siteId||f.siteId||(id?siteForRequestV1099(state,id):(state.settings?.activeLabId||state.settings?.primaryLabId)),scope=siteId?P.siteScopedStateV1099(state,siteId,{includeRequestId:id||null}):state;return _diagnoseV1099(scope,failure)};
+
+
+// REV 1.0.130 — manual planning calendar floor.
+// A manual scenario is allowed to search from the earliest material/readiness day,
+// even when that is earlier than the current clock time. AUTO-PLAN does not use this
+// override and therefore remains strictly forward-looking.
+function manualPlanningFloorV130(state,requestId){
+ const r=(state.requests||[]).find(x=>x.id===requestId);if(!r)return P.todayISO();
+ const mat=P.materialPlanningAssessment(state,r),dates=[mat?.earliestDate,r.planningNotBefore,r.networkTransferAvailableDate].map(x=>String(x||'').slice(0,10)).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort();
+ return dates.length?dates[dates.length-1]:P.todayISO();
+}
+const _manualPlanCalendarFloorV130=P.PlanningEngineV1096.manualPlan;
+P.PlanningEngineV1096.manualPlan=function(state,requestId,selections=[]){
+ state.settings=state.settings||{};const had=Object.prototype.hasOwnProperty.call(state.settings,'_manualPlanningEarliestV130'),before=state.settings._manualPlanningEarliestV130;
+ state.settings._manualPlanningEarliestV130=manualPlanningFloorV130(state,requestId);
+ try{const out=_manualPlanCalendarFloorV130.call(this,state,requestId,selections);if(out?.next?.settings)delete out.next.settings._manualPlanningEarliestV130;return out}
+ finally{if(had)state.settings._manualPlanningEarliestV130=before;else delete state.settings._manualPlanningEarliestV130}
+};
+// V1096 and V1099 intentionally reference the same orchestration object, but assign
+// explicitly as a guard against future refactoring.
+if(P.PlanningEngineV1099)P.PlanningEngineV1099.manualPlan=P.PlanningEngineV1096.manualPlan;
+P.manualPlanningFloorV130=manualPlanningFloorV130;
 
 // REV 1.0.128 — controlled test-specific external sourcing economics with validity-safe fallback.
 function externalTestQuoteV123(state,request,testRequirement){
