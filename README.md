@@ -1,10 +1,10 @@
-# LabOS REV 1.0.155
+# LabOS REV 1.0.156
 
-REV 1.0.155 makes customer specification flowdown the primary Validation workflow. It fixes the mobile Programme Builder hierarchy so the controlled Programme Canvas renders immediately below the Programme Logic toolbar, adds governed requirement import from CSV/XLSX/DOCX/text-layer PDF plus a downloadable template, automatically proposes and builds a reviewable visual test programme using reuse/adapt/develop logic, supports promotion of proven developed methods into the common Standard Test Library, and pre-populates realistic Twente Validation performance history so Validation KPIs can be exercised. Schema remains 38; no reset or migration is required.
+REV 1.0.156 consolidates Prototype and Validation onto one Programme Logic canvas interaction model and makes customer-defined Validation structure a controlled input. Customer specifications can carry test legs, sequence, predecessors, parallel groups and DUT-flow rules; imported CSV/XLSX/DOCX/text-layer PDF requirements can therefore populate the visual programme automatically. Requirement mapping is explicit (reuse, adapt, combine, develop new, or other verification), development continues to learn from shared Prototype + Validation history, and the populated Twente Validation KPI/demo history from REV 1.0.155 is preserved. Schema remains 38; no reset or migration is required.
 
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.155**  
+**Current prototype release: REV 1.0.156**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled Prototype and Validation/DV/PV laboratory operations, with shared planning, resources, evidence, approvals, audit and KPI services. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -13,32 +13,32 @@ LabOS is a static-browser proof of concept for controlled Prototype and Validati
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.155**.
+4. Refresh the page and confirm the header shows **REV 1.0.156**.
 
 The deployment package contains the current application, current task-based user manual, required assets and the release-specific QA report. Historical QA/changelog files are not bundled.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.155.js`, `labos-services-1.0.155.js`, `labos-repository-1.0.155.js`, `labos-demo-data-1.0.155.js`, `labos-validation-1.0.155.js`, `labos-app-1.0.155.js` — application runtime.
-- `labos-styles-1.0.155.css` — application styling.
+- `labos-core-1.0.156.js`, `labos-services-1.0.156.js`, `labos-repository-1.0.156.js`, `labos-demo-data-1.0.156.js`, `labos-validation-1.0.156.js`, `labos-app-1.0.156.js` — application runtime.
+- `labos-styles-1.0.156.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
 
-## REV 1.0.155 — Validation builder, flowdown and learning
+## REV 1.0.156 — shared Programme Logic + customer-defined Validation programmes
 
-- Replaces the constrained Validation canvas interaction with true free block positioning. Visual placement is layout-only; it no longer silently changes a controlled leg or dependency. **Auto layout** restores a clean dependency-based arrangement.
-- Makes **controlled specification → verification requirement → test/evidence** flowdown visible directly above the programme canvas and in the RTM workspace.
-- Implements **reuse first**: released Test Library methods and previously released Validation methods are ranked using requirement context, prior programme use, same-product use and controlled history. Engineers can **Reuse**, **Adapt**, or develop a genuinely new method.
-- Adaptation carries the source method/family into the existing shared REV 1.0.129 development-learning service. Measured Validation development hours are written into the same `developmentHistory` used by Prototype, so future Prototype and Validation estimates learn from both domains.
-- Method-development completion releases the downstream adapted/new verification method while retaining original estimate, latest estimate and measured actual engineering hours.
-- Candidate lessons are detected automatically from development overruns, lab-caused invalid tests, delays/recoveries, sister-lab recovery and external dependencies.
-- The Validation report draft is automatically refreshed when controlled programme, requirement, planning, result or disposition data changes. Approval remains a separate human-controlled action, and an approved historical report is never overwritten.
-- Makes the **customer specification** the controlled source for Validation. Users can define requirements manually, download/upload the controlled CSV template, or import local CSV, XLSX, DOCX and text-layer PDF requirements. Imported requirements remain engineer-reviewed controlled records; scanned/image-only PDF OCR is not fabricated by the static PoC.
-- **Generate programme from specification** maps each imported requirement to the strongest released Standard Test / previous controlled Validation method, proposes adaptation where appropriate, and creates a schedulable development path only for genuine gaps. The resulting visual graph is populated automatically but remains under engineer review before release.
-- A successfully developed Validation method can be nominated and approved into the shared Standard Test Library with traceability to its originating programme/development evidence.
-- Adds **nine Twente Validation KPI demo programmes** across DV/PV with completed and active work, customer requirements, results, invalid-test/retest evidence, product failure/disposition, sister-lab recovery, development history, costs, lost/recovered days and report evidence. These are explicitly demo records, not claimed production results.
-- Schema remains **38**. REV 1.0.155 adds compatible optional fields and UI/runtime behavior; no Reset Demo Data is required.
+- Introduces one common **Programme Logic canvas shell and graph adapter** for Prototype and Validation. Prototype routes are rendered through the shared graph adapter while retaining Prototype-specific material, route, Control Plan, process-development and execution semantics. Validation retains customer-specification, RTM and DV/PV controls around the same interaction model.
+- The common canvas supports free visual placement, dependency lines, Auto layout, zoom/Fit and mobile-safe controls. Visual movement is layout-only; it never silently changes a controlled Prototype route or Validation dependency.
+- Extends the controlled Validation template with **customer test leg, sequence, predecessor, parallel group, DUT quantity, DUT continuation, destructive flag, verification type, customer method/reference, source clause/page and notes**. Downloaded and uploaded templates therefore describe programme structure rather than only a flat requirement list.
+- CSV/XLSX/DOCX/text-layer PDF import retains source traceability, proposes requirements and customer structure, and then auto-populates the controlled visual graph. Engineer review remains mandatory before release; scanned/image-only PDFs are not guessed by the static PoC.
+- A repeated released method used at two different customer sequence positions is represented by separate **execution occurrences**. Method identity may be reused, but independent legs are not collapsed into one test node.
+- Customer-defined independent DUT branches synchronise the expected DUT population and create controlled Split allocations. The worked 6-DUT environmental + 4-DUT mechanical example becomes a 10-DUT split, two independent legs and a valid Merge.
+- **+ Requirement** now exposes leg, sequence, predecessor(s), parallel group, DUT flow and customer method/reference. Requirement cards show predecessor/successor context; **Show full chain** highlights the related sequence on the Programme Logic canvas.
+- Requirement-to-method decisions are explicit: **Reuse as-is**, **Adapt this method**, **Combine multiple tests**, **Develop new test**, or **Other verification**. Candidate cards expose the controlled method and historical mapping evidence; similarity is assistance, never automatic approval.
+- Adapt/new-method development remains a schedulable controlled activity with original/latest/actual engineering hours. Measured effort continues to feed the same development-history learning used by Prototype, and released developed methods can be nominated into the common Standard Test Library.
+- Adds an in-app worked **Customer specification PDF → requirements → legs/sequences → reuse/adapt/develop → generated canvas → shared planning → execution → RTM/report/lessons** example.
+- Preserves the REV 1.0.155 Twente Validation demo/KPI history and all existing shared planning, sister-lab/external, resource assurance, My Work, audit, reporting, lessons, genealogy and KPI services.
+- Schema remains **38**. No Reset Demo Data and no new schema migration are required.
 
 ## REV 1.0.153 — unified Validation operating UX
 
