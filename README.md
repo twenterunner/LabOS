@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.150**  
+**Current prototype release: REV 1.0.151**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,16 +9,24 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.150**.
+4. Refresh the page and confirm the header shows **REV 1.0.151**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.150.js`, `labos-services-1.0.150.js`, `labos-repository-1.0.150.js`, `labos-demo-data-1.0.150.js`, `labos-app-1.0.150.js` — application runtime.
-- `labos-styles-1.0.150.css` — application styling.
+- `labos-core-1.0.151.js`, `labos-services-1.0.151.js`, `labos-repository-1.0.151.js`, `labos-demo-data-1.0.151.js`, `labos-app-1.0.151.js` — application runtime.
+- `labos-styles-1.0.151.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
+
+## REV 1.0.151 — executive KPI analytics dashboard
+
+- Rebuilds Management → KPI into a period-aware laboratory operating-performance dashboard with executive KPIs, trend charts, Pareto analysis, BU/cost allocation, lab-network value, development/learning, equipment/skills assurance and replanning analytics.
+- Adds one KPI definition/metadata engine for common, Prototype, Validation and Failure Analysis domains. Validation and FA definitions are present without fabricated production results until those workflows exist.
+- Adds combined period/lab/domain/BU/product/programme/project/family/equipment/priority filters, automatic graph granularity, previous-equivalent-period comparison, cross-filtering, explainable headline drilldowns and configurable business targets.
+- Adds normalized KPI demo facts for delay, quality, capacity, downtime, lab-network and planning-instability testing while preserving operational records as the source of truth.
+- Keeps requested, accepted committed, forecast and actual dates distinct so commitment movement cannot hide requested-date delivery performance.
 
 ## REV 1.0.150 — canonical equipment/resource semantics
 
