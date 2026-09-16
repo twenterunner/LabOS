@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.152**  
+**Current prototype release: REV 1.0.153**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled Prototype and Validation/DV/PV laboratory operations, with shared planning, resources, evidence, approvals, audit and KPI services. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,16 +9,26 @@ LabOS is a static-browser proof of concept for controlled Prototype and Validati
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.152**.
+4. Refresh the page and confirm the header shows **REV 1.0.153**.
 
 The deployment package contains the current application, current task-based user manual, required assets and the release-specific QA report. Historical QA/changelog files are not bundled.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.152.js`, `labos-services-1.0.152.js`, `labos-repository-1.0.152.js`, `labos-demo-data-1.0.152.js`, `labos-validation-1.0.152.js`, `labos-app-1.0.152.js` — application runtime.
-- `labos-styles-1.0.152.css` — application styling.
+- `labos-core-1.0.153.js`, `labos-services-1.0.153.js`, `labos-repository-1.0.153.js`, `labos-demo-data-1.0.153.js`, `labos-validation-1.0.153.js`, `labos-app-1.0.153.js` — application runtime.
+- `labos-styles-1.0.153.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
+
+## REV 1.0.153 — unified Validation operating UX
+
+- Generalises the Master Planner swimlane renderer so **All** shows Prototype and Validation on the same graphical timeline and **Validation** remains a graphical swimlane view instead of falling back to a table. Shared equipment/person lanes retain calibration, maintenance and training reservations.
+- Validation bookings retain their programme/node identity in the canonical shared booking collection; clicking a Validation bar opens the exact programme and test in **Validation → Resource Plan**. Sister-lab execution remains visibly associated with the selected execution lab.
+- Adds **Request Validation** to the common Requests front door and Prototype queue header for authorised engineering/planning roles. The guided intake captures DV/PV, product, Business Unit, home lab, required completion, DUT quantity, controlled specification and optional Prototype source, then opens the programme builder.
+- Makes Validation DV/PV portfolio filters operational, exposes controlled Validation reports in the shared Reports workspace, and includes Validation DUT genealogy in Sample & Serial History.
+- Integrates Validation actions into My Work / Action Centre with role ownership, live open/closed evaluation, and direct routing to Requirements, Builder, Resource Plan, Execution or Report. Adds the Validation Engineer role to the common role model.
+- Adds guided Validation readiness resolution and current Help/manual guidance so blockers navigate to a concrete resolution workspace instead of leaving a text-only dead end.
+- Preserves schema 38 and the REV 1.0.152 schema-37→38 migration; REV 1.0.153 is an application/UI/process-flow release and requires no new data reset or schema migration.
 
 ## REV 1.0.152 — native Validation / DV / PV domain
 
