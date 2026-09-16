@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.153**  
+**Current prototype release: REV 1.0.154**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled Prototype and Validation/DV/PV laboratory operations, with shared planning, resources, evidence, approvals, audit and KPI services. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,16 +9,28 @@ LabOS is a static-browser proof of concept for controlled Prototype and Validati
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.153**.
+4. Refresh the page and confirm the header shows **REV 1.0.154**.
 
 The deployment package contains the current application, current task-based user manual, required assets and the release-specific QA report. Historical QA/changelog files are not bundled.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.153.js`, `labos-services-1.0.153.js`, `labos-repository-1.0.153.js`, `labos-demo-data-1.0.153.js`, `labos-validation-1.0.153.js`, `labos-app-1.0.153.js` — application runtime.
-- `labos-styles-1.0.153.css` — application styling.
+- `labos-core-1.0.154.js`, `labos-services-1.0.154.js`, `labos-repository-1.0.154.js`, `labos-demo-data-1.0.154.js`, `labos-validation-1.0.154.js`, `labos-app-1.0.154.js` — application runtime.
+- `labos-styles-1.0.154.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
+
+
+## REV 1.0.154 — Validation builder, flowdown and learning
+
+- Replaces the constrained Validation canvas interaction with true free block positioning. Visual placement is layout-only; it no longer silently changes a controlled leg or dependency. **Auto layout** restores a clean dependency-based arrangement.
+- Makes **controlled specification → verification requirement → test/evidence** flowdown visible directly above the programme canvas and in the RTM workspace.
+- Implements **reuse first**: released Test Library methods and previously released Validation methods are ranked using requirement context, prior programme use, same-product use and controlled history. Engineers can **Reuse**, **Adapt**, or develop a genuinely new method.
+- Adaptation carries the source method/family into the existing shared REV 1.0.129 development-learning service. Measured Validation development hours are written into the same `developmentHistory` used by Prototype, so future Prototype and Validation estimates learn from both domains.
+- Method-development completion releases the downstream adapted/new verification method while retaining original estimate, latest estimate and measured actual engineering hours.
+- Candidate lessons are detected automatically from development overruns, lab-caused invalid tests, delays/recoveries, sister-lab recovery and external dependencies.
+- The Validation report draft is automatically refreshed when controlled programme, requirement, planning, result or disposition data changes. Approval remains a separate human-controlled action, and an approved historical report is never overwritten.
+- Schema remains **38**. REV 1.0.154 adds compatible optional fields and UI/runtime behavior; no Reset Demo Data is required.
 
 ## REV 1.0.153 — unified Validation operating UX
 
