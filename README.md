@@ -1,10 +1,10 @@
-# LabOS REV 1.0.157
+# LabOS REV 1.0.158
 
-REV 1.0.157 makes Prototype and Validation feel like one LabOS application. Both workstreams now use the same landing/portfolio pattern, the same Programme Logic canvas family and the same shared swimlane renderer. Validation programme rows are explicitly openable on desktop and mobile. Lab Standards & Resources is the single governed master-data home for processes, Standard Tests, equipment, competencies and 5S zones, with add/edit actions and plural equipment-capability / competency associations for process and test methods. Schema remains 38; no reset or migration is required.
+REV 1.0.158 makes Prototype and Validation feel like one LabOS application. Both workstreams now use the same landing/portfolio pattern, the same Programme Logic canvas family and the same shared swimlane renderer. Validation programme rows are explicitly openable on desktop and mobile. Lab Standards & Resources is the single governed master-data home for processes, Standard Tests, equipment, competencies and 5S zones, with add/edit actions and plural equipment-capability / competency associations for process and test methods. Schema remains 38; no reset or migration is required.
 
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.157**  
+**Current prototype release: REV 1.0.158**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled Prototype and Validation/DV/PV laboratory operations, with shared planning, resources, evidence, approvals, audit and KPI services. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -13,20 +13,20 @@ LabOS is a static-browser proof of concept for controlled Prototype and Validati
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.157**.
+4. Refresh the page and confirm the header shows **REV 1.0.158**.
 
 The deployment package contains the current application, current task-based user manual, required assets and the release-specific QA report. Historical QA/changelog files are not bundled.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.157.js`, `labos-services-1.0.157.js`, `labos-repository-1.0.157.js`, `labos-demo-data-1.0.157.js`, `labos-validation-1.0.157.js`, `labos-app-1.0.157.js` — application runtime.
-- `labos-styles-1.0.157.css` — application styling.
+- `labos-core-1.0.158.js`, `labos-services-1.0.158.js`, `labos-repository-1.0.158.js`, `labos-demo-data-1.0.158.js`, `labos-validation-1.0.158.js`, `labos-app-1.0.158.js` — application runtime.
+- `labos-styles-1.0.158.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
 
 
-## REV 1.0.157 — one Prototype + Validation operating UX
+## REV 1.0.158 — one Prototype + Validation operating UX
 
 - Gives **Prototype** and **Validation / DV / PV** the same workstream landing structure: the same metric strip, Active/Completed/All filters, search, portfolio table pattern, health presentation and full-row/open-button navigation.
 - Fixes the Validation portfolio navigation defect that could make a programme appear untappable when an older/demo specification record had no customer metadata. Every Validation programme row now uses one common open handler on desktop and mobile.
