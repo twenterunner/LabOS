@@ -1,4 +1,4 @@
-// LabOS 1.0.156 deployment reset worker.
+// LabOS 1.0.157 deployment reset worker.
 // No offline runtime cache: rapid GitHub Pages updates must never be masked by stale assets.
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {
