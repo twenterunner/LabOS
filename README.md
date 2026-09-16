@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.148**  
+**Current prototype release: REV 1.0.149**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,18 +9,18 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.148**.
+4. Refresh the page and confirm the header shows **REV 1.0.149**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.148.js`, `labos-services-1.0.148.js`, `labos-repository-1.0.148.js`, `labos-demo-data-1.0.148.js`, `labos-app-1.0.148.js` — application runtime.
-- `labos-styles-1.0.148.css` — application styling.
+- `labos-core-1.0.149.js`, `labos-services-1.0.149.js`, `labos-repository-1.0.149.js`, `labos-demo-data-1.0.149.js`, `labos-app-1.0.149.js` — application runtime.
+- `labos-styles-1.0.149.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.148 — canonical equipment/resource semantics
+## REV 1.0.149 — canonical equipment/resource semantics
 
 - Fixed execution start/complete rejecting valid optical/microscope equipment when older records only carried a broad legacy capability/category.
 - Added one canonical technical capability resolver used by planning, execution, load balancing, capacity forecasting and cost estimation.
