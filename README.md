@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.149**  
+**Current prototype release: REV 1.0.150**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,18 +9,18 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.149**.
+4. Refresh the page and confirm the header shows **REV 1.0.150**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.149.js`, `labos-services-1.0.149.js`, `labos-repository-1.0.149.js`, `labos-demo-data-1.0.149.js`, `labos-app-1.0.149.js` — application runtime.
-- `labos-styles-1.0.149.css` — application styling.
+- `labos-core-1.0.150.js`, `labos-services-1.0.150.js`, `labos-repository-1.0.150.js`, `labos-demo-data-1.0.150.js`, `labos-app-1.0.150.js` — application runtime.
+- `labos-styles-1.0.150.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.149 — canonical equipment/resource semantics
+## REV 1.0.150 — canonical equipment/resource semantics
 
 - Fixed execution start/complete rejecting valid optical/microscope equipment when older records only carried a broad legacy capability/category.
 - Added one canonical technical capability resolver used by planning, execution, load balancing, capacity forecasting and cost estimation.
@@ -59,3 +59,8 @@ The POC uses browser-local persistence and JSON export/import. A production shar
 
 ## Compliance boundary
 LabOS provides **IATF 16949- and ISO/IEC 17025-oriented workflow/evidence support**. It is not a certification system and does not replace the deploying organisation's QMS, customer-specific requirements, controlled procedures, auditor judgement, records-retention rules or approval authorities.
+
+## REV 1.0.150 resource semantic repair
+- Repairs REV 1.0.149 states where broad legacy resource descriptors could be promoted into technical `planningCapability` values.
+- Preserves legacy descriptive category/location values while deriving controlled technical compatibility independently.
+- Adds schema 36 → 37 migration and repairs process, test, route-step and booking capability semantics without resetting user data.
