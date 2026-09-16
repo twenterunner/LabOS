@@ -1,32 +1,32 @@
-# LabOS REV 1.0.159
+# LabOS REV 1.0.160
 
-**Current prototype release: REV 1.0.159**  
-**Browser schema: 37**  
+**Current prototype release: REV 1.0.160**  
+**Browser schema: 38**  
 **Baseline strategy:** rebuilt from the clean REV 1.0.151 Prototype application so Validation uses the same application runtime, navigation, workflow shell and Programme Logic visual language rather than a parallel mini-app.
 
 ## Run the static PoC
 
 1. Extract the ZIP.
 2. Open `index.html` in a modern Chromium-based browser, or serve the folder from a simple static web server.
-3. Confirm the header shows **REV 1.0.159**.
+3. Confirm the header shows **REV 1.0.160**.
 4. The PoC uses browser-local persistence. Use the existing export/import controls before clearing browser site data.
 
 ## Runtime files
 
 - `index.html` — application entry point.
-- `labos-core-1.0.159.js` — common domain/model utilities and KPI definitions.
-- `labos-demo-data-1.0.159.js` — populated Prototype demo state.
-- `labos-repository-1.0.159.js` — local persistence/repository layer.
-- `labos-services-1.0.159.js` — shared planning, readiness and domain services.
-- `labos-app-1.0.159.js` — the **single canonical application runtime**, including Prototype and Validation UI/workflows.
-- `labos-styles-1.0.159.css` — shared styling for both workstreams.
+- `labos-core-1.0.160.js` — common domain/model utilities and KPI definitions.
+- `labos-demo-data-1.0.160.js` — populated Prototype demo state.
+- `labos-repository-1.0.160.js` — local persistence/repository layer.
+- `labos-services-1.0.160.js` — shared planning, readiness and domain services.
+- `labos-app-1.0.160.js` — the **single canonical application runtime**, including Prototype and Validation UI/workflows.
+- `labos-styles-1.0.160.css` — shared styling for both workstreams.
 - `service-worker.js` — deployment-reset worker; no long-lived offline runtime cache.
 
 There is deliberately **no separate Validation application/runtime** in this release.
 
-## REV 1.0.159 — Prototype UX is the master pattern
+## REV 1.0.160 — Prototype UX is the master pattern
 
-REV 1.0.159 changes the implementation strategy. Validation is rebuilt inside the proven REV 1.0.151 Prototype shell instead of being developed beside it and cosmetically harmonised later.
+REV 1.0.160 changes the implementation strategy. Validation is rebuilt inside the proven REV 1.0.151 Prototype shell instead of being developed beside it and cosmetically harmonised later.
 
 The operating rule is:
 
@@ -103,4 +103,7 @@ Method/process development evidence is intended to remain shared across workstre
 
 ## Scope boundary
 
-REV 1.0.159 remains a static-browser proof of concept. Production deployment still requires governed backend persistence, multi-user authentication/authorization enforcement, concurrency/transactions, controlled evidence storage and server-side audit guarantees.
+REV 1.0.160 remains a static-browser proof of concept. Production deployment still requires governed backend persistence, multi-user authentication/authorization enforcement, concurrency/transactions, controlled evidence storage and server-side audit guarantees.
+
+## REV 1.0.160 startup compatibility
+REV 1.0.160 restores schema 38 as the supported browser data schema. It opens existing schema-38 state created by earlier Validation releases and migrates schema-37 REV 1.0.159 state forward without resetting data. Release QA must include startup from populated prior-schema browser state.
