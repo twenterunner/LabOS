@@ -1,32 +1,37 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.151**  
-**Data schema: 35**
+**Current prototype release: REV 1.0.152**  
+**Data schema: 38**
 
-LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
+LabOS is a static-browser proof of concept for controlled Prototype and Validation/DV/PV laboratory operations, with shared planning, resources, evidence, approvals, audit and KPI services. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
 
 ## Deploy
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.151**.
+4. Refresh the page and confirm the header shows **REV 1.0.152**.
 
-The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
+The deployment package contains the current application, current task-based user manual, required assets and the release-specific QA report. Historical QA/changelog files are not bundled.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.151.js`, `labos-services-1.0.151.js`, `labos-repository-1.0.151.js`, `labos-demo-data-1.0.151.js`, `labos-app-1.0.151.js` — application runtime.
-- `labos-styles-1.0.151.css` — application styling.
+- `labos-core-1.0.152.js`, `labos-services-1.0.152.js`, `labos-repository-1.0.152.js`, `labos-demo-data-1.0.152.js`, `labos-validation-1.0.152.js`, `labos-app-1.0.152.js` — application runtime.
+- `labos-styles-1.0.152.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.151 — executive KPI analytics dashboard
+## REV 1.0.152 — native Validation / DV / PV domain
 
-- Rebuilds Management → KPI into a period-aware laboratory operating-performance dashboard with executive KPIs, trend charts, Pareto analysis, BU/cost allocation, lab-network value, development/learning, equipment/skills assurance and replanning analytics.
-- Adds one KPI definition/metadata engine for common, Prototype, Validation and Failure Analysis domains. Validation and FA definitions are present without fabricated production results until those workflows exist.
-- Adds combined period/lab/domain/BU/product/programme/project/family/equipment/priority filters, automatic graph granularity, previous-equivalent-period comparison, cross-filtering, explainable headline drilldowns and configurable business targets.
-- Adds normalized KPI demo facts for delay, quality, capacity, downtime, lab-network and planning-instability testing while preserving operational records as the source of truth.
-- Keeps requested, accepted committed, forecast and actual dates distinct so commitment movement cannot hide requested-date delivery performance.
+- Adds Validation as a native LabOS operating domain on top of the existing common platform services rather than a separate mini-application. Prototype and Validation share the canonical constrained planner, equipment, people/skills, calendars, calibration, maintenance, sister-lab routing, external testing, approvals, evidence, audit, lessons learned, My Work and KPI event model.
+- Adds a controlled visual Validation Programme Builder backed by a directed workflow graph (`programmeNodes`, `programmeEdges`, `programmeLegs`, DUT allocations and genealogy). The graph is the operational definition used by planning/execution, not a decorative diagram.
+- Supports sequential and parallel legs, split/merge, conditioning, waits/holds, transport, review/decision gates, method/fixture development, destructive DUT handling, external tests, sister-lab execution and Prototype-source dependencies including partial DUT releases.
+- Adds controlled requirement/specification records and requirement-to-test mapping, verification status, unmapped-requirement visibility, specification revision impact comparison and closure gating.
+- Adds shared AUTO PLAN and manual-planning flows for Validation, with deterministic constraint reasoning, forward feasible-slot search, downstream dependency propagation, critical-path/forecast impact, sister-lab recovery and external alternatives. Validation bookings remain canonical shared bookings and therefore consume the same people/equipment capacity as Prototype work.
+- Adds controlled programme revision states (Draft / Under review / Released / In execution / Completed / Superseded). Structural edits after release create a new controlled revision and require an explicit release rationale.
+- Adds Validation execution semantics for Pass, Valid product failure, Invalid test — lab caused, Invalid test — sample issue, Retest required, Blocked and Awaiting disposition. Disposition records are additive; failed/invalid historical results are never overwritten.
+- Adds automatic Validation report preview, approval/closure controls, Validation audit events, candidate lessons learned, Portfolio/Master Planner/My Work integration, active Validation KPI calculations and ten varied demo programmes covering sequential, parallel, Prototype-linked/partial-release, sister-lab, external, method-development, destructive split, invalid/retest, product failure and specification-revision scenarios.
+- Adds mobile-friendly Add step / reorder controls while retaining the full drag-and-drop workflow designer as the primary desktop experience.
+- Adds explicit idempotent schema 37 → 38 migration. Existing REV 1.0.151 Prototype data is preserved without requiring Reset Demo Data.
 
 ## REV 1.0.150 — canonical equipment/resource semantics
 
