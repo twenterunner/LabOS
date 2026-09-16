@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.145**  
+**Current prototype release: REV 1.0.146**  
 **Data schema: 35**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,24 +9,32 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.145**.
+4. Refresh the page and confirm the header shows **REV 1.0.146**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.145.js`, `labos-services-1.0.145.js`, `labos-repository-1.0.145.js`, `labos-demo-data-1.0.145.js`, `labos-app-1.0.145.js` — application runtime.
-- `labos-styles-1.0.145.css` — application styling.
+- `labos-core-1.0.146.js`, `labos-services-1.0.146.js`, `labos-repository-1.0.146.js`, `labos-demo-data-1.0.146.js`, `labos-app-1.0.146.js` — application runtime.
+- `labos-styles-1.0.146.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.145 — self-healing Daily Operations actions
-- Daily Operations load-balancing cards are now treated as **live executable commands**, not cached advice. Every card is revalidated when opened and again immediately before acceptance.
-- The service retains the exact displayed proposal snapshot and compares it with the current plan. If assignments changed, LabOS refreshes the proposal for review instead of letting a stale card fail.
-- If the opportunity has already disappeared because load dropped, LabOS explains that no action is required and removes the card from the executable queue.
-- If the resource remains overloaded but no complete same-lab automatic rebalance exists anymore, the dead proposal is removed and the user gets a guided route to Planning rather than an error-only "proposal withdrawn" toast.
-- Daily Operations review metadata is refreshed from the same live executable set so the headline count and cards cannot intentionally reference different proposal populations.
-- Acceptance remains atomic: qualifications/readiness, conflicts, current bookings and lab ownership are checked again before any controlled booking or route owner is changed.
+## REV 1.0.146 — approve-later Control Plans + complete My Work
+- **Control Plan selection stays product-safe, but no longer approval-deadlocks the request.** The request wizard and Controls decision list same-product controlled plans in Approved, Approval requested, or Draft status. Plans belonging to another product remain excluded.
+- Approved plans are still preferred as the default. A user may intentionally select a same-product Draft / Approval-requested plan and carry it forward as the intended controlled plan.
+- Final independent Control Plan approval is now a **later governed Build Readiness gate**, not an artificial prerequisite for route/resource planning. The approval appears as an exact mandatory yellow/My Work action and execution cannot begin until it is satisfied.
+- The Controls stage separates **planning readiness** (controlled definition + build-specific change review) from **final governance readiness** (Quality/Product Safety approval), preventing the earlier pattern where a selectable plan was accepted at intake and then unexpectedly blocked planning.
+- **My Work now renders every mandatory item assigned to the current user/role.** The previous top-10 action, top-6 readiness and top-4 opportunity slices were removed. Mandatory ordinary actions, approval/governance work and readiness work are shown in the queue; improvement opportunities remain a separate foldout.
+- The Action Centre/nav count uses the same mandatory population as My Work.
+- **Legacy equipment capability records are self-healed for planning/execution.** A valid microscope/optical-inspection setup no longer disappears merely because an older saved record only contains its broad equipment category (for example `Precision bench`) and predates the dedicated `planningCapability` field. The canonical planning-capability resolver is now used by the planner, execution equipment selector and guided equipment resolver.
+- **Resource Assurance call-ups are restored as first-class controls.** Calibration, maintenance and training can each be scheduled manually, reviewed/rescheduled, or cancelled. Cancellation releases the reserved capacity but retains the historical schedule/audit record.
+- **30/60/90-day batch call-ups are restored.** `Plan all due ≤30 d`, `≤60 d` and `≤90 d` collect overdue + unscheduled calibration, maintenance and training in the active lab and open the normal controlled collision/build-impact review rather than committing blindly.
+
+### Daily Operations self-healing retained from REV 1.0.145
+- Daily Operations load-balancing cards are live executable commands and are revalidated when opened and immediately before acceptance.
+- Changed proposals refresh for review; resolved overloads disappear; non-executable rebalance opportunities guide the user to Planning instead of returning an error-only withdrawal message.
+- Acceptance remains atomic and rechecks qualifications/readiness, conflicts, current bookings and lab ownership before changing controlled bookings or route ownership.
 
 ## REV 1.0.144 — product-safe request and network-aware planning
 - **Control Plan selection is product-scoped.** The new-request and Controls decision dropdowns show only approved reusable baselines whose controlled provenance resolves to the same product. A current/legacy Control Plan from another product cannot bypass the filter. Different revisions of the same product may still be proposed as a baseline; build-specific deltas and approvals remain controlled later.
