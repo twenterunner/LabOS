@@ -1,5 +1,5 @@
 
-## REV 1.0.175 — permanent Management Demo launcher
+## REV 1.0.176 — permanent Management Demo launcher
 
 - Help now opens with a visible **Management Demo · Showcase projects** section; it is no longer hidden at the bottom or conditional on a pre-populated settings array.
 - Existing demo browser states are reconciled automatically through `ensureDemoShowcaseV174()`.
@@ -9,27 +9,38 @@
 
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.175**  
+**Current prototype release: REV 1.0.176**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
+
+## REV 1.0.176 · Validation technical-report upgrade
+
+Validation reporting now uses a native, controlled technical-report structure designed around ISO/IEC 17025-style reporting expectations and IATF laboratory evidence needs. It does **not** claim accreditation or certification.
+
+- The report contains a visual snapshot of the released overall Validation Test Flow: independent Test Legs, sequential tests, DUT splits/branches and merge/rejoin points.
+- Every Validation test is rendered as its own technical dossier with test description/purpose, method/revision, setup/procedure summary, acceptance criteria, conformity decision rule, test conditions, operator/competence, equipment/calibration evidence, controlled setup photograph, DUT/serial measurements or observations, optional uncertainty/validity statement and explicit conclusion.
+- Completing a Validation test now requires a measured/observed result for every assigned DUT, test conditions, a conformity decision rule, a technical conclusion and at least one report-included photograph classified as **Test setup**.
+- Additional DUT/result/failure photographs remain supported and can be included in the report.
+- Report approval is blocked when a critical technical-record element is missing. Changes to the controlled flow, method metadata, results, conclusions or report photographs change the evidence fingerprint and require report re-review.
+- The management demo Validation programmes `V26-0103` and `V26-0104` are enriched with complete report-ready examples.
 
 ## Deploy
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
 4. If the browser is still showing an older REV after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted current revision URL.
-5. Confirm the header shows **REV 1.0.175**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
+5. Confirm the header shows **REV 1.0.176**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.175.js`, `labos-services-1.0.175.js`, `labos-repository-1.0.175.js`, `labos-demo-data-1.0.175.js`, `labos-app-1.0.175.js` — application runtime.
-- `labos-styles-1.0.175.css` — application styling.
+- `labos-core-1.0.176.js`, `labos-services-1.0.176.js`, `labos-repository-1.0.176.js`, `labos-demo-data-1.0.176.js`, `labos-app-1.0.176.js` — application runtime.
+- `labos-styles-1.0.176.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
-- `DEMO_GUIDE_v1.0.175.md` — management-demo walkthrough and pitch capability map.
-- `QA_REPORT_v1.0.175.md` — release verification and known browser-test limitation.
+- `DEMO_GUIDE_v1.0.176.md` — management-demo walkthrough and pitch capability map.
+- `QA_REPORT_v1.0.176.md` — release verification and known browser-test limitation.
 - `labos-version.json` — cache-bypassed live deployment revision marker.
 - `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
@@ -39,7 +50,7 @@ The deployment package contains the current application, current task-based user
 
 
 
-## REV 1.0.175 — management-demo showcase portfolio
+## REV 1.0.176 — management-demo showcase portfolio
 
 - Adds four dedicated **40-part Prototype builds** so management demos can exercise the full distribution/histogram path rather than only small-sample trend plots:
   - `P26-1101` — normal population, no statistical outliers;
@@ -51,9 +62,9 @@ The deployment package contains the current application, current task-based user
 - Enriches `V26-0104` as a sister-lab Validation/report exemplar with ten standalone DUT identities, completed Test Legs, sample-linked results and controlled report photographs.
 - Existing browser-local demo datasets are upgraded **additively and idempotently** at application boot; Reset Demo Data is not required.
 - Help now opens with **Management Demo · Showcase projects** at the top so the presentation records are immediately visible and can be opened directly without memorising IDs.
-- `DEMO_GUIDE_v1.0.175.md` provides a recommended walkthrough and pitch-oriented feature map.
+- `DEMO_GUIDE_v1.0.176.md` provides a recommended walkthrough and pitch-oriented feature map.
 
-## REV 1.0.175 — Prototype-linked Validation dependency audit hardening
+## REV 1.0.176 — Prototype-linked Validation dependency audit hardening
 
 - A linked Prototype timing movement now creates an explicit controlled **Prototype dependency timing changed** audit event with source Prototype, old/new DUT-availability boundary, prior Validation forecast and prior active booking count.
 - Each dependency movement is retained in `validationDependencyHistoryV173` instead of only overwriting the latest `prototypeImpact` snapshot.
