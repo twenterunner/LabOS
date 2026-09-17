@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.161**  
+**Current prototype release: REV 1.0.162**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,27 +9,30 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.161**.
+4. Refresh the page and confirm the header shows **REV 1.0.162**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.161.js`, `labos-services-1.0.161.js`, `labos-repository-1.0.161.js`, `labos-demo-data-1.0.161.js`, `labos-app-1.0.161.js` — application runtime.
-- `labos-styles-1.0.161.css` — application styling.
+- `labos-core-1.0.162.js`, `labos-services-1.0.162.js`, `labos-repository-1.0.162.js`, `labos-demo-data-1.0.162.js`, `labos-app-1.0.162.js` — application runtime.
+- `labos-styles-1.0.162.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.161 — Validation rebuilt from the REV 1.0.151 Prototype architecture
+## REV 1.0.162 — one visual Programme Builder for Prototype and Validation
 
-- Uses **REV 1.0.151 as the clean implementation baseline** for the Validation reset. Validation is integrated into the canonical LabOS runtime rather than loaded as a separate application.
-- Adds `programmeType = prototype | validation` while preserving the existing Prototype request/build model and shared resource services.
-- Validation reuses the Prototype page shell, guided-workspace grammar, cards, status semantics, shared Programme Logic canvas, planning language, constrained planner, equipment/staff/calibration/skill data, Portfolio, My Work, KPI framework, reporting and Archive Manager.
-- Adds requirements-first Validation: controlled requirement entry/import, closest released Standard Test ranking, reuse/adapt/combine/new-method decisions, delta visibility, controlled test-development activities, multi-leg programme generation and RTM status roll-up.
-- Validation and Prototype compete for the same constrained resources. Linked Prototype timing propagates into DUT availability and downstream Validation replanning; sister-lab comparison uses the same planning constraints.
-- Adds controlled Validation execution/results/evidence, automatic Validation Report generation, Validation KPI contribution and a unified Prototype + Validation Archive Manager.
-- Adds a shared learning bridge: Validation automatically captures evidence-based learning, surfaces relevant accepted Prototype/Validation lessons, and records Apply / Acknowledge / Dismiss / Convert-to-improvement decisions. Closeout is blocked until newly detected learning is reviewed.
-- Preserves schema-38 compatibility and the schema 37 → 38 migration path so browsers that previously ran Validation builds do not fail with a newer-schema startup error.
+- Replaces the older lane-oriented programme editor with one reusable **LabOS Programme Builder** used by both Prototype Build and Validation Programme construction. It is one canvas engine with domain adapters, not two builders.
+- Uses a structured left-to-right programme model: every activity belongs to the main flow or a controlled parallel leg; normal use never leaves floating activities and users do not draw connector arrows manually.
+- Adds activity/test library, central canvas, selected-item properties, undo/redo, zoom −/+/Fit, auto-layout, search/jump, programme validation, Save and feasibility checking.
+- Supports forgiving drag/drop insertion, reordering, movement between legs, multi-select movement, new parallel-leg creation, nested splits, split/merge reconstruction, leg rename/move/delete, duplication, replacement and safe deletion impact review.
+- Adds visual DUT/sample allocation for fixed quantity, percentage, same-DUT continuation, destructive testing and retained samples. Over-allocation and impossible destructive reuse are blocking validation findings.
+- Validation requirements are draggable. Dropping a requirement opens ranked Standard Test matches and can create a controlled test-development activity when no suitable released method exists; requirement links remain traceable through replacement where valid.
+- Adds reusable Prototype and Validation subflow templates, recently used/favorites/search categories, optional Structure/Requirements/Resources/Planning/Execution overlays and a minimap only for larger programmes.
+- Draft programmes remain low-friction. Structural edits to Released programmes use controlled revision handling and rationale; Draft / Under Review / Released / Superseded is visible in the builder.
+- Mobile/tablet keeps the same programme model while providing tap selection, long-press/drag support and explicit move controls so precision drag/drop is not mandatory.
+- Existing Prototype routes and Validation legs/activities migrate into the new shared structure at repository load and synchronise back into the existing planner, execution, genealogy, requirement, booking and audit records. Existing IDs are preserved. Schema remains **38** and no reset is required.
+- Performance/regression qualification includes >100 activities, >20 parallel legs, dependency-loop/orphan checks, destructive genealogy cases, save/reload-shaped persistence, controlled revisions and real rendered browser drag/drop.
 
 ## REV 1.0.150 — canonical equipment/resource semantics
 
