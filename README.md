@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.170**  
+**Current prototype release: REV 1.0.171**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -10,14 +10,14 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
 4. If the browser is still showing an older REV after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted current revision URL.
-5. Confirm the header shows **REV 1.0.170**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
+5. Confirm the header shows **REV 1.0.171**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.170.js`, `labos-services-1.0.170.js`, `labos-repository-1.0.170.js`, `labos-demo-data-1.0.170.js`, `labos-app-1.0.170.js` — application runtime.
-- `labos-styles-1.0.170.css` — application styling.
+- `labos-core-1.0.171.js`, `labos-services-1.0.171.js`, `labos-repository-1.0.171.js`, `labos-demo-data-1.0.171.js`, `labos-app-1.0.171.js` — application runtime.
+- `labos-styles-1.0.171.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `labos-version.json` — cache-bypassed live deployment revision marker.
 - `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
@@ -25,7 +25,7 @@ The deployment package contains the current application, current task-based user
 
 
 
-## REV 1.0.170 — Validation report launcher repair
+## REV 1.0.171 — Validation report launcher repair
 
 - Validation result entry now makes the controlled chain explicit before data entry: **part number / product revision → Validation programme → test + method revision → exact DUT/sample + formal serial number → measured result / outcome → evidence reference**. Results are stored per DUT rather than only as a programme-level Pass/Fail.
 - A changed Validation result invalidates an already approved report and requires a new controlled review. Failed results may be included in a final report only after the technical-record/disposition evidence is complete; a failure is not hidden or converted into a pass.
