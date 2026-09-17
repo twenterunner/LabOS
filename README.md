@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.166**  
+**Current prototype release: REV 1.0.167**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,20 +9,20 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.166**.
+4. Refresh the page and confirm the header shows **REV 1.0.167**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.166.js`, `labos-services-1.0.166.js`, `labos-repository-1.0.166.js`, `labos-demo-data-1.0.166.js`, `labos-app-1.0.166.js` — application runtime.
-- `labos-styles-1.0.166.css` — application styling.
+- `labos-core-1.0.167.js`, `labos-services-1.0.167.js`, `labos-repository-1.0.167.js`, `labos-demo-data-1.0.167.js`, `labos-app-1.0.167.js` — application runtime.
+- `labos-styles-1.0.167.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.166 — rendered Planning/Validation correction and Prototype sticky-layout repair
+## REV 1.0.167 — rendered Planning/Validation correction and Prototype sticky-layout repair
 
-- Fixes the REV 1.0.165 UI-scope defect: the prior UI extension was outside the main LabOS application closure, so the browser could continue with older rendered paths despite the new helper code being present. REV 1.0.166 installs the changes inside the live application runtime.
+- Fixes the REV 1.0.165 UI-scope defect: the prior UI extension was outside the main LabOS application closure, so the browser could continue with older rendered paths despite the new helper code being present. REV 1.0.167 installs the changes inside the live application runtime.
 - Planning now renders one true mixed-domain portfolio with **All / Prototype / Validation** swim-lane filters. Active Validation programmes appear as first-class lanes even before they have bookings, and project/programme titles are the primary visible lane label on desktop and mobile.
 - Validation **Add Test** immediately asks **Standard Test** or **Test Development**. Standard Tests show released acceptance criteria; Test Development requires explicit acceptance criteria and uses the learned cross-domain development estimate.
 - Validation begins with a visible **Define Samples** register. Linked Prototype programmes inherit the Prototype sample IDs/serials; standalone Validation defines its own sample IDs/serials. Exact samples can then be assigned/overridden per test while automatically following the leg/branch flow by default.
