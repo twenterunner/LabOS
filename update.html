@@ -10,7 +10,7 @@
   <style>body{font:16px/1.5 system-ui,sans-serif;margin:0;background:#f4f7f8;color:#17343a}.box{max-width:620px;margin:12vh auto;padding:24px;border:1px solid #d5e1e4;border-radius:18px;background:white;box-shadow:0 8px 30px #16343a14}strong{color:#0c5862}</style>
 </head>
 <body>
-  <div class="box"><strong>Updating LabOS to REV 1.0.174…</strong><p id="status">Removing stale application caches and reloading the current deployment.</p></div>
+  <div class="box"><strong>Updating LabOS to REV 1.0.175…</strong><p id="status">Removing stale application caches and reloading the current deployment.</p></div>
 <script>
 (async function(){
   const status=document.getElementById('status');
@@ -30,12 +30,12 @@
         if(k.startsWith('protolab-cache-clean-')||k.startsWith('labos-cache-clean-')) localStorage.removeItem(k);
       }
     }catch(_e){}
-    status.textContent='Cache cleared. Loading REV 1.0.174…';
+    status.textContent='Cache cleared. Loading REV 1.0.175…';
   }catch(err){
-    status.textContent='Cache cleanup completed as far as the browser allowed. Loading REV 1.0.174…';
+    status.textContent='Cache cleanup completed as far as the browser allowed. Loading REV 1.0.175…';
   }
   const u=new URL('./index.html',location.href);
-  u.searchParams.set('labos_rev','1.0.174');
+  u.searchParams.set('labos_rev','1.0.175');
   u.searchParams.set('refresh',Date.now().toString());
   location.replace(u.toString());
 })();

@@ -9,16 +9,16 @@
   <meta name="theme-color" content="#0c5862" />
   <meta name="description" content="Laboratory Operations System proof-of-concept for automotive prototype, validation and engineering laboratory operations." />
   <title>LabOS — Laboratory Operations System</title>
-  <link rel="manifest" href="manifest.webmanifest?v=1.0.174" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.174" />
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.174" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.174" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.175" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.175" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.175" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.175" />
   <script>
-    // REV 1.0.174 deployment handshake. The version file is always fetched with cache bypass.
+    // REV 1.0.175 deployment handshake. The version file is always fetched with cache bypass.
     // If GitHub Pages has a newer deployment while this HTML is stale, reload once using a
     // revisioned navigation URL so the browser cannot keep reusing the old document cache.
     (function(){
-      const EXPECTED='1.0.174';
+      const EXPECTED='1.0.175';
       window.__LABOS_EXPECTED_REVISION__=EXPECTED;
       const versionUrl='labos-version.json?ts='+Date.now();
       fetch(versionUrl,{cache:'no-store',headers:{'Cache-Control':'no-cache'}}).then(r=>{
@@ -46,7 +46,7 @@
       }).catch(err=>console.warn('LabOS revision check skipped',err));
     })();
   </script>
-  <link rel="stylesheet" href="labos-styles-1.0.174.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.174.css')" />
+  <link rel="stylesheet" href="labos-styles-1.0.175.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.175.css')" />
   <script>
     (function(){
       const bootErrors=[];window.__LABOS_BOOT_FATAL__=false;window.__LABOS_BOOT_PHASE__='shell';
@@ -88,7 +88,7 @@
       <button id="menuButton" class="icon-button mobile-only" aria-label="Open navigation">☰</button>
       <div class="brand" role="button" tabindex="0" data-nav="dashboard" aria-label="Go to dashboard">
         <img class="brand-logo" src="labos-wordmark.png" alt="LabOS" />
-        <span id="versionBadge" class="version-badge">REV 1.0.174</span>
+        <span id="versionBadge" class="version-badge">REV 1.0.175</span>
       </div>
       <div class="top-actions">
         <div class="global-search-wrap">
@@ -111,15 +111,15 @@
       </div>
     </aside>
     <main id="main" class="main" tabindex="-1">
-      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.174…</div></div>
+      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.175…</div></div>
     </main>
   </div>
   <div id="modalRoot"></div>
   <div id="toastRoot" aria-live="polite" aria-atomic="true"></div>
-  <script src="labos-core-1.0.174.js" onerror="LabOSBootFail('labos-core-1.0.174.js')"></script>
-  <script src="labos-demo-data-1.0.174.js" onerror="LabOSBootFail('labos-demo-data-1.0.174.js')"></script>
-  <script src="labos-repository-1.0.174.js" onerror="LabOSBootFail('labos-repository-1.0.174.js')"></script>
-  <script src="labos-services-1.0.174.js" onerror="LabOSBootFail('labos-services-1.0.174.js')"></script>
-  <script src="labos-app-1.0.174.js" onerror="LabOSBootFail('labos-app-1.0.174.js')"></script>
+  <script src="labos-core-1.0.175.js" onerror="LabOSBootFail('labos-core-1.0.175.js')"></script>
+  <script src="labos-demo-data-1.0.175.js" onerror="LabOSBootFail('labos-demo-data-1.0.175.js')"></script>
+  <script src="labos-repository-1.0.175.js" onerror="LabOSBootFail('labos-repository-1.0.175.js')"></script>
+  <script src="labos-services-1.0.175.js" onerror="LabOSBootFail('labos-services-1.0.175.js')"></script>
+  <script src="labos-app-1.0.175.js" onerror="LabOSBootFail('labos-app-1.0.175.js')"></script>
 </body>
 </html>
