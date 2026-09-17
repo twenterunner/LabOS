@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.164**  
+**Current prototype release: REV 1.0.165**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,26 +9,26 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.164**.
+4. Refresh the page and confirm the header shows **REV 1.0.165**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.164.js`, `labos-services-1.0.164.js`, `labos-repository-1.0.164.js`, `labos-demo-data-1.0.164.js`, `labos-app-1.0.164.js` — application runtime.
-- `labos-styles-1.0.164.css` — application styling.
+- `labos-core-1.0.165.js`, `labos-services-1.0.165.js`, `labos-repository-1.0.165.js`, `labos-demo-data-1.0.165.js`, `labos-app-1.0.165.js` — application runtime.
+- `labos-styles-1.0.165.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.164 — ReisSlim-style Validation flow, adaptive test development and preventive learning
+## REV 1.0.165 — ReisSlim-style Validation flow, adaptive test development and preventive learning
 
 - **The Portfolio navigation tab is removed.** Prototype, Validation, Planning, KPI and Reports now provide the operational views without a separate Portfolio workspace entry.
 - **Prototype Build keeps the established process-flow workflow.** Prototype does not use the Validation designer. Its yellow/green guided workflow, route/process steps, controlled evidence, approvals, genealogy and planning hand-off remain intact.
-- **Validation is now test-flow first.** Opening a Validation programme goes directly to **Validation Test Flow Definition**. The engineer defines the physical test programme first; customer requirements are mapped afterwards as a coverage-assurance layer rather than constructing the programme one requirement at a time.
+- **Validation is test-flow first.** Opening a Validation programme goes directly to **Validation Test Flow Definition**. The engineer defines Test Legs, exact DUT/sample allocation, Standard Tests or controlled Test Development, then continues to shared resource Planning.
 - The Validation designer follows the proven ReisSlim interaction model: independent **Test Leg** columns, sequential tests within a leg, explicit DUT/sample splits, recursive sub-branches, controlled allocation per branch, automatic merge/rejoin into the parent path, tests after merge, and additional independent Test Legs. Activities remain attached to a controlled leg/branch; there are no floating test blocks.
 - Every added Validation test begins with a **test intent**. LabOS ranks the full released Standard Test library and shows the closest matches before allowing new development. Strong matches are directed to reuse; controlled adaptations record the delta from the closest standard; a generic new method is blocked when it would duplicate a strong released match unless a specific controlled delta is supplied.
 - **Method-development time is learned, not fixed.** Adapt/new-test estimates use the closest standard, match gap, controlled delta complexity and actual development effort from comparable completed Validation work. Recording actual development hours updates the learning history for future estimates, with estimate basis and confidence shown to the engineer.
-- Requirements now follow the flow definition as a **Requirements Coverage Check**. They map to one or more already-defined flow tests and highlight uncovered requirements or tests without requirement/engineering rationale. Requirements do not silently create duplicate tests.
+- **Requirement Coverage is removed from the active Validation workflow.** Existing requirement records remain available to historical report/audit logic but no longer appear as a separate workflow tab or planning gate.
 - **Validation remains first-class in shared Planning.** Active Validation demand is planned against the same people, equipment, skills, calibration/maintenance state, closures and existing Prototype bookings. Validation booking records remain identifiable as `domain: Validation` / `programmeType: validation` while sharing the constrained resource calendar.
 - **Lessons Learned are now preventive controls rather than retrospective notes.** Every completed Prototype Build and closed Validation Programme is auto-captured. Material learning records carry the previous problem, evidence/root cause status, prevention control, detection/readiness check, risk, applicability and effectiveness state. Successful closeouts are retained as reference baselines but do not clutter the recurrence-prevention queue.
 - At the start of similar Prototype or Validation work, LabOS surfaces relevant preventive lessons by product and overlapping process/test methods. Users must **Apply control**, give a rationale for **Not applicable**, or create a preventive action. The source lesson is never deleted by that decision.
