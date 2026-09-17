@@ -1,6 +1,15 @@
+
+## REV 1.0.174 — permanent Management Demo launcher
+
+- Help now opens with a visible **Management Demo · Showcase projects** section; it is no longer hidden at the bottom or conditional on a pre-populated settings array.
+- Existing demo browser states are reconciled automatically through `ensureDemoShowcaseV174()`.
+- **Prepare / Refresh / repair showcase** repairs only the additive demo examples and does not reset normal LabOS data.
+- The launcher shows readiness as **N/11** and lists all available presentation records with direct open actions.
+- The demo guide can be opened directly from Help.
+
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.173**  
+**Current prototype release: REV 1.0.174**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -10,17 +19,17 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
 4. If the browser is still showing an older REV after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted current revision URL.
-5. Confirm the header shows **REV 1.0.173**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
+5. Confirm the header shows **REV 1.0.174**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.173.js`, `labos-services-1.0.173.js`, `labos-repository-1.0.173.js`, `labos-demo-data-1.0.173.js`, `labos-app-1.0.173.js` — application runtime.
-- `labos-styles-1.0.173.css` — application styling.
+- `labos-core-1.0.174.js`, `labos-services-1.0.174.js`, `labos-repository-1.0.174.js`, `labos-demo-data-1.0.174.js`, `labos-app-1.0.174.js` — application runtime.
+- `labos-styles-1.0.174.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
-- `DEMO_GUIDE_v1.0.173.md` — management-demo walkthrough and pitch capability map.
-- `QA_REPORT_v1.0.173.md` — release verification and known browser-test limitation.
+- `DEMO_GUIDE_v1.0.174.md` — management-demo walkthrough and pitch capability map.
+- `QA_REPORT_v1.0.174.md` — release verification and known browser-test limitation.
 - `labos-version.json` — cache-bypassed live deployment revision marker.
 - `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
@@ -30,7 +39,7 @@ The deployment package contains the current application, current task-based user
 
 
 
-## REV 1.0.173 — management-demo showcase portfolio
+## REV 1.0.174 — management-demo showcase portfolio
 
 - Adds four dedicated **40-part Prototype builds** so management demos can exercise the full distribution/histogram path rather than only small-sample trend plots:
   - `P26-1101` — normal population, no statistical outliers;
@@ -41,10 +50,10 @@ The deployment package contains the current application, current task-based user
 - Enriches `V26-0103` as a linked Prototype→Validation genealogy/report exemplar with inherited serial identities, four completed tests, per-test photographs, report Test Flow and seeded dependency-replan audit history.
 - Enriches `V26-0104` as a sister-lab Validation/report exemplar with ten standalone DUT identities, completed Test Legs, sample-linked results and controlled report photographs.
 - Existing browser-local demo datasets are upgraded **additively and idempotently** at application boot; Reset Demo Data is not required.
-- Help now includes **Management Demo → Showcase projects** so the presentation records can be opened directly without memorising IDs.
-- `DEMO_GUIDE_v1.0.173.md` provides a recommended walkthrough and pitch-oriented feature map.
+- Help now opens with **Management Demo · Showcase projects** at the top so the presentation records are immediately visible and can be opened directly without memorising IDs.
+- `DEMO_GUIDE_v1.0.174.md` provides a recommended walkthrough and pitch-oriented feature map.
 
-## REV 1.0.173 — Prototype-linked Validation dependency audit hardening
+## REV 1.0.174 — Prototype-linked Validation dependency audit hardening
 
 - A linked Prototype timing movement now creates an explicit controlled **Prototype dependency timing changed** audit event with source Prototype, old/new DUT-availability boundary, prior Validation forecast and prior active booking count.
 - Each dependency movement is retained in `validationDependencyHistoryV173` instead of only overwriting the latest `prototypeImpact` snapshot.

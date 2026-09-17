@@ -1,4 +1,4 @@
-// LabOS REV 1.0.173 emergency reset worker.
+// LabOS REV 1.0.174 emergency reset worker.
 // LabOS does not rely on offline caching. If this worker is registered by an older installation,
 // navigations are network-first and all LabOS/ProtoLab Cache Storage entries are removed.
 self.addEventListener('install', event => { self.skipWaiting(); });
@@ -11,6 +11,6 @@ self.addEventListener('activate', event => {
 });
 self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => fetch('./index.html?labos_rev=1.0.173', { cache: 'no-store' })));
+    event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => fetch('./index.html?labos_rev=1.0.174', { cache: 'no-store' })));
   }
 });
