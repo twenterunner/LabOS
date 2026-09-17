@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.167**  
+**Current prototype release: REV 1.0.168**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -8,21 +8,33 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 ## Deploy
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
-3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.167**.
+3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
+4. If the browser is still showing REV 1.0.166/1.0.167 after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted REV 1.0.168 URL.
+5. Confirm the header shows **REV 1.0.168**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.167.js`, `labos-services-1.0.167.js`, `labos-repository-1.0.167.js`, `labos-demo-data-1.0.167.js`, `labos-app-1.0.167.js` — application runtime.
-- `labos-styles-1.0.167.css` — application styling.
+- `labos-core-1.0.168.js`, `labos-services-1.0.168.js`, `labos-repository-1.0.168.js`, `labos-demo-data-1.0.168.js`, `labos-app-1.0.168.js` — application runtime.
+- `labos-styles-1.0.168.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
+- `labos-version.json` — cache-bypassed live deployment revision marker.
+- `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.167 — rendered Planning/Validation correction and Prototype sticky-layout repair
 
-- Fixes the REV 1.0.165 UI-scope defect: the prior UI extension was outside the main LabOS application closure, so the browser could continue with older rendered paths despite the new helper code being present. REV 1.0.167 installs the changes inside the live application runtime.
+## REV 1.0.168 — deployment self-update hardening
+
+- Fixes the upgrade path where Chrome/GitHub Pages could continue serving a cached REV 1.0.166 document and therefore never execute the newer page's cleanup logic.
+- Adds `labos-version.json`, fetched with `cache: no-store` on every loaded LabOS shell. If the live deployment revision differs from the HTML shell revision, LabOS performs one cache-busted navigation to the live revision.
+- Adds `update.html` as a one-time recovery entry point for already-stuck older deployments. It unregisters service workers and clears Cache Storage without touching IndexedDB/application state, then opens the revisioned 1.0.168 URL.
+- The web-app manifest now uses a revisioned `start_url`, so installed/standalone launches do not depend on an unversioned document URL.
+- Adds document no-cache meta directives and keeps the emergency service worker network-first for navigation if an older installation has one registered.
+
+## REV 1.0.168 — rendered Planning/Validation correction and Prototype sticky-layout repair
+
+- Fixes the REV 1.0.165 UI-scope defect: the prior UI extension was outside the main LabOS application closure, so the browser could continue with older rendered paths despite the new helper code being present. REV 1.0.168 installs the changes inside the live application runtime.
 - Planning now renders one true mixed-domain portfolio with **All / Prototype / Validation** swim-lane filters. Active Validation programmes appear as first-class lanes even before they have bookings, and project/programme titles are the primary visible lane label on desktop and mobile.
 - Validation **Add Test** immediately asks **Standard Test** or **Test Development**. Standard Tests show released acceptance criteria; Test Development requires explicit acceptance criteria and uses the learned cross-domain development estimate.
 - Validation begins with a visible **Define Samples** register. Linked Prototype programmes inherit the Prototype sample IDs/serials; standalone Validation defines its own sample IDs/serials. Exact samples can then be assigned/overridden per test while automatically following the leg/branch flow by default.

@@ -1,11 +1,16 @@
-// LabOS 1.0.167 deployment reset worker.
-// No offline runtime cache: rapid GitHub Pages updates must never be masked by stale assets.
+// LabOS REV 1.0.168 emergency reset worker.
+// LabOS does not rely on offline caching. If this worker is registered by an older installation,
+// navigations are network-first and all LabOS/ProtoLab Cache Storage entries are removed.
 self.addEventListener('install', event => { self.skipWaiting(); });
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     await Promise.all(keys.filter(k => /protolab|labos/i.test(k)).map(k => caches.delete(k)));
     await self.clients.claim();
-    await self.registration.unregister();
   })());
+});
+self.addEventListener('fetch', event => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => fetch('./index.html?labos_rev=1.0.168', { cache: 'no-store' })));
+  }
 });

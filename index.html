@@ -2,15 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c5862" />
   <meta name="description" content="Laboratory Operations System proof-of-concept for automotive prototype, validation and engineering laboratory operations." />
   <title>LabOS — Laboratory Operations System</title>
-  <link rel="manifest" href="manifest.webmanifest?v=1.0.167" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.167" />
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.167" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.167" />
-  <link rel="stylesheet" href="labos-styles-1.0.167.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.167.css')" />
+  <link rel="manifest" href="manifest.webmanifest?v=1.0.168" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.168" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.168" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.168" />
+  <script>
+    // REV 1.0.168 deployment handshake. The version file is always fetched with cache bypass.
+    // If GitHub Pages has a newer deployment while this HTML is stale, reload once using a
+    // revisioned navigation URL so the browser cannot keep reusing the old document cache.
+    (function(){
+      const EXPECTED='1.0.168';
+      window.__LABOS_EXPECTED_REVISION__=EXPECTED;
+      const versionUrl='labos-version.json?ts='+Date.now();
+      fetch(versionUrl,{cache:'no-store',headers:{'Cache-Control':'no-cache'}}).then(r=>{
+        if(!r.ok) throw new Error('version '+r.status);
+        return r.json();
+      }).then(v=>{
+        const live=String(v&&v.revision||'').trim();
+        if(!live || live===EXPECTED){
+          try{sessionStorage.removeItem('labos-update-attempt:'+EXPECTED)}catch(_e){}
+          return;
+        }
+        const key='labos-update-attempt:'+live;
+        let attempted=false;
+        try{attempted=sessionStorage.getItem(key)==='1'}catch(_e){}
+        if(attempted){
+          window.__LABOS_DEPLOYMENT_MISMATCH__={page:EXPECTED,server:live};
+          console.warn('LabOS deployment mismatch after refresh attempt',window.__LABOS_DEPLOYMENT_MISMATCH__);
+          return;
+        }
+        try{sessionStorage.setItem(key,'1')}catch(_e){}
+        const u=new URL(location.href);
+        u.searchParams.set('labos_rev',live);
+        u.searchParams.set('refresh',Date.now().toString());
+        location.replace(u.toString());
+      }).catch(err=>console.warn('LabOS revision check skipped',err));
+    })();
+  </script>
+  <link rel="stylesheet" href="labos-styles-1.0.168.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.168.css')" />
   <script>
     (function(){
       const bootErrors=[];window.__LABOS_BOOT_FATAL__=false;window.__LABOS_BOOT_PHASE__='shell';
@@ -52,7 +88,7 @@
       <button id="menuButton" class="icon-button mobile-only" aria-label="Open navigation">☰</button>
       <div class="brand" role="button" tabindex="0" data-nav="dashboard" aria-label="Go to dashboard">
         <img class="brand-logo" src="labos-wordmark.png" alt="LabOS" />
-        <span id="versionBadge" class="version-badge">REV 1.0.167</span>
+        <span id="versionBadge" class="version-badge">REV 1.0.168</span>
       </div>
       <div class="top-actions">
         <div class="global-search-wrap">
@@ -75,15 +111,15 @@
       </div>
     </aside>
     <main id="main" class="main" tabindex="-1">
-      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.167…</div></div>
+      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.168…</div></div>
     </main>
   </div>
   <div id="modalRoot"></div>
   <div id="toastRoot" aria-live="polite" aria-atomic="true"></div>
-  <script src="labos-core-1.0.167.js" onerror="LabOSBootFail('labos-core-1.0.167.js')"></script>
-  <script src="labos-demo-data-1.0.167.js" onerror="LabOSBootFail('labos-demo-data-1.0.167.js')"></script>
-  <script src="labos-repository-1.0.167.js" onerror="LabOSBootFail('labos-repository-1.0.167.js')"></script>
-  <script src="labos-services-1.0.167.js" onerror="LabOSBootFail('labos-services-1.0.167.js')"></script>
-  <script src="labos-app-1.0.167.js" onerror="LabOSBootFail('labos-app-1.0.167.js')"></script>
+  <script src="labos-core-1.0.168.js" onerror="LabOSBootFail('labos-core-1.0.168.js')"></script>
+  <script src="labos-demo-data-1.0.168.js" onerror="LabOSBootFail('labos-demo-data-1.0.168.js')"></script>
+  <script src="labos-repository-1.0.168.js" onerror="LabOSBootFail('labos-repository-1.0.168.js')"></script>
+  <script src="labos-services-1.0.168.js" onerror="LabOSBootFail('labos-services-1.0.168.js')"></script>
+  <script src="labos-app-1.0.168.js" onerror="LabOSBootFail('labos-app-1.0.168.js')"></script>
 </body>
 </html>
