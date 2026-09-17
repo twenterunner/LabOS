@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.171**  
+**Current prototype release: REV 1.0.172**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -10,20 +10,31 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
 4. If the browser is still showing an older REV after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted current revision URL.
-5. Confirm the header shows **REV 1.0.171**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
+5. Confirm the header shows **REV 1.0.172**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.171.js`, `labos-services-1.0.171.js`, `labos-repository-1.0.171.js`, `labos-demo-data-1.0.171.js`, `labos-app-1.0.171.js` — application runtime.
-- `labos-styles-1.0.171.css` — application styling.
+- `labos-core-1.0.172.js`, `labos-services-1.0.172.js`, `labos-repository-1.0.172.js`, `labos-demo-data-1.0.172.js`, `labos-app-1.0.172.js` — application runtime.
+- `labos-styles-1.0.172.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `labos-version.json` — cache-bypassed live deployment revision marker.
 - `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
 
+
+
+## REV 1.0.172 — Validation Test Flow and photographic test evidence
+
+- The controlled Validation Test Report now includes the released **Test Flow** itself: independent Test Legs, sequential tests, DUT/sample splits, nested branches and merge/rejoin points. The flow is snapshotted into the controlled report revision instead of being presented only as a flat test list.
+- Validation Execution now keeps every completed test reopenable through **Result / photos**. Test evidence therefore remains editable/reviewable after the first Pass/Fail entry instead of becoming inaccessible.
+- Each Validation test accepts up to **8 controlled photographs**. On mobile the user can take a photo directly or choose existing images. Photos are resized to a maximum of 1600 px and compressed before IndexedDB storage.
+- Every photo retains caption/observation, uploader/time and an optional link to the exact DUT/sample/serial. The user can explicitly choose whether each photo is included in the Validation Report.
+- Included photographs are shown under the corresponding test in the Validation Report with caption, observation and DUT/serial traceability.
+- Test-flow changes and photographic-evidence changes are part of the Validation evidence fingerprint. Any such change after report approval invalidates the approval and requires controlled re-review.
+- Photo binaries live once in the controlled Validation evidence store. Persisted report revisions retain photo evidence IDs/metadata without duplicating base64 image payloads into every historical report revision.
 
 ## REV 1.0.171 — Validation report launcher repair
 
