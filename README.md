@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.168**  
+**Current prototype release: REV 1.0.169**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,20 +9,29 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
-4. If the browser is still showing REV 1.0.166/1.0.167 after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted REV 1.0.168 URL.
-5. Confirm the header shows **REV 1.0.168**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
+4. If the browser is still showing an older REV after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted current revision URL.
+5. Confirm the header shows **REV 1.0.169**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.168.js`, `labos-services-1.0.168.js`, `labos-repository-1.0.168.js`, `labos-demo-data-1.0.168.js`, `labos-app-1.0.168.js` — application runtime.
-- `labos-styles-1.0.168.css` — application styling.
+- `labos-core-1.0.169.js`, `labos-services-1.0.169.js`, `labos-repository-1.0.169.js`, `labos-demo-data-1.0.169.js`, `labos-app-1.0.169.js` — application runtime.
+- `labos-styles-1.0.169.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `labos-version.json` — cache-bypassed live deployment revision marker.
 - `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
+
+
+## REV 1.0.169 — controlled result traceability and test-report assurance
+
+- Validation result entry now makes the controlled chain explicit before data entry: **part number / product revision → Validation programme → test + method revision → exact DUT/sample + formal serial number → measured result / outcome → evidence reference**. Results are stored per DUT rather than only as a programme-level Pass/Fail.
+- A changed Validation result invalidates an already approved report and requires a new controlled review. Failed results may be included in a final report only after the technical-record/disposition evidence is complete; a failure is not hidden or converted into a pass.
+- The controlled Validation report adds a document-control cover, part/programme/lab/sample identity, DUT×test traceability matrix, test-method revision and acceptance criteria, per-DUT evidence, operator/time, equipment and calibration evidence, personnel competence evidence, numeric DUT trend charts (including controlled target/limits when available), requirement/source traceability, report revision/approval and audit-event evidence.
+- Prototype reports add explicit part-number/programme/customer identity, technical-record readiness and sample-level numeric test plots. Small prototype/validation samples are treated descriptively; LabOS no longer presents a capability index as meaningful when fewer than 30 numeric observations are available.
+- These controls are **IATF-aligned evidence aids**, not a claim that the software alone makes a laboratory or report IATF 16949 compliant. The organization still has to apply its customer-specific requirements, controlled laboratory scope, approved test methods, competence rules, measurement-system/calibration controls and any external-laboratory qualification/accreditation requirements.
 
 ## REV 1.0.168 — deployment self-update hardening
 
