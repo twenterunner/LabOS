@@ -1,20 +1,28 @@
+# LabOS Prototype Build POC
 
-## REV 1.0.176 — permanent Management Demo launcher
+## REV 1.0.178 — complex Validation + engine-driven learning demo
+
+REV 1.0.178 changes `V26-0205` into a completed 24-DUT **18 V brushless cordless drill/driver** Design Validation with 4 Test Legs, 31 tests, two split/branch/merge structures, realistic power-tool engineering records, setup photographs and a FINAL approved Validation Report.
+
+The Management Demo also exposes engine-generated prevention and development learning. Historical demo projects seed execution evidence and measured development actuals; the normal LabOS closeout/similarity/development-estimation engines generate the lessons and future recommendations. Key proof records are P26-1201 → P26-1202 and V26-0201/V26-0202/V26-0205 → V26-0206.
+
+
+## REV 1.0.178 — permanent Management Demo launcher
 
 - Help now opens with a visible **Management Demo · Showcase projects** section; it is no longer hidden at the bottom or conditional on a pre-populated settings array.
-- Existing demo browser states are reconciled automatically through `ensureDemoShowcaseV174()`.
+- Existing demo browser states are reconciled automatically through `ensureDemoShowcaseV177()`.
 - **Prepare / Refresh / repair showcase** repairs only the additive demo examples and does not reset normal LabOS data.
-- The launcher shows readiness as **N/11** and lists all available presentation records with direct open actions.
+- The launcher shows readiness as **N/16** and lists all available presentation records with direct open actions.
 - The demo guide can be opened directly from Help.
 
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.176**  
+**Current prototype release: REV 1.0.178**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
 
-## REV 1.0.176 · Validation technical-report upgrade
+## REV 1.0.178 · Validation technical-report upgrade
 
 Validation reporting now uses a native, controlled technical-report structure designed around ISO/IEC 17025-style reporting expectations and IATF laboratory evidence needs. It does **not** claim accreditation or certification.
 
@@ -30,17 +38,17 @@ Validation reporting now uses a native, controlled technical-report structure de
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
 4. If the browser is still showing an older REV after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted current revision URL.
-5. Confirm the header shows **REV 1.0.176**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
+5. Confirm the header shows **REV 1.0.178**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.176.js`, `labos-services-1.0.176.js`, `labos-repository-1.0.176.js`, `labos-demo-data-1.0.176.js`, `labos-app-1.0.176.js` — application runtime.
-- `labos-styles-1.0.176.css` — application styling.
+- `labos-core-1.0.178.js`, `labos-services-1.0.178.js`, `labos-repository-1.0.178.js`, `labos-demo-data-1.0.178.js`, `labos-app-1.0.178.js` — application runtime.
+- `labos-styles-1.0.178.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
-- `DEMO_GUIDE_v1.0.176.md` — management-demo walkthrough and pitch capability map.
-- `QA_REPORT_v1.0.176.md` — release verification and known browser-test limitation.
+- `DEMO_GUIDE_v1.0.178.md` — management-demo walkthrough and pitch capability map.
+- `QA_REPORT_v1.0.178.md` — release verification and known browser-test limitation.
 - `labos-version.json` — cache-bypassed live deployment revision marker.
 - `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
@@ -50,7 +58,7 @@ The deployment package contains the current application, current task-based user
 
 
 
-## REV 1.0.176 — management-demo showcase portfolio
+## REV 1.0.178 — management-demo showcase portfolio
 
 - Adds four dedicated **40-part Prototype builds** so management demos can exercise the full distribution/histogram path rather than only small-sample trend plots:
   - `P26-1101` — normal population, no statistical outliers;
@@ -62,9 +70,9 @@ The deployment package contains the current application, current task-based user
 - Enriches `V26-0104` as a sister-lab Validation/report exemplar with ten standalone DUT identities, completed Test Legs, sample-linked results and controlled report photographs.
 - Existing browser-local demo datasets are upgraded **additively and idempotently** at application boot; Reset Demo Data is not required.
 - Help now opens with **Management Demo · Showcase projects** at the top so the presentation records are immediately visible and can be opened directly without memorising IDs.
-- `DEMO_GUIDE_v1.0.176.md` provides a recommended walkthrough and pitch-oriented feature map.
+- `DEMO_GUIDE_v1.0.178.md` provides a recommended walkthrough and pitch-oriented feature map.
 
-## REV 1.0.176 — Prototype-linked Validation dependency audit hardening
+## REV 1.0.178 — Prototype-linked Validation dependency audit hardening
 
 - A linked Prototype timing movement now creates an explicit controlled **Prototype dependency timing changed** audit event with source Prototype, old/new DUT-availability boundary, prior Validation forecast and prior active booking count.
 - Each dependency movement is retained in `validationDependencyHistoryV173` instead of only overwriting the latest `prototypeImpact` snapshot.
