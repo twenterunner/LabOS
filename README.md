@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.162**  
+**Current prototype release: REV 1.0.163**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -9,30 +9,29 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 1. Extract this ZIP.
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html` at repository root.
-4. Refresh the page and confirm the header shows **REV 1.0.162**.
+4. Refresh the page and confirm the header shows **REV 1.0.163**.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.162.js`, `labos-services-1.0.162.js`, `labos-repository-1.0.162.js`, `labos-demo-data-1.0.162.js`, `labos-app-1.0.162.js` — application runtime.
-- `labos-styles-1.0.162.css` — application styling.
+- `labos-core-1.0.163.js`, `labos-services-1.0.163.js`, `labos-repository-1.0.163.js`, `labos-demo-data-1.0.163.js`, `labos-app-1.0.163.js` — application runtime.
+- `labos-styles-1.0.163.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-## REV 1.0.162 — one visual Programme Builder for Prototype and Validation
+## REV 1.0.163 — Prototype process flow, guided Validation designer, integrated planning and product learning
 
-- Replaces the older lane-oriented programme editor with one reusable **LabOS Programme Builder** used by both Prototype Build and Validation Programme construction. It is one canvas engine with domain adapters, not two builders.
-- Uses a structured left-to-right programme model: every activity belongs to the main flow or a controlled parallel leg; normal use never leaves floating activities and users do not draw connector arrows manually.
-- Adds activity/test library, central canvas, selected-item properties, undo/redo, zoom −/+/Fit, auto-layout, search/jump, programme validation, Save and feasibility checking.
-- Supports forgiving drag/drop insertion, reordering, movement between legs, multi-select movement, new parallel-leg creation, nested splits, split/merge reconstruction, leg rename/move/delete, duplication, replacement and safe deletion impact review.
-- Adds visual DUT/sample allocation for fixed quantity, percentage, same-DUT continuation, destructive testing and retained samples. Over-allocation and impossible destructive reuse are blocking validation findings.
-- Validation requirements are draggable. Dropping a requirement opens ranked Standard Test matches and can create a controlled test-development activity when no suitable released method exists; requirement links remain traceable through replacement where valid.
-- Adds reusable Prototype and Validation subflow templates, recently used/favorites/search categories, optional Structure/Requirements/Resources/Planning/Execution overlays and a minimap only for larger programmes.
-- Draft programmes remain low-friction. Structural edits to Released programmes use controlled revision handling and rationale; Draft / Under Review / Released / Superseded is visible in the builder.
-- Mobile/tablet keeps the same programme model while providing tap selection, long-press/drag support and explicit move controls so precision drag/drop is not mandatory.
-- Existing Prototype routes and Validation legs/activities migrate into the new shared structure at repository load and synchronise back into the existing planner, execution, genealogy, requirement, booking and audit records. Existing IDs are preserved. Schema remains **38** and no reset is required.
-- Performance/regression qualification includes >100 activities, >20 parallel legs, dependency-loop/orphan checks, destructive genealogy cases, save/reload-shaped persistence, controlled revisions and real rendered browser drag/drop.
+- **Prototype Build keeps the established process-flow workflow.** The REV 1.0.162 visual Programme Builder is no longer shown in Prototype. The existing build workflow, route/process steps, current yellow action, controlled evidence, approvals, genealogy and planning hand-off remain the operating model.
+- **Validation uses a dedicated guided visual designer** adapted to the proven LabOS interaction pattern in the ReisSlim repository: programme definition → DUT population → standard-test selection → explicit sequential flow / split branches / merge → readiness → shared resource planning. It remains visual and drag/reorder capable, but does not force Prototype into the same construction UI.
+- Validation programme design continues to use controlled structured data underneath, including requirement links, DUT genealogy, dependencies, sister-lab/external work and released-programme revision controls.
+- **Validation demand is now first-class in Planning.** The main Planning workspace shows Prototype + Validation demand, planned/unplanned Validation counts, combined commitment health and the shared swimlane/resource calendar. `PLAN VALIDATION DEMAND` plans active Validation programmes against the same people, equipment, calibration/maintenance, skills, closures and existing Prototype bookings.
+- Validation booking records remain identifiable as `domain: Validation` / `programmeType: validation` while sharing the same constrained resource calendar.
+- **Automatic lessons learned are captured for every completed Prototype Build and closed Validation Programme**, including a baseline record when no material exception occurred. Captured evidence includes quality/result exceptions, replans, development activity, process/test duration overrun and network-routing/recovery context where present.
+- Similar-product learning is automatically surfaced at the start of the next Prototype Build or Validation Programme, prioritising exact product history and then overlapping processes/tests. Users can mark a surfaced lesson reviewed or not applicable without deleting the source learning record.
+- Reports now include a **Product Lessons Learned Report** consolidating Prototype + Validation history for the selected product, recurring recommendations and evidence history, with CSV export and browser print/PDF output.
+- Existing accepted lessons remain interoperable: automatic closeout learning is mirrored into the controlled LabOS lessons store so current lessons/reuse workflows continue to benefit from the new capture.
+- Schema remains **38** and existing IDs, planning, results, audit history and execution evidence are preserved. No data reset is required.
 
 ## REV 1.0.150 — canonical equipment/resource semantics
 
