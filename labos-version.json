@@ -1,6 +1,6 @@
 {
-  "revision": "1.0.178",
-  "runtime": "1.0.178-poc",
+  "revision": "1.0.179",
+  "runtime": "1.0.179-poc",
   "deployment": "2026-09-17",
   "cachePolicy": "network-check"
 }
