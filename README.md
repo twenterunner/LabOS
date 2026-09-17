@@ -183,6 +183,6 @@ LabOS provides **IATF 16949- and ISO/IEC 17025-oriented workflow/evidence suppor
 Planning/Validation UX restoration: Prototype-style Validation search, six interactive Planning KPI filters, timeline −/+ / FIT controls, mouse drag-to-scroll, per-project Optimize recovery / Compare sister lab actions, and removal of Programme commitment health.
 
 
-## REV 1.0.184 navigation architecture
+## REV 1.0.185 navigation architecture
 
 Planning and Audit Readiness are registered with the application router through the canonical view-renderer registry. Planning is always visible under Shared operations; the actual menu navigation path is regression-tested across all demo roles.
