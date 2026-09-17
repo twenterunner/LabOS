@@ -1,6 +1,6 @@
 # LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.172**  
+**Current prototype release: REV 1.0.173**  
 **Data schema: 38**
 
 LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
@@ -10,21 +10,48 @@ LabOS is a static-browser proof of concept for controlled prototype-build and en
 2. Upload the complete ZIP contents to the GitHub Pages repository root.
 3. Keep `index.html`, `labos-version.json` and `update.html` at repository root.
 4. If the browser is still showing an older REV after deployment, open `update.html` once. It clears only browser caches/service-worker registrations (not LabOS IndexedDB data) and redirects to a cache-busted current revision URL.
-5. Confirm the header shows **REV 1.0.172**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
+5. Confirm the header shows **REV 1.0.173**. Future deployments are checked automatically through the cache-bypassed `labos-version.json` handshake.
 
 The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
 ## Main files
 - `index.html` — application shell.
-- `labos-core-1.0.172.js`, `labos-services-1.0.172.js`, `labos-repository-1.0.172.js`, `labos-demo-data-1.0.172.js`, `labos-app-1.0.172.js` — application runtime.
-- `labos-styles-1.0.172.css` — application styling.
+- `labos-core-1.0.173.js`, `labos-services-1.0.173.js`, `labos-repository-1.0.173.js`, `labos-demo-data-1.0.173.js`, `labos-app-1.0.173.js` — application runtime.
+- `labos-styles-1.0.173.css` — application styling.
 - `USER_MANUAL.html` — current task-based help.
+- `DEMO_GUIDE_v1.0.173.md` — management-demo walkthrough and pitch capability map.
+- `QA_REPORT_v1.0.173.md` — release verification and known browser-test limitation.
 - `labos-version.json` — cache-bypassed live deployment revision marker.
 - `update.html` — one-time emergency updater for a browser stuck on an older cached LabOS shell; it preserves LabOS user/demo data.
 - `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
 
 
+
+
+
+## REV 1.0.173 — management-demo showcase portfolio
+
+- Adds four dedicated **40-part Prototype builds** so management demos can exercise the full distribution/histogram path rather than only small-sample trend plots:
+  - `P26-1101` — normal population, no statistical outliers;
+  - `P26-1102` — normal process core with one deliberate statistical flier that remains inside the engineering specification;
+  - `P26-1103` — clearly bimodal / non-normal population without isolated IQR outliers;
+  - `P26-1104` — skewed non-normal population with a deliberate high flier outside specification and an open controlled quality hold.
+- Every statistical showcase has **40 physical sample/serial identities**, 40 controlled numeric measurements and representative controlled photographs that appear in the Prototype Build Report.
+- Enriches `V26-0103` as a linked Prototype→Validation genealogy/report exemplar with inherited serial identities, four completed tests, per-test photographs, report Test Flow and seeded dependency-replan audit history.
+- Enriches `V26-0104` as a sister-lab Validation/report exemplar with ten standalone DUT identities, completed Test Legs, sample-linked results and controlled report photographs.
+- Existing browser-local demo datasets are upgraded **additively and idempotently** at application boot; Reset Demo Data is not required.
+- Help now includes **Management Demo → Showcase projects** so the presentation records can be opened directly without memorising IDs.
+- `DEMO_GUIDE_v1.0.173.md` provides a recommended walkthrough and pitch-oriented feature map.
+
+## REV 1.0.173 — Prototype-linked Validation dependency audit hardening
+
+- A linked Prototype timing movement now creates an explicit controlled **Prototype dependency timing changed** audit event with source Prototype, old/new DUT-availability boundary, prior Validation forecast and prior active booking count.
+- Each dependency movement is retained in `validationDependencyHistoryV173` instead of only overwriting the latest `prototypeImpact` snapshot.
+- If a linked Validation already has a committed resource plan, the automatic constrained replan now writes a separate **Prototype-linked Validation auto-replan completed** event with old/new Validation forecasts, old/new booking counts and affected booking IDs.
+- Failed automatic replans write **Prototype-linked Validation auto-replan failed**, retain the previous committed plan as controlled evidence, mark the programme as recovery-required and expose a High-severity recovery action.
+- Normal Validation planning audit wording now distinguishes first planning from **replanning**; it no longer records every replan as `Unplanned → forecast`.
+- The automatic dependency events are explicitly tagged `trigger = Automatic dependency propagation`, while retaining the signed-in user/role that caused the save/reconciliation.
 
 ## REV 1.0.172 — Validation Test Flow and photographic test evidence
 
