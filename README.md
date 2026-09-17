@@ -1,109 +1,77 @@
-# LabOS REV 1.0.160
+# LabOS — Laboratory Operations System
 
-**Current prototype release: REV 1.0.160**  
-**Browser schema: 38**  
-**Baseline strategy:** rebuilt from the clean REV 1.0.151 Prototype application so Validation uses the same application runtime, navigation, workflow shell and Programme Logic visual language rather than a parallel mini-app.
+**Current prototype release: REV 1.0.161**  
+**Data schema: 38**
 
-## Run the static PoC
+LabOS is a static-browser proof of concept for controlled prototype-build and engineering-laboratory operations. It is designed for GitHub Pages deployment and stores POC state in IndexedDB in the browser.
 
-1. Extract the ZIP.
-2. Open `index.html` in a modern Chromium-based browser, or serve the folder from a simple static web server.
-3. Confirm the header shows **REV 1.0.160**.
-4. The PoC uses browser-local persistence. Use the existing export/import controls before clearing browser site data.
+## Deploy
+1. Extract this ZIP.
+2. Upload the complete ZIP contents to the GitHub Pages repository root.
+3. Keep `index.html` at repository root.
+4. Refresh the page and confirm the header shows **REV 1.0.161**.
 
-## Runtime files
+The deployment package contains the current application, current task-based user manual and required assets. Historical QA/changelog files are deliberately kept outside the runtime ZIP.
 
-- `index.html` — application entry point.
-- `labos-core-1.0.160.js` — common domain/model utilities and KPI definitions.
-- `labos-demo-data-1.0.160.js` — populated Prototype demo state.
-- `labos-repository-1.0.160.js` — local persistence/repository layer.
-- `labos-services-1.0.160.js` — shared planning, readiness and domain services.
-- `labos-app-1.0.160.js` — the **single canonical application runtime**, including Prototype and Validation UI/workflows.
-- `labos-styles-1.0.160.css` — shared styling for both workstreams.
-- `service-worker.js` — deployment-reset worker; no long-lived offline runtime cache.
+## Main files
+- `index.html` — application shell.
+- `labos-core-1.0.161.js`, `labos-services-1.0.161.js`, `labos-repository-1.0.161.js`, `labos-demo-data-1.0.161.js`, `labos-app-1.0.161.js` — application runtime.
+- `labos-styles-1.0.161.css` — application styling.
+- `USER_MANUAL.html` — current task-based help.
+- `manifest.webmanifest`, `service-worker.js`, icons/images and `assets/` — deployment assets.
 
-There is deliberately **no separate Validation application/runtime** in this release.
+## REV 1.0.161 — Validation rebuilt from the REV 1.0.151 Prototype architecture
 
-## REV 1.0.160 — Prototype UX is the master pattern
+- Uses **REV 1.0.151 as the clean implementation baseline** for the Validation reset. Validation is integrated into the canonical LabOS runtime rather than loaded as a separate application.
+- Adds `programmeType = prototype | validation` while preserving the existing Prototype request/build model and shared resource services.
+- Validation reuses the Prototype page shell, guided-workspace grammar, cards, status semantics, shared Programme Logic canvas, planning language, constrained planner, equipment/staff/calibration/skill data, Portfolio, My Work, KPI framework, reporting and Archive Manager.
+- Adds requirements-first Validation: controlled requirement entry/import, closest released Standard Test ranking, reuse/adapt/combine/new-method decisions, delta visibility, controlled test-development activities, multi-leg programme generation and RTM status roll-up.
+- Validation and Prototype compete for the same constrained resources. Linked Prototype timing propagates into DUT availability and downstream Validation replanning; sister-lab comparison uses the same planning constraints.
+- Adds controlled Validation execution/results/evidence, automatic Validation Report generation, Validation KPI contribution and a unified Prototype + Validation Archive Manager.
+- Adds a shared learning bridge: Validation automatically captures evidence-based learning, surfaces relevant accepted Prototype/Validation lessons, and records Apply / Acknowledge / Dismiss / Convert-to-improvement decisions. Closeout is blocked until newly detected learning is reviewed.
+- Preserves schema-38 compatibility and the schema 37 → 38 migration path so browsers that previously ran Validation builds do not fail with a newer-schema startup error.
 
-REV 1.0.160 changes the implementation strategy. Validation is rebuilt inside the proven REV 1.0.151 Prototype shell instead of being developed beside it and cosmetically harmonised later.
+## REV 1.0.150 — canonical equipment/resource semantics
 
-The operating rule is:
+- Fixed execution start/complete rejecting valid optical/microscope equipment when older records only carried a broad legacy capability/category.
+- Added one canonical technical capability resolver used by planning, execution, load balancing, capacity forecasting and cost estimation.
+- Added execution-readiness checks that combine technical capability, operational status, calibration, maintenance and governance readiness.
+- Added a boundary migration that materialises canonical `planningCapability` values for older/imported equipment, process, test and booking records while retaining legacy descriptive fields.
+- Removed direct raw `.capability === ...` / `.capability !== ...` business-logic comparisons from core, services and app runtime.
+- Added resource-semantic consistency audit and targeted regression hooks.
+- Preserved the REV 1.0.147 review-before-approval and independent Control Plan approval fixes.
 
-> If a Validation interaction can reasonably behave like the corresponding Prototype interaction, it uses the same LabOS component and interaction pattern.
+## REV 1.0.144 — product-safe request and network-aware planning
+- **Control Plan selection is product-scoped.** The new-request and Controls decision dropdowns show only approved reusable baselines whose controlled provenance resolves to the same product. A current/legacy Control Plan from another product cannot bypass the filter. Different revisions of the same product may still be proposed as a baseline; build-specific deltas and approvals remain controlled later.
+- **Engineering-supplied material now has an explicit submission gate:** accountable supply owner + valid expected arrival at the lab. The user may continue completing a Draft, but the Draft cannot be submitted to the controlled build workflow until the timing basis exists (unless the exact material has already been issued).
+- A known engineering-supply ETA is a **planning basis, not physical availability**. Resource definition/planning may proceed and AUTO PLAN uses that ETA as the earliest material-available date; Build Readiness/execution remains blocked until exact receipt/issue evidence exists. Lab-supplied material must be resolved in the Material step through exact stock reservation or a dated incoming supply plan before Plan & commit.
+- **AUTO PLAN no longer stops at the home-lab dead end.** When the home result is unplanned, blocked, or has no verified optimization, LabOS automatically runs the canonical planner against every active sister lab and displays the configured external facility alternative with timing and cost evidence. Sister-lab routing still uses the formal sender/receiver acceptance handshake; external execution is qualified through the governed scenario decision before LIVE application.
+- The network recovery panel clearly distinguishes home recovery, sister-lab transfer and external outsourcing so “no local plan” is not presented as “no planning option”.
 
-Shared patterns include portfolio navigation, fixed programme cockpit, workflow steps, Programme Logic canvas, leg/lane styling, node cards, action placement, planning semantics, audit, reports, lessons, Archive Manager and mobile treatment.
+### Guided build operating model retained
+- The build workspace now uses one persistent sticky cockpit. It shows **Build number, Requested delivery, Original commitment, Current commitment, Latest forecast, Build workflow, Substeps, Planning, Current stage & owner, Approvals, and Next step & owner**.
+- Workflow semantics are consistent: **green = completed evidence; yellow = the one action required now; grey = future/locked**. A real blocker is explained inside the current yellow action rather than becoming a second navigation scheme.
+- The process-step body starts with **Purpose**, then the **yellow executable action**, then **Evidence progression**, followed by the detailed work for that step. Completed selected steps show green; future steps are read-only.
+- Stage completion is evidence-driven. Approved/reused Control Plan evidence plus completed build-specific sign-offs closes Controls automatically; there is no redundant “confirm controls” acknowledgement after the real controlled action is complete.
+- The guided-step engine resolves legacy/lazy state changes to a bounded fixed point before rendering. This prevents the first render from showing a previous stage while the underlying evidence already points to the next stage.
+- Formal Build Readiness Review remains an explicit controlled human sign-off where the assurance profile requires it; the button now uses a navigation-safe handler.
+- Async completion actions no longer force a late tab change if the user has already moved to a different build.
+- Execution includes batch productivity tools: immutable Lab Sample IDs, bulk formal-serial series generation/editing, sample-register CSV import/export, batch-fill of controlled sample parameters, and the existing evidence-matrix/process-step CSV import/export.
+- **Materials & Inventory is now editable after receipt** without destroying genealogy: authorised users can correct/set available quantity, add found/received quantity, record scrap/consumption, quarantine/release a lot, and update location/expiry/source evidence with a required reason and optional reference. Reserved build allocations can be resized/released; issued build material can be recorded as scrap/loss as a separate traceable disposition.
+- The Controls stage now has **one canonical evidence gate** used by the green substeps, the yellow action, automatic reconciliation and click-time validation. A visually-complete Controls stage therefore advances automatically; if evidence is genuinely missing, the yellow action identifies the exact missing approval/evidence and owner instead of showing a dead-end error toast.
 
-## Validation workflow
+## Audit behavior retained from REV 1.0.141
+- Audit build population is **completed/CLOSED builds only**.
+- In-progress builds with nonconformities remain visible in **Operational watch**, but are excluded from audit findings, score, findings CSV and printed audit evidence pack.
+- Build-linked audit findings cite the **specific build, deliverable, owner and record reference**.
 
-The controlled Validation flow starts with requirements:
+## Data / evidence boundary
+The POC uses browser-local persistence and JSON export/import. A production shared deployment should use governed backend storage for transactional data and evidence files while retaining stable IDs, controlled revisions, objective evidence, approval history and audit history.
 
-1. **Requirements** — define or import the customer specification and review source clauses.
-2. **Programme Logic** — generate/review the snapped test-leg/sequence graph.
-3. **Resource Plan** — use the same constrained LabOS planning resources and calendars as Prototype.
-4. **Readiness** — equipment, competence, method, calibration/MSA and DUT readiness.
-5. **Execution** — execute controlled tests and capture evidence/results.
-6. **Verification** — roll results back to customer requirements/RTM.
-7. **Report & Close** — controlled report, approval, archive and lessons learned.
+## Compliance boundary
+LabOS provides **IATF 16949- and ISO/IEC 17025-oriented workflow/evidence support**. It is not a certification system and does not replace the deploying organisation's QMS, customer-specific requirements, controlled procedures, auditor judgement, records-retention rules or approval authorities.
 
-Opening a Validation programme starts at **Requirements**.
-
-## Customer specification → Validation programme
-
-Validation may be defined manually or imported from customer-controlled content. The structured template supports customer programme intent, not only a flat requirement list. Fields include requirement/clause identity, requirement text, acceptance criteria, test leg, sequence, predecessor, DUT quantity/context and verification intent.
-
-The primary guided flow is:
-
-**Customer requirements → mapping review → Generate Validation Programme → snapped Programme Logic → shared planner.**
-
-For each requirement the engineer reviews an explicit verification decision:
-
-- **Reuse** a released Standard Test;
-- **Adapt** an existing test/method;
-- **Combine** multiple controlled tests;
-- **Develop new** where no adequate method exists;
-- **Other verification** with controlled justification.
-
-Mapping remains an engineering decision. LabOS may propose a reusable method, but a proposal does not itself approve requirement coverage.
-
-### Worked customer-PDF example
-
-The in-app worked example stages four customer clauses into two independent legs:
-
-- **Environmental durability**: thermal exposure → functional verification;
-- **Mechanical durability**: vibration → functional verification.
-
-After requirement review and mapping, LabOS generates separate execution occurrences for each customer leg even when the same released Standard Test is reused. This preserves the correct DUT genealogy and sequence while reusing the controlled method definition.
-
-## Programme Logic
-
-Prototype and Validation use the same Programme Logic renderer and visual grammar.
-
-- visible legs/lanes;
-- blocks snapped to a controlled leg rather than freely floating between legs;
-- dependency/sequence connectors;
-- shared node-card treatment;
-- zoom and auto-layout;
-- mobile-friendly interaction;
-- controlled structural changes with audit history.
-
-For Prototype, route/process/test definitions are adapted into the same canvas. For Validation, customer requirements and mapping decisions generate the test programme graph. Domain-specific controls remain around the common canvas rather than creating a second canvas implementation.
-
-## Archive Manager
-
-Archive Manager is a platform capability for both Prototype and Validation. Active Prototype builds and Validation programmes can be archived with reason/audit evidence and restored where permitted by the existing archive controls.
-
-## Shared master data
-
-Lab Standards & Resources remains the common source for equipment, methods/tests, people/competencies and 5S workplace controls. Prototype and Validation consume the same controlled resources and therefore compete for the same planning capacity.
-
-## Development learning
-
-Method/process development evidence is intended to remain shared across workstreams: estimated/latest/actual effort and lessons can inform future Prototype or Validation work. Released Validation methods can become reusable Standard Tests through controlled governance rather than being trapped inside one programme.
-
-## Scope boundary
-
-REV 1.0.160 remains a static-browser proof of concept. Production deployment still requires governed backend persistence, multi-user authentication/authorization enforcement, concurrency/transactions, controlled evidence storage and server-side audit guarantees.
-
-## REV 1.0.160 startup compatibility
-REV 1.0.160 restores schema 38 as the supported browser data schema. It opens existing schema-38 state created by earlier Validation releases and migrates schema-37 REV 1.0.159 state forward without resetting data. Release QA must include startup from populated prior-schema browser state.
+## REV 1.0.150 resource semantic repair
+- Repairs REV 1.0.149 states where broad legacy resource descriptors could be promoted into technical `planningCapability` values.
+- Preserves legacy descriptive category/location values while deriving controlled technical compatibility independently.
+- Adds schema 36 → 37 migration and repairs process, test, route-step and booking capability semantics without resetting user data.
