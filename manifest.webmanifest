@@ -1,7 +1,7 @@
 {
   "name": "LabOS \u2014 Laboratory Operations System",
   "short_name": "LabOS",
-  "start_url": "./index.html?labos_rev=1.0.185",
+  "start_url": "./index.html?labos_rev=1.0.187",
   "display": "standalone",
   "background_color": "#f4f7f8",
   "theme_color": "#0c5862",
