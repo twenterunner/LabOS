@@ -1,6 +1,9 @@
 (function(){
 'use strict';
 const P=window.ProtoLab;
+// Stage 1: migrations execute against function references captured when the repository loads.
+// Later runtime wrappers cannot silently change historical migration semantics.
+const MigrationRuntime=Object.freeze({...P});
 class StorageRepository{async init(){} async load(){} async save(){} async reset(){} async exportJSON(){} async importJSON(){} }
 class IndexedDBStorageRepository extends StorageRepository{
  constructor(){super();this.dbName='ProtoLabOS';this.store='app';this.key='state';this.db=null;this.memoryFallback=null;}
@@ -16,52 +19,53 @@ class IndexedDBStorageRepository extends StorageRepository{
 }
 class MigrationService{
  static migrate(state){
-  let s=P.deepClone(state);if(s.schemaVersion>P.SCHEMA_VERSION)throw new Error('This data was created by a newer schema.');
-  while(s.schemaVersion<P.SCHEMA_VERSION){
+  const M=MigrationRuntime;
+  let s=M.deepClone(state);const startingSchema=Number(s.schemaVersion||0);if(s.schemaVersion>M.SCHEMA_VERSION)throw new Error('This data was created by a newer schema.');
+  while(s.schemaVersion<M.SCHEMA_VERSION){
    if(s.schemaVersion===0){s.settings=s.settings||{};s.schemaVersion=1;continue;}
    if(s.schemaVersion===1){
-    P.ensureMaterialModel(s);
+    M.ensureMaterialModel(s);
     (s.requests||[]).forEach(r=>{
-      P.ensureMaterialRequirements(s,r);P.ensureApprovalRecords(s,r);
+      M.ensureMaterialRequirements(s,r);M.ensureApprovalRecords(s,r);
       let route=(s.routes||[]).find(x=>x.requestId===r.id);
-      if(!route){route={id:r.routeId||P.uid('ROUTE'),requestId:r.id,revision:'A',steps:[],reworkLoops:[]};s.routes.push(route);r.routeId=route.id;}
-      if(!route.steps?.length){route.proposed=true;route.confirmed=false;route.steps=P.getDefaultRoute(r.productId).map((pid,i)=>{const proc=(s.processes||[]).find(p=>p.id===pid);return {id:P.uid('STEP'),order:i+1,processId:pid,name:proc?.name||pid,processRevision:proc?.revision||'A',type:'standard',owner:'Unassigned',planned:null,status:'Proposed',readiness:'pending',parallelGroup:null,optional:false};});}
+      if(!route){route={id:r.routeId||M.uid('ROUTE'),requestId:r.id,revision:'A',steps:[],reworkLoops:[]};s.routes.push(route);r.routeId=route.id;}
+      if(!route.steps?.length){route.proposed=true;route.confirmed=false;route.steps=M.getDefaultRoute(r.productId).map((pid,i)=>{const proc=(s.processes||[]).find(p=>p.id===pid);return {id:M.uid('STEP'),order:i+1,processId:pid,name:proc?.name||pid,processRevision:proc?.revision||'A',type:'standard',owner:'Unassigned',planned:null,status:'Proposed',readiness:'pending',parallelGroup:null,optional:false};});}
     });
     s.dataVersion=s.dataVersion||'migrated';s.schemaVersion=2;continue;
    }
    if(s.schemaVersion===2){
-    const seed=P.createDemoState?P.createDemoState():null;
-    if(!(s.standardTests||[]).length&&seed)s.standardTests=P.deepClone(seed.standardTests||[]);if(!(s.competencies||[]).length&&seed)s.competencies=P.deepClone(seed.competencies||[]);if(!(s.buildHistory||[]).length&&seed)s.buildHistory=P.deepClone(seed.buildHistory||[]);
-    P.ensurePlanningModel(s);
-    (s.requests||[]).forEach(r=>{r.materialOwnership=P.normaliseMaterialSource(r.materialOwnership);if(r.materialOwnership==='Engineering supplied'){r.materialSupply=r.materialSupply||{owner:r.requester||'Engineering Requester',expectedDate:r.requiredDate||P.todayISO(),reference:'Migrated supply plan'};}P.ensureTestRequirements(s,r);const route=(s.routes||[]).find(x=>x.requestId===r.id);if(route&&route.confirmed===undefined){route.confirmed=P.GATES.indexOf(r.status)>=P.GATES.indexOf('PROCESS DEFINITION');route.proposed=!route.confirmed;}});
+    const seed=M.createDemoState?M.createDemoState():null;
+    if(!(s.standardTests||[]).length&&seed)s.standardTests=M.deepClone(seed.standardTests||[]);if(!(s.competencies||[]).length&&seed)s.competencies=M.deepClone(seed.competencies||[]);if(!(s.buildHistory||[]).length&&seed)s.buildHistory=M.deepClone(seed.buildHistory||[]);
+    M.ensurePlanningModel(s);
+    (s.requests||[]).forEach(r=>{r.materialOwnership=M.normaliseMaterialSource(r.materialOwnership);if(r.materialOwnership==='Engineering supplied'){r.materialSupply=r.materialSupply||{owner:r.requester||'Engineering Requester',expectedDate:r.requiredDate||M.todayISO(),reference:'Migrated supply plan'};}M.ensureTestRequirements(s,r);const route=(s.routes||[]).find(x=>x.requestId===r.id);if(route&&route.confirmed===undefined){route.confirmed=M.GATES.indexOf(r.status)>=M.GATES.indexOf('PROCESS DEFINITION');route.proposed=!route.confirmed;}});
     (s.processDevelopments||[]).forEach(d=>{if(!Number(d.planningEstimateHours))d.planningEstimateHours=d.status==='RELEASED'?0:8;});
     s.dataVersion='2026.09-demo-5';s.schemaVersion=3;continue;
    }
-   if(s.schemaVersion===3){P.ensureEnterpriseModel(s);s.dataVersion='2026.09-demo-6';s.schemaVersion=4;continue;}
-   if(s.schemaVersion===4){P.ensureEnterpriseModel(s);const demoCerts=(s.trainingCertificates||[]).filter(c=>String(c.id||'').startsWith('CERT-U')).slice(0,4);demoCerts.forEach((c,i)=>{const d=new Date();d.setDate(d.getDate()+[45,90,150,240][i]);c.expiresAt=d.toISOString().slice(0,10);});s.dataVersion='2026.09-demo-7';s.schemaVersion=5;continue;}
-   if(s.schemaVersion===5){(s.requests||[]).forEach(r=>P.ensureAssuranceProfile(r));s.dataVersion='2026.09-demo-8';s.schemaVersion=6;continue;}
-   if(s.schemaVersion===6){(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.calibrationCertificates||[]).forEach(c=>{c.documentUploaded=!!(c.documentUploaded||c.fileData);});s.dataVersion='2026.09-demo-10';s.schemaVersion=7;continue;}
+   if(s.schemaVersion===3){M.ensureEnterpriseModel(s);s.dataVersion='2026.09-demo-6';s.schemaVersion=4;continue;}
+   if(s.schemaVersion===4){M.ensureEnterpriseModel(s);const demoCerts=(s.trainingCertificates||[]).filter(c=>String(c.id||'').startsWith('CERT-U')).slice(0,4);demoCerts.forEach((c,i)=>{const d=new Date();d.setDate(d.getDate()+[45,90,150,240][i]);c.expiresAt=d.toISOString().slice(0,10);});s.dataVersion='2026.09-demo-7';s.schemaVersion=5;continue;}
+   if(s.schemaVersion===5){(s.requests||[]).forEach(r=>M.ensureAssuranceProfile(r));s.dataVersion='2026.09-demo-8';s.schemaVersion=6;continue;}
+   if(s.schemaVersion===6){(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';M.ensureQualityCase(d);});(s.calibrationCertificates||[]).forEach(c=>{c.documentUploaded=!!(c.documentUploaded||c.fileData);});s.dataVersion='2026.09-demo-10';s.schemaVersion=7;continue;}
    if(s.schemaVersion===7){
     const byRequest={};(s.serials||[]).forEach(x=>(byRequest[x.requestId]||(byRequest[x.requestId]=[])).push(x));
-    for(const [requestId,list] of Object.entries(byRequest)){const r=(s.requests||[]).find(x=>x.id===requestId),profile=r?P.ensureAssuranceProfile(r):null;list.forEach((sample,i)=>{sample.sampleId=sample.sampleId||sample.serial;sample.sampleNumber=sample.sampleNumber||String(i+1).padStart(2,'0');sample.serialNumber=sample.serialNumber??(profile?.requires?.serialisation?sample.serial:'');sample.processHistory=sample.processHistory||[];sample.status=sample.status||'Active';});}
+    for(const [requestId,list] of Object.entries(byRequest)){const r=(s.requests||[]).find(x=>x.id===requestId),profile=r?M.ensureAssuranceProfile(r):null;list.forEach((sample,i)=>{sample.sampleId=sample.sampleId||sample.serial;sample.sampleNumber=sample.sampleNumber||String(i+1).padStart(2,'0');sample.serialNumber=sample.serialNumber??(profile?.requires?.serialisation?sample.serial:'');sample.processHistory=sample.processHistory||[];sample.status=sample.status||'Active';});}
     (s.routes||[]).forEach(route=>(route.steps||[]).forEach(step=>{step.executionRuns=step.executionRuns||[];}));
     (s.measurements||[]).forEach(m=>{if(!m.measurementType)m.measurementType='legacy';});
     s.dataVersion='2026.09-demo-11';s.schemaVersion=8;continue;
    }
    if(s.schemaVersion===8){
-    P.ensureEnterpriseModel(s);
-    (s.requests||[]).forEach(r=>{r.archived=!!(r.archived||r.status==='CLOSED');r.archivedAt=r.archivedAt||(r.archived?(r.closedAt||r.deliveredAt||r.submittedAt||P.now()):null);r.consumablesEnabled=!!r.consumablesEnabled;r.buildConsumables=Array.isArray(r.buildConsumables)?r.buildConsumables:[];r.costingEnabled=r.costingEnabled!==false;});
+    M.ensureEnterpriseModel(s);
+    (s.requests||[]).forEach(r=>{r.archived=!!(r.archived||r.status==='CLOSED');r.archivedAt=r.archivedAt||(r.archived?(r.closedAt||r.deliveredAt||r.submittedAt||M.now()):null);r.consumablesEnabled=!!r.consumablesEnabled;r.buildConsumables=Array.isArray(r.buildConsumables)?r.buildConsumables:[];r.costingEnabled=r.costingEnabled!==false;});
     s.dataVersion='2026.09-demo-12';s.schemaVersion=9;continue;
    }
    if(s.schemaVersion===9){
-    P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     s.planningEvents=Array.isArray(s.planningEvents)?s.planningEvents:[];
     (s.requests||[]).forEach(r=>{
       r.originalRequestedDate=r.originalRequestedDate||r.requiredDate||null;
       r.commitmentHistory=Array.isArray(r.commitmentHistory)?r.commitmentHistory:[];
       if(!r.originalCommitmentDate&&r.triage?.status==='Committed'&&r.triage?.forecastDate){
         r.originalCommitmentDate=r.triage.forecastDate;r.currentCommitmentDate=r.triage.forecastDate;
-        r.commitmentHistory.push({seq:1,type:'initial',at:r.triage.committedAt||r.submittedAt||P.now(),oldDate:null,newDate:r.triage.forecastDate,deltaDays:0,cumulativeDays:0,reasonCategory:'Initial commitment',reason:'Migrated committed timing',eventId:null,actor:'Migration'});
+        r.commitmentHistory.push({seq:1,type:'initial',at:r.triage.committedAt||r.submittedAt||M.now(),oldDate:null,newDate:r.triage.forecastDate,deltaDays:0,cumulativeDays:0,reasonCategory:'Initial commitment',reason:'Migrated committed timing',eventId:null,actor:'Migration'});
       }
       r.currentCommitmentDate=r.currentCommitmentDate||r.originalCommitmentDate||null;
       r.actualDeliveryDate=r.actualDeliveryDate||null;r.pendingReplanContext=r.pendingReplanContext||null;
@@ -70,32 +74,32 @@ class MigrationService{
    }
    if(s.schemaVersion===10){
     const wasDemo=String(s.dataVersion||'').startsWith('2026.09-demo');
-    P.ensureEnterpriseModel(s);
+    M.ensureEnterpriseModel(s);
     // Upgrade existing POC/demo browsers with the new archived examples without polluting imported/non-demo datasets.
-    if(wasDemo&&P.createDemoState){
-      const seed=P.createDemoState(),closedIds=new Set(seed.requests.filter(r=>r.status==='CLOSED').map(r=>r.id));
-      const merge=(key,match)=>{s[key]=Array.isArray(s[key])?s[key]:[];for(const x of seed[key]||[]){if(!match(x))continue;if(!s[key].some(y=>y.id===x.id))s[key].push(P.deepClone(x));}};
+    if(wasDemo&&M.createDemoState){
+      const seed=M.createDemoState(),closedIds=new Set(seed.requests.filter(r=>r.status==='CLOSED').map(r=>r.id));
+      const merge=(key,match)=>{s[key]=Array.isArray(s[key])?s[key]:[];for(const x of seed[key]||[]){if(!match(x))continue;if(!s[key].some(y=>y.id===x.id))s[key].push(M.deepClone(x));}};
       merge('requests',x=>closedIds.has(x.id));merge('routes',x=>closedIds.has(x.requestId));merge('serials',x=>closedIds.has(x.requestId));merge('measurements',x=>closedIds.has(x.requestId));merge('deviations',x=>closedIds.has(x.requestId));merge('approvals',x=>closedIds.has(x.requestId));merge('documents',x=>closedIds.has(x.requestId));merge('allocations',x=>closedIds.has(x.requestId));
     }
     s.dailyOperationsReviews=Array.isArray(s.dailyOperationsReviews)?s.dailyOperationsReviews:[];
     s.settings=s.settings||{};s.settings.lastOperationsReviewDate=s.settings.lastOperationsReviewDate||null;
-    (s.requests||[]).forEach(r=>P.ensureBuildReportApproval(s,r));
+    (s.requests||[]).forEach(r=>M.ensureBuildReportApproval(s,r));
     s.dataVersion='2026.09-demo-14';s.schemaVersion=11;continue;
    }
    if(s.schemaVersion===11){
-    (s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));
+    (s.serials||[]).forEach(sample=>M.ensureSampleEvidence(sample));
     s.dataVersion=String(s.dataVersion||'').startsWith('2026.09-demo')?'2026.09-demo-15':(s.dataVersion||'migrated');
     s.schemaVersion=12;continue;
    }
    if(s.schemaVersion===12){
-    const wasDemo=P.isDemoDataset(s);s.settings=s.settings||{};if(wasDemo)s.settings.demoDataset=true;
+    const wasDemo=M.isDemoDataset(s);s.settings=s.settings||{};if(wasDemo)s.settings.demoDataset=true;
     // Repair any duplicate permanent Lab Sample IDs created by older archive/demo merges before adding anything new.
-    P.repairDuplicateSamples(s);
+    M.repairDuplicateSamples(s);
     // Ensure the three completed archive examples exist in every recognised POC demo, even if an older dataVersion marker was lost.
-    if(wasDemo&&P.createDemoState){
-      const seed=P.createDemoState(),closed=seed.requests.filter(r=>r.status==='CLOSED'),closedIds=new Set(closed.map(r=>r.id));
-      const add=(key,x,natural)=>{s[key]=Array.isArray(s[key])?s[key]:[];if(!s[key].some(y=>natural(y,x)))s[key].push(P.deepClone(x));};
-      for(const r of closed){const existing=(s.requests||[]).find(x=>x.id===r.id);if(!existing)s.requests.push(P.deepClone(r));else if(String(existing.title||'').toLowerCase()===String(r.title||'').toLowerCase()){existing.status='CLOSED';existing.currentGate='CLOSED';existing.archived=true;existing.archivedAt=existing.archivedAt||r.archivedAt||r.closedAt;existing.closedAt=existing.closedAt||r.closedAt;existing.actualDeliveryDate=existing.actualDeliveryDate||r.actualDeliveryDate;}}
+    if(wasDemo&&M.createDemoState){
+      const seed=M.createDemoState(),closed=seed.requests.filter(r=>r.status==='CLOSED'),closedIds=new Set(closed.map(r=>r.id));
+      const add=(key,x,natural)=>{s[key]=Array.isArray(s[key])?s[key]:[];if(!s[key].some(y=>natural(y,x)))s[key].push(M.deepClone(x));};
+      for(const r of closed){const existing=(s.requests||[]).find(x=>x.id===r.id);if(!existing)s.requests.push(M.deepClone(r));else if(String(existing.title||'').toLowerCase()===String(r.title||'').toLowerCase()){existing.status='CLOSED';existing.currentGate='CLOSED';existing.archived=true;existing.archivedAt=existing.archivedAt||r.archivedAt||r.closedAt;existing.closedAt=existing.closedAt||r.closedAt;existing.actualDeliveryDate=existing.actualDeliveryDate||r.actualDeliveryDate;}}
       for(const x of seed.routes||[])if(closedIds.has(x.requestId))add('routes',x,(a,b)=>a.id===b.id||a.requestId===b.requestId);
       for(const x of seed.serials||[])if(closedIds.has(x.requestId))add('serials',x,(a,b)=>String(a.serial||a.sampleId)===String(b.serial||b.sampleId));
       for(const x of seed.measurements||[])if(closedIds.has(x.requestId))add('measurements',x,(a,b)=>a.id===b.id);
@@ -103,111 +107,111 @@ class MigrationService{
       for(const x of seed.approvals||[])if(closedIds.has(x.requestId))add('approvals',x,(a,b)=>a.requestId===b.requestId&&a.type===b.type&&String(a.stage||'')===String(b.stage||''));
       for(const x of seed.documents||[])if(closedIds.has(x.requestId))add('documents',x,(a,b)=>a.requestId===b.requestId&&a.type===b.type&&String(a.revision||'A')===String(b.revision||'A'));
       for(const x of seed.allocations||[])if(closedIds.has(x.requestId))add('allocations',x,(a,b)=>a.requestId===b.requestId&&a.requirementId===b.requirementId&&a.lot===b.lot&&a.status===b.status);
-      P.repairDuplicateSamples(s);
+      M.repairDuplicateSamples(s);
     }
     s.dataVersion=wasDemo?'2026.09-demo-16':(s.dataVersion||'migrated');s.schemaVersion=13;continue;
    }
    if(s.schemaVersion===13){
-    const wasDemo=P.isDemoDataset(s);
-    if(wasDemo){s.settings=s.settings||{};s.settings.demoDataset=true;P.ensureDemoArchivedExamples(s);}
-    P.repairDuplicateSamples(s);
+    const wasDemo=M.isDemoDataset(s);
+    if(wasDemo){s.settings=s.settings||{};s.settings.demoDataset=true;M.ensureDemoArchivedExamples(s);}
+    M.repairDuplicateSamples(s);
     s.dataVersion=wasDemo?'2026.09-demo-17':(s.dataVersion||'migrated');s.schemaVersion=14;continue;
    }
    if(s.schemaVersion===14){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);
     if(wasDemo)(s.requests||[]).forEach(r=>{if(!(r.batchDataRequirements||[]).length)r.batchDataRequirements=[{id:'BATCH-fixture-setup-id',label:'Fixture / setup ID',unit:'',required:true,includeInBuildReport:true},{id:'BATCH-batch-build-observation',label:'Batch build observation',unit:'',required:false,includeInBuildReport:true}];if(!(r.sampleDataRequirements||[]).length)r.sampleDataRequirements=[{id:'SAMPLE-final-mass',label:'Final mass',unit:'g',required:false,includeInBuildReport:true},{id:'SAMPLE-visual-condition',label:'Visual condition',unit:'',required:true,includeInBuildReport:true}];if(!(r.photoEvidenceRequirements||[]).length)r.photoEvidenceRequirements=[{id:'PHOTO-overall-sample',label:'Overall sample',unit:'',required:true,includeInBuildReport:true},{id:'PHOTO-label-serial-identification',label:'Label / serial identification',unit:'',required:false,includeInBuildReport:true},...(r.productSafety?[{id:'PHOTO-special-characteristic-evidence',label:'Special-characteristic evidence',unit:'',required:true,includeInBuildReport:true}]:[])]});
-    (s.requests||[]).forEach(r=>P.syncRequestFlowdown(s,r));
+    (s.requests||[]).forEach(r=>M.syncRequestFlowdown(s,r));
     s.dataVersion=wasDemo?'2026.09-demo-18':(s.dataVersion||'migrated');s.schemaVersion=15;continue;
    }
    if(s.schemaVersion===15){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
-    if(wasDemo&&P.createDemoState){
-      s.settings=s.settings||{};s.settings.demoDataset=true;const seed=P.createDemoState(),src=seed.requests.find(r=>r.title==='Archived pressure DV batch'),dst=(s.requests||[]).find(r=>r.id===src?.id)||s.requests.find(r=>r.title===src?.title);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
+    if(wasDemo&&M.createDemoState){
+      s.settings=s.settings||{};s.settings.demoDataset=true;const seed=M.createDemoState(),src=seed.requests.find(r=>r.title==='Archived pressure DV batch'),dst=(s.requests||[]).find(r=>r.id===src?.id)||s.requests.find(r=>r.title===src?.title);
       if(src&&dst){
-        for(const k of ['assuranceProfile','productSafety','purpose','maturity','specialCharacteristics','characterisation','controlPlanId','buildReportRevision','batchEvidence','lessons','capturePlan','batchDataRequirements','sampleDataRequirements','photoEvidenceRequirements','buildReportApprovedAt','buildReportApprovedBy','reportExample'])dst[k]=P.deepClone(src[k]);
-        const replaceReqRows=key=>{s[key]=Array.isArray(s[key])?s[key]:[];s[key]=s[key].filter(x=>x.requestId!==dst.id);s[key].push(...P.deepClone((seed[key]||[]).filter(x=>x.requestId===src.id)));};
+        for(const k of ['assuranceProfile','productSafety','purpose','maturity','specialCharacteristics','characterisation','controlPlanId','buildReportRevision','batchEvidence','lessons','capturePlan','batchDataRequirements','sampleDataRequirements','photoEvidenceRequirements','buildReportApprovedAt','buildReportApprovedBy','reportExample'])dst[k]=M.deepClone(src[k]);
+        const replaceReqRows=key=>{s[key]=Array.isArray(s[key])?s[key]:[];s[key]=s[key].filter(x=>x.requestId!==dst.id);s[key].push(...M.deepClone((seed[key]||[]).filter(x=>x.requestId===src.id)));};
         replaceReqRows('routes');replaceReqRows('pfmea');replaceReqRows('measurements');replaceReqRows('deviations');replaceReqRows('approvals');replaceReqRows('documents');
-        s.controlPlans=(s.controlPlans||[]).filter(x=>x.id!=='CP-ARCH-001');const cp=(seed.controlPlans||[]).find(x=>x.id==='CP-ARCH-001');if(cp)s.controlPlans.push(P.deepClone(cp));
-        s.serials=Array.isArray(s.serials)?s.serials:[];for(const ss of (seed.serials||[]).filter(x=>x.requestId===src.id)){let ds=s.serials.find(x=>x.requestId===dst.id&&(x.serial===ss.serial||x.sampleNumber===ss.sampleNumber));if(!ds){s.serials.push(P.deepClone(ss));continue}for(const k of ['sampleId','sampleNumber','serialNumber','status','releaseState','description','dataFields','evidencePhotos','delivery','materials','processHistory'])ds[k]=P.deepClone(ss[k]);}
-        P.syncRequestFlowdown(s,dst);P.ensureApprovalRecords(s,dst);P.repairDuplicateSamples(s);P.audit(s,'Comprehensive archived report example installed','Demo data','Prototype Build Report',dst.id,'Basic archived report','Full process / Control Plan / critical-characteristic dossier','REV 1.0.30 report migration');
+        s.controlPlans=(s.controlPlans||[]).filter(x=>x.id!=='CP-ARCH-001');const cp=(seed.controlPlans||[]).find(x=>x.id==='CP-ARCH-001');if(cp)s.controlPlans.push(M.deepClone(cp));
+        s.serials=Array.isArray(s.serials)?s.serials:[];for(const ss of (seed.serials||[]).filter(x=>x.requestId===src.id)){let ds=s.serials.find(x=>x.requestId===dst.id&&(x.serial===ss.serial||x.sampleNumber===ss.sampleNumber));if(!ds){s.serials.push(M.deepClone(ss));continue}for(const k of ['sampleId','sampleNumber','serialNumber','status','releaseState','description','dataFields','evidencePhotos','delivery','materials','processHistory'])ds[k]=M.deepClone(ss[k]);}
+        M.syncRequestFlowdown(s,dst);M.ensureApprovalRecords(s,dst);M.repairDuplicateSamples(s);M.audit(s,'Comprehensive archived report example installed','Demo data','Prototype Build Report',dst.id,'Basic archived report','Full process / Control Plan / critical-characteristic dossier','REV 1.0.30 report migration');
       }
     }
     s.dataVersion=wasDemo?'2026.09-demo-19':(s.dataVersion||'migrated');s.schemaVersion=16;continue;
    }
    if(s.schemaVersion===16){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     let released=0;(s.resourceCareBookings||[]).forEach(b=>{if(b.autoGenerated===true&&b.status==='Scheduled'&&!b.locked){b.status='Cancelled';b.cancelReason='REV 1.0.31 changed readiness scheduling to proposal-first user control.';released++;}});
     (s.equipment||[]).forEach(e=>{e.equipmentType=e.equipmentType||String(e.name||'Equipment').replace(/\s+(?:[A-Z]|\d+)$/,'').replace(/\s+\d+$/,'').trim();});
     s.settings=s.settings||{};s.settings.resourceAssurance=s.settings.resourceAssurance||{proposalFirst:true,defaultHorizonWeeks:26,warningDays:{Calibration:30,Maintenance:45,Training:60}};
-    if(released)P.audit(s,'Legacy AUTO readiness reservations released','Resource assurance','Portfolio',`${released} AUTO-generated scheduled slot(s)`,'Proposal-first scheduling', 'REV 1.0.31 resource-assurance migration');
+    if(released)M.audit(s,'Legacy AUTO readiness reservations released','Resource assurance','Portfolio',`${released} AUTO-generated scheduled slot(s)`,'Proposal-first scheduling', 'REV 1.0.31 resource-assurance migration');
     s.dataVersion=wasDemo?'2026.09-demo-20':(s.dataVersion||'migrated');s.schemaVersion=17;continue;
    }
    if(s.schemaVersion===17){
-    const wasDemo=P.isDemoDataset(s);(s.deviations||[]).forEach(d=>P.ensureQualityCase(d));
-    P.audit(s,'Quality Workbench case model enabled','Quality','Portfolio','Legacy guided quality cards','Controlled action / Control Plan / trend workbench','REV 1.0.32 quality-workbench migration');
+    const wasDemo=M.isDemoDataset(s);(s.deviations||[]).forEach(d=>M.ensureQualityCase(d));
+    M.audit(s,'Quality Workbench case model enabled','Quality','Portfolio','Legacy guided quality cards','Controlled action / Control Plan / trend workbench','REV 1.0.32 quality-workbench migration');
     s.dataVersion=wasDemo?'2026.09-demo-21':(s.dataVersion||'migrated');s.schemaVersion=18;continue;
    }
    if(s.schemaVersion===18){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     // REV 1.0.33: keep customer data untouched, but enrich the controlled archived demo dossier with the unified report's end-characterisation evidence.
-    if(wasDemo&&P.createDemoState){
-      s.settings=s.settings||{};s.settings.demoDataset=true;const seed=P.createDemoState(),src=seed.requests.find(r=>r.title==='Archived pressure DV batch'),dst=(s.requests||[]).find(r=>r.id===src?.id)||s.requests.find(r=>r.title===src?.title);
-      if(src&&dst){dst.characterisation=P.deepClone(src.characterisation||[]);dst.testRequirements=P.deepClone(src.testRequirements||[]);dst.specialCharacteristics=P.deepClone(src.specialCharacteristics||[]);const sourceEnd=(seed.measurements||[]).filter(m=>m.requestId===src.id&&m.measurementType==='end-characterisation');s.measurements=(s.measurements||[]).filter(m=>!(m.requestId===dst.id&&m.measurementType==='end-characterisation'));s.measurements.push(...P.deepClone(sourceEnd));P.syncRequestFlowdown(s,dst);P.invalidateBuildReport(s,dst,'Unified Build Report end-characterisation evidence installed for demo exemplar');const ba=P.ensureBuildReportApproval(s,dst);ba.status='Approved';ba.person='Sofia Bakker';ba.role='Quality Engineer';ba.roleId='quality';ba.timestamp=dst.closedAt||P.now();ba.comment='Unified Build Report example reviewed including end-characterisation, critical distributions/Cpk, Control Plan and photographic evidence.';dst.buildReportApprovedAt=ba.timestamp;dst.buildReportApprovedBy=ba.person;P.audit(s,'Unified Build Report exemplar enriched','Demo data','Prototype Build Report',dst.id,'Control Plan-only critical data','Critical data + complete specified end-characterisation','REV 1.0.33 report/CSV migration');}
+    if(wasDemo&&M.createDemoState){
+      s.settings=s.settings||{};s.settings.demoDataset=true;const seed=M.createDemoState(),src=seed.requests.find(r=>r.title==='Archived pressure DV batch'),dst=(s.requests||[]).find(r=>r.id===src?.id)||s.requests.find(r=>r.title===src?.title);
+      if(src&&dst){dst.characterisation=M.deepClone(src.characterisation||[]);dst.testRequirements=M.deepClone(src.testRequirements||[]);dst.specialCharacteristics=M.deepClone(src.specialCharacteristics||[]);const sourceEnd=(seed.measurements||[]).filter(m=>m.requestId===src.id&&m.measurementType==='end-characterisation');s.measurements=(s.measurements||[]).filter(m=>!(m.requestId===dst.id&&m.measurementType==='end-characterisation'));s.measurements.push(...M.deepClone(sourceEnd));M.syncRequestFlowdown(s,dst);M.invalidateBuildReport(s,dst,'Unified Build Report end-characterisation evidence installed for demo exemplar');const ba=M.ensureBuildReportApproval(s,dst);ba.status='Approved';ba.person='Sofia Bakker';ba.role='Quality Engineer';ba.roleId='quality';ba.timestamp=dst.closedAt||M.now();ba.comment='Unified Build Report example reviewed including end-characterisation, critical distributions/Cpk, Control Plan and photographic evidence.';dst.buildReportApprovedAt=ba.timestamp;dst.buildReportApprovedBy=ba.person;M.audit(s,'Unified Build Report exemplar enriched','Demo data','Prototype Build Report',dst.id,'Control Plan-only critical data','Critical data + complete specified end-characterisation','REV 1.0.33 report/CSV migration');}
     }
     s.dataVersion=wasDemo?'2026.09-demo-22':(s.dataVersion||'migrated');s.schemaVersion=19;continue;
    }
    if(s.schemaVersion===19){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     (s.requests||[]).forEach(r=>{
-      const a=P.ensureBuildReportApproval(s,r);r.buildReportEvidenceVersion=Number(r.buildReportEvidenceVersion||1);
+      const a=M.ensureBuildReportApproval(s,r);r.buildReportEvidenceVersion=Number(r.buildReportEvidenceVersion||1);
       if(a.status==='Approved'){
         r.buildReportApprovedEvidenceVersion=r.buildReportEvidenceVersion;
-        r.buildReportApprovedMeasurementFingerprint=P.measurementEvidenceFingerprint(s,r.id);
+        r.buildReportApprovedMeasurementFingerprint=M.measurementEvidenceFingerprint(s,r.id);
         const doc=(s.documents||[]).find(d=>d.requestId===r.id&&d.type==='Prototype Build Report'&&d.status==='Approved'&&String(d.revision||'A')===String(r.buildReportRevision||'A'));
-        if(doc){doc.evidenceVersion=r.buildReportApprovedEvidenceVersion;doc.measurementFingerprint=r.buildReportApprovedMeasurementFingerprint;doc.approvedAt=a.timestamp||doc.approvedAt||P.now();}
+        if(doc){doc.evidenceVersion=r.buildReportApprovedEvidenceVersion;doc.measurementFingerprint=r.buildReportApprovedMeasurementFingerprint;doc.approvedAt=a.timestamp||doc.approvedAt||M.now();}
       }
     });
     s.dataVersion=wasDemo?'2026.09-demo-23':(s.dataVersion||'migrated');s.schemaVersion=20;continue;
    }
    if(s.schemaVersion===20){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
-    (s.requests||[]).forEach(r=>{P.ensureReusePackage(r);const route=(s.routes||[]).find(x=>x.requestId===r.id),cp=(s.controlPlans||[]).find(x=>x.id===r.controlPlanId),risks=(s.pfmea||[]).filter(x=>x.requestId===r.id);if(route?.confirmed&&P.routeStandardReady(s,route)&&r.reusePackage.route.mode==='none')r.reusePackage.route={mode:'reused',source:'Existing released route',revision:route.revision||'A'};if(cp?.status==='Approved'&&!cp.buildSpecific&&r.reusePackage.controlPlan.mode==='none')r.reusePackage.controlPlan={mode:'reused',baselineId:cp.id,revision:cp.revision,source:cp.name};if(risks.length&&risks.every(x=>x.status!=='Open high risk')&&r.reusePackage.pfmea.mode==='none')r.reusePackage.pfmea={mode:'reused',sourceRequestId:r.id,count:risks.length};});
-    P.audit(s,'Reuse-first workflow enabled','System','Controlled information','Repeat setup per build','Approved route / Control Plan inheritance with delta reviews','REV 1.0.35 reuse-first migration');
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
+    (s.requests||[]).forEach(r=>{M.ensureReusePackage(r);const route=(s.routes||[]).find(x=>x.requestId===r.id),cp=(s.controlPlans||[]).find(x=>x.id===r.controlPlanId),risks=(s.pfmea||[]).filter(x=>x.requestId===r.id);if(route?.confirmed&&M.routeStandardReady(s,route)&&r.reusePackage.route.mode==='none')r.reusePackage.route={mode:'reused',source:'Existing released route',revision:route.revision||'A'};if(cp?.status==='Approved'&&!cp.buildSpecific&&r.reusePackage.controlPlan.mode==='none')r.reusePackage.controlPlan={mode:'reused',baselineId:cp.id,revision:cp.revision,source:cp.name};if(risks.length&&risks.every(x=>x.status!=='Open high risk')&&r.reusePackage.pfmea.mode==='none')r.reusePackage.pfmea={mode:'reused',sourceRequestId:r.id,count:risks.length};});
+    M.audit(s,'Reuse-first workflow enabled','System','Controlled information','Repeat setup per build','Approved route / Control Plan inheritance with delta reviews','REV 1.0.35 reuse-first migration');
     s.dataVersion=wasDemo?'2026.09-demo-24':(s.dataVersion||'migrated');s.schemaVersion=21;continue;
    }
    if(s.schemaVersion===21){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     s.settings=s.settings||{};s.settings.auditProfile=s.settings.auditProfile||{organisation:'',site:'',scopeStatement:'',auditOwner:'',exclusions:'',controlledReference:'',recordsRetentionReference:'',internalAuditReference:''};
     // REV 1.0.47: PFMEA is no longer an owned LabOS workflow. Keep legacy records for historical compatibility only.
     (s.trainingCertificates||[]).forEach(c=>{c.documentUploaded=!!(c.documentUploaded||c.fileData);});
-    P.audit(s,'Audit UX and resource scheduling model upgraded','System','Governance','Duplicated risk-analysis workflow / partial audit exports','Control Plan + external risk-reference model / guided audit findings / printable resource schedules','REV 1.0.47 migration');
+    M.audit(s,'Audit UX and resource scheduling model upgraded','System','Governance','Duplicated risk-analysis workflow / partial audit exports','Control Plan + external risk-reference model / guided audit findings / printable resource schedules','REV 1.0.47 migration');
     s.dataVersion=wasDemo?'2026.09-demo-25':(s.dataVersion||'migrated');s.schemaVersion=22;continue;
    }
    if(s.schemaVersion===22){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     // REV 1.0.48: execution evidence is governed by the released process plus the linked Control Plan.
     // Repair only known demo placeholders; never overwrite customer-created controlled process fields.
-    if(wasDemo&&typeof P.createDemoState==='function'){
-      const seed=P.createDemoState(),seedProc=new Map((seed.processes||[]).map(x=>[x.id,x])),seedCp=new Map((seed.controlPlans||[]).map(x=>[x.id,x]));
-      (s.processes||[]).forEach(proc=>{const generic=(proc.params||[]).length===2&&String(proc.params[0]?.name||'')==='Primary setpoint'&&String(proc.params[1]?.name||'')==='Tolerance';if(generic&&seedProc.has(proc.id))proc.params=P.deepClone(seedProc.get(proc.id).params||[])});
+    if(wasDemo&&typeof M.createDemoState==='function'){
+      const seed=M.createDemoState(),seedProc=new Map((seed.processes||[]).map(x=>[x.id,x])),seedCp=new Map((seed.controlPlans||[]).map(x=>[x.id,x]));
+      (s.processes||[]).forEach(proc=>{const generic=(proc.params||[]).length===2&&String(proc.params[0]?.name||'')==='Primary setpoint'&&String(proc.params[1]?.name||'')==='Tolerance';if(generic&&seedProc.has(proc.id))proc.params=M.deepClone(seedProc.get(proc.id).params||[])});
       (s.controlPlans||[]).forEach(cp=>{const scp=seedCp.get(cp.id);if(!scp)return;const byId=new Map((scp.characteristics||[]).map(x=>[x.id,x]));(cp.characteristics||[]).forEach(c=>{const src=byId.get(c.id);if(!src)return;if(!c.processStepId){c.processId=src.processId;c.processStepName=src.processStepName;c.processStep=src.processStep}if(/^(100%|1\s*\/\s*unit)$/i.test(String(c.sampleSize||''))){c.sampleSize=src.sampleSize;c.frequency=src.frequency}})});
     }
-    P.audit(s,'Process execution model upgraded','System','Build execution','Generic step forms / ambiguous CP linkage','Released-process data + explicit CP sampling matrix','REV 1.0.48 execution migration');
+    M.audit(s,'Process execution model upgraded','System','Build execution','Generic step forms / ambiguous CP linkage','Released-process data + explicit CP sampling matrix','REV 1.0.48 execution migration');
     s.dataVersion=wasDemo?'2026.09-demo-26':(s.dataVersion||'migrated');s.schemaVersion=23;continue;
    }
    if(s.schemaVersion===23){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     // REV 1.0.49: actionable recommendations must be executable end-to-end. Withdraw
     // legacy accepted/guided improvements that could leave the user in manual replanning.
     const unresolved=new Set((s.actions||[]).filter(a=>a.improvementProposalId&&a.implementation?.status!=='Implemented & verified'&&a.implementation?.status!=='Verified').map(a=>a.improvementProposalId));
     s.actions=(s.actions||[]).filter(a=>!a.improvementProposalId||!unresolved.has(a.improvementProposalId));
-    (s.improvementDecisions||[]).forEach(d=>{if(d.decision==='Accepted'&&unresolved.has(d.proposalId)){d.decision='Withdrawn';d.withdrawnAt=P.now();d.withdrawnReason='REV 1.0.49 executable-only proposal contract: legacy proposal could not guarantee end-to-end implementation.';}});
+    (s.improvementDecisions||[]).forEach(d=>{if(d.decision==='Accepted'&&unresolved.has(d.proposalId)){d.decision='Withdrawn';d.withdrawnAt=M.now();d.withdrawnReason='REV 1.0.49 executable-only proposal contract: legacy proposal could not guarantee end-to-end implementation.';}});
     s.dailyOperationsReviews=[];s.settings=s.settings||{};s.settings.lastOperationsReviewDate='';
-    P.audit(s,'Executable-only guided-workflow contract enabled','System','Operations','Advisory proposals could be accepted before full resolution was guaranteed','Only prevalidated proposals can be accepted; accepted proposals apply atomically or are withdrawn','REV 1.0.49 workflow migration');
+    M.audit(s,'Executable-only guided-workflow contract enabled','System','Operations','Advisory proposals could be accepted before full resolution was guaranteed','Only prevalidated proposals can be accepted; accepted proposals apply atomically or are withdrawn','REV 1.0.49 workflow migration');
     s.dataVersion=wasDemo?'2026.09-demo-27':(s.dataVersion||'migrated');s.schemaVersion=24;continue;
    }
    if(s.schemaVersion===24){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     s.settings=s.settings||{};s.settings.auditEquipmentScopes=s.settings.auditEquipmentScopes||{};
     const groups={};
     (s.equipment||[]).forEach(e=>{const key=String(e.scopeCategory||e.capability||e.equipmentType||'Other equipment').trim()||'Other equipment';(groups[key]||(groups[key]=[])).push(e)});
@@ -216,50 +220,50 @@ class MigrationService{
       const defined=items.map(e=>e.scopeSpecification||{}).find(x=>x.activity||x.range||x.method)||{};
       s.settings.auditEquipmentScopes[key]={category:key,activity:defined.activity||'',range:defined.range||'',resolution:defined.resolution||'',uncertainty:defined.uncertainty||'',method:defined.method||'',note:defined.note||''};
     });
-    P.audit(s,'UX master-data model upgraded','System','LabOS','Per-asset scope / fixed test families / duplicated execution navigation','Category capability scope / configurable test families / integrated route navigation / 5S zone model','REV 1.0.50 migration');
+    M.audit(s,'UX master-data model upgraded','System','LabOS','Per-asset scope / fixed test families / duplicated execution navigation','Category capability scope / configurable test families / integrated route navigation / 5S zone model','REV 1.0.50 migration');
     s.dataVersion=wasDemo?'2026.09-demo-28':(s.dataVersion||'migrated');s.schemaVersion=25;continue;
    }
    if(s.schemaVersion===25){
-    const wasDemo=P.isDemoDataset(s);P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
-    (s.requests||[]).forEach(r=>{const lim=P.materialOutputLimit(s,r),anyIssued=(s.allocations||[]).some(a=>a.requestId===r.id&&a.status==='Issued'&&Number(a.qty||0)>0);r.materialOutputLimit=lim.limited&&anyIssued?{maxBuildQty:lim.maxBuildQty,requestedQty:lim.requestedQty,updatedAt:P.now(),reason:'Issued material quantity'}:null;r.planningPreferences=r.planningPreferences||{staffByTask:{},staffByTaskName:{},staffBySkill:{}};});
-    P.audit(s,'Guided resolution and mobile workflow model upgraded','System','LabOS','Stale readiness state / unforced staff reassignment / fixed receipt quantity / modal overflow risk','Live readiness reconciliation / prevalidated staff choices / partial-material output limiter / viewport-safe modal layout','REV 1.0.53 migration');
+    const wasDemo=M.isDemoDataset(s);M.ensureMaterialModel(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
+    (s.requests||[]).forEach(r=>{const lim=M.materialOutputLimit(s,r),anyIssued=(s.allocations||[]).some(a=>a.requestId===r.id&&a.status==='Issued'&&Number(a.qty||0)>0);r.materialOutputLimit=lim.limited&&anyIssued?{maxBuildQty:lim.maxBuildQty,requestedQty:lim.requestedQty,updatedAt:M.now(),reason:'Issued material quantity'}:null;r.planningPreferences=r.planningPreferences||{staffByTask:{},staffByTaskName:{},staffBySkill:{}};});
+    M.audit(s,'Guided resolution and mobile workflow model upgraded','System','LabOS','Stale readiness state / unforced staff reassignment / fixed receipt quantity / modal overflow risk','Live readiness reconciliation / prevalidated staff choices / partial-material output limiter / viewport-safe modal layout','REV 1.0.53 migration');
     s.dataVersion=wasDemo?'2026.09-demo-29':(s.dataVersion||'migrated');s.schemaVersion=26;continue;
    }
    if(s.schemaVersion===26){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     s.settings=s.settings||{};s.settings.labSetup=s.settings.labSetup||{};
     // REV 1.0.54: green setup ticks are explicit reviewed milestones, never inferred from pre-existing data.
     s.settings.labSetup.completedSteps=[];delete s.settings.labSetup.completedAt;delete s.settings.labSetup.completedBy;
     s.lessonDecisions=Array.isArray(s.lessonDecisions)?s.lessonDecisions:[];s.lessons=Array.isArray(s.lessons)?s.lessons:[];
-    P.audit(s,'Hard-gated workflow and learning model enabled','System','LabOS','Data-presence ticks / implicit closeout learning','Explicit reviewed setup milestones / evidence-based lessons proposals / concise report terminology','REV 1.0.54 migration');
+    M.audit(s,'Hard-gated workflow and learning model enabled','System','LabOS','Data-presence ticks / implicit closeout learning','Explicit reviewed setup milestones / evidence-based lessons proposals / concise report terminology','REV 1.0.54 migration');
     s.dataVersion=wasDemo?'2026.09-demo-30':(s.dataVersion||'migrated');s.schemaVersion=27;continue;
    }
    if(s.schemaVersion===27){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     s.gageRRStudies=Array.isArray(s.gageRRStudies)?s.gageRRStudies:[];s.adminExceptions=Array.isArray(s.adminExceptions)?s.adminExceptions:[];s.processSkipApprovals=Array.isArray(s.processSkipApprovals)?s.processSkipApprovals:[];
-    P.audit(s,'Measurement assurance and controlled exception model enabled','System','LabOS','Ungoverned setup/calibration evidence / no MSA object / hard dead ends','Controlled EHS/commissioning dossiers / formal calibration-certificate approval / Gage R&R / auditable administrator exceptions / approved process-step skip','REV 1.0.56 migration');
+    M.audit(s,'Measurement assurance and controlled exception model enabled','System','LabOS','Ungoverned setup/calibration evidence / no MSA object / hard dead ends','Controlled EHS/commissioning dossiers / formal calibration-certificate approval / Gage R&R / auditable administrator exceptions / approved process-step skip','REV 1.0.56 migration');
     s.dataVersion=wasDemo?'2026.09-demo-31':(s.dataVersion||'migrated');s.schemaVersion=28;continue;
    }
    if(s.schemaVersion===28){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);
     s.gageRRStudies=Array.isArray(s.gageRRStudies)?s.gageRRStudies:[];
-    s.gageRRStudies.forEach(study=>{study.standardTestId=study.standardTestId||'';study.studyDate=study.studyDate||String(study.createdAt||P.now()).slice(0,10);study.sourceType=study.sourceType||'LabOS calculated';study.conclusion=study.conclusion||(study.result?.valid&&Number(study.result?.studyPct)<10?'Acceptable':study.result?.valid&&Number(study.result?.studyPct)<=30?'Conditionally acceptable':study.result?.valid?'Not acceptable':'Review required');study.documentUploaded=!!(study.documentUploaded||study.fileData);});
-    P.audit(s,'Measurement assurance workflow refined','System','LabOS','MSA hidden from process/test context / separate capability workspace / manual-only daily refresh','Process/test/equipment-linked MSA / upload-or-run guided GRR / daily automatic operations check / simplified quality workspace','REV 1.0.57 migration');
+    s.gageRRStudies.forEach(study=>{study.standardTestId=study.standardTestId||'';study.studyDate=study.studyDate||String(study.createdAt||M.now()).slice(0,10);study.sourceType=study.sourceType||'LabOS calculated';study.conclusion=study.conclusion||(study.result?.valid&&Number(study.result?.studyPct)<10?'Acceptable':study.result?.valid&&Number(study.result?.studyPct)<=30?'Conditionally acceptable':study.result?.valid?'Not acceptable':'Review required');study.documentUploaded=!!(study.documentUploaded||study.fileData);});
+    M.audit(s,'Measurement assurance workflow refined','System','LabOS','MSA hidden from process/test context / separate capability workspace / manual-only daily refresh','Process/test/equipment-linked MSA / upload-or-run guided GRR / daily automatic operations check / simplified quality workspace','REV 1.0.57 migration');
     s.dataVersion=wasDemo?'2026.09-demo-32':(s.dataVersion||'migrated');s.schemaVersion=29;continue;
    }
    if(s.schemaVersion===29){
-    const wasDemo=P.isDemoDataset(s);if(wasDemo&&typeof P.createDemoState==='function'){
-      const priorIdentity=P.deepClone(s.identity||{}),weekends=!!s.settings?.includeWeekendsForBuilds,seed=P.createDemoState();
+    const wasDemo=M.isDemoDataset(s);if(wasDemo&&typeof M.createDemoState==='function'){
+      const priorIdentity=M.deepClone(s.identity||{}),weekends=!!s.settings?.includeWeekendsForBuilds,seed=M.createDemoState();
       s=seed;s.identity=priorIdentity?.role?priorIdentity:s.identity;s.settings=s.settings||{};s.settings.includeWeekendsForBuilds=weekends;
-      P.audit(s,'Demo portfolio replaced','System','Demo dataset','Previous demo build/request records','Fresh 24-request power-tool prototype portfolio','REV 1.0.79 intentionally replaces prior demo build data while preserving identity and weekend-planning preference');
-    }else{P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>P.ensureAssuranceProfile(r));s.schemaVersion=30;}
+      M.audit(s,'Demo portfolio replaced','System','Demo dataset','Previous demo build/request records','Fresh 24-request power-tool prototype portfolio','REV 1.0.79 intentionally replaces prior demo build data while preserving identity and weekend-planning preference');
+    }else{M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);(s.requests||[]).forEach(r=>M.ensureAssuranceProfile(r));s.schemaVersion=30;}
     s.dataVersion=wasDemo?'2026.09-demo-33-power-tools':(s.dataVersion||'migrated');s.schemaVersion=30;continue;
    }
    if(s.schemaVersion===30){
-    const wasDemo=P.isDemoDataset(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);s.settings=s.settings||{};
-    const repair=wasDemo&&P.repairSeedPlanningIntegrityV1081?P.repairSeedPlanningIntegrityV1081(s):{changed:false,reason:'repair-service-not-loaded'};
+    const wasDemo=M.isDemoDataset(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);s.settings=s.settings||{};
+    const repair=wasDemo&&M.repairSeedPlanningIntegrityV1081?M.repairSeedPlanningIntegrityV1081(s):{changed:false,reason:'repair-service-not-loaded'};
     if(wasDemo&&!repair.changed&&repair.reason==='repair-service-not-loaded')delete s.settings.seedPlanningIntegrityVersion;
-    P.audit(s,'Planning integrity model upgraded','System','Planning','REV 1.0.80 schedule state','REV 1.0.81 resource-valid schedule state',repair.changed?`Legacy demo seed repaired: ${repair.moved||0} active booking(s) replanned; ${repair.removedFinal||0} obsolete final-state booking(s) removed.`:'Planning integrity validation enabled; no legacy seed repair required at migration time.');
+    M.audit(s,'Planning integrity model upgraded','System','Planning','REV 1.0.80 schedule state','REV 1.0.81 resource-valid schedule state',repair.changed?`Legacy demo seed repaired: ${repair.moved||0} active booking(s) replanned; ${repair.removedFinal||0} obsolete final-state booking(s) removed.`:'Planning integrity validation enabled; no legacy seed repair required at migration time.');
     s.dataVersion=wasDemo?'2026.09-demo-34-planning-integrity':(s.dataVersion||'migrated');s.schemaVersion=31;continue;
    }
    // REV 1.0.98 migration repair: schema 32 and 33 were introduced by later
@@ -268,79 +272,82 @@ class MigrationService{
    // the existing enterprise/planning/request models, then let the normal startup
    // reconciliation validate semantic planning bookings against the canonical task graph.
    if(s.schemaVersion===31){
-    const wasDemo=P.isDemoDataset?.(s);s.settings=s.settings||{};
-    P.ensureMaterialModel?.(s);P.ensurePlanningModel?.(s);P.ensureEnterpriseModel?.(s);P.ensureRequestingTeamModel?.(s);
-    for(const r of s.requests||[]){P.ensureAssuranceProfile?.(r);P.ensureTestRequirements?.(s,r);P.ensureApprovalRecords?.(s,r);P.syncRequestFlowdown?.(s,r);}
+    const wasDemo=M.isDemoDataset?.(s);s.settings=s.settings||{};
+    M.ensureMaterialModel?.(s);M.ensurePlanningModel?.(s);M.ensureEnterpriseModel?.(s);M.ensureRequestingTeamModel?.(s);
+    for(const r of s.requests||[]){M.ensureAssuranceProfile?.(r);M.ensureTestRequirements?.(s,r);M.ensureApprovalRecords?.(s,r);M.syncRequestFlowdown?.(s,r);}
     s.settings.migrationHistory=Array.isArray(s.settings.migrationHistory)?s.settings.migrationHistory:[];
-    if(!s.settings.migrationHistory.some(x=>x?.id==='schema31-to-32'))s.settings.migrationHistory.push({id:'schema31-to-32',at:P.now?.()||new Date().toISOString(),release:'1.0.98',note:'Restored missing planning/governance migration link.'});
-    if(s.auditTrail)P.audit(s,'Schema migration repaired','System','Data model','Schema 31','Schema 32','Data-preserving planning/governance normalisation restored in REV 1.0.98.');
+    if(!s.settings.migrationHistory.some(x=>x?.id==='schema31-to-32'))s.settings.migrationHistory.push({id:'schema31-to-32',at:M.now?.()||new Date().toISOString(),release:'1.0.98',note:'Restored missing planning/governance migration link.'});
+    if(s.auditTrail)M.audit(s,'Schema migration repaired','System','Data model','Schema 31','Schema 32','Data-preserving planning/governance normalisation restored in REV 1.0.98.');
     s.dataVersion=wasDemo?'2026.09-demo-35-governed-planning':(s.dataVersion||'migrated');s.schemaVersion=32;continue;
    }
    if(s.schemaVersion===32){
-    const wasDemo=P.isDemoDataset?.(s);s.settings=s.settings||{};
-    P.ensureMaterialModel?.(s);P.ensurePlanningModel?.(s);P.ensureEnterpriseModel?.(s);P.ensureRequestingTeamModel?.(s);
-    for(const r of s.requests||[]){P.ensureAssuranceProfile?.(r);P.ensureTestRequirements?.(s,r);P.ensureApprovalRecords?.(s,r);P.syncRequestFlowdown?.(s,r);}
+    const wasDemo=M.isDemoDataset?.(s);s.settings=s.settings||{};
+    M.ensureMaterialModel?.(s);M.ensurePlanningModel?.(s);M.ensureEnterpriseModel?.(s);M.ensureRequestingTeamModel?.(s);
+    for(const r of s.requests||[]){M.ensureAssuranceProfile?.(r);M.ensureTestRequirements?.(s,r);M.ensureApprovalRecords?.(s,r);M.syncRequestFlowdown?.(s,r);}
     // Provider-neutral Project Team authority and probability normalisation are
     // applied by ensureEnterpriseModel/ensureRequestingTeamModel. Planning booking
     // fingerprints are reconciled immediately after migration during normal startup.
     s.settings.migrationHistory=Array.isArray(s.settings.migrationHistory)?s.settings.migrationHistory:[];
-    if(!s.settings.migrationHistory.some(x=>x?.id==='schema32-to-33'))s.settings.migrationHistory.push({id:'schema32-to-33',at:P.now?.()||new Date().toISOString(),release:'1.0.98',note:'Restored missing canonical-planning/project-authority migration link.'});
-    if(s.auditTrail)P.audit(s,'Schema migration repaired','System','Data model','Schema 32','Schema 33','Canonical planning and Project Team authority model normalised without replacing user data.');
+    if(!s.settings.migrationHistory.some(x=>x?.id==='schema32-to-33'))s.settings.migrationHistory.push({id:'schema32-to-33',at:M.now?.()||new Date().toISOString(),release:'1.0.98',note:'Restored missing canonical-planning/project-authority migration link.'});
+    if(s.auditTrail)M.audit(s,'Schema migration repaired','System','Data model','Schema 32','Schema 33','Canonical planning and Project Team authority model normalised without replacing user data.');
     s.dataVersion=wasDemo?'2026.09-demo-36-canonical-planning':(s.dataVersion||'migrated');s.schemaVersion=33;continue;
    }
    if(s.schemaVersion===33){
-    const wasDemo=P.isDemoDataset?.(s);s.settings=s.settings||{};
-    P.ensureMaterialModel?.(s);P.ensurePlanningModel?.(s);P.ensureEnterpriseModel?.(s);P.ensureRequestingTeamModel?.(s);P.ensureMultiLabModelV1099?.(s);
-    for(const r of s.requests||[]){P.ensureAssuranceProfile?.(r);P.ensureTestRequirements?.(s,r);P.ensureApprovalRecords?.(s,r);P.syncRequestFlowdown?.(s,r);P.assignRequestDefaultSiteV1099?.(s,r,{force:false});}
+    const wasDemo=M.isDemoDataset?.(s);s.settings=s.settings||{};
+    M.ensureMaterialModel?.(s);M.ensurePlanningModel?.(s);M.ensureEnterpriseModel?.(s);M.ensureRequestingTeamModel?.(s);M.ensureMultiLabModelV1099?.(s);
+    for(const r of s.requests||[]){M.ensureAssuranceProfile?.(r);M.ensureTestRequirements?.(s,r);M.ensureApprovalRecords?.(s,r);M.syncRequestFlowdown?.(s,r);M.assignRequestDefaultSiteV1099?.(s,r,{force:false});}
     s.settings.migrationHistory=Array.isArray(s.settings.migrationHistory)?s.settings.migrationHistory:[];
-    if(!s.settings.migrationHistory.some(x=>x?.id==='schema33-to-34'))s.settings.migrationHistory.push({id:'schema33-to-34',at:P.now?.()||new Date().toISOString(),release:'1.0.100',note:'Multi-laboratory network model added. Existing controlled work retained at its prior lab; product routing defaults enabled for future Prototype / Validation / Failure Analysis demand.'});
-    if(s.auditTrail)P.audit(s,'Laboratory network model enabled','System','Data model','Single-lab schema 33','Multi-lab schema 34','Existing work retained at its current execution site; no controlled build silently moved.');
+    if(!s.settings.migrationHistory.some(x=>x?.id==='schema33-to-34'))s.settings.migrationHistory.push({id:'schema33-to-34',at:M.now?.()||new Date().toISOString(),release:'1.0.100',note:'Multi-laboratory network model added. Existing controlled work retained at its prior lab; product routing defaults enabled for future Prototype / Validation / Failure Analysis demand.'});
+    if(s.auditTrail)M.audit(s,'Laboratory network model enabled','System','Data model','Single-lab schema 33','Multi-lab schema 34','Existing work retained at its current execution site; no controlled build silently moved.');
     s.dataVersion=wasDemo?'2026.09-demo-37-multi-lab-network':(s.dataVersion||'migrated');s.schemaVersion=34;continue;
    }
    if(s.schemaVersion===34){
-    const wasDemo=P.isDemoDataset?.(s);s.settings=s.settings||{};
-    P.ensureMaterialModel?.(s);P.ensurePlanningModel?.(s);P.ensureEnterpriseModel?.(s);P.ensureRequestingTeamModel?.(s);P.ensureMultiLabModelV1099?.(s);
-    const demoUpgrade=wasDemo&&P.seedMultiLabDemoPortfolioV1100?P.seedMultiLabDemoPortfolioV1100(s):{changed:false,reason:wasDemo?'demo-helper-unavailable':'customer-data'};
-    const forecastRepairs=P.reconcileAllForecastsV1100?.(s)||0;
+    const wasDemo=M.isDemoDataset?.(s);s.settings=s.settings||{};
+    M.ensureMaterialModel?.(s);M.ensurePlanningModel?.(s);M.ensureEnterpriseModel?.(s);M.ensureRequestingTeamModel?.(s);M.ensureMultiLabModelV1099?.(s);
+    const demoUpgrade=wasDemo&&M.seedMultiLabDemoPortfolioV1100?M.seedMultiLabDemoPortfolioV1100(s):{changed:false,reason:wasDemo?'demo-helper-unavailable':'customer-data'};
+    const forecastRepairs=M.reconcileAllForecastsV1100?.(s)||0;
     s.settings.migrationHistory=Array.isArray(s.settings.migrationHistory)?s.settings.migrationHistory:[];
-    if(!s.settings.migrationHistory.some(x=>x?.id==='schema34-to-35'))s.settings.migrationHistory.push({id:'schema34-to-35',at:P.now?.()||new Date().toISOString(),release:'1.0.100',note:'Delivery health now derives from the exact canonical plan finish and a 17:00 requested-delivery cutoff. Demo data is distributed across all internal labs with constrained late and long-horizon scenarios.'});
-    if(s.auditTrail)P.audit(s,'Planning delivery truth upgraded','System','Planning','Date-only forecast health and noon visual deadline','Exact plan-finish health and end-of-workday deadline',`${forecastRepairs} forecast record(s) reconciled; demo portfolio ${demoUpgrade.changed?'upgraded':'preserved'} (${demoUpgrade.reason||'complete'}).`);
+    if(!s.settings.migrationHistory.some(x=>x?.id==='schema34-to-35'))s.settings.migrationHistory.push({id:'schema34-to-35',at:M.now?.()||new Date().toISOString(),release:'1.0.100',note:'Delivery health now derives from the exact canonical plan finish and a 17:00 requested-delivery cutoff. Demo data is distributed across all internal labs with constrained late and long-horizon scenarios.'});
+    if(s.auditTrail)M.audit(s,'Planning delivery truth upgraded','System','Planning','Date-only forecast health and noon visual deadline','Exact plan-finish health and end-of-workday deadline',`${forecastRepairs} forecast record(s) reconciled; demo portfolio ${demoUpgrade.changed?'upgraded':'preserved'} (${demoUpgrade.reason||'complete'}).`);
     s.dataVersion=wasDemo?'2026.09-demo-38-multi-lab-waterfall':(s.dataVersion||'migrated');s.schemaVersion=35;continue;
    }
    if(s.schemaVersion===35){
-    const wasDemo=P.isDemoDataset?.(s);s.settings=s.settings||{};
+    const wasDemo=M.isDemoDataset?.(s);s.settings=s.settings||{};
     // REV 1.0.150: restore the schema-35 -> 36 bridge introduced by the
     // canonical resource-semantics upgrade in REV 1.0.150. This migration is
     // intentionally data-preserving: it only materialises canonical planning
     // capability fields and leaves the legacy descriptive category/capability
     // values intact for display and import compatibility.
-    P.ensureMaterialModel?.(s);P.ensurePlanningModel?.(s);P.ensureEnterpriseModel?.(s);P.ensureRequestingTeamModel?.(s);P.ensureMultiLabModelV1099?.(s);
-    const semanticStats=P.migrateLegacyResourceSemanticsV148?.(s)||{equipment:0,processes:0,tests:0,bookings:0,steps:0};
-    const semanticIssues=P.resourceSemanticAuditV148?.(s)||[];
+    M.ensureMaterialModel?.(s);M.ensurePlanningModel?.(s);M.ensureEnterpriseModel?.(s);M.ensureRequestingTeamModel?.(s);M.ensureMultiLabModelV1099?.(s);
+    const semanticStats=M.migrateLegacyResourceSemanticsV148?.(s)||{equipment:0,processes:0,tests:0,bookings:0,steps:0};
+    const semanticIssues=M.resourceSemanticAuditV148?.(s)||[];
     s.settings.migrationHistory=Array.isArray(s.settings.migrationHistory)?s.settings.migrationHistory:[];
-    if(!s.settings.migrationHistory.some(x=>x?.id==='schema35-to-36'))s.settings.migrationHistory.push({id:'schema35-to-36',at:P.now?.()||new Date().toISOString(),release:'1.0.150',note:'Restored the missing schema bridge for canonical resource semantics. Existing equipment/process/test/booking data is preserved; canonical planningCapability values are materialised for consistent planning and execution.'});
-    if(s.auditTrail)P.audit(s,'Resource semantics schema bridge restored','System','Data model','Schema 35 legacy/partially canonical resource fields','Schema 36 canonical planning capability model',`Migrated ${semanticStats.equipment||0} equipment, ${semanticStats.processes||0} processes, ${semanticStats.tests||0} tests, ${semanticStats.bookings||0} bookings and ${semanticStats.steps||0} route steps; ${semanticIssues.length} semantic audit issue(s) remain for review.`);
+    if(!s.settings.migrationHistory.some(x=>x?.id==='schema35-to-36'))s.settings.migrationHistory.push({id:'schema35-to-36',at:M.now?.()||new Date().toISOString(),release:'1.0.150',note:'Restored the missing schema bridge for canonical resource semantics. Existing equipment/process/test/booking data is preserved; canonical planningCapability values are materialised for consistent planning and execution.'});
+    if(s.auditTrail)M.audit(s,'Resource semantics schema bridge restored','System','Data model','Schema 35 legacy/partially canonical resource fields','Schema 36 canonical planning capability model',`Migrated ${semanticStats.equipment||0} equipment, ${semanticStats.processes||0} processes, ${semanticStats.tests||0} tests, ${semanticStats.bookings||0} bookings and ${semanticStats.steps||0} route steps; ${semanticIssues.length} semantic audit issue(s) remain for review.`);
     s.dataVersion=wasDemo?'2026.09-demo-39-resource-semantics':(s.dataVersion||'migrated');s.schemaVersion=36;continue;
    }
    if(s.schemaVersion===36){
-    const wasDemo=P.isDemoDataset?.(s);s.settings=s.settings||{};
-    const repaired=P.repairPollutedResourceSemanticsV150?.(s)||{equipment:0,processes:0,tests:0,bookings:0,steps:0,reassigned:0};
+    const wasDemo=M.isDemoDataset?.(s);s.settings=s.settings||{};
+    const repaired=M.repairPollutedResourceSemanticsV150?.(s)||{equipment:0,processes:0,tests:0,bookings:0,steps:0,reassigned:0};
     s.settings.migrationHistory=Array.isArray(s.settings.migrationHistory)?s.settings.migrationHistory:[];
-    if(!s.settings.migrationHistory.some(x=>x?.id==='schema36-to-37'))s.settings.migrationHistory.push({id:'schema36-to-37',at:P.now?.()||new Date().toISOString(),release:'1.0.150',note:'Separated legacy resource location/category descriptors from technical planning capabilities and repaired polluted planning/resource assignments without deleting operational data.'});
-    if(s.auditTrail)P.audit(s,'Resource capability semantics repaired','System','Data model','Broad display/location descriptors could be stored as technical planning capabilities','Technical planning capability resolved independently from resource taxonomy',`Repaired ${repaired.equipment||0} equipment, ${repaired.processes||0} processes, ${repaired.tests||0} tests, ${repaired.bookings||0} bookings and ${repaired.steps||0} route steps; ${repaired.reassigned||0} booking assignment(s) reconciled.`);
+    if(!s.settings.migrationHistory.some(x=>x?.id==='schema36-to-37'))s.settings.migrationHistory.push({id:'schema36-to-37',at:M.now?.()||new Date().toISOString(),release:'1.0.150',note:'Separated legacy resource location/category descriptors from technical planning capabilities and repaired polluted planning/resource assignments without deleting operational data.'});
+    if(s.auditTrail)M.audit(s,'Resource capability semantics repaired','System','Data model','Broad display/location descriptors could be stored as technical planning capabilities','Technical planning capability resolved independently from resource taxonomy',`Repaired ${repaired.equipment||0} equipment, ${repaired.processes||0} processes, ${repaired.tests||0} tests, ${repaired.bookings||0} bookings and ${repaired.steps||0} route steps; ${repaired.reassigned||0} booking assignment(s) reconciled.`);
     s.dataVersion=wasDemo?'2026.09-demo-40-resource-semantic-repair':(s.dataVersion||'migrated');s.schemaVersion=37;continue;
    }
    if(s.schemaVersion===37){
-    const wasDemo=P.isDemoDataset?.(s);s.settings=s.settings||{};
-    const programme=P.ensureProgrammeModelV161?.(s,{seedDemo:wasDemo})||{changed:false};
+    const wasDemo=M.isDemoDataset?.(s);s.settings=s.settings||{};
+    const programme=M.ensureProgrammeModelV161?.(s,{seedDemo:wasDemo})||{changed:false};
     s.settings.migrationHistory=Array.isArray(s.settings.migrationHistory)?s.settings.migrationHistory:[];
-    if(!s.settings.migrationHistory.some(x=>x?.id==='schema37-to-38'))s.settings.migrationHistory.push({id:'schema37-to-38',at:P.now?.()||new Date().toISOString(),release:'1.0.164',note:'Added the shared Programme abstraction and Validation specialisation while preserving the REV 1.0.151 Prototype model and common planning/resource services.'});
-    if(s.auditTrail)P.audit(s,'Shared Programme model enabled','System','Data model','Prototype-only programme domain','Prototype + Validation programmeType model',`Validation model initialised${programme.changed?' and demo fixtures added':' without replacing existing controlled data'}.`);
+    if(!s.settings.migrationHistory.some(x=>x?.id==='schema37-to-38'))s.settings.migrationHistory.push({id:'schema37-to-38',at:M.now?.()||new Date().toISOString(),release:'1.0.164',note:'Added the shared Programme abstraction and Validation specialisation while preserving the REV 1.0.151 Prototype model and common planning/resource services.'});
+    if(s.auditTrail)M.audit(s,'Shared Programme model enabled','System','Data model','Prototype-only programme domain','Prototype + Validation programmeType model',`Validation model initialised${programme.changed?' and demo fixtures added':' without replacing existing controlled data'}.`);
     s.dataVersion=wasDemo?'2026.09-demo-41-shared-programmes':(s.dataVersion||'migrated');s.schemaVersion=38;continue;
    }
    throw new Error(`No migration available from schema ${s.schemaVersion}`);
   }
-  P.ensureMaterialModel(s);P.ensurePlanningModel(s);P.ensureEnterpriseModel(s);P.ensureMultiLabModelV1099?.(s);P.ensureProgrammeModelV161?.(s,{seedDemo:false});P.ensureProgrammeBuilderV162?.(s);(s.requests||[]).forEach(r=>{P.assignRequestDefaultSiteV1099?.(s,r,{force:false});P.syncRequestFlowdown(s,r);});P.repairDemoWorkflowFixturesV1115?.(s);P.reconcileAllForecastsV1100?.(s);(s.serials||[]).forEach(sample=>P.ensureSampleEvidence(sample));P.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';P.ensureQualityCase(d);});(s.requests||[]).forEach(r=>P.ensureApprovalRecords(s,r));return s;
+  if(startingSchema<M.SCHEMA_VERSION){
+   M.ensureMaterialModel(s);M.ensurePlanningModel(s);M.ensureEnterpriseModel(s);M.ensureMultiLabModelV1099?.(s);M.ensureProgrammeModelV161?.(s,{seedDemo:false});M.ensureProgrammeBuilderV162?.(s);(s.requests||[]).forEach(r=>{M.assignRequestDefaultSiteV1099?.(s,r,{force:false});M.syncRequestFlowdown(s,r);});M.repairDemoWorkflowFixturesV1115?.(s);M.reconcileAllForecastsV1100?.(s);(s.serials||[]).forEach(sample=>M.ensureSampleEvidence(sample));M.repairDuplicateSamples(s);(s.deviations||[]).forEach(d=>{if(d.type==='NCR')d.type='Nonconformance';M.ensureQualityCase(d);});(s.requests||[]).forEach(r=>M.ensureApprovalRecords(s,r));
+  }
+  return s;
  }
 }
 
