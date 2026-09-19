@@ -1,19 +1,13 @@
-# LabOS Stage 3 — Controlled Build Identification Report
+# Stage 3 Build Identification — Test 8
 
-Date: 2026-09-19
+Product revision remains `1.0.185`.
 
-Product revision: **1.0.185**  
-Controlled build checkpoint: **STAGE3-GITHUB-TEST-6**  
-Visible browser identifier: **REV 1.0.185 · S3 TEST**
+Controlled checkpoint: `STAGE3-GITHUB-TEST-8`
 
-## Browser-visible identity
+Visible browser badge: `REV 1.0.185 · S3 TEST-8`
 
-- browser title: `LabOS — REV 1.0.185 · STAGE 3 TEST`
-- header badge: `REV 1.0.185 · S3 TEST`
-- sidebar footer: `Controlled build: STAGE3-GITHUB-TEST-6`
-- `labos-version.json` buildId: `STAGE3-GITHUB-TEST-6`
-- deployment handshake expected build: `STAGE3-GITHUB-TEST-6`
+Startup message: `Starting LabOS REV 1.0.185 · STAGE 3 TEST-8…`
 
-The product revision remains 1.0.185. The controlled-build identifier distinguishes same-revision GitHub test deployments without changing the product revision.
+All production JavaScript and CSS startup URLs carry `?build=STAGE3-GITHUB-TEST-8` so same-revision GitHub deployments cannot silently mix runtime bundles from an earlier controlled build.
 
-The narrow mobile layout retains the revision badge.
+`qa/stage3-build-identification-tests.js`: **10/10 PASS**.

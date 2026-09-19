@@ -114,6 +114,53 @@ const DataRepairService={
     for(const x of s.allocations||[])if(!x.siteId){const site=materials.get(x.materialId)?.siteId||programmeSite(x.requestId);if(site){x.siteId=site;changes.push(`allocations:${x.id}.siteId`)}}
     return {changed:changes.length>0,changes};
   },
+  /* Controlled rebuild compatibility repair for pre-Stage-2 Validation graphs.
+     Some persisted snapshots contain a complete Validation definition in the older
+     programmeNodes/programmeEdges or validationNodes/validationEdges stores, but no
+     canonical validationActivities. Stage 2 and Stage 3 intentionally consume only
+     canonical activities, so hydrate that representation once at the canonical
+     load/import/reset boundary. Never infer from display names. If the legacy graph
+     cannot be represented without changing dependency semantics, leave it untouched
+     and emit a structured integrity issue instead of guessing. */
+  repairLegacyValidationStructure(state){
+    const s=state,changes=[],issueSource='validation-legacy-structure',prior=(s.canonicalIntegrityIssuesV1||[]).filter(x=>x?.source!==issueSource),issues=[];
+    s.validationActivities=Array.isArray(s.validationActivities)?s.validationActivities:[];s.validationLegs=Array.isArray(s.validationLegs)?s.validationLegs:[];
+    const std=new Map((s.standardTests||[]).map(x=>[x.id,x])),reqs=s.validationRequirements||[],programmes=s.validationProgrammes||[];
+    const schedulable=n=>{const t=String(n?.type||'').toLowerCase();return ['test','method','development','activity'].includes(t)||!!n?.standardTestId||!!n?.developmentType};
+    const sortNode=(a,b)=>Number(a?.sequence??a?.order??999999)-Number(b?.sequence??b?.order??999999)||String(a?.id||'').localeCompare(String(b?.id||''));
+    for(const p of programmes){
+      const pid=p?.id;if(!pid||s.validationActivities.some(a=>a.programmeId===pid))continue;
+      const valNodes=(s.validationNodes||[]).filter(n=>n.programmeId===pid),progNodes=(s.programmeNodes||[]).filter(n=>n.programmeId===pid),sourceNodes=valNodes.length?valNodes:progNodes;
+      if(!sourceNodes.length)continue;
+      const sourceKind=valNodes.length?'validationNodes':'programmeNodes',edgeStore=valNodes.length?'validationEdges':'programmeEdges',sourceEdges=(s[edgeStore]||[]).filter(e=>e.programmeId===pid),tasks=sourceNodes.filter(schedulable);
+      if(!tasks.length)continue;
+      const nodeMap=new Map(sourceNodes.map(n=>[n.id,n])),taskMap=new Map(tasks.map(n=>[n.id,n])),incoming=new Map(),outgoing=new Map();
+      for(const e of sourceEdges){if(!e?.from||!e?.to)continue;if(!incoming.has(e.to))incoming.set(e.to,[]);incoming.get(e.to).push(e.from);if(!outgoing.has(e.from))outgoing.set(e.from,[]);outgoing.get(e.from).push(e.to)}
+      const nearestPreds=(id,seen=new Set())=>{const out=[];for(const from of incoming.get(id)||[]){if(seen.has(from))continue;seen.add(from);if(taskMap.has(from))out.push(from);else if(nodeMap.has(from))out.push(...nearestPreds(from,seen))}return [...new Set(out)]};
+      const predMap=new Map(tasks.map(n=>[n.id,nearestPreds(n.id)])),succMap=new Map(tasks.map(n=>[n.id,[]]));for(const [id,preds] of predMap)for(const pr of preds)if(succMap.has(pr))succMap.get(pr).push(id);
+      const cross=[],complex=[];for(const n of tasks){const preds=predMap.get(n.id)||[];const x=preds.filter(pr=>taskMap.get(pr)?.legId!==n.legId);if(x.length)cross.push({activityId:n.id,predecessorIds:x});if(preds.length>1)complex.push({activityId:n.id,kind:'multiple-predecessors',ids:preds})}for(const [id,succ] of succMap)if(succ.length>1)complex.push({activityId:id,kind:'multiple-successors',ids:succ});
+      if(cross.length||complex.length){issues.push({source:issueSource,code:'VALIDATION_LEGACY_STRUCTURE_UNREPRESENTABLE',severity:'warning',entityType:'ValidationProgramme',programmeId:pid,evidence:{sourceKind,crossLegDependencies:cross,complexDependencies:complex}});continue}
+      const sourceLegStore=valNodes.length?'validationLegs':'programmeLegs',sourceLegs=(s[sourceLegStore]||[]).filter(l=>l.programmeId===pid),legIds=[...new Set(tasks.map(n=>n.legId).filter(Boolean))];
+      const legs=legIds.map((id,i)=>{const src=sourceLegs.find(l=>l.id===id)||s.validationLegs.find(l=>l.id===id);return {id,programmeId:pid,name:src?.name||`Test Leg ${i+1}`,order:Number(src?.order||i+1),status:src?.status||'Planned',flowV164:true}}).sort((a,b)=>a.order-b.order||String(a.id).localeCompare(String(b.id)));
+      if(!legs.length){issues.push({source:issueSource,code:'VALIDATION_LEGACY_STRUCTURE_NO_LEGS',severity:'warning',entityType:'ValidationProgramme',programmeId:pid,evidence:{sourceKind}});continue}
+      // Build a lossless simple-chain/parallel-root flow. These are the structures
+      // emitted by the historical Validation builders represented in supported snapshots.
+      let representable=true;const flowLegs=[];
+      for(const leg of legs){const rows=tasks.filter(n=>n.legId===leg.id).sort(sortNode),ids=new Set(rows.map(n=>n.id)),roots=rows.filter(n=>(predMap.get(n.id)||[]).filter(x=>ids.has(x)).length===0);if(!rows.length){flowLegs.push({id:leg.id,sequenceId:`SEQ-${leg.id}`,name:leg.name,nodes:[]});continue}
+        const chainFrom=root=>{const out=[],visited=new Set(),walk=id=>{if(visited.has(id)){representable=false;return}visited.add(id);out.push({kind:'activity',activityId:id});const nx=(succMap.get(id)||[]).filter(x=>ids.has(x));if(nx.length>1){representable=false;return}if(nx[0])walk(nx[0])};walk(root.id);return {nodes:out,visited}};
+        if(roots.length===1){const c=chainFrom(roots[0]);if(c.visited.size!==rows.length)representable=false;flowLegs.push({id:leg.id,sequenceId:`SEQ-${leg.id}`,name:leg.name,nodes:c.nodes})}
+        else {const branches=[],all=new Set();for(let i=0;i<roots.length;i++){const c=chainFrom(roots[i]);for(const x of c.visited){if(all.has(x))representable=false;all.add(x)}branches.push({key:String.fromCharCode(65+i),sequenceId:`SEQ-${leg.id}-MIG-${i+1}`,name:`Migrated branch ${i+1}`,nodes:c.nodes})}if(all.size!==rows.length)representable=false;flowLegs.push({id:leg.id,sequenceId:`SEQ-${leg.id}`,name:leg.name,nodes:[{kind:'split',id:`MIG-SPLIT-${pid}-${leg.id}`,branches}]})}
+      }
+      if(!representable){issues.push({source:issueSource,code:'VALIDATION_LEGACY_STRUCTURE_UNREPRESENTABLE',severity:'warning',entityType:'ValidationProgramme',programmeId:pid,evidence:{sourceKind,reason:'Legacy graph is not a lossless simple-chain/parallel-root flow.'}});continue}
+      const requirementIdsFor=node=>{const direct=Array.isArray(node.requirementIds)?node.requirementIds:[];const linked=reqs.filter(r=>r.programmeId===pid&&(r.linkedNodeIds||[]).includes(node.id)).map(r=>r.id);return [...new Set([...direct,...linked])].filter(Boolean)};
+      const migrated=tasks.sort(sortNode).map((n,i)=>{const test=std.get(n.standardTestId),development=String(n.type||'').toLowerCase()==='method'||String(n.developmentType||'').toLowerCase().includes('method')||String(n.type||'').toLowerCase()==='development';return {id:n.id,programmeId:pid,legId:n.legId,order:Number(n.sequence??n.order??i+1),kind:development?'Test Development':'Validation Test',name:n.name||test?.name||n.id,requirementIds:requirementIdsFor(n),standardTestId:development?null:(n.standardTestId||null),basisTestId:n.basisTestId||n.standardTestId||null,estimatedHours:Number(n.latestEstimateHours??n.originalEstimateHours??n.durationHours??1)||1,actualHours:n.actualHours??null,status:n.status||n.executionStatus||'Planned',predecessorIds:[...(predMap.get(n.id)||[])],planningCapability:n.planningCapability||test?.planningCapability||null,equipmentCapability:n.equipmentCapability||test?.equipmentCapability||null,competency:n.competency||n.skillRequirement||test?.competency||null,acceptanceCriteria:n.acceptanceCriteria||test?.acceptanceCriteria||null,quantity:Number(n.dutQuantity||p.quantity||1)||1,readiness:'pending',siteId:n.executionSiteId||null,destructive:!!n.destructive,sameDutContinuation:n.dutContinuation!==false,retainedSamples:0,external:false,sisterLab:false,builderModel:'legacy-canonical-repair',flowModel:'1.0.164',canonicalMigrationV1:{source:sourceKind,sourceNodeId:n.id}}});
+      s.validationActivities.push(...migrated);s.validationLegs=s.validationLegs.filter(l=>l.programmeId!==pid).concat(legs);p.validationFlowV164={version:'1.0.164',createdAt:p.createdAt||new Date(0).toISOString(),updatedAt:p.updatedAt||p.createdAt||new Date(0).toISOString(),legs:flowLegs};
+      const migratedIds=new Set(migrated.map(a=>a.id));for(const r of reqs.filter(r=>r.programmeId===pid)){const fromNodes=(r.linkedNodeIds||[]).filter(id=>migratedIds.has(id));if(fromNodes.length){const next=[...new Set([...(r.linkedActivityIds||[]),...fromNodes])];if(JSON.stringify(next)!==JSON.stringify(r.linkedActivityIds||[])){r.linkedActivityIds=next;changes.push(`validationRequirements:${r.id}.linkedActivityIds`)}}}
+      changes.push(`validationActivities:${pid}:migrated-from-${sourceKind}`,`validationLegs:${pid}:canonicalized`,`validationProgrammes:${pid}.validationFlowV164`);
+    }
+    const nextIssues=[...prior,...issues],had=Array.isArray(s.canonicalIntegrityIssuesV1);if(had||nextIssues.length){const before=JSON.stringify(s.canonicalIntegrityIssuesV1||[]),after=JSON.stringify(nextIssues);if(before!==after){s.canonicalIntegrityIssuesV1=nextIssues;changes.push('canonicalIntegrityIssuesV1')}}
+    return {changed:changes.length>0,changes,issues};
+  },
   /* Stage-3 acceptance continuity repair. Historical Validation planning used a
      synthetic TESTREQ-<programme>-<standard-test> identity before Stage 2 made
      Validation activity IDs stable end-to-end. Repair only deterministic legacy
@@ -142,7 +189,7 @@ const DataRepairService={
     const nextIssues=[...prior,...issues],hadIssueRegistry=Array.isArray(s.canonicalIntegrityIssuesV1);if(hadIssueRegistry||nextIssues.length){const before=JSON.stringify(s.canonicalIntegrityIssuesV1||[]),after=JSON.stringify(nextIssues);if(before!==after){s.canonicalIntegrityIssuesV1=nextIssues;changes.push('canonicalIntegrityIssuesV1')}}
     return {changed:changes.length>0,changes,issues};
   },
-  run(state){const out=clone(state),a=this.repairMultiLabMaster(out),b=this.repairResourceOwnership(out),c=this.repairOwnership(out),d=this.repairOperationalOwnership(out),e=this.repairValidationBookingIdentity(out);return {state:out,changed:a.changed||b.changed||c.changed||d.changed||e.changed,changes:[...a.changes,...b.changes,...c.changes,...d.changes,...e.changes],issues:e.issues||[]};}
+  run(state){const out=clone(state),a=this.repairMultiLabMaster(out),b=this.repairResourceOwnership(out),c=this.repairOwnership(out),d=this.repairOperationalOwnership(out),e=this.repairLegacyValidationStructure(out),f=this.repairValidationBookingIdentity(out);return {state:out,changed:a.changed||b.changed||c.changed||d.changed||e.changed||f.changed,changes:[...a.changes,...b.changes,...c.changes,...d.changes,...e.changes,...f.changes],issues:[...(e.issues||[]),...(f.issues||[])]};}
 };
 function siteScopedPure(state,siteId,{includeRequestId=null,includeNetworkTasks=false}={}){
   const out=clone(state),sid=siteId||state?.settings?.primaryLabId||(state?.labs||[]).find(x=>x.type==='internal'&&x.active!==false)?.id||'LAB-NL';

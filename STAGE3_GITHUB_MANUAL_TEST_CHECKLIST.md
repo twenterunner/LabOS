@@ -1,15 +1,13 @@
-# Stage 3 GitHub Manual Test Checklist — TEST-7
+# Stage 3 GitHub Manual Test Checklist — TEST-8
 
-**Do not Reset Demo Data. Do not clear site data or IndexedDB.** Use the existing carried-forward browser state that exposed the earlier Validation issue.
+**Do NOT reset demo data, clear site data, clear IndexedDB, or use a fresh browser profile.** Use the same carried-forward browser state that exposed the Test-7 failures.
 
-Expected visible build: `REV 1.0.185 · S3 TEST-7`
-Expected controlled checkpoint: `STAGE3-GITHUB-TEST-7`
+1. Confirm the visible badge remains `REV 1.0.185 · S3 TEST-8` after startup completes.
+2. Tap the same previously failing Validation activity. Confirm `Move / replan in swimlane` produces usable Green/Yellow alternatives.
+3. Confirm the same Validation planned-item window exposes `Route only this test/activity to a sister lab` when independently routable, and that feasible remote labs are shown.
+4. Run AUTO PLAN. Historical/migrated Validation programmes such as the previously failing V26-31xx examples must no longer be falsely blocked with `Generate the Validation programme before resource planning`. A genuinely undefined programme may still be reported as a legitimate blocker.
+5. Review more than one AUTO scenario, including same-tier candidates if shown. Each Review action must open the exact scenario selected and must not show `That scenario is not reviewable` for a displayed reviewable scenario.
+6. Repeat manual replan and task-level sister-lab routing on a Prototype task to confirm Prototype behavior is unchanged.
+7. Accept one Validation partial transfer, run AUTO/replan, then refresh/reopen the page without clearing IndexedDB. The accepted remote assignment must remain the single live assignment and the Validation manual/network actions must still work.
 
-1. Confirm the visible mobile revision badge says `S3 TEST-7`.
-2. Run AUTO PLAN. Review at least two displayed optimization scenarios, especially two sharing the same displayed tier/class. Each `Review` action must open that exact scenario and must not show `That scenario is not reviewable.`
-3. Tap a planned Validation activity in existing persisted state. Confirm Green/Yellow manual alternatives work through `Move / replan in swimlane`.
-4. Confirm the same Validation activity shows `Route only this test/activity to a sister lab` when independently routable.
-5. Confirm Prototype planned-item/manual/sister-lab behavior remains unchanged.
-6. Accept a Validation partial sister-lab transfer, then run AUTO/replan. The accepted remote assignment must remain the single live assignment.
-7. Refresh/close/reopen the page without clearing IndexedDB and repeat Validation manual/sister-lab checks.
-8. Report any other missing/restored/new functionality; it will be classified into the 10-stage framework before changes.
+Also report any unrelated regression, missing/restored functionality, confusing behavior, performance concern, or new-function request. Each item will be classified into the fixed 10-stage framework before any change is made.
