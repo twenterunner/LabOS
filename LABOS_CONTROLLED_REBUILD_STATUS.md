@@ -19,15 +19,15 @@ Stage 2 RC1 remains the accepted protected development baseline until Stage 3 is
 ## Current controlled test build
 
 - Product revision: **1.0.185**
-- Controlled checkpoint: **STAGE3-GITHUB-TEST-5**
+- Controlled checkpoint: **STAGE3-GITHUB-TEST-6**
 - Visible browser identifier: **REV 1.0.185 · S3 TEST**
 - Status: **GitHub manual-test build; not a Stage-3 RC**
 
 ## Roadmap
 
-1. ✅ Stage 1 — Data & State Integrity — COMPLETE / PROTECTED
-2. ✅ Stage 2 — Planning Engine — COMPLETE / PROTECTED after controlled reopen + recertification
-3. 🟡 Stage 3 — Network / Sister-Lab Capability — AUTOMATED GATES GREEN / AWAITING TEST-5 GITHUB MANUAL TEST
+1. ✅ Stage 1 — Data & State Integrity — COMPLETE / PROTECTED after controlled persisted-state repair + recertification
+2. ✅ Stage 2 — Planning Engine — COMPLETE / PROTECTED after controlled Validation replan correction + recertification
+3. 🟡 Stage 3 — Network / Sister-Lab Capability — AUTOMATED GATES GREEN / AWAITING TEST-6 GITHUB MANUAL TEST
 4. ⬜ Stage 4 — Readiness Engine — NOT STARTED
 5. ⬜ Stage 5 — Workflow Engine — NOT STARTED
 6. ⬜ Stage 6 — Execution & Evidence Engine — NOT STARTED
@@ -39,11 +39,12 @@ Stage 2 RC1 remains the accepted protected development baseline until Stage 3 is
 ## Current protected architecture
 
 - Stage-1 StateTransactionService / persistence / read-purity boundaries remain protected.
+- Historical Validation `TESTREQ-<programme>-<standard-test>` booking identities are repaired deterministically at the canonical Stage-1 boundary to stable Validation activity IDs; unresolved/ambiguous references create structured integrity issues rather than name-based guesses.
 - One Stage-2 graph-aware PlanningEngine / PlannerService remains the only scheduling authority.
+- Validation replanning atomically replaces prior active bookings while preserving historical rows, so accepted partial SiteAssignments remain the single live routing authority.
+- Manual alternative semantics treat filling a previously unassigned resource as ordinary feasible planning; Yellow is reserved for displacement/readiness changes. The same classifier is used by PlanningEngine and Validation in-lane rendering.
 - Prototype and Validation share the same planning kernel and one planned-item interaction model.
 - Overall / Per programme / Per equipment / Per person use one canonical Planning renderer and booking model; only grouping changes.
-- Manual in-lane replan uses the Stage-2 planning kernel and common Green/Yellow/Red feasibility semantics for Prototype and Validation.
-- Canonical Planning exposes one whole-demand AUTO PLAN covering Prototype + Validation demand.
 - Stage-3 whole/partial sister-lab feasibility is exposed through NetworkProposalService and applied through governed NetworkTransferService transactions.
 - Prototype tasks and Validation activities use stable canonical IDs end-to-end.
 - Validation leg/subflow transfer remains supported through TransferScope.subflow.
@@ -51,18 +52,20 @@ Stage 2 RC1 remains the accepted protected development baseline until Stage 3 is
 - Internal sister labs and external providers retain distinct governance.
 - No Stage-4 readiness implementation has started.
 
-## Fresh protection executed on the corrected TEST-5 source
-
-Canonical Stage 2: **70/70 PASS**
-- graph: 27/27
-- portfolio/scenario: 24/24
-- hardening: 19/19
+## Fresh protection executed on the corrected TEST-6 source before checkpoint metadata advance
 
 Stage 1: **46/46 PASS**
 - architecture/read purity: 10/10
 - integrity: 17/17
 - canonical boundary: 3/3
 - functional: 16/16
+
+Canonical Stage 2: **70/70 PASS**
+- graph: 27/27
+- portfolio/scenario: 24/24
+- hardening: 19/19
+
+Stage-2 browser/planning regression: **5/5 PASS**
 
 Stage 3 canonical/supporting suites:
 - network/domain: 77/77
@@ -71,18 +74,13 @@ Stage 3 canonical/supporting suites:
 - caller audit: 15/15
 - release hardening: 10/10
 - prior Stage-3 manual-feedback regression: 5/5
+- Test-4 feedback / persisted-state integration: 9/9
+- historical Validation identity continuity: 8/8
 
-Additional controlled regression suites:
-- Test-4 feedback / persisted-state integration: **9/9 PASS**
-- Stage-2 browser-feedback regression: **5/5 PASS**
-- build identification after TEST-5 checkpoint advance: **8/8 PASS**
-
-Structural protection after checkpoint advance:
-- root production JavaScript: **10/10 parse**
-- local index script references: **9/9 present**
+Pre-build-identification aggregate: **277/277 PASS, 0 FAIL**.
 
 Real browser/IndexedDB automation is not certified by the Node protection suite. The Stage-1 repository tests use the documented in-memory fallback when IndexedDB is unavailable. The GitHub Pages browser test remains the manual stage gate.
 
 ## Continuity rule
 
-Do not start Stage 4 and do not create a Stage-3 RC until TEST 5 browser feedback is accepted and the final Stage-3 acceptance gate is explicitly authorized.
+Do not start Stage 4 and do not create a Stage-3 RC until TEST 6 browser feedback is accepted and the final Stage-3 acceptance gate is explicitly authorized.
