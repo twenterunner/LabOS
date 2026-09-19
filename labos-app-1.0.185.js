@@ -6228,8 +6228,8 @@ function installV1190InLanePlanning(){
     if(t.dataset.v1190StartInlane){const id=t.dataset.v1190StartInlane;v1190StartInLaneReplan(id);return}
     if(t.dataset.v1190InlaneOption){v1190ApplyInLaneOption(t.dataset.v1190InlaneOption);return}
     if(t.hasAttribute('data-v1190-cancel-inlane')){v1190ClearInLaneReplan();return}
-    if(t.hasAttribute('data-v1190-open-full-manual')){const rid=App.inLaneReplanV1190?.requestId;v1190ClearInLaneReplan();if(rid)v1116ManualPlanModal(rid,false);return}
-    if(t.dataset.v1190ConfirmYellow){const key=t.dataset.v1190ConfirmYellow,why=$('#v1190YellowReason')?.value.trim()||'';if(!why){toast('A rationale is required for a Yellow readiness change.',true);return}closeModal();const mode=App.inLaneReplanV1190,opt=mode?.options?.find(x=>x.key===key);if(!opt)return;const prop=opt.prop;v1190ClearInLaneReplan();commitMoveProposalV1070(prop,why);return}
+    if(t.hasAttribute('data-v1190-open-full-manual')){v1190OpenFullManualV5();return}
+    if(t.dataset.v1190ConfirmYellow){const key=t.dataset.v1190ConfirmYellow,why=$('#v1190YellowReason')?.value.trim()||'';if(!why){toast('A rationale is required for a Yellow planning change.',true);return}v1190ConfirmInLaneYellowV5(key,why);return}
   },true)
 }
 // Desktop move grip / drag and the Planned Task button now enter the same
@@ -10884,7 +10884,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest?.('[data-ca
   if(t.dataset.planFilter){App.filters.planFilter=t.dataset.planFilter;render();return}
   if(t.dataset.planDomain){App.filters.planDomain=t.dataset.planDomain;render();return}
   if(t.dataset.planZoom){const a=t.dataset.planZoom;if(a==='fit')App.filters.planZoom='fit';else{let z=App.filters.planZoom==='fit'?1:Number(App.filters.planZoom||1);z=Math.max(.55,Math.min(1.8,z+(a==='in'?.15:-.15)));App.filters.planZoom=z}render();return}
-  if(t.dataset.planBooking){e.preventDefault();e.stopPropagation();const b=(App.state.bookings||[]).find(x=>x.id===t.dataset.planBooking);if(!b)return;const domain=(App.state.validationProgrammes||[]).some(x=>x.id===b.requestId)?'validation':'prototype';if(domain==='prototype')planningItemPromptV1068(b.id);else openManualSlots(b.id);return}
+  if(t.dataset.planBooking){e.preventDefault();e.stopPropagation();const b=(App.state.bookings||[]).find(x=>x.id===t.dataset.planBooking);if(!b)return;planningItemPromptV1068(b.id);return}
   if(t.dataset.planOpen){const id=t.dataset.planOpen,d=t.dataset.planDomainOpen;if(d==='validation')openValidationV161(id,'planning');else openRequest(id,'schedule');return}
   if(t.dataset.planOptimize){e.preventDefault();e.stopPropagation();optimizeRecovery(t.dataset.planOptimize);return}
   if(t.dataset.planCompare){e.preventDefault();e.stopPropagation();compareLabs(t.dataset.planCompare);return}
@@ -11019,6 +11019,72 @@ async function stage3AcceptTransfer(id,reason){return stage3RunNetworkTransactio
 async function stage3RejectTransfer(id,reason){return stage3RunNetworkTransaction('rejectTransaction',id,{reason,context:App.session})}
 async function stage3CancelTransfer(id,reason){return stage3RunNetworkTransaction('cancelTransaction',id,{reason,context:App.session})}
 
+
+/* Stage 3 Test-5 correction — one canonical planned-item interaction and one
+   canonical task-level network proposal path for Prototype and Validation. */
+function planningDomainForProgrammeV5(id){return new P.ProgrammeRegistry(App.state).domain(id)}
+function planningTasksForProgrammeV5(id,dom=planningDomainForProgrammeV5(id)){
+  if(dom==='validation')return P.compileValidationPlanningTasksV2?.(App.state,id)||[];
+  return P.compilePlanningTasksV2?.(App.state,id)||[];
+}
+function stage3PlannedItemModelV5(bookingId){
+  const b=(App.state.bookings||[]).find(x=>x.id===bookingId);if(!b)return null;
+  const reg=new P.ProgrammeRegistry(App.state),rec=reg.get(b.requestId),dom=rec?.domain||planningDomainForProgrammeV5(b.requestId),entity=rec?.entity||null;
+  const task=planningTasksForProgrammeV5(b.requestId,dom).find(t=>t.id===b.stepId)||null,kind=String(task?.kind||b.taskKind||b.taskType||'').toLowerCase();
+  const historical=typeof v1080BookingIsHistorical==='function'?v1080BookingIsHistorical(b):P.isHistoricalPlanningBooking?.(b),plannerAllowed=can('plan')||currentRole()==='administrator';
+  let routable=false;if(task&&!historical){try{P.resolveTransferScopeV3(App.state,P.TransferScope.task(b.requestId,b.stepId,dom));routable=['process','test','development','closeout','operation','activity'].includes(kind)||dom==='validation'}catch(_){routable=false}}
+  return {booking:b,programmeId:b.requestId,stepId:b.stepId,domain:dom,entity,task,taskKind:kind,historical:!!historical,plannerAllowed,sisterRoutable:routable,remote:!!b.remoteExecution};
+}
+function stage3CompareTaskNetworkV5(programmeId,stepId){
+  const dom=planningDomainForProgrammeV5(programmeId),scope=P.TransferScope.task(programmeId,stepId,dom),resolved=P.resolveTransferScopeV3(App.state,scope),from=currentLabForProgrammeV3(programmeId),svc=new P.NetworkProposalService(App.state,{context:{asOf:P.now()}}),rows=[];
+  for(const lab of (App.state.labs||[]).filter(l=>l.active!==false&&l.type==='internal')){
+    if(lab.id===from){rows.push({ok:true,current:true,siteId:lab.id,toSiteId:lab.id,lab,name:lab.name||lab.id,scope:resolved});continue}
+    try{const proposal=svc.propose(resolved,lab.id);rows.push({...proposal,ok:true,current:false,siteId:lab.id,toSiteId:lab.id,lab,name:lab.name||lab.id})}
+    catch(error){rows.push({ok:false,current:false,siteId:lab.id,toSiteId:lab.id,lab,name:lab.name||lab.id,code:error.code||'NETWORK_BLOCKED',reason:error.message||String(error)})}
+  }
+  return {ok:rows.some(r=>r.ok&&!r.current),requestId:programmeId,programmeId,stepId,domain:dom,scope:resolved,fromSiteId:from,homeSiteId:from,rows,generatedAt:P.now()};
+}
+function stage3TaskRoutingMarkupV5(pack,model){
+  const task=model.task||{name:model.booking.stepName||model.stepId,kind:model.taskKind},kind=String(task.kind||model.taskKind||'activity').toLowerCase(),kindLabel=kind==='process'?'PROCESS STEP':kind==='test'?'TEST':'ACTIVITY',rows=(pack.rows||[]).filter(r=>!r.current),home=v1170TaskSiteName(pack.fromSiteId);
+  return `<div class="resolution-focus"><span class="eyebrow">SINGLE ${esc(kindLabel)} · SISTER LAB</span><h2>${esc(task.name||model.booking.stepName||model.stepId)}</h2><p>${model.domain==='validation'?'Validation programme':'Build'} ownership remains at <strong>${esc(home)}</strong>. Only this canonical ${kind==='test'?'test/activity':'operation'} is proposed for sister-lab execution. Every option below is generated by <b>NetworkProposalService → Stage-2 PlanningEngine</b>; acceptance revalidates the same scope before LIVE routing changes.</p></div><div class="v161-site-options">${rows.map(row=>{const lab=row.lab?.name||row.name||row.siteId;if(row.ok){const moved=(row.movedTasks||[]).find(x=>x.taskId===model.stepId)||(row.movedTasks||[])[0],candidate=row.candidate?.state||row.candidate?.next||row.candidate||{},eq=(candidate.equipment||[]).find(e=>e.id===moved?.equipmentId)?.name||'Solver-assigned equipment',st=(candidate.staff||[]).find(x=>x.id===moved?.staffId)?.name||'Solver-assigned person';return `<button type="button" class="audit-guided-row good" data-v1170-apply-step-site="${esc(row.toSiteId||row.siteId)}" data-v1170-request="${esc(model.programmeId)}" data-v1170-step="${esc(model.stepId)}"><div><strong>${esc(lab)} · feasible</strong><small>${moved?.start?P.formatDate(String(moved.start).slice(0,10)):'Feasible'} · programme forecast ${row.proposedForecast?P.formatDate(row.proposedForecast):'—'} · ${esc(eq)} · ${esc(st)}</small></div><b>Request this lab →</b></button>`}return `<div class="audit-guided-row bad"><div><strong>${esc(lab)} · blocked</strong><small>${esc(row.reason||'No complete feasible plan')}</small></div></div>`}).join('')||'<div class="callout warn"><strong>No other internal sister laboratories are configured.</strong></div>'}</div>${pack.ok?'':'<div class="callout warn"><strong>No sister lab is currently feasible for this activity.</strong><p>The comparison is canonical and read-only. Correct the underlying resource/readiness blocker and rerun it; LIVE planning has not changed.</p></div>'}`;
+}
+v1170TaskTransferModal=async function(programmeId,stepId){
+  const booking=(App.state.bookings||[]).find(x=>x.requestId===programmeId&&x.stepId===stepId&&!v1080BookingIsHistorical(x)),model=booking?stage3PlannedItemModelV5(booking.id):null;if(!model){toast('The selected activity is no longer part of the current canonical plan.',true);return}
+  try{P.resolveTransferScopeV3(App.state,P.TransferScope.task(programmeId,stepId,model.domain))}catch(err){toast(err.message||String(err),true);return}
+  const labs=(App.state.labs||[]).filter(l=>l.active!==false&&l.type==='internal'&&l.id!==currentLabForProgrammeV3(programmeId)),bodyId=`stage3TaskRouteV5-${String(stepId).replace(/[^a-zA-Z0-9_-]/g,'_')}`;
+  openModal(`Sister-lab ${model.domain==='validation'?'activity':'operation'} routing · ${programmeId}`,`<div id="${bodyId}"><div class="planner-computing-v1094"><span class="spinner"></span><div><strong>Checking sister labs with the canonical network planner…</strong><small>0 of ${labs.length} receiving labs evaluated.</small></div></div></div>`,'',true);await new Promise(r=>setTimeout(r,20));
+  const rows=[],scope=P.TransferScope.task(programmeId,stepId,model.domain),svc=new P.NetworkProposalService(App.state,{context:{asOf:P.now()}}),from=currentLabForProgrammeV3(programmeId);
+  for(let i=0;i<labs.length;i++){
+    const root=document.getElementById(bodyId);if(!root)return;root.innerHTML=`<div class="planner-computing-v1094"><span class="spinner"></span><div><strong>Checking ${esc(labs[i].name||labs[i].id)}…</strong><small>${i} of ${labs.length} receiving labs evaluated using NetworkProposalService.</small></div></div>`;await new Promise(r=>setTimeout(r,0));
+    try{const proposal=svc.propose(scope,labs[i].id);rows.push({...proposal,ok:true,current:false,siteId:labs[i].id,toSiteId:labs[i].id,lab:labs[i],name:labs[i].name||labs[i].id})}catch(error){rows.push({ok:false,current:false,siteId:labs[i].id,toSiteId:labs[i].id,lab:labs[i],name:labs[i].name||labs[i].id,code:error.code||'NETWORK_BLOCKED',reason:error.message||String(error)})}
+    const pack={ok:rows.some(x=>x.ok),requestId:programmeId,programmeId,stepId,domain:model.domain,scope,fromSiteId:from,homeSiteId:from,rows:[...rows],generatedAt:P.now()};const live=document.getElementById(bodyId);if(live)live.innerHTML=stage3TaskRoutingMarkupV5(pack,model);await new Promise(r=>setTimeout(r,0));
+  }
+  const pack={ok:rows.some(x=>x.ok),requestId:programmeId,programmeId,stepId,domain:model.domain,scope,fromSiteId:from,homeSiteId:from,rows,generatedAt:P.now()};App.pendingTaskSiteComparisonV1210=pack;const root=document.getElementById(bodyId);if(root)root.innerHTML=stage3TaskRoutingMarkupV5(pack,model);
+};
+planningItemPromptV1068=function(bookingId){
+  const m=stage3PlannedItemModelV5(bookingId);if(!m)return;const b=m.booking,eq=(App.state.equipment||[]).find(x=>x.id===b.equipmentId),st=(App.state.staff||[]).find(x=>x.id===b.staffId),siteId=b.siteId||m.entity?.executionSiteId||m.entity?.homeSiteId,domainLabel=m.domain==='validation'?'VALIDATION ACTIVITY':'PROTOTYPE TASK',openAttr=m.domain==='validation'?`data-plan-open="${esc(m.programmeId)}" data-plan-domain-open="validation"`:`data-v1068-open-build="${esc(m.programmeId)}"`;
+  openModal(`Planned item · ${m.programmeId}`,`<div class="planning-item-prompt-v1068" data-stage3-planned-item-domain="${esc(m.domain)}"><span class="eyebrow">${domainLabel}</span><h2>${esc(m.task?.name||b.stepName||'Planned work')}</h2><div class="grid cols-4"><div class="mini-kpi"><span>Day</span><strong>${esc(P.formatDate(String(b.start||'').slice(0,10)))}</strong></div><div class="mini-kpi"><span>Lab</span><strong>${esc(v1170TaskSiteName(siteId))}${m.remote?' · sister':''}</strong></div><div class="mini-kpi"><span>Equipment</span><strong>${esc(eq?.name||'Not assigned')}</strong></div><div class="mini-kpi"><span>Person</span><strong>${esc(st?.name||'Not assigned')}</strong></div></div>${m.historical?'<div class="callout info"><strong>Completed / historical work is locked.</strong><p>It remains visible for traceability and cannot be moved or transferred.</p></div>':m.plannerAllowed?`<div class="callout info"><strong>Controlled replanning</strong><p>Move / replan highlights canonical Green and Yellow alternatives in this same Planning swimlane.${m.sisterRoutable?' Route only this test/activity to a sister lab uses the same Stage-3 network proposal service and Stage-2 planning kernel.':''}</p></div>`:'<div class="callout warn"><strong>Planner role required</strong><p>Switch to Lab Planner to change dates or sister-lab routing.</p></div>'}</div>`,`${btn('Stay in planning','data-modal-close','button')}${!m.historical&&m.plannerAllowed?btn('Move / replan in swimlane →',`data-v1190-start-inlane="${esc(b.id)}"`,'button primary'):''}${!m.historical&&m.plannerAllowed&&m.sisterRoutable?btn(m.remote?'Route this activity to another lab →':'Route only this test/activity to a sister lab →',`data-v1170-compare-step-site="${esc(b.id)}"`,'button secondary'):''}${btn(m.domain==='validation'?'Open validation →':'Open build →',openAttr,'button secondary')}`,true);
+};
+
+/* Validation uses the same full-width in-lane interaction as Prototype, but its
+   alternatives are generated progressively by the protected Stage-2 PlanningEngine
+   because the historical Prototype manual-draft adapter only understands requests. */
+function stage2ValidationInLaneDatesV5(booking,range){const current=String(booking.start||'').slice(0,10),out=[];let d=v1096DayStart(range.start),end=v1096DayStart(range.end);while(d<end){const wd=d.getDay(),iso=v1116DayIso(d);if((v1072WeekendsEnabled()||![0,6].includes(wd))&&iso!==current)out.push(iso);d=planAddDays(d,1)}return out}
+function stage2StartValidationInLaneV5(booking){
+  if(v1080BookingIsHistorical(booking)||P.isHistoricalPlanningBooking?.(booking)){toast('Completed / historical work is locked and cannot be replanned.',true);return}if(!(can('plan')||currentRole()==='administrator')){toast('Switch to Lab Planner to manually replan this activity.',true);return}
+  closeModal();v1190ClearInLaneReplan();App.dragBookingV1061=booking.id;const range=v1190RenderedUnionRange(booking.id);if(!range){openManualSlots(booking.id);return}
+  const model=stage3PlannedItemModelV5(booking.id),entity=model?.entity,siteId=booking.siteId||entity?.executionSiteId||entity?.homeSiteId,dates=stage2ValidationInLaneDatesV5(booking,range),token=`S2V5-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,ctx=new P.PlanningContext({asOf:P.now(),siteId,horizonDays:Math.max(30,dates.length+7),includeWeekends:App.state.settings?.includeWeekendsForBuilds,mode:'manual'}),engineV5=new P.PlanningEngine(App.state),liveFingerprint=planningFingerprintV1070(App.state),options=[];let cursor=0;
+  App.inLaneReplanV1190={bookingId:booking.id,requestId:booking.requestId,domain:'validation',genericStage2:true,liveFingerprint,options:[],failure:null,scanToken:token,scanning:true,scanDone:0,scanTotal:dates.length};v1190RenderInLaneReplan();
+  const step=()=>{const mode=App.inLaneReplanV1190;if(mode?.scanToken!==token)return;if(cursor>=dates.length){mode.scanning=false;v1190RenderInLaneReplan();return}const date=dates[cursor++];try{const sc=engineV5.plan(booking.requestId,{siteId,notBefore:entity?.dutAvailableDate||entity?.planningNotBefore||null,context:ctx,manualConstraint:{stepId:booking.stepId,date}}),moved=(sc.state.bookings||[]).find(x=>x.requestId===booking.requestId&&x.stepId===booking.stepId&&!v1080BookingIsHistorical(x));if(moved&&String(moved.start||'').slice(0,10)===date){const careBefore=(App.state.resourceCareBookings||[]).filter(c=>c.sourceRequestId===booking.requestId).length,careAfter=(sc.state.resourceCareBookings||[]).filter(c=>c.sourceRequestId===booking.requestId).length,kind=((moved.equipmentId||null)===(booking.equipmentId||null)&&(moved.staffId||null)===(booking.staffId||null)&&careAfter<=careBefore)?'green':'yellow',scenarioKey=rememberScenario(sc,'SLOT'),key=`L119V5-${booking.id}-${date}-${kind}`;options.push({key,kind,date,start:moved.start,end:moved.end,equipmentId:moved.equipmentId||null,staffId:moved.staffId||null,equipmentName:(sc.state.equipment||[]).find(e=>e.id===moved.equipmentId)?.name||'No equipment',staffName:(sc.state.staff||[]).find(x=>x.id===moved.staffId)?.name||'Unassigned',care:[],stage2ScenarioKey:scenarioKey,scenario:sc})}}catch(_){/* infeasible days are deliberately not painted as selectable alternatives */}if(App.inLaneReplanV1190?.scanToken===token){App.inLaneReplanV1190.options=options.slice();App.inLaneReplanV1190.scanDone=cursor;App.inLaneReplanV1190.scanning=cursor<dates.length;v1190RenderInLaneReplan()}setTimeout(step,0)};setTimeout(step,0)
+}
+const _stage2PrototypeStartInLaneV5=v1190StartInLaneReplan;
+v1190StartInLaneReplan=function(bookingId,opts={}){const model=stage3PlannedItemModelV5(bookingId);if(model?.domain==='validation')return stage2StartValidationInLaneV5(model.booking);return _stage2PrototypeStartInLaneV5(bookingId,opts)};
+const _stage2PrototypeApplyInLaneV5=v1190ApplyInLaneOption;
+v1190ApplyInLaneOption=async function(key){const mode=App.inLaneReplanV1190,opt=mode?.options?.find(x=>x.key===key);if(!opt?.stage2ScenarioKey)return _stage2PrototypeApplyInLaneV5(key);if(planningFingerprintV1070(App.state)!==mode.liveFingerprint){toast('The live plan changed. Alternatives are being recalculated.',true);return v1190StartInLaneReplan(mode.bookingId,{rescan:true})}if(opt.kind==='yellow'){openModal('Yellow day · controlled change',`<div class="resolution-focus"><span class="eyebrow">YELLOW MANUAL-PLAN OPTION</span><h2>${esc(P.formatDate(opt.date))}</h2><p>This date is feasible through the same Stage-2 planning kernel with a controlled resource/readiness reassignment.</p></div><div class="field"><label>Decision rationale</label><textarea id="v1190YellowReason">Use this feasible Yellow Validation day and the controlled planning change calculated by the Stage-2 engine.</textarea></div>`,`${btn('Back to swimlane','data-modal-close','button')}${btn('Accept Yellow slot →',`data-v1190-confirm-yellow="${esc(key)}"`,'button warn-action')}`,true);return}v1190ClearInLaneReplan();return commitScenario(opt.stage2ScenarioKey,'Green in-lane Validation day selected through the canonical Stage-2 PlanningEngine.')};
+function v1190ConfirmInLaneYellowV5(key,why){const mode=App.inLaneReplanV1190,opt=mode?.options?.find(x=>x.key===key);if(!opt)return;if(opt.stage2ScenarioKey){closeModal();v1190ClearInLaneReplan();return commitScenario(opt.stage2ScenarioKey,why)}closeModal();const prop=opt.prop;v1190ClearInLaneReplan();return commitMoveProposalV1070(prop,why)}
+function v1190OpenFullManualV5(){const mode=App.inLaneReplanV1190;if(!mode)return;const rid=mode.requestId,bid=mode.bookingId,dom=mode.domain||planningDomainForProgrammeV5(rid);v1190ClearInLaneReplan();if(dom==='validation')return openManualSlots(bid);if(rid)return v1116ManualPlanModal(rid,false)}
+if(window.__LABOS_V1190_TEST__){window.__LABOS_V1190_TEST__.start=v1190StartInLaneReplan;window.__LABOS_V1190_TEST__.apply=v1190ApplyInLaneOption}
+
 /* External suppliers are deliberately separate from the internal sister-lab handshake.
    Scenario Lab may compare an external provider, but an effective external decision must
    be a controlled ExternalExecutionRequest followed by a separately persisted approval
@@ -11150,6 +11216,8 @@ window.__LABOS_STAGE3_TEST__={
   cancel:(id,reason='Stage3 QA sender cancellation')=>stage3CancelTransfer(id,reason),
   effectiveSendBuild:(id,to)=>v134SendBuildTransferRequest(id,to),
   effectiveSendTask:(id,taskId,to)=>v134SendTaskTransferRequest(id,taskId,to),
+  compareTaskNetwork:(id,taskId)=>stage3CompareTaskNetworkV5(id,taskId),
+  plannedItemModel:(bookingId)=>stage3PlannedItemModelV5(bookingId),
   effectiveAccept:id=>v134AcceptTransfer(id),
   effectiveReject:id=>v134RejectTransfer(id),
   effectiveCancel:id=>v134CancelTransfer(id),
