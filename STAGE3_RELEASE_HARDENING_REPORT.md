@@ -6,7 +6,7 @@ Date: 2026-09-19
 
 This package is a **GitHub Pages manual-test build**, not an accepted Stage-3 RC and not a Stage-4 baseline.
 
-Controlled build identifier: **`STAGE3-GITHUB-TEST-2`**
+Controlled build identifier: **`STAGE3-GITHUB-TEST-3`**
 
 Visible browser identifier: **`REV 1.0.185 · S3 TEST`**
 
@@ -36,7 +36,8 @@ Stage-3 source used for hardening:
 - Caller audit: **15/15 PASS**
 - Release-hardening additions: **10/10 PASS**
 - Release-identification hardening: **8/8 PASS**
-- Stage-3 total: **142/142 PASS, 0 FAIL**
+- Manual-feedback correction regression: **11/11 PASS**
+- Stage-3 total after TEST 3 feedback coverage: **153/153 PASS, 0 FAIL**
 
 ### Protected Stage 2 regression
 - Graph/single-programme: **27/27 PASS**
@@ -51,16 +52,16 @@ Stage-3 source used for hardening:
 - Functional regression: **16/16 PASS**
 - Stage-1 total: **46/46 PASS, 0 FAIL**
 
-Combined Stage-1/2/3 automated assertions: **258 PASS / 0 FAIL**.
+Combined Stage-1/2/3 automated assertions after TEST 3 feedback coverage: **269 PASS / 0 FAIL**.
 
 Structural checks:
 - Root production JavaScript parse: **10/10 PASS**
 - `index.html` local script references: **9/9 present**
-- Root production JavaScript bundles unchanged from prior Stage-3 GitHub test package: **10/10 byte-identical SHA-256**
+- TEST 3 intentionally changes only `labos-app-1.0.185.js` among the 10 root production JavaScript bundles for the four manual-feedback integration corrections; the other **9/9** root JavaScript files are byte-identical to TEST 2 by SHA-256
 
 ## Browser / IndexedDB execution
 
-Real Chromium execution was attempted against the static tree, including a direct `file://` navigation. The execution environment blocked the navigation with `net::ERR_BLOCKED_BY_ADMINISTRATOR`. Therefore browser/IndexedDB is **NOT EXECUTABLE in the current tool environment**, not PASS and not FAIL.
+A fresh Chromium/Playwright execution was attempted against the TEST 3 static tree over `http://127.0.0.1`. The execution environment blocked navigation with `net::ERR_BLOCKED_BY_ADMINISTRATOR`. Therefore browser/IndexedDB is **NOT EXECUTABLE in the current tool environment**, not PASS and not FAIL.
 
 The GitHub Pages manual test is therefore a mandatory final human stage gate before accepting Stage 3 or moving to Stage 4.
 
@@ -80,7 +81,7 @@ See `qa/STAGE3_PERFORMANCE_FINAL.json`.
 
 - Stage 1 — COMPLETE / PROTECTED
 - Stage 2 — COMPLETE / PROTECTED
-- Stage 3 — AUTOMATED RELEASE HARDENING GREEN / **AWAITING GITHUB MANUAL TEST**
+- Stage 3 — TEST 3 AUTOMATED GATES GREEN / **AWAITING GITHUB MANUAL TEST**
 - Stage 4 — NOT STARTED
 
 Do not treat this package as a Stage-3 RC until the GitHub manual test is accepted explicitly.

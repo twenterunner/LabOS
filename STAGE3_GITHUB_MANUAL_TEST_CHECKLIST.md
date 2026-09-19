@@ -1,51 +1,60 @@
-# Stage 3 GitHub Pages Manual Test Checklist
+# Stage 3 GitHub Pages Manual Test Checklist — TEST 3
 
-Deploy the contents of the ZIP so that `index.html` is at the GitHub Pages root. Use a hard refresh/private window after deployment.
+Deploy the ZIP contents so `index.html` is at the GitHub Pages root. Use a hard refresh or private/incognito window after deployment.
 
-## Build identification — verify this first
-- Browser header must visibly show **`REV 1.0.185 · S3 TEST`**.
-- Open the left navigation and confirm **`Controlled build: STAGE3-GITHUB-TEST-2`** appears in the sidebar footer.
-- The browser tab/title should read **`LabOS — REV 1.0.185 · STAGE 3 TEST`**.
-- If any of these identifiers are missing, stop testing: the deployed browser is not showing the intended Stage-3 test checkpoint.
+## 1. Build identification
+- Header must show **`REV 1.0.185 · S3 TEST`**.
+- Sidebar footer must show **`Controlled build: STAGE3-GITHUB-TEST-3`**.
+- Browser title must read **`LabOS — REV 1.0.185 · STAGE 3 TEST`**.
+- If any identifier is wrong, stop: the intended checkpoint is not running.
 
-## Boot / persistence
-- App loads with no visible boot error.
-- Refresh the page after a small controlled change and confirm state persists.
-- Reset Demo Data works.
+## 2. Requested sister-lab work in My Work — repaired in TEST 3
+- From `LAB-NL`, submit a whole-programme sister-lab request to another internal lab such as `LAB-DE`.
+- Switch the active lab/context to the receiving lab.
+- Open **My Work / Action Centre**.
+- Confirm the new **Requested** transfer appears as an actionable receiver item with **Review request**.
+- Accept one request and reject another if convenient; confirm the item/status updates appropriately.
 
-## Protected planning smoke
-- Prototype planning opens and AUTO planning still works.
-- Validation planning opens and uses the same planning view/kernel.
-- Manual planning still offers feasible/blocked alternatives.
+## 3. Single-test / single-operation sister-lab routing — repaired in TEST 3
+- Open Planning and select a **planned Prototype test/operation bar**.
+- Open its manual/replan options.
+- Confirm **`Route only this test / operation to sister lab`** is available.
+- Compare/select a sister lab and submit the request.
+- Before acceptance, confirm programme ownership has not silently changed.
+- At the receiving lab, accept the request and confirm only that selected operation is routed remotely.
+- Run AUTO/replan again and confirm the accepted partial assignment is retained.
 
-## Whole sister-lab governance
-- Compare a Prototype programme with sister labs.
-- Request another internal lab: LIVE ownership/routing must **not** change immediately.
-- Open/switch to the receiving lab and accept the request.
-- Only after acceptance should whole-programme `executionSiteId` move; `homeSiteId` remains unchanged.
-- Reject and cancel paths leave LIVE planning unchanged.
+## 4. Future / potential projects in Overall Planning — restored in TEST 3
+- Open Planning → **Overall**.
+- Confirm potential/future-project lanes are visible and clearly marked **POTENTIAL**.
+- Confirm probability (for example `%`) and **probability-weighted hours** are shown.
+- Toggle **Show potential projects** off and on.
+- Confirm this only changes visibility; it must not delete the underlying potential project data.
 
-## Partial routing
-- Request one Prototype operation at a sister lab and confirm programme ownership stays local.
-- Accept it at the receiving lab and confirm only that operation is routed remotely.
-- For Validation, test both an activity request and a leg/subflow request.
+## 5. Planning perspectives — restored/verified in TEST 3
+Switch through all four planning views and confirm each genuinely changes the swim-lane perspective:
+- **Overall** — programme swim lanes, including potential projects when enabled.
+- **Per programme** — task/test-oriented programme detail lanes.
+- **Per equipment** — equipment loading lanes.
+- **Per person** — people/qualification loading lanes.
 
-## Scenario Lab governance
-- For a sister-lab Scenario Lab result, the action must say/request a governed sister-lab request rather than directly applying LIVE.
-- Sending the Scenario Lab sister request must leave LIVE routing unchanged pending receiver acceptance.
+## 6. Core Stage-3 whole-programme governance
+- Compare a Prototype programme with sister labs and request another internal lab.
+- Confirm the request does **not** immediately change LIVE ownership/routing.
+- Accept at the receiving lab; only then should whole-programme `executionSiteId` move while `homeSiteId` remains unchanged.
+- Reject/cancel paths should leave LIVE planning unchanged.
 
-## External execution governance
-- Open an external Scenario Lab option.
-- It must **not** offer direct LIVE application.
-- Create an external request with quote reference, validity date and costs.
-- Confirm My Work shows a pending external commercial approval.
-- Approve with PO/approval reference.
-- Confirm an ExternalOrder is created and the pending approval disappears.
-- Internal sister-lab transfer records and external supplier records must remain conceptually separate.
+## 7. Validation partial routing
+- For Validation, verify an activity/test or leg/subflow can be requested at a sister lab through the governed request/accept flow.
+- Confirm Validation does not directly commit another lab without acceptance.
 
-## Receiver workload / KPI smoke
-- Requested/UnderReview/Accepted/InExecution sister-lab work appears in the receiving lab workflow as appropriate.
-- Network KPI views still render without errors and include canonical transfer data.
+## 8. Scenario / external governance smoke
+- Sister-lab Scenario actions must create governed internal requests, not direct LIVE moves.
+- External Scenario options must create an external request requiring commercial approval; they must not directly become LIVE/approved.
+- Pending external commercial work should appear in My Work, and approval should create the distinct external order.
+
+## 9. Normal-use regression observation
+Use LabOS normally for several minutes. Report anything missing, confusing, broken, unexpectedly removed, or worse than an earlier build—even if it is outside Stage 3. It will be classified into the controlled 10-stage framework rather than patched ad hoc.
 
 ## Result
-Record PASS/FAIL and screenshots for any failure. A failure means Stage 3 remains open; do not begin Stage 4.
+Record PASS/FAIL for the relevant items and attach screenshots for failures. Any genuine failure keeps Stage 3 open. Do not begin Stage 4 until Stage 3 is explicitly accepted.
