@@ -183,6 +183,19 @@ const DataRepairService={
       const keyMatch=String(b.taskDefinitionKey||'').match(/^VALIDATION:(.+)$/);if(keyMatch)add(acts.find(a=>a.id===keyMatch[1]),'taskDefinitionKey');
       for(const ref of [b.validationActivityId,b.activityId,b.sourceActivityId])if(ref)add(acts.find(a=>a.id===ref),'explicitActivityReference');
       const prefix=`TESTREQ-${pid}-`,legacyRef=String(b.stepId||'');if(legacyRef.startsWith(prefix)){const testId=legacyRef.slice(prefix.length),matches=acts.filter(a=>a.standardTestId===testId||a.basisTestId===testId);for(const a of matches)add(a,'legacySyntheticTestRequirement')}
+      /* Later pre-canonical Validation planners also emitted custom TESTREQ/DEV-TESTREQ
+         booking ids.  Those rows often retain an exact stable requirement id in their
+         structured booking metadata even though the activity id itself was synthetic.
+         Requirement identity + task kind + graph genealogy is safe to use; a display
+         label by itself is not.  Parallel/custom branches without an unambiguous
+         canonical requirement/kind target deliberately remain unresolved. */
+      const reqRows=(s.validationRequirements||[]).filter(r=>r.programmeId===pid),structured=[b.requirementId,b.validationRequirementId,...(Array.isArray(b.requirementIds)?b.requirementIds:[]),b.stepId,b.taskDefinitionKey,b.description,b.stepName].filter(Boolean).map(String),explicitReqs=new Set();
+      for(const r of reqRows){if(structured.some(v=>v===r.id||v.includes(r.id)))explicitReqs.add(r.id)}
+      const bookingKind=/development/i.test(String(b.taskKind||b.taskType||''))?'development':/closeout|final/i.test(String(b.taskKind||b.taskType||''))?'closeout':'test',parallelSignal=structured.some(v=>/parallel/i.test(v));
+      if(explicitReqs.size===1&&!parallelSignal&&bookingKind!=='closeout'){
+        const reqId=[...explicitReqs][0],linked=new Set(reqRows.find(r=>r.id===reqId)?.linkedActivityIds||[]),kindMatches=acts.filter(a=>(a.requirementIds||[]).includes(reqId)||linked.has(a.id)).filter(a=>bookingKind==='development'?/development/i.test(String(a.kind||'')):!/development/i.test(String(a.kind||'')));
+        if(kindMatches.length===1)add(kindMatches[0],'stableRequirementAndTaskKind');else if(kindMatches.length>1)for(const a of kindMatches)add(a,'stableRequirementAndTaskKind');
+      }
       const rows=[...candidates.values()];if(rows.length===1){const a=rows[0].activity,oldId=b.stepId;b.stepId=a.id;b.taskDefinitionKey=`VALIDATION:${a.id}`;b.validationProgrammeId=pid;b.domain='Validation';b.programmeType='validation';if(!b.taskKind)b.taskKind=/development/i.test(String(a.kind||''))?'development':'test';replaceRef(pid,oldId,a.id);changes.push(`bookings:${b.id}.stepId:${oldId}->${a.id}`);continue}
       issues.push({source:issueSource,code:rows.length>1?'VALIDATION_BOOKING_ACTIVITY_AMBIGUOUS':'VALIDATION_BOOKING_ACTIVITY_UNRESOLVED',severity:'warning',entityType:'Booking',bookingId:b.id||null,programmeId:pid,legacyStepId:b.stepId||null,candidateActivityIds:rows.map(x=>x.activity.id).sort(),evidence:{taskDefinitionKey:b.taskDefinitionKey||null,validationActivityId:b.validationActivityId||b.activityId||b.sourceActivityId||null}})
     }

@@ -1,13 +1,13 @@
-# Stage 3 Build Identification — Test 8
+# Stage 3 Build Identification — Test 9
 
 Product revision remains `1.0.185`.
 
-Controlled checkpoint: `STAGE3-GITHUB-TEST-8`
+Controlled checkpoint: `STAGE3-GITHUB-TEST-9`
 
-Visible browser badge: `REV 1.0.185 · S3 TEST-8`
+Visible browser badge: `REV 1.0.185 · S3 TEST-9`
 
-Startup message: `Starting LabOS REV 1.0.185 · STAGE 3 TEST-8…`
+Startup message: `Starting LabOS REV 1.0.185 · STAGE 3 TEST-9…`
 
-All production JavaScript and CSS startup URLs carry `?build=STAGE3-GITHUB-TEST-8` so same-revision GitHub deployments cannot silently mix runtime bundles from an earlier controlled build.
+All production JavaScript and CSS startup URLs carry `?build=STAGE3-GITHUB-TEST-9`. The Stage-2 planning worker is also loaded with the same controlled-build key through `window.__LABOS_EXPECTED_BUILD__`/`globalThis.__LABOS_EXPECTED_BUILD__`.
 
-`qa/stage3-build-identification-tests.js`: **10/10 PASS**.
+`qa/stage3-build-identification-tests.js`: **11/11 PASS**.
