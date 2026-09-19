@@ -6,6 +6,10 @@ Date: 2026-09-19
 
 This package is a **GitHub Pages manual-test build**, not an accepted Stage-3 RC and not a Stage-4 baseline.
 
+Controlled build identifier: **`STAGE3-GITHUB-TEST-2`**
+
+Visible browser identifier: **`REV 1.0.185 · S3 TEST`**
+
 Protected accepted baseline remains:
 - `ProtoLabOS_Prototype_Build_POC_v1.0.185_STAGE2_RC1_WEB.zip`
 - SHA-256 `830e8b137f5398ff44952e7a54943a5ba4f64ffa993f3c48301774ef1afab6a8`
@@ -21,6 +25,7 @@ Stage-3 source used for hardening:
 3. External execution now follows the distinct governed path: `ExternalExecutionRequest` -> commercial approval -> `ExternalOrder`, each through `StateTransactionService`.
 4. Pending external commercial approvals are derived into My Work from canonical external state.
 5. Added dedicated Stage-3 release-hardening regression coverage for the above authority/rollback paths.
+6. Added controlled-build identification without changing product revision 1.0.185: visible Stage-3 test badge, exact checkpoint identifier in the UI, same-revision build handshake, and mobile visibility protection.
 
 ## Fresh automated certification against this exact production source
 
@@ -30,7 +35,8 @@ Stage-3 source used for hardening:
 - Reservation/lifecycle/external transactions: **18/18 PASS**
 - Caller audit: **15/15 PASS**
 - Release-hardening additions: **10/10 PASS**
-- Stage-3 total: **134/134 PASS, 0 FAIL**
+- Release-identification hardening: **8/8 PASS**
+- Stage-3 total: **142/142 PASS, 0 FAIL**
 
 ### Protected Stage 2 regression
 - Graph/single-programme: **27/27 PASS**
@@ -45,11 +51,12 @@ Stage-3 source used for hardening:
 - Functional regression: **16/16 PASS**
 - Stage-1 total: **46/46 PASS, 0 FAIL**
 
-Combined Stage-1/2/3 automated assertions: **250 PASS / 0 FAIL**.
+Combined Stage-1/2/3 automated assertions: **258 PASS / 0 FAIL**.
 
 Structural checks:
 - Root production JavaScript parse: **10/10 PASS**
 - `index.html` local script references: **9/9 present**
+- Root production JavaScript bundles unchanged from prior Stage-3 GitHub test package: **10/10 byte-identical SHA-256**
 
 ## Browser / IndexedDB execution
 

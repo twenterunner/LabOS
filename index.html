@@ -8,42 +8,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c5862" />
   <meta name="description" content="Laboratory Operations System proof-of-concept for automotive prototype, validation and engineering laboratory operations." />
-  <title>LabOS — Laboratory Operations System</title>
+  <title>LabOS — REV 1.0.185 · STAGE 3 TEST</title>
   <link rel="manifest" href="manifest.webmanifest?v=1.0.185" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.185" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.185" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.185" />
   <script>
-    // REV 1.0.185 deployment handshake. The version file is always fetched with cache bypass.
-    // If GitHub Pages has a newer deployment while this HTML is stale, reload once using a
-    // revisioned navigation URL so the browser cannot keep reusing the old document cache.
+    // REV 1.0.185 controlled-build deployment handshake. Both product revision and
+    // rebuild checkpoint are fetched with cache bypass so same-revision GitHub deployments
+    // can be distinguished without changing the product revision.
     (function(){
-      const EXPECTED='1.0.185';
-      window.__LABOS_EXPECTED_REVISION__=EXPECTED;
+      const EXPECTED_REVISION='1.0.185';
+      const EXPECTED_BUILD='STAGE3-GITHUB-TEST-2';
+      window.__LABOS_EXPECTED_REVISION__=EXPECTED_REVISION;
+      window.__LABOS_EXPECTED_BUILD__=EXPECTED_BUILD;
       const versionUrl='labos-version.json?ts='+Date.now();
       fetch(versionUrl,{cache:'no-store',headers:{'Cache-Control':'no-cache'}}).then(r=>{
         if(!r.ok) throw new Error('version '+r.status);
         return r.json();
       }).then(v=>{
-        const live=String(v&&v.revision||'').trim();
-        if(!live || live===EXPECTED){
-          try{sessionStorage.removeItem('labos-update-attempt:'+EXPECTED)}catch(_e){}
+        const liveRevision=String(v&&v.revision||'').trim();
+        const liveBuild=String(v&&v.buildId||'').trim();
+        const revisionMatches=!liveRevision||liveRevision===EXPECTED_REVISION;
+        const buildMatches=!liveBuild||liveBuild===EXPECTED_BUILD;
+        if(revisionMatches&&buildMatches){
+          try{sessionStorage.removeItem('labos-update-attempt:'+EXPECTED_REVISION+':'+EXPECTED_BUILD)}catch(_e){}
           return;
         }
-        const key='labos-update-attempt:'+live;
+        const key='labos-update-attempt:'+liveRevision+':'+liveBuild;
         let attempted=false;
         try{attempted=sessionStorage.getItem(key)==='1'}catch(_e){}
         if(attempted){
-          window.__LABOS_DEPLOYMENT_MISMATCH__={page:EXPECTED,server:live};
+          window.__LABOS_DEPLOYMENT_MISMATCH__={pageRevision:EXPECTED_REVISION,pageBuild:EXPECTED_BUILD,serverRevision:liveRevision,serverBuild:liveBuild};
           console.warn('LabOS deployment mismatch after refresh attempt',window.__LABOS_DEPLOYMENT_MISMATCH__);
           return;
         }
         try{sessionStorage.setItem(key,'1')}catch(_e){}
         const u=new URL(location.href);
-        u.searchParams.set('labos_rev',live);
+        u.searchParams.set('labos_rev',liveRevision||EXPECTED_REVISION);
+        u.searchParams.set('labos_build',liveBuild||EXPECTED_BUILD);
         u.searchParams.set('refresh',Date.now().toString());
         location.replace(u.toString());
-      }).catch(err=>console.warn('LabOS revision check skipped',err));
+      }).catch(err=>console.warn('LabOS revision/build check skipped',err));
     })();
   </script>
   <link rel="stylesheet" href="labos-styles-1.0.185.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.185.css')" />
@@ -88,7 +94,7 @@
       <button id="menuButton" class="icon-button mobile-only" aria-label="Open navigation">☰</button>
       <div class="brand" role="button" tabindex="0" data-nav="dashboard" aria-label="Go to dashboard">
         <img class="brand-logo" src="labos-wordmark.png" alt="LabOS" />
-        <span id="versionBadge" class="version-badge">REV 1.0.185</span>
+        <span id="versionBadge" class="version-badge" title="Controlled rebuild checkpoint: STAGE3-GITHUB-TEST-2" aria-label="Revision 1.0.185, Stage 3 test build">REV 1.0.185 · S3 TEST</span>
       </div>
       <div class="top-actions">
         <div class="global-search-wrap">
@@ -106,12 +112,12 @@
       </div>
       <nav id="mainNav"></nav>
       <div class="sidebar-footer">
-        <div class="compliance-note">IATF 16949-aligned control support<br><small>POC — organisation configuration required</small></div>
+        <div class="compliance-note">IATF 16949-aligned control support<br><small>POC — organisation configuration required</small><br><small id="controlledBuildId">Controlled build: STAGE3-GITHUB-TEST-2</small></div>
         <button class="nav-link" data-nav="help">? Help &amp; Manual</button>
       </div>
     </aside>
     <main id="main" class="main" tabindex="-1">
-      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.185…</div></div>
+      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.185 · STAGE 3 TEST…</div></div>
     </main>
   </div>
   <div id="modalRoot"></div>

@@ -2,6 +2,12 @@
 
 Deploy the contents of the ZIP so that `index.html` is at the GitHub Pages root. Use a hard refresh/private window after deployment.
 
+## Build identification — verify this first
+- Browser header must visibly show **`REV 1.0.185 · S3 TEST`**.
+- Open the left navigation and confirm **`Controlled build: STAGE3-GITHUB-TEST-2`** appears in the sidebar footer.
+- The browser tab/title should read **`LabOS — REV 1.0.185 · STAGE 3 TEST`**.
+- If any of these identifiers are missing, stop testing: the deployed browser is not showing the intended Stage-3 test checkpoint.
+
 ## Boot / persistence
 - App loads with no visible boot error.
 - Refresh the page after a small controlled change and confirm state persists.
