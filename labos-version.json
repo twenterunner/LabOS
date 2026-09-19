@@ -1,5 +1,6 @@
 {
-  "revision": "1.0.187",
-  "build": 187,
-  "package": "ProtoLabOS_Prototype_Build_POC_v1.0.187_WEB.zip"
+  "revision": "1.0.185",
+  "runtime": "1.0.185-poc",
+  "deployment": "2026-09-18",
+  "cachePolicy": "network-check"
 }

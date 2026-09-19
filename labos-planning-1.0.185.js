@@ -12,11 +12,11 @@ const daysBetween=(a,b)=>{if(!a||!b)return 0;return Math.round((new Date(`${b}T1
 const closeStatus=v=>['closed','complete','completed','archived','released','delivered','cancelled'].includes(norm(v));
 
 class PlanningEngine{
-  constructor(state){this.state=state;P.ensureMultiLabModelV1099?.(state);}
+  constructor(state){this.state=state;} // Stage 1: planner construction is read-pure; load/migration owns normalization.
   domainOf(id){return (this.state.validationProgrammes||[]).some(x=>x.id===id)?'validation':(this.state.requests||[]).some(x=>x.id===id)?'prototype':null}
   entity(id){return (this.state.validationProgrammes||[]).find(x=>x.id===id)||(this.state.requests||[]).find(x=>x.id===id)||null}
   activeLabId(){return this.state.settings?.activeLabId||this.state.settings?.primaryLabId||(this.internalLabs()[0]?.id)||null}
-  internalLabs(){P.ensureMultiLabModelV1099?.(this.state);return P.internalLabsV1099?P.internalLabsV1099(this.state):(this.state.labs||[]).filter(x=>x.type==='internal'&&x.active!==false&&x.status!=='Inactive')}
+  internalLabs(){return P.internalLabsV1099?P.internalLabsV1099(this.state):(this.state.labs||[]).filter(x=>x.type==='internal'&&x.active!==false&&x.status!=='Inactive')} // Stage 1 pure selector
   labName(id){const l=(this.state.labs||[]).find(x=>x.id===id);return l?.name||l?.code||id||'—'}
   bookingSite(b){if(b?.siteId)return b.siteId;const e=(this.state.equipment||[]).find(x=>x.id===b?.equipmentId),s=(this.state.staff||[]).find(x=>x.id===b?.staffId);if(e?.siteId)return e.siteId;if(s?.siteId)return s.siteId;const w=this.entity(b?.requestId);return w?.executionSiteId||w?.homeSiteId||this.state.settings?.primaryLabId||null}
   entitySite(w){return w?.executionSiteId||w?.homeSiteId||this.state.settings?.primaryLabId||null}

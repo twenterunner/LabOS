@@ -1,40 +1,43 @@
-# LabOS REV 1.0.185 — Planning Recovery QA
+# LabOS QA Report — Rev 1.0.185 Stage 2 RC1
 
-REV 1.0.185 is a release-critical planning regression recovery built from REV 1.0.184.
+## Release decision
 
-## Changes verified
+Stage 2 Planning Engine is accepted after exact-final recertification. No genuine application regression was identified in the protected comparisons.
 
-- Overall Planning keeps the six filter tiles in one horizontal row.
-- All / Prototype Builds / Validation remains immediately above the swim lanes.
-- Overall timeline supports horizontal scrollbar, mouse/pointer drag, trackpad horizontal movement and − / + / FIT.
-- Every live booking remains clickable and opens the shared Green / Yellow / Red manual replan search.
-- The project column has a wider, bounded layout with stable action buttons.
-- Prototype and Validation full-programme planning use strict target-lab equipment and people; remote resources cannot leak into a sister-lab feasibility result.
-- Optimize Recovery remains local-only.
-- Compare Sister Labs excludes the current lab and creates a formal transfer request instead of directly committing a cross-lab scenario.
-- Sister-lab transfer lifecycle is request → receiving-lab review → accept/reject → live revalidation → apply, with cancel while pending and audit history.
-- Direct cross-lab scenario commit is blocked as a governance backstop.
-- Validation retains Archive Manager access.
-- Material workflow completion requires every real BOM requirement to be fully provided/committed; a date/owner alone cannot make the Material step green.
-- Process & Methods no longer auto-closes for an active build solely because technical route data is ready. Explicit review remains required; migrated legacy builds remain reconcilable.
-- KPI context is selected-lab-specific, including the Equipment Availability trend denominator.
-- Time-series KPI visuals remain line/point plots; filled/surface plots are explicitly suppressed.
+## Protected test totals
 
-## Verification gates
+- Stage 1: **46 PASS / 0 FAIL**
+- Stage 2: **70 PASS / 0 FAIL**
+- Combined explicit Stage-1/2 shield: **116 PASS / 0 FAIL**
 
-The packaged release is checked for JavaScript syntax, version consistency, required assets, canonical planning UI markers, formal sister-lab governance handlers, material/process workflow guards and lab-scoped KPI logic. Runtime tests exercise Prototype and Validation AUTO-PLAN, manual slots, sister-lab comparison, request/accept/reject, cross-lab resource integrity and lessons-learned APIs.
+## Application comparison
 
-## Executed regression results
+- 12-case smoke: 11 byte-equivalent + 1 required Stage-2 Planning correction, 0 genuine regressions.
+- 70 built-in hooks: 67 byte-equivalent + 2 timestamp-only + 1 required Stage-2 V163 Validation-DAG correction, 0 genuine regressions.
 
-- JavaScript syntax: PASS for core, demo data, repository, services, planning and application bundles.
-- Deployment/version/asset references: PASS; no missing runtime asset referenced by `index.html`.
-- Canonical Overall population: 11 programmes in the fresh demo fixture (8 Prototype, 3 Validation).
-- Prototype AUTO-PLAN: PASS, 8 bookings.
-- Validation AUTO-PLAN: PASS, 4 bookings.
-- Prototype manual planning: PASS; Green / Yellow / Red alternatives returned.
-- Validation manual planning: PASS; feasible Green plus blocked Red alternatives returned in the tested window.
-- Prototype sister-lab comparison: PASS; LAB-DE candidate 8 bookings, zero target-lab resource leaks.
-- Validation sister-lab comparison: PASS; LAB-DE candidate 4 bookings, zero target-lab resource leaks.
-- Prototype and Validation transfer governance: PASS for Requested-without-LIVE-move, Accept & revalidate, and Reject paths.
-- Material semantics: PASS; expected date + owner without full commitment remains planning-ready but `workflowReady=false` and `buildReady=false`.
-- Browser-rendered Overall Planning: PASS with 6 tiles, All / Prototype Builds / Validation controls, 38 live booking bars in the fixture, horizontal overflow, 360 px project column, governed sister-lab request action, Validation Archive Manager, and no page errors.
+## Architecture/static audit
+
+- runtime caller audit: 12/12 PASS;
+- V163 preview delegates to PlanningPortfolioService;
+- V163 commit uses the atomic Stage-2 transaction path;
+- direct App.repo.save planning bypasses: 0;
+- scoped App.state projection swaps: 0;
+- direct IndexedDB use outside repository boundary: 0;
+- Rev 186/187 contamination: 0;
+- canonical Stage-2 legacy weekend-global dependencies: 0;
+- canonical Stage-2 transient planner-setting dependencies: 0.
+
+## Browser
+
+**NOT EXECUTABLE.** Local QA navigation was blocked by `ERR_BLOCKED_BY_ADMINISTRATOR`. This is not counted as PASS.
+
+## Performance
+
+See `qa/STAGE2_PERFORMANCE_FINAL.json` and the Stage-2 acceptance report.
+
+## Protected hashes
+
+- Rev 1.0.185: `ca256107a58ed18e9303c9e0fdbe20e14fead5a4d68a04d75a7804b83629a8ab`
+- Stage 1 RC2: `2d642d4568b7b8b525fc238505ed70df6cf3971687e84a6fa2fe1e62851f3ee8`
+
+The Stage-2 RC1 ZIP SHA-256 is computed after packaging and reported alongside the delivered artifact.
