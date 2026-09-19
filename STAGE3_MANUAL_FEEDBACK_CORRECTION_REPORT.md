@@ -1,38 +1,81 @@
-# LabOS Controlled Rebuild — Stage 3 Manual Feedback Correction Report
+# LabOS Stage 3 — Manual Feedback Correction Report
 
 Date: 2026-09-19
-Controlled checkpoint: **STAGE3-GITHUB-TEST-3**
+Controlled build target: **STAGE3-GITHUB-TEST-3**
 Product revision: **1.0.185**
 
-This build remains a GitHub Pages manual-test checkpoint. It is **not** a Stage-3 RC and does not start Stage 4.
+## Scope
 
-## Feedback classified and corrected inside the 10-stage framework
+This correction remains inside the controlled 10-stage rebuild framework. Stage 4 has not started.
 
-### Stage 3 — Network / Sister-Lab
-1. **Requested receiver work in My Work**
-   - Cause: the final canonical Stage-3 My Work wrapper derived only `UnderReview`, `Accepted`, and `InExecution`, assuming an older queue would always supply `Requested`.
-   - Correction: canonical receiver workload now derives `Requested`, `UnderReview`, `Accepted`, and `InExecution` through `NetworkRecordAdapter`. Requested items expose the governed receiver review action. No UI-only transfer state was introduced.
+The browser feedback from `STAGE3-GITHUB-TEST-2` was classified as:
 
-2. **Single-test / single-operation routing discoverability**
-   - Cause: the canonical Planning bar opened the generic manual-slot modal directly, bypassing the older task-level route entry point even though governed task transfer still existed.
-   - Correction: the task manual/replan modal exposes `Route only this test / operation to sister lab`, which continues through the existing V1170 compatibility entry into canonical `TransferScope` / Stage-3 `NetworkTransferService`. No second scheduler or direct SiteAssignment path was created.
+1. **Stage 3 — My Work:** newly Requested sister-lab transfers were not visible as receiver work.
+2. **Stage 3 — partial routing:** governed single-operation routing existed but the effective Prototype Planning click path bypassed the task action prompt, making it effectively undiscoverable.
+3. **Controlled Stage-2 reopen — future projects:** potential/future projects were no longer represented in the effective canonical Planning page.
+4. **Controlled Stage-2 reopen — planning perspectives:** Overall / Per programme / Per equipment / Per person were not all rendered through the same canonical planning experience.
 
-### Controlled reopen of Stage 2 — Planning Engine
-3. **Future/potential projects missing from Overall Planning**
-   - Cause: the canonical Overall board replaced the older integrated swimlane renderer without carrying forward `pipelineProjects` presentation.
-   - Correction: Overall Planning again renders potential-project lanes using the existing potential-event/planning data model, with probability and probability-weighted load. Visibility is controlled by the existing `planPotential` filter; data is not deleted when hidden.
+## Architectural corrections
 
-4. **Planning perspectives effectively lost**
-   - Cause: Overall / Per programme / Per equipment / Per person controls still existed, but canonical event handling depended on older post-render binding rather than owning the view switch.
-   - Correction: the canonical Planning event layer now owns `data-plan-view` switching. The four perspectives continue to use the same underlying planning data/kernel; no parallel planner was added.
+### Stage 3 — receiver My Work
 
-## Dedicated regression coverage
-`qa/stage3-manual-feedback-tests.js` contains **11** cases covering the four findings above, including canonical-state derivation, governed task routing, potential-project representation/toggle behavior, and all four planning perspectives.
+Canonical network records from `NetworkRecordAdapter` now include `Requested` alongside `UnderReview`, `Accepted`, and `InExecution` in receiver My Work. Requested/UnderReview records expose a receiver review action. No UI-only transfer state was introduced.
 
-## Architectural constraints preserved
-- Stage-2 PlanningEngine / PlannerService remains the only scheduling authority.
-- `homeSiteId`, `executionSiteId`, and `booking.siteId` retain distinct meanings.
-- Partial routing remains canonical SiteAssignment-based after governed acceptance.
-- No direct repository save or direct App.state replacement was introduced.
-- No UI-only transfer authority was introduced.
-- Internal sister-lab and external supplier governance remain distinct.
+### Stage 3 — single-operation routing
+
+The effective Prototype planned-booking click path now opens the existing planned-task action prompt. That prompt exposes both normal Move / replan and governed single-operation sister-lab routing. The routing action continues to use the Stage-3 transfer scope/proposal/transaction path and the same Stage-2 planning kernel; no second planner or direct site assignment was added.
+
+Validation activity/leg/subflow governed routing remains preserved.
+
+### Controlled Stage-2 reopen — future projects
+
+The canonical Overall Planning experience again displays future/potential-project demand from the existing pipeline model, including probability and probability-weighted expected load. These items are planning demand overlays only; they are not committed bookings and do not create a separate forecast/scheduling engine.
+
+### Controlled Stage-2 reopen — planning perspectives
+
+Overall, Per programme, Per equipment, and Per person now remain within the same canonical planning renderer/data model. Non-overall views no longer fall back to the disconnected legacy planning renderer. This change is functional architecture only; cosmetic redesign remains Stage 10.
+
+## New regression coverage
+
+`qa/stage3-manual-feedback-tests.js` contains five regression scenarios covering:
+
+- Requested receiver My Work visibility;
+- planned-task click-path reachability;
+- visible governed single-operation routing action;
+- future/potential-project probability overlay;
+- canonical rendering of all four planning perspectives.
+
+Fresh result: **5/5 PASS, 0 FAIL**.
+
+## Fresh protection status for this correction tree
+
+Stage 3:
+- network/domain 77/77
+- application 14/14
+- transactions 18/18
+- caller audit 15/15
+- release hardening 10/10
+- build identification 8/8
+- manual-feedback regression 5/5
+- **Stage-3 total 147/147 PASS, 0 FAIL**
+
+Protected Stage 2:
+- graph 27/27
+- portfolio/scenario 24/24
+- hardening 19/19
+- **Stage-2 total 70/70 PASS, 0 FAIL**
+
+Protected Stage 1:
+- architecture/read purity 10/10
+- integrity 17/17
+- canonical boundary 3/3
+- functional 16/16
+- **Stage-1 total 46/46 PASS, 0 FAIL**
+
+Combined Stage-1/2/3 automated assertions: **263/263 PASS, 0 FAIL**.
+
+Structural checks:
+- root JavaScript parse: 10/10 PASS
+- local `index.html` script references: 9/9 present
+
+Real browser/IndexedDB automation remains a separate manual/environment gate. Node fallback execution must not be described as real IndexedDB certification.

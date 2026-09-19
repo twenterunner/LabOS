@@ -1,60 +1,35 @@
-# Stage 3 GitHub Pages Manual Test Checklist — TEST 3
+# Stage 3 GitHub Pages Manual Test Checklist — TEST 4
 
-Deploy the ZIP contents so `index.html` is at the GitHub Pages root. Use a hard refresh or private/incognito window after deployment.
+Controlled build: **STAGE3-GITHUB-TEST-4**  
+Product revision: **1.0.185**
 
-## 1. Build identification
-- Header must show **`REV 1.0.185 · S3 TEST`**.
-- Sidebar footer must show **`Controlled build: STAGE3-GITHUB-TEST-3`**.
-- Browser title must read **`LabOS — REV 1.0.185 · STAGE 3 TEST`**.
-- If any identifier is wrong, stop: the intended checkpoint is not running.
+Before testing, hard-refresh or use a private/incognito tab. Confirm:
 
-## 2. Requested sister-lab work in My Work — repaired in TEST 3
-- From `LAB-NL`, submit a whole-programme sister-lab request to another internal lab such as `LAB-DE`.
-- Switch the active lab/context to the receiving lab.
-- Open **My Work / Action Centre**.
-- Confirm the new **Requested** transfer appears as an actionable receiver item with **Review request**.
-- Accept one request and reject another if convenient; confirm the item/status updates appropriately.
+- header shows **`REV 1.0.185 · S3 TEST`**;
+- sidebar footer shows **`Controlled build: STAGE3-GITHUB-TEST-4`**.
 
-## 3. Single-test / single-operation sister-lab routing — repaired in TEST 3
-- Open Planning and select a **planned Prototype test/operation bar**.
-- Open its manual/replan options.
-- Confirm **`Route only this test / operation to sister lab`** is available.
-- Compare/select a sister lab and submit the request.
-- Before acceptance, confirm programme ownership has not silently changed.
-- At the receiving lab, accept the request and confirm only that selected operation is routed remotely.
-- Run AUTO/replan again and confirm the accepted partial assignment is retained.
+## Requested browser checks
 
-## 4. Future / potential projects in Overall Planning — restored in TEST 3
-- Open Planning → **Overall**.
-- Confirm potential/future-project lanes are visible and clearly marked **POTENTIAL**.
-- Confirm probability (for example `%`) and **probability-weighted hours** are shown.
-- Toggle **Show potential projects** off and on.
-- Confirm this only changes visibility; it must not delete the underlying potential project data.
+### 1. One canonical Planning experience
+Open Planning and switch through **Overall**, **Per programme**, **Per equipment**, and **Per person**.
 
-## 5. Planning perspectives — restored/verified in TEST 3
-Switch through all four planning views and confirm each genuinely changes the swim-lane perspective:
-- **Overall** — programme swim lanes, including potential projects when enabled.
-- **Per programme** — task/test-oriented programme detail lanes.
-- **Per equipment** — equipment loading lanes.
-- **Per person** — people/qualification loading lanes.
+PASS if the page remains recognisably the same Planning application: same header, key controls, visual language and swim-lane interaction. Only grouping/lane content should change. It must not jump back to the older `Visual Resource Planning` application.
 
-## 6. Core Stage-3 whole-programme governance
-- Compare a Prototype programme with sister labs and request another internal lab.
-- Confirm the request does **not** immediately change LIVE ownership/routing.
-- Accept at the receiving lab; only then should whole-programme `executionSiteId` move while `homeSiteId` remains unchanged.
-- Reject/cancel paths should leave LIVE planning unchanged.
+### 2. Manual in-lane replan
+In any perspective containing a planned Prototype test/operation, tap the planned item and choose **Move / replan in swimlane**.
 
-## 7. Validation partial routing
-- For Validation, verify an activity/test or leg/subflow can be requested at a sister lab through the governed request/accept flow.
-- Confirm Validation does not directly commit another lab without acceptance.
+PASS if the action responds promptly, the current swim-lane remains visible, and Green/Yellow feasible day options progressively appear across that lane. Red/infeasible conditions must never be silently committed. Selecting an option must use the governed Stage-2 planning commit path.
 
-## 8. Scenario / external governance smoke
-- Sister-lab Scenario actions must create governed internal requests, not direct LIVE moves.
-- External Scenario options must create an external request requiring commercial approval; they must not directly become LIVE/approved.
-- Pending external commercial work should appear in My Work, and approval should create the distinct external order.
+Please report roughly how long it feels from tapping the test to seeing the task prompt, and from choosing Move/replan to seeing the first planning feedback/options.
 
-## 9. Normal-use regression observation
-Use LabOS normally for several minutes. Report anything missing, confusing, broken, unexpectedly removed, or worse than an earlier build—even if it is outside Stage 3. It will be classified into the controlled 10-stage framework rather than patched ad hoc.
+### 3. Single-operation sister-lab routing remains available
+Tap a planned Prototype operation and verify **Route only this step to a sister lab** is still available alongside the manual replan action. Create a request if convenient and verify it remains governed rather than immediately changing execution ownership.
 
-## Result
-Record PASS/FAIL for the relevant items and attach screenshots for failures. Any genuine failure keeps Stage 3 open. Do not begin Stage 4 until Stage 3 is explicitly accepted.
+### 4. Future/potential project overlay
+In Planning → Overall, toggle **Show potential projects** off and on. Verify potential work appears as forecast/probability-weighted demand and does not become committed bookings simply by being displayed.
+
+### 5. AUTO PLAN semantics
+On the canonical Planning page, verify there is one portfolio AUTO PLAN action covering Prototype + Validation demand. There should not be a competing `PLAN VALIDATION DEMAND` planning authority on this page. If Validation-specific planning appears elsewhere in a workflow, report where you see it.
+
+### 6. General regression pass
+Use LabOS normally for several minutes. Report anything missing, confusing, unintentionally removed, slower, or newly desired. You do not need to classify the feedback into a rebuild stage; ChatGPT will map each item into the established 10-stage framework before any change is made.

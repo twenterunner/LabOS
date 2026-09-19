@@ -1,35 +1,82 @@
-# LABOS CONTROLLED REBUILD — CURRENT STATUS
+# LABOS CONTROLLED REBUILD — AUTHORITATIVE STATUS
 
 Date: 2026-09-19
-Product revision: **1.0.185**
-Current GitHub manual-test checkpoint: **STAGE3-GITHUB-TEST-3**
 
-## Protected baselines
-- Original Rev 1.0.185: `ca256107a58ed18e9303c9e0fdbe20e14fead5a4d68a04d75a7804b83629a8ab`
-- Stage 1 RC2: `2d642d4568b7b8b525fc238505ed70df6cf3971687e84a6fa2fe1e62851f3ee8`
-- Stage 2 RC1: `830e8b137f5398ff44952e7a54943a5ba4f64ffa993f3c48301774ef1afab6a8`
+## Protected source baseline
 
-Stage 2 RC1 remains the accepted protected baseline until Stage 3 is explicitly accepted after manual GitHub/browser testing.
+- LabOS Rev **1.0.185**
+- SHA-256: `ca256107a58ed18e9303c9e0fdbe20e14fead5a4d68a04d75a7804b83629a8ab`
 
-## Roadmap
+## Accepted protected checkpoints
+
+- Stage 1 RC2: `ProtoLabOS_Prototype_Build_POC_v1.0.185_STAGE1_RC2_WEB.zip`
+- SHA-256: `2d642d4568b7b8b525fc238505ed70df6cf3971687e84a6fa2fe1e62851f3ee8`
+- Stage 2 RC1: `ProtoLabOS_Prototype_Build_POC_v1.0.185_STAGE2_RC1_WEB.zip`
+- SHA-256: `830e8b137f5398ff44952e7a54943a5ba4f64ffa993f3c48301774ef1afab6a8`
+
+Stage 2 RC1 remains the accepted protected development baseline until Stage 3 is explicitly accepted.
+
+## Current controlled test build
+
+- Product revision: **1.0.185**
+- Controlled checkpoint: **STAGE3-GITHUB-TEST-4**
+- Visible browser identifier: **REV 1.0.185 · S3 TEST**
+- Status: **GitHub manual-test build; not a Stage-3 RC**
+
+## Roadmap status
+
 1. ✅ Stage 1 — Data & State Integrity — COMPLETE / PROTECTED
-2. ✅ Stage 2 — Planning Engine — COMPLETE / PROTECTED (narrowly reopened and recertified for TEST 3 regressions)
-3. 🟡 Stage 3 — Network / Sister-Lab Capability — AUTOMATED GATES GREEN / MANUAL TEST PENDING
-4. ⬜ Stage 4 — Readiness Engine
-5. ⬜ Stage 5 — Workflow Engine
-6. ⬜ Stage 6 — Execution & Evidence Engine
-7. ⬜ Stage 7 — Reporting Engine
-8. ⬜ Stage 8 — Lessons Learned Engine
-9. ⬜ Stage 9 — KPI Engine
-10. ⬜ Stage 10 — Tab / UI / UX Review
+2. ✅ Stage 2 — Planning Engine — COMPLETE / PROTECTED after controlled manual-feedback reopen and full recertification
+3. 🟡 Stage 3 — Network / Sister-Lab Capability — AUTOMATED GATES GREEN / AWAITING TEST-4 GITHUB MANUAL TEST
+4. ⬜ Stage 4 — Readiness Engine — NOT STARTED
+5. ⬜ Stage 5 — Workflow Engine — NOT STARTED
+6. ⬜ Stage 6 — Execution & Evidence Engine — NOT STARTED
+7. ⬜ Stage 7 — Reporting Engine — NOT STARTED
+8. ⬜ Stage 8 — Lessons Learned Engine — NOT STARTED
+9. ⬜ Stage 9 — KPI Engine — NOT STARTED
+10. ⬜ Stage 10 — Tab / UI / UX Review — NOT STARTED
 
-Do not start Stage 4 and do not describe this checkpoint as a Stage-3 RC.
+## Current protected architecture
 
-## TEST 3 scope
-The manual-feedback correction is limited to:
-- Stage 3 receiver My Work for Requested transfers;
-- Stage 3 discoverable governed single-test/operation routing;
-- controlled Stage-2 restoration of potential/future projects in Overall Planning;
-- controlled Stage-2 restoration of effective Overall / Per programme / Per equipment / Per person planning perspectives.
+- Stage-1 StateTransactionService / persistence / read-purity boundaries remain protected.
+- One Stage-2 graph-aware PlanningEngine / PlannerService remains the only scheduling authority.
+- Prototype and Validation share the same planning kernel.
+- Overall / Per programme / Per equipment / Per person use one canonical Planning renderer and booking model; only grouping changes.
+- Manual in-lane replan uses the Stage-2 planning kernel and the governed Green/Yellow feasibility interaction.
+- Canonical Planning exposes one whole-demand AUTO PLAN covering Prototype + Validation demand.
+- Stage-3 whole/partial sister-lab transfers use governed NetworkProposal / NetworkTransfer services and canonical SiteAssignment.
+- Requested sister-lab work is derived into receiver My Work from canonical network records.
+- Internal sister labs and external providers retain distinct governance.
+- No Stage-4 readiness implementation has started.
 
-See `STAGE3_MANUAL_FEEDBACK_CORRECTION_REPORT.md` and `STAGE3_GITHUB_MANUAL_TEST_CHECKLIST.md`.
+## Fresh protection executed before TEST 4 package freeze
+
+Canonical Stage 2: **70/70 PASS**
+- graph: 27/27
+- portfolio/scenario: 24/24
+- hardening: 19/19
+
+Stage 1: **46/46 PASS**
+- architecture/read purity: 10/10
+- integrity: 17/17
+- canonical boundary: 3/3
+- functional: 16/16
+
+Stage 3 suites:
+- network/domain: 77/77
+- application: 14/14
+- transaction/lifecycle/external: 18/18
+- caller audit: 15/15
+- release hardening: 10/10
+- prior Stage-3 manual-feedback regression: 5/5
+- build identification: 8/8
+
+Additional Stage-2 browser-feedback regression: **5/5 PASS**.
+
+Structural protection: root production JavaScript **10/10 parses**; local index script references **9/9 present**.
+
+Real browser/IndexedDB automation is not certified by the Node protection suite; the GitHub Pages browser test remains the manual stage gate.
+
+## Continuity rule
+
+Do not start Stage 4 and do not create a Stage-3 RC until TEST 4 browser feedback is accepted and the final Stage-3 acceptance gate is explicitly authorized.

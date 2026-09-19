@@ -1,23 +1,20 @@
-# LabOS Stage 3 — Controlled Build Identification
+# LabOS Stage 3 — Build Identification Hardening
 
 Date: 2026-09-19
 
 Product revision remains **1.0.185**.
 
-Controlled build checkpoint: **STAGE3-GITHUB-TEST-3**
+Controlled build checkpoint: **STAGE3-GITHUB-TEST-4**
 
 Visible identifiers:
 - top bar: `REV 1.0.185 · S3 TEST`
-- sidebar footer: `Controlled build: STAGE3-GITHUB-TEST-3`
+- sidebar footer: `Controlled build: STAGE3-GITHUB-TEST-4`
 - browser title: `LabOS — REV 1.0.185 · STAGE 3 TEST`
 
-`labos-version.json` exposes `stage`, `stageStatus`, `buildId`, and `buildLabel` while preserving `revision: 1.0.185`. The deployment handshake checks both revision and controlled build ID so same-revision controlled checkpoints can be distinguished.
+Deployment metadata in `labos-version.json` includes `stage`, `stageStatus`, `buildId`, and `buildLabel` while preserving `revision: 1.0.185`. The deployment handshake checks both revision and controlled build ID for same-revision deployments.
 
-The version badge remains visible at widths <=400 px.
+Mobile hardening keeps the version badge visible at widths <=400 px.
 
-Dedicated identification regression suite: `qa/stage3-build-identification-tests.js` — **8/8 PASS**.
+Dedicated regression suite: `qa/stage3-build-identification-tests.js` — **8/8 PASS** before package freeze.
 
-## TEST 3 production change boundary
-Compared with `STAGE3-GITHUB-TEST-2`, exactly one root production JavaScript bundle intentionally changed: `labos-app-1.0.185.js`. That change contains the four controlled manual-feedback integration corrections documented in `STAGE3_MANUAL_FEEDBACK_CORRECTION_REPORT.md`. The other **9/9** root JavaScript files are byte-identical by SHA-256 to TEST 2.
-
-The TEST 3 build-identifier change itself is limited to deployment metadata/shell text (`index.html`, `index.stage3-edited.html`, `labos-version.json`) plus QA/evidence documentation; it does not change product revision or introduce another business engine.
+Compared with TEST 3, functional runtime change is confined to `labos-app-1.0.185.js` for the controlled Stage-2 planning-integration corrections documented in `STAGE2_PLANNING_FEEDBACK_CORRECTION_REPORT.md`. The Stage-2 planning kernel and Stage-3 network module are unchanged; no new scheduling or network authority was introduced.
