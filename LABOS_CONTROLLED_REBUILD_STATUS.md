@@ -84,3 +84,7 @@ Real browser/IndexedDB automation is not certified by the Node protection suite.
 ## Continuity rule
 
 Do not start Stage 4 and do not create a Stage-3 RC until TEST 6 browser feedback is accepted and the final Stage-3 acceptance gate is explicitly authorized.
+
+## Stage 3 Test-7 controlled browser gate — 2026-09-19
+
+`STAGE3-GITHUB-TEST-7` fixes same-revision runtime cache identity and exact AUTO PLAN scenario review identity. Fresh controlled-suite protection: 293/293 PASS, 0 FAIL. Stage 4 not started; Stage 3 not yet RC/accepted pending browser test.

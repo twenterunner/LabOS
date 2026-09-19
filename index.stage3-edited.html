@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c5862" />
   <meta name="description" content="Laboratory Operations System proof-of-concept for automotive prototype, validation and engineering laboratory operations." />
-  <title>LabOS — REV 1.0.185 · STAGE 3 TEST</title>
+  <title>LabOS — REV 1.0.185 · STAGE 3 TEST-7</title>
   <link rel="manifest" href="manifest.webmanifest?v=1.0.185" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.185" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.185" />
@@ -19,7 +19,7 @@
     // can be distinguished without changing the product revision.
     (function(){
       const EXPECTED_REVISION='1.0.185';
-      const EXPECTED_BUILD='STAGE3-GITHUB-TEST-6';
+      const EXPECTED_BUILD='STAGE3-GITHUB-TEST-7';
       window.__LABOS_EXPECTED_REVISION__=EXPECTED_REVISION;
       window.__LABOS_EXPECTED_BUILD__=EXPECTED_BUILD;
       const versionUrl='labos-version.json?ts='+Date.now();
@@ -52,7 +52,7 @@
       }).catch(err=>console.warn('LabOS revision/build check skipped',err));
     })();
   </script>
-  <link rel="stylesheet" href="labos-styles-1.0.185.css" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.185.css')" />
+  <link rel="stylesheet" href="labos-styles-1.0.185.css?build=STAGE3-GITHUB-TEST-7" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.185.css')" />
   <script>
     (function(){
       const bootErrors=[];window.__LABOS_BOOT_FATAL__=false;window.__LABOS_BOOT_PHASE__='shell';
@@ -94,7 +94,7 @@
       <button id="menuButton" class="icon-button mobile-only" aria-label="Open navigation">☰</button>
       <div class="brand" role="button" tabindex="0" data-nav="dashboard" aria-label="Go to dashboard">
         <img class="brand-logo" src="labos-wordmark.png" alt="LabOS" />
-        <span id="versionBadge" class="version-badge" title="Controlled rebuild checkpoint: STAGE3-GITHUB-TEST-6" aria-label="Revision 1.0.185, Stage 3 test build">REV 1.0.185 · S3 TEST</span>
+        <span id="versionBadge" class="version-badge" title="Controlled rebuild checkpoint: STAGE3-GITHUB-TEST-7" aria-label="Revision 1.0.185, Stage 3 test build">REV 1.0.185 · S3 TEST-7</span>
       </div>
       <div class="top-actions">
         <div class="global-search-wrap">
@@ -112,7 +112,7 @@
       </div>
       <nav id="mainNav"></nav>
       <div class="sidebar-footer">
-        <div class="compliance-note">IATF 16949-aligned control support<br><small>POC — organisation configuration required</small><br><small id="controlledBuildId">Controlled build: STAGE3-GITHUB-TEST-6</small></div>
+        <div class="compliance-note">IATF 16949-aligned control support<br><small>POC — organisation configuration required</small><br><small id="controlledBuildId">Controlled build: STAGE3-GITHUB-TEST-7</small></div>
         <button class="nav-link" data-nav="help">? Help &amp; Manual</button>
       </div>
     </aside>
@@ -122,14 +122,14 @@
   </div>
   <div id="modalRoot"></div>
   <div id="toastRoot" aria-live="polite" aria-atomic="true"></div>
-  <script src="labos-core-1.0.185.js" onerror="LabOSBootFail('labos-core-1.0.185.js')"></script>
-  <script src="labos-demo-data-1.0.185.js" onerror="LabOSBootFail('labos-demo-data-1.0.185.js')"></script>
-  <script src="labos-repository-1.0.185.js" onerror="LabOSBootFail('labos-repository-1.0.185.js')"></script>
-  <script src="labos-state-1.0.185-stage1.js" onerror="LabOSBootFail('labos-state-1.0.185-stage1.js')"></script>
-  <script src="labos-services-1.0.185.js" onerror="LabOSBootFail('labos-services-1.0.185.js')"></script>
-  <script src="labos-planning-1.0.185.js" onerror="LabOSBootFail('labos-planning-1.0.185.js')"></script>
-  <script src="labos-planning-stage2-1.0.185.js" onerror="LabOSBootFail('labos-planning-stage2-1.0.185.js')"></script>
-  <script src="labos-network-stage3-1.0.185.js" onerror="LabOSBootFail('labos-network-stage3-1.0.185.js')"></script>
-  <script src="labos-app-1.0.185.js" onerror="LabOSBootFail('labos-app-1.0.185.js')"></script>
+  <script src="labos-core-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-core-1.0.185.js')"></script>
+  <script src="labos-demo-data-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-demo-data-1.0.185.js')"></script>
+  <script src="labos-repository-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-repository-1.0.185.js')"></script>
+  <script src="labos-state-1.0.185-stage1.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-state-1.0.185-stage1.js')"></script>
+  <script src="labos-services-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-services-1.0.185.js')"></script>
+  <script src="labos-planning-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-planning-1.0.185.js')"></script>
+  <script src="labos-planning-stage2-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-planning-stage2-1.0.185.js')"></script>
+  <script src="labos-network-stage3-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-network-stage3-1.0.185.js')"></script>
+  <script src="labos-app-1.0.185.js?build=STAGE3-GITHUB-TEST-7" onerror="LabOSBootFail('labos-app-1.0.185.js')"></script>
 </body>
 </html>
