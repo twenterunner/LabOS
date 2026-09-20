@@ -1988,9 +1988,9 @@ body,#page,.modal,.report{letter-spacing:normal!important;word-spacing:normal;li
 }
 
 @media(max-width:400px){
-  .brand .version-badge{display:none!important}
-  .brand{max-width:76px}
-  .brand-logo{max-width:72px}
+  .brand .version-badge{display:inline-flex!important;font-size:7px!important;padding:2px 3px!important}
+  .brand{max-width:132px}
+  .brand-logo{max-width:58px;min-width:52px}
 }
 
 /* ============================================================
