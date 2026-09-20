@@ -303,7 +303,7 @@ function planningAuditTouchesRequestV1088(row,requestId){return [row.requestId,r
 function replacePlanningStateV1088(state,next){for(const k of Object.keys(state))delete state[k];Object.assign(state,next)}
 const _autoPlanMutableV1088=PlannerService.prototype.autoPlan;
 PlannerService.prototype.autoPlan=function(state,requestId){
- const planningContext=state?.__planningContext||null,inPlace=state?.__stage2PortfolioInPlace===true;
+ const planningContext=state?.__planningContext||null,inPlace=state?.__stage2PortfolioInPlace===true||state?.__stage2EnterprisePlanningInPlace===true;
  if(inPlace){
   const originalWeekends=state.settings?.includeWeekendsForBuilds;let changes;
   if(planningContext?.includeWeekends!=null){state.settings=state.settings||{};state.settings.includeWeekendsForBuilds=!!planningContext.includeWeekends}
@@ -799,7 +799,7 @@ function expandTierPackV1099(enterprise,siteId,pack){
 }
 PlannerService.prototype.autoPlan=function(state,requestId){
  P.ensureMultiLabModelV1099?.(state);const rr=(state.requests||[]).find(x=>x.id===requestId),hasStepNetwork=!!Object.keys(rr?.taskSiteOverridesV1170||{}).length,planningContext=state?.__planningContext||null;
- if(state?.__stage2PortfolioInPlace===true){_PlannerAutoPlanV1099.call(this,state,requestId);return (state.bookings||[]).filter(b=>b.requestId===requestId&&!plannerHistoricalV1096(b));}
+ if(state?.__stage2PortfolioInPlace===true||state?.__stage2EnterprisePlanningInPlace===true){_PlannerAutoPlanV1099.call(this,state,requestId);return (state.bookings||[]).filter(b=>b.requestId===requestId&&!plannerHistoricalV1096(b));}
  if(hasStepNetwork){_PlannerAutoPlanV1099.call(this,state,requestId);return (state.bookings||[]).filter(b=>b.requestId===requestId&&!plannerHistoricalV1096(b));}
  const siteId=siteForRequestV1099(state,requestId),scoped=P.siteScopedStateV1099(state,siteId,{includeRequestId:requestId});if(planningContext)Object.defineProperty(scoped,'__planningContext',{value:planningContext,writable:true,configurable:true,enumerable:false});
  _PlannerAutoPlanV1099.call(this,scoped,requestId);
