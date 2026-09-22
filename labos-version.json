@@ -1,10 +1,10 @@
 {
   "revision": "1.0.185",
   "runtime": "1.0.185-poc",
-  "deployment": "2026-09-20",
+  "deployment": "2026-09-21",
   "cachePolicy": "network-check",
-  "stage": 3,
+  "stage": 4,
   "stageStatus": "GITHUB_TEST",
-  "buildId": "STAGE3-GITHUB-TEST-13",
-  "buildLabel": "REV 1.0.185 \u00b7 STAGE 3 TEST-13"
+  "buildId": "STAGE4-GITHUB-TEST-1",
+  "buildLabel": "REV 1.0.185 · STAGE 4 TEST-1"
 }

@@ -1,12 +1,7 @@
-# LabOS Stage 3 — Current GitHub Manual Test Gate
+# Stage 3 GitHub Manual Test Checklist — TEST-14
 
-Current controlled build: **STAGE3-GITHUB-TEST-12**  
-Visible revision: **REV 1.0.185 · S3 TEST-12**
+Current browser-acceptance package: `STAGE3-GITHUB-TEST-14` / `REV 1.0.185 · S3 TEST-14`.
 
-Use `STAGE3_TEST12_MANUAL_BROWSER_CHECKLIST.md` as the authoritative manual browser checklist for this checkpoint.
+Use the detailed controlled checklist in `STAGE3_TEST14_MANUAL_BROWSER_CHECKLIST.md` with existing IndexedDB/site data preserved. Do not Reset Demo Data, clear site data or use a fresh browser profile for acceptance.
 
-TEST-12 contains the generic Stage-2 correction for the TEST-11 manual-replan failure affecting both Prototype and Validation. The active manual path now uses one shared Stage-2 PlanningEngine and the full enterprise/cross-domain capacity ledger; Green/Yellow controls use the existing governed canonical commit path, and interactive controls are excluded from timeline pointer-pan capture.
-
-No UI-only booking patch, duplicate planner, separate Validation scheduler, direct state mutation, alternate persistence route, or sister-lab-specific scheduler is authorized.
-
-Stage 3 is not yet an RC. Do not create a protected Stage-3 checkpoint and do not start Stage 4 until manual TEST-12 acceptance and explicit Stage-3 acceptance are complete.
+Stage 3 remains OPEN until all required manual checks pass and the user explicitly accepts Stage 3.
