@@ -3,8 +3,8 @@
   "runtime": "1.0.185-poc",
   "deployment": "2026-09-27",
   "cachePolicy": "network-check",
-  "stage": 2,
-  "stageStatus": "CORRECTION_TEST",
-  "buildId": "STAGE2-PREDECESSOR-FIX-TEST1",
-  "buildLabel": "REV 1.0.185 \u00b7 S2 PREDECESSOR FIX TEST-1"
+  "stage": 3,
+  "stageStatus": "REGRESSION_CORRECTION_TEST",
+  "buildId": "STAGE3-NETWORK-INBOX-FIX-TEST1",
+  "buildLabel": "REV 1.0.185 \u00b7 S3 NETWORK INBOX FIX TEST-1"
 }
