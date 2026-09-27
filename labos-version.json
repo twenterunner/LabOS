@@ -5,6 +5,6 @@
   "cachePolicy": "network-check",
   "stage": 3,
   "stageStatus": "REGRESSION_CORRECTION_TEST",
-  "buildId": "STAGE3-NETWORK-INBOX-FIX-TEST1",
-  "buildLabel": "REV 1.0.185 \u00b7 S3 NETWORK INBOX FIX TEST-1"
+  "buildId": "STAGE3-BUILD-SITE-VISIBILITY-FIX-TEST1",
+  "buildLabel": "REV 1.0.185 \u00b7 S3 BUILD SITE VISIBILITY FIX TEST-1"
 }

@@ -73,3 +73,7 @@ The TEST-11 date-drift fixture and TEST-13 Chromium fixture were corrected only 
 `STAGE4-GITHUB-TEST-1` is **not an RC** and Stage 4 is **not protected**. Deploy the exact frozen candidate while preserving existing IndexedDB/site data and run `STAGE4_MANUAL_BROWSER_CHECKLIST.md`.
 
 Do not start Stage 5. Do not create a Stage-4 RC until the user explicitly accepts the exact candidate after manual browser testing.
+## Stage-3 build-site visibility correction
+
+A narrow UI correction is integrated in `STAGE3-BUILD-SITE-VISIBILITY-FIX-TEST1`: Prototype build Planning now shows each task booking's current lab code. Pending task-level network requests show the requested target as `→ <site> · awaiting receiver` without changing LIVE routing; accepted task-level remote bookings show `<site> · SISTER LAB`. Canonical Stage-3 network governance and Stage-2 planning behaviour are unchanged.
+

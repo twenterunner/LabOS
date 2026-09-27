@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-27  
 **Product revision:** `REV 1.0.185`  
-**Candidate:** `STAGE3-NETWORK-INBOX-FIX-TEST1`
+**Candidate:** `STAGE3-BUILD-SITE-VISIBILITY-FIX-TEST1`
 
 ## Reproduced failure
 
