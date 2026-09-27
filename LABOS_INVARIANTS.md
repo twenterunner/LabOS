@@ -24,6 +24,10 @@ Protected through Stage 3; Stage-4 Readiness invariants below are candidate inva
 15. Validation committable candidates contain exactly one active booking per canonical activity; missing/duplicate/orphan coverage is rejected.
 16. Replanning one Validation activity may move downstream work but cannot delete the remaining sequence.
 
+### Stage-2 predecessor-anchor correction candidate — pending browser acceptance
+
+16a. When one Validation activity is manually replanned, every already-booked transitive predecessor is anchored to its existing start/end/resources/site for that solve. The selected activity and its downstream successors may be re-solved; an infeasible requested date is rejected rather than moving predecessors. Temporary solve anchors must not persist as permanent user locks.
+
 ## C. Network / Sister-Lab — protected
 
 17. One governed Network/Sister-Lab architecture; no separate sister-lab scheduler.

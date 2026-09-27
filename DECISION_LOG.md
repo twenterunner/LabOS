@@ -172,3 +172,11 @@
 **QA-fixture governance:** Test-11 horizon and TEST-13 Chromium fixture were changed only after the exact same fixture failures reproduced on protected RC1; behavioral assertions were retained. A legacy QA `show()` helper that mutates live state before the protected render boundary is not used to judge production render purity.  
 **Resulting candidate invariant:** Stage 4 remains unprotected until the exact frozen package passes `STAGE4_MANUAL_BROWSER_CHECKLIST.md` and the user explicitly accepts it. Stage 5 remains not started.  
 **Deferred:** Stage-10 sticky Planning timeline/date/lane/`−`/`+`/`FIT` requirement remains deferred.
+## 2026-09-27 — Manual Validation replan predecessor boundary
+
+- Reproduced the Stage-2 policy mismatch: manually moving an activity could re-solve and move preceding activities in the same Validation dependency chain.
+- Accepted correction rule for this candidate: active transitive predecessors are temporary hard anchors for the manual solve; the selected activity and downstream successors may replan.
+- If the selected date would require moving a predecessor, the candidate is rejected instead.
+- Temporary anchor metadata is removed before the planning candidate is returned, so predecessors do not become permanently protected locks.
+- Candidate build: `STAGE2-PREDECESSOR-FIX-TEST1`. Protected Stage-4 RC1 remains the baseline until browser acceptance.
+

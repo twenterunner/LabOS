@@ -79,3 +79,5 @@ TEST-14:
 ## Manual acceptance
 
 Stage 4 remains **OPEN / NOT PROTECTED**. The exact frozen `STAGE4-GITHUB-TEST-1` package must pass `STAGE4_MANUAL_BROWSER_CHECKLIST.md` and receive explicit user acceptance before any Stage-4 RC/protected checkpoint exists.
+| Manual Validation replan preserves transitive predecessors | Stage 2 | `qa/stage2-manual-predecessor-anchor-tests.js` | 2/2 PASS | Correction candidate `STAGE2-PREDECESSOR-FIX-TEST1`; browser acceptance pending |
+

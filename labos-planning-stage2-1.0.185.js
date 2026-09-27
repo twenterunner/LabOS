@@ -66,6 +66,27 @@ P.manualPlanningAlternativeKindV2=(original,moved,{careBefore=0,careAfter=0}={})
   const staffDisplaced=!!original?.staffId&&(moved?.staffId||null)!==original.staffId;
   return !equipmentDisplaced&&!staffDisplaced&&Number(careAfter||0)<=Number(careBefore||0)?'green':'yellow';
 };
+
+/* Manual Validation replanning is forward-scoped. The selected activity may move and
+   the canonical graph may re-solve its successors, but already-booked transitive
+   predecessors are temporary hard anchors for this solve. The anchor flag is removed
+   before the candidate is returned, so a manual move does not permanently lock earlier
+   work against a later, explicitly requested planning action. */
+function stage2ManualPredecessorIdsV185(tasks,stepId){
+  const by=new Map((tasks||[]).map(t=>[t.id,t])),target=by.get(stepId),out=new Set(),stack=[...(target?.predecessorIds||[])];
+  while(stack.length){const id=stack.pop();if(!id||out.has(id))continue;out.add(id);for(const p of by.get(id)?.predecessorIds||[])stack.push(p)}
+  return out;
+}
+function stage2ValidationManualAnchorsV185(state,programmeId,adapterId,tasks,manualConstraint){
+  if(!manualConstraint?.stepId)return {predecessorIds:new Set(),anchors:[],earliest:null};
+  const predecessorIds=stage2ManualPredecessorIdsV185(tasks,manualConstraint.stepId),active=(state.bookings||[]).filter(b=>b.requestId===programmeId&&!hist(b)),anchors=[];
+  for(const b of active){if(!predecessorIds.has(b.stepId))continue;const x=clone(b);x.requestId=adapterId;x.locked=true;x._stage2ManualPredecessorAnchorV185=true;x._stage2ManualPredecessorOriginalLockedV185=b.locked===true;x._stage2ManualPredecessorHadConstraintV185=Object.prototype.hasOwnProperty.call(b,'manualConstraintV1096');x._stage2ManualPredecessorOriginalConstraintV185=x._stage2ManualPredecessorHadConstraintV185?clone(b.manualConstraintV1096):null;x.manualConstraintV1096=true;anchors.push(x)}
+  const earliest=anchors.map(b=>isoDay(b.start)).filter(Boolean).sort()[0]||null;return {predecessorIds,anchors,earliest};
+}
+function stage2RestoreValidationManualAnchorsV185(bookings){
+  for(const b of bookings||[]){if(!b?._stage2ManualPredecessorAnchorV185)continue;b.locked=b._stage2ManualPredecessorOriginalLockedV185===true;if(b._stage2ManualPredecessorHadConstraintV185)b.manualConstraintV1096=clone(b._stage2ManualPredecessorOriginalConstraintV185);else delete b.manualConstraintV1096;delete b._stage2ManualPredecessorAnchorV185;delete b._stage2ManualPredecessorOriginalLockedV185;delete b._stage2ManualPredecessorHadConstraintV185;delete b._stage2ManualPredecessorOriginalConstraintV185}
+}
+P.stage2ManualPredecessorIdsV185=stage2ManualPredecessorIdsV185;
 if(P.PlannerService?.prototype){const _stage2AutoPlanMutable=P.PlannerService.prototype.autoPlan;P.__stage2SingleProgrammeKernel=P.__stage2SingleProgrammeKernel||_stage2AutoPlanMutable;P.PlannerService.prototype.autoPlan=function(state,requestId){const r=(state.requests||[]).find(x=>x.id===requestId);if(r&&!r._stage2ValidationProgrammeId)P.ensureTestRequirements?.(state,r);Object.defineProperty(state,'__planningMutableCommand',{value:true,writable:true,configurable:true,enumerable:false});try{return _stage2AutoPlanMutable.call(this,state,requestId)}finally{delete state.__planningMutableCommand}}}
 
 
@@ -87,21 +108,24 @@ P.PlanningEngine.prototype._prototypePlan=function(id,{siteId=null,notBefore=nul
 };
 P.PlanningEngine.prototype._validationPlan=function(id,{siteId=null,notBefore=null,manualConstraint=null,context=null,inPlace=false}={}){
   const base=inPlace?this.state:clone(this.state),p=(base.validationProgrammes||[]).find(x=>x.id===id);if(!p)throw new Error('Validation programme was not found.');const activities=(base.validationActivities||[]).filter(a=>a.programmeId===id);if(!activities.length)throw new Error('Generate the Validation programme before resource planning.');const sid=siteId||p.executionSiteId||p.homeSiteId||base.settings?.primaryLabId;p.executionSiteId=sid;if(notBefore)p.planningNotBefore=notBefore;
+  const adapterId=`__VALPLAN__${id}`,validationTasks=P.compileValidationPlanningTasksV2(base,id),manualAnchors=stage2ValidationManualAnchorsV185(base,id,adapterId,validationTasks,manualConstraint);
   // Validation uses a transient synthetic request to enter the common PlannerService.
-  // Remove the programme's existing *active* bookings before solving so a replan
-  // replaces, rather than appends to, the live Validation plan. Historical rows stay
-  // untouched for traceability. This is essential for canonical SiteAssignments:
-  // an accepted remote activity must not coexist with a stale local live booking.
+  // Normal replans replace the active plan. A manual activity replan is narrower: every
+  // already-booked transitive predecessor is reintroduced under the transient adapter as a
+  // hard anchor, so only the selected activity and downstream graph can be re-solved.
   base.bookings=(base.bookings||[]).filter(b=>b.requestId!==id||hist(b));
+  if(manualAnchors.anchors.length)base.bookings.push(...manualAnchors.anchors);
   if(!inPlace&&(p.executionSiteId||p.homeSiteId||sid)!==sid){/* site-scoping remains delegated to the Stage-1 projection adapter below */}
-  const adapterId=`__VALPLAN__${id}`;const synthetic=P.validationSyntheticRequestV161?P.validationSyntheticRequestV161(base,p):{id:adapterId,productId:p.productId,quantity:p.quantity||1,requiredDate:p.requiredDate,priority:p.priority||'Normal',status:'PLANNED'};synthetic.id=adapterId;synthetic.executionSiteId=sid;synthetic.homeSiteId=p.homeSiteId||sid;synthetic.planningNotBefore=notBefore||p.planningNotBefore||null;synthetic.taskSiteOverridesV1170=P.SiteAssignmentResolver?.legacyOverrides?.(base,id,{fallback:{}})||{};synthetic._stage2ValidationProgrammeId=id;synthetic._stage2ValidationTasks=P.compileValidationPlanningTasksV2(base,id);synthetic.testRequirements=[];synthetic.characterisation=[];
+  const synthetic=P.validationSyntheticRequestV161?P.validationSyntheticRequestV161(base,p):{id:adapterId,productId:p.productId,quantity:p.quantity||1,requiredDate:p.requiredDate,priority:p.priority||'Normal',status:'PLANNED'};synthetic.id=adapterId;synthetic.executionSiteId=sid;synthetic.homeSiteId=p.homeSiteId||sid;synthetic.planningNotBefore=notBefore||p.planningNotBefore||null;synthetic.taskSiteOverridesV1170=P.SiteAssignmentResolver?.legacyOverrides?.(base,id,{fallback:{}})||{};synthetic._stage2ValidationProgrammeId=id;synthetic._stage2ValidationTasks=validationTasks;synthetic.testRequirements=[];synthetic.characterisation=[];
   if(manualConstraint){synthetic.planningConstraintsV1096={byTask:{[manualConstraint.stepId]:{date:manualConstraint.date,...(manualConstraint.equipmentId?{equipmentId:manualConstraint.equipmentId}:{}),...(manualConstraint.staffId?{staffId:manualConstraint.staffId}:{})}}}}
   base.requests=(base.requests||[]).filter(x=>x.id!==adapterId);base.requests.push(synthetic);
-  // Keep the complete enterprise booking ledger while solving Validation as well.  Resource
+  // Keep the complete enterprise booking ledger while solving Validation as well. Resource
   // eligibility remains site-constrained by the synthetic request/task SiteAssignments, but
   // capacity checks must include Prototype, Validation and incoming network work together.
-  const work=base;Object.defineProperty(work,'__planningContext',{value:context||null,writable:true,configurable:true,enumerable:false});Object.defineProperty(work,'__stage2EnterprisePlanningInPlace',{value:true,writable:true,configurable:true,enumerable:false});try{new P.PlannerService().autoPlan(work,adapterId)}finally{delete work.__planningContext;delete work.__stage2EnterprisePlanningInPlace}
-  let enterprise=work;const generated=(enterprise.bookings||[]).filter(b=>b.requestId===adapterId&&!hist(b));for(const b of generated)Object.assign(b,{requestId:id,domain:'Validation',programmeType:'validation',validationProgrammeId:id,siteId:b.siteId||sid});const lp=(enterprise.validationProgrammes||[]).find(x=>x.id===id);if(lp){lp.forecastDate=P.DateSemantics?.forecastDate?.(enterprise,id)||generated.map(b=>isoDay(b.end||b.start)).filter(Boolean).sort().at(-1)||null;lp.executionSiteId=sid;lp.status='Planned';lp.lastPlannedAt=context?.asOf||nowIso();lp.lastPlannedBy=enterprise.identity?.name||'Lab Planner'}
+  // The temporary manual earliest floor lets a predecessor booked before the current planning
+  // clock remain anchored; it is restored immediately and never persists in the candidate.
+  const work=base;work.settings=work.settings||{};const hadManualEarliest=Object.prototype.hasOwnProperty.call(work.settings,'_manualPlanningEarliestV130'),previousManualEarliest=work.settings._manualPlanningEarliestV130;if(manualAnchors.earliest)work.settings._manualPlanningEarliestV130=manualAnchors.earliest;Object.defineProperty(work,'__planningContext',{value:context||null,writable:true,configurable:true,enumerable:false});Object.defineProperty(work,'__stage2EnterprisePlanningInPlace',{value:true,writable:true,configurable:true,enumerable:false});try{new P.PlannerService().autoPlan(work,adapterId)}finally{if(hadManualEarliest)work.settings._manualPlanningEarliestV130=previousManualEarliest;else delete work.settings._manualPlanningEarliestV130;delete work.__planningContext;delete work.__stage2EnterprisePlanningInPlace}
+  let enterprise=work;const generated=(enterprise.bookings||[]).filter(b=>b.requestId===adapterId&&!hist(b));stage2RestoreValidationManualAnchorsV185(generated);for(const b of generated)Object.assign(b,{requestId:id,domain:'Validation',programmeType:'validation',validationProgrammeId:id,siteId:b.siteId||sid});const lp=(enterprise.validationProgrammes||[]).find(x=>x.id===id);if(lp){lp.forecastDate=P.DateSemantics?.forecastDate?.(enterprise,id)||generated.map(b=>isoDay(b.end||b.start)).filter(Boolean).sort().at(-1)||null;lp.executionSiteId=sid;lp.status='Planned';lp.lastPlannedAt=context?.asOf||nowIso();lp.lastPlannedBy=enterprise.identity?.name||'Lab Planner'}
   const byId=new Map(generated.map(b=>[b.stepId,b]));for(const a of enterprise.validationActivities||[]){if(a.programmeId!==id)continue;const b=byId.get(a.id);if(b){a.plannedStart=b.start;a.plannedEnd=b.end;a.equipmentId=b.equipmentId||null;a.staffId=b.staffId||null;a.siteId=b.siteId||sid}}
   for(const c of enterprise.resourceCareBookings||[]){if(c.sourceRequestId===adapterId)c.sourceRequestId=id;if(c.originRequestId===adapterId)c.originRequestId=id}enterprise.requests=(enterprise.requests||[]).filter(x=>x.id!==adapterId);P.syncValidationActionsV161?.(enterprise);P.assertPlanningCandidateCompletenessV14(enterprise,[id]);return this._result(enterprise,id,'validation',sid)
 };
