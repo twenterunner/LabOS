@@ -4,7 +4,7 @@
   "deployment": "2026-09-28",
   "cachePolicy": "network-check",
   "stage": 3,
-  "stageStatus": "FUTURE_PROJECT_SCOPE_MODAL_FIX_TEST",
-  "buildId": "FUTURE-PROJECT-SCOPE-MODAL-FIX-TEST3",
-  "buildLabel": "REV 1.0.185 \u00b7 FUTURE PROJECT SCOPE MODAL FIX TEST-3"
+  "stageStatus": "PLANNING_SWIMLANE_LAYOUT_FIX_TEST",
+  "buildId": "PLANNING-SWIMLANE-LAYOUT-FIX-TEST4",
+  "buildLabel": "REV 1.0.185 \u00b7 PLANNING SWIMLANE LAYOUT FIX TEST-4"
 }
