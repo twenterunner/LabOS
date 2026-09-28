@@ -3285,3 +3285,68 @@
 
 
 
+
+/* REV 1.0.185 · FUTURE PROJECT WORK-PACKAGE ESTIMATING TEST-2
+   Potential projects may explicitly describe Prototype and Validation work.
+   The estimate is scenario-only: it does not create requests, programmes or bookings. */
+(function(P){
+  if(!P||P.futureProjectEstimateV185)return;
+  const legacyPipelineCost=P.pipelineProjectCost;
+  const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+  const capFor=x=>P.canonicalPlanningCapability?P.canonicalPlanningCapability(x):x;
+  function equipmentRate(state,cap){
+    const need=capFor(cap);if(!need)return 0;
+    const eq=(state.equipment||[]).find(e=>P.equipmentSupportsCapability?P.equipmentSupportsCapability(e,need):e.capability===need);
+    return num(eq?.hourlyCost,0);
+  }
+  function processItem(state,proc,qty,phase,index){
+    const units=proc?.basis==='Batch'?1:Math.max(1,num(qty,1)),hours=Math.max(.25,(num(proc?.setupTime)+num(proc?.cycleTime)*units)/60),cap=capFor(proc?.planningCapability||proc?.equipmentCapability)||null;
+    return {id:`${phase}:PROC:${proc?.id||index}`,phase,kind:'process',sourceId:proc?.id||null,label:proc?.name||proc?.id||'Prototype process',hours,equipmentCapability:cap,competency:proc?.competency||null,weekOffset:Math.floor(index/3),fixedCost:num(proc?.fixedCharge),consumableCost:num(proc?.consumableCost)*units,external:false};
+  }
+  function testItem(state,test,qty,phase,index,{externalMode='internal',weekBase=0,label=null,fallback=null}={}){
+    if(!test&&fallback){const h=Math.max(.25,num(fallback.estimatedHours||fallback.durationHours,1)),cap=capFor(fallback.planningCapability||fallback.equipmentCapability)||null;return {id:`${phase}:ACT:${fallback.id||index}`,phase,kind:'test',sourceId:fallback.standardTestId||fallback.basisTestId||fallback.id||null,label:fallback.name||label||'Validation activity',hours:h,equipmentCapability:cap,competency:fallback.competency||fallback.skillId||null,weekOffset:weekBase+Math.floor(index/3),fixedCost:0,consumableCost:0,external:false};}
+    if(!test)return null;
+    const units=test.basis==='Batch'?1:Math.max(1,num(qty,1)),hours=Math.max(.25,(num(test.setupTime)+num(test.cycleTime)*units)/60),ext=test.externalSourcing||{},useExternal=externalMode==='benchmark'&&ext.enabled===true&&num(ext.price)>0;
+    let externalCost=0;if(useExternal){const pricedUnits=ext.pricingBasis==='unit'?Math.max(1,num(qty,1)):1;externalCost=num(ext.price)*pricedUnits+num(ext.setupFee)+num(ext.transportCost)}
+    return {id:`${phase}:TEST:${test.id}:${index}`,phase,kind:'test',sourceId:test.id,label:label||test.name||test.id,hours:useExternal?0:hours,grossInternalHours:hours,equipmentCapability:useExternal?null:(capFor(test.planningCapability||test.equipmentCapability)||null),competency:useExternal?null:(test.competency||null),weekOffset:weekBase+Math.floor(index/3),fixedCost:useExternal?0:num(test.fixedCharge),consumableCost:useExternal?0:num(test.consumableCost)*units,external:useExternal,externalCost,externalSupplier:useExternal?(ext.supplier||'External provider'):null,externalLeadDays:useExternal?num(ext.leadDays):0};
+  }
+  function prototypeProcessIds(state,project,proto){
+    if(proto.scopeMode==='reference-build'&&proto.referenceRequestId){const route=(state.routes||[]).find(r=>r.requestId===proto.referenceRequestId);const ids=(route?.steps||[]).map(s=>s.processId).filter(Boolean);if(ids.length)return ids;}
+    const product=(state.products||[]).find(p=>p.id===project.productId);return product?.defaultRoute?.length?[...product.defaultRoute]:(P.getDefaultRoute?P.getDefaultRoute(project.productId):[]);
+  }
+  function prototypeReferenceTests(state,proto){
+    if(proto.scopeMode!=='reference-build'||!proto.referenceRequestId)return [];
+    const r=(state.requests||[]).find(x=>x.id===proto.referenceRequestId);return (r?.testRequirements||[]).map(x=>x.standardTestId).filter(Boolean);
+  }
+  function validationDescriptors(state,val){
+    if(val.scopeMode==='reference-programme'&&val.referenceProgrammeId){
+      return (state.validationActivities||[]).filter(a=>a.programmeId===val.referenceProgrammeId&&String(a.kind||'').toLowerCase()!=='hold').map(a=>({testId:a.standardTestId||a.basisTestId||null,fallback:a,label:a.name}));
+    }
+    return [...new Set(val.testIds||[])].map(id=>({testId:id,fallback:null,label:null}));
+  }
+  P.futureProjectWorkPackageV185=(project={})=>{
+    const w=project.workPackageV185||null;
+    if(w)return P.deepClone(w);
+    return {version:'legacy-default-route',prototype:{enabled:true,quantity:Math.max(1,num(project.quantity,1)),scopeMode:'default-route',referenceRequestId:null},validation:{enabled:false,dutQuantity:Math.max(1,num(project.quantity,1)),scopeMode:'selected-tests',testIds:[],referenceProgrammeId:null,startOffsetWeeks:4,externalMode:'internal'}};
+  };
+  P.futureProjectEstimateV185=(state,project={})=>{
+    const w=P.futureProjectWorkPackageV185(project),proto=w.prototype||{},val=w.validation||{},items=[],finance=state.settings?.finance||{},techRate=num(finance.roleRates?.technician,58),contPct=num(finance.contingencyPct,0);let bom=0;
+    if(proto.enabled){
+      const qty=Math.max(1,num(proto.quantity||project.quantity,1)),product=(state.products||[]).find(p=>p.id===project.productId);
+      for(const b of product?.bom||[]){const factor=String(b.kind||'component')==='consumable'?(1+num(b.wastePct)/100):1;bom+=num(b.unitCost)*num(b.qtyPerUnit,1)*qty*factor}
+      prototypeProcessIds(state,project,proto).forEach((pid,i)=>{const p=(state.processes||[]).find(x=>x.id===pid);if(p)items.push(processItem(state,p,qty,'prototype',i))});
+      prototypeReferenceTests(state,proto).forEach((tid,i)=>{const t=(state.standardTests||[]).find(x=>x.id===tid),it=testItem(state,t,qty,'prototype-test',i,{weekBase:Math.ceil(items.filter(x=>x.phase==='prototype').length/3),externalMode:'internal'});if(it)items.push(it)});
+    }
+    if(val.enabled){
+      const qty=Math.max(1,num(val.dutQuantity||project.quantity,1)),weekBase=Math.max(0,Math.floor(num(val.startOffsetWeeks,proto.enabled?4:0))),desc=validationDescriptors(state,val);
+      desc.forEach((d,i)=>{const t=d.testId?(state.standardTests||[]).find(x=>x.id===d.testId):null,it=testItem(state,t,qty,'validation',i,{weekBase,externalMode:val.externalMode==='benchmark'?'benchmark':'internal',fallback:d.fallback,label:d.label});if(it)items.push(it)});
+    }
+    const equipment={},skills={};let process=0,tests=0,labour=0,equipmentCost=0,external=0;
+    for(const it of items){if(it.equipmentCapability&&it.hours>0)equipment[it.equipmentCapability]=(equipment[it.equipmentCapability]||0)+it.hours;if(it.competency&&it.hours>0)skills[it.competency]=(skills[it.competency]||0)+it.hours;labour+=it.hours*techRate;if(it.equipmentCapability)equipmentCost+=it.hours*equipmentRate(state,it.equipmentCapability);if(it.kind==='process')process+=num(it.fixedCost)+num(it.consumableCost);else tests+=num(it.fixedCost)+num(it.consumableCost);external+=num(it.externalCost)}
+    const subtotal=bom+process+tests+labour+equipmentCost+external,total=subtotal*(1+contPct/100),prob=Math.max(0,Math.min(1,num(project.probability,0)));
+    return {workPackage:w,items,equipment,skills,equipmentHours:Object.values(equipment).reduce((a,b)=>a+b,0),skillHours:Object.values(skills).reduce((a,b)=>a+b,0),cost:{bom,process,tests,labour,equipment:equipmentCost,external,subtotal,contingency:total-subtotal,total,probabilityWeighted:total*prob},prototype:{enabled:!!proto.enabled,quantity:Math.max(1,num(proto.quantity||project.quantity,1)),itemCount:items.filter(x=>String(x.phase).startsWith('prototype')).length},validation:{enabled:!!val.enabled,dutQuantity:Math.max(1,num(val.dutQuantity||project.quantity,1)),itemCount:items.filter(x=>x.phase==='validation').length,externalCount:items.filter(x=>x.phase==='validation'&&x.external).length}};
+  };
+  P.futureProjectScopeLabelV185=(state,project={})=>{const e=P.futureProjectEstimateV185(state,project),parts=[];if(e.prototype.enabled)parts.push(`Prototype · ${e.prototype.quantity} unit${e.prototype.quantity===1?'':'s'}`);if(e.validation.enabled)parts.push(`Validation · ${e.validation.itemCount} test${e.validation.itemCount===1?'':'s'} / ${e.validation.dutQuantity} DUT${e.validation.dutQuantity===1?'':'s'}`);return parts.join(' + ')||'No work package selected'};
+  P.__legacyPipelineProjectCostV185=legacyPipelineCost;
+  P.pipelineProjectCost=(state,project)=>project?.workPackageV185?P.futureProjectEstimateV185(state,project).cost.total:legacyPipelineCost(state,project);
+})(window.ProtoLab);

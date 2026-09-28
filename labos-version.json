@@ -4,7 +4,7 @@
   "deployment": "2026-09-28",
   "cachePolicy": "network-check",
   "stage": 3,
-  "stageStatus": "FUTURE_PROJECTS_KPI_RESOURCE_NEEDS_TEST",
-  "buildId": "FUTURE-PROJECTS-KPI-RESOURCE-NEEDS-TEST1",
-  "buildLabel": "REV 1.0.185 \u00b7 FUTURE PROJECTS + KPI RESOURCE NEEDS TEST-1"
+  "stageStatus": "FUTURE_PROJECT_SCOPE_SCENARIO_FIX_TEST",
+  "buildId": "FUTURE-PROJECT-SCOPE-SCENARIO-FIX-TEST2",
+  "buildLabel": "REV 1.0.185 \u00b7 FUTURE PROJECT SCOPE + SCENARIO FIX TEST-2"
 }

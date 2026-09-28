@@ -2763,3 +2763,12 @@ body,#page,.modal,.report{letter-spacing:normal!important;word-spacing:normal;li
 .v185-future-horizon select{min-height:34px;padding:6px 28px 6px 10px}
 #planning-future-projects-v185 .pipeline-card small+small{margin-top:3px}
 @media(max-width:900px){.v185-future-resource-needs .v151-section-head{display:block}.v185-future-resource-needs .route-toolbar{margin-top:10px;flex-wrap:wrap}}
+
+/* FUTURE PROJECT WORK PACKAGE · TEST-2 */
+.v185-work-package{border:1px solid rgba(25,92,120,.16);background:rgba(247,251,252,.72)}
+.v185-scope-toggle{display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap}
+.v185-scope-toggle input{width:18px;height:18px}
+.v185-scope-test-list{max-height:270px;overflow:auto;border:1px solid rgba(25,92,120,.14);border-radius:12px;padding:6px;background:#fff}
+.v185-scope-test{display:grid;grid-template-columns:20px 1fr auto;gap:9px;align-items:center;padding:8px;border-bottom:1px solid rgba(25,92,120,.08);cursor:pointer}
+.v185-scope-test:last-child{border-bottom:0}.v185-scope-test input{width:17px;height:17px}.v185-scope-test span{display:flex;flex-direction:column}.v185-scope-test small{color:#6b7f87}.v185-scope-test em{font-size:11px;color:#5d6d73;font-style:normal}
+.v185-future-cost-kpis{margin-bottom:2px}
