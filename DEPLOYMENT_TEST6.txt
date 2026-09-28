@@ -1,0 +1,9 @@
+LabOS TEST-6 deployment marker
+Build ID: DEPLOYMENT-HARDENED-MYWORK-TEST6
+Revision: 1.0.185
+
+After uploading all extracted files to the GitHub Pages source root, open:
+  deploy-test6.html
+
+If that page says PASS, click its button to clear stale browser caches and open TEST-6.
+If deploy-test6.html is 404 or reports another build, the GitHub Pages source/deployment has not published this file set yet.
