@@ -2,9 +2,9 @@
   "revision": "1.0.185",
   "runtime": "1.0.185-poc",
   "deployment": "2026-09-28",
-  "cachePolicy": "network-check",
+  "cachePolicy": "immutable-build-files-plus-network-build-check",
   "stage": 3,
-  "stageStatus": "PLANNING_SWIMLANE_LAYOUT_FIX_TEST",
-  "buildId": "PLANNING-SWIMLANE-LAYOUT-FIX-TEST4",
-  "buildLabel": "REV 1.0.185 \u00b7 PLANNING SWIMLANE LAYOUT FIX TEST-4"
+  "stageStatus": "DEPLOYMENT_HARDENED_MYWORK_TEST",
+  "buildId": "DEPLOYMENT-HARDENED-MYWORK-TEST6",
+  "buildLabel": "REV 1.0.185 · DEPLOYMENT HARDENED + MY WORK CLEANUP TEST-6"
 }
