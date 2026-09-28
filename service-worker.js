@@ -11,6 +11,6 @@ self.addEventListener('activate', event => {
 });
 self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => fetch('./index.html?labos_rev=1.0.185&labos_build=PLANNING-FULL-VIEWPORT-WIDTH-TEST9', { cache: 'no-store' })));
+    event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => fetch('./index.html?labos_rev=1.0.185&labos_build=EXTERNAL-EXECUTION-FULL-BLEED-TEST10', { cache: 'no-store' })));
   }
 });

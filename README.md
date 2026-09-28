@@ -190,3 +190,9 @@ Planning and Audit Readiness are registered with the application router through 
 
 ## TEST-9 Planning timeline
 The canonical Planning swim lanes now break out to the measured viewport width and provide a minimum one-year-past / one-year-future scrollable timeline. +/- changes temporal scale without removing dates.
+
+## TEST-10 cumulative update
+
+Build identity: `REV 1.0.185 · EXTERNAL EXECUTION + FULL-BLEED PLANNING TEST-10`.
+
+Adds complete governed external execution after PO through supplier confirmation, canonical replanning, logistics, execution, results/evidence, technical disposition/retest, sample return/disposition and commercial closeout. Also fixes the remaining Planning swim-lane left-offset so a hidden sidebar produces a true edge-to-edge viewport board. See `EXTERNAL_EXECUTION_FULL_BLEED_TEST10_REPORT.md`.
