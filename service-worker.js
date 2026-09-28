@@ -11,6 +11,6 @@ self.addEventListener('activate', event => {
 });
 self.addEventListener('fetch', event => {
   if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => fetch('./index.html?labos_rev=1.0.185&labos_build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7', { cache: 'no-store' })));
+    event.respondWith(fetch(event.request, { cache: 'no-store' }).catch(() => fetch('./index.html?labos_rev=1.0.185&labos_build=PLANNING-YEAR-RANGE-WIDTH-TEST8', { cache: 'no-store' })));
   }
 });
