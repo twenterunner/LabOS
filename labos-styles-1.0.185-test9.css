@@ -2778,9 +2778,9 @@ body,#page,.modal,.report{letter-spacing:normal!important;word-spacing:normal;li
    User acceptance focus: no fixed week-span selector; +/- temporal zoom only.
    ============================================================ */
 .canonical-planning-board[data-canonical-planning="1"]{
-  width:calc(100vw - var(--sidebar))!important;
+  width:100%!important;
   max-width:none!important;
-  margin-left:-28px!important;
+  margin-left:0!important;
   margin-right:0!important;
   padding:12px 14px 14px!important;
   border-radius:0 0 12px 12px!important;
@@ -2858,14 +2858,14 @@ body,#page,.modal,.report{letter-spacing:normal!important;word-spacing:normal;li
 .canonical-lane-track{min-width:0!important}
 .canonical-potential-board{width:100%!important;max-width:100%!important;margin:14px 0 0!important;padding:12px!important;border-radius:10px!important}
 @media(max-width:820px){
-  .canonical-planning-board[data-canonical-planning="1"]{width:100vw!important;margin-left:-14px!important;padding:10px 10px 12px!important}
+  .canonical-planning-board[data-canonical-planning="1"]{width:100%!important;margin-left:0!important;padding:10px 10px 12px!important}
   .canonical-plan-scroll{max-height:calc(100vh - 150px)}
   .canonical-project-head,.canonical-plan-scroll .swim-head-track{height:72px!important;min-height:72px!important}
   .canonical-axis-month-row-v185{height:22px}.canonical-axis-week-row-v185{top:22px;height:20px}.canonical-axis-day-row-v185{top:42px;height:30px}
   .canonical-axis-month-v185 span{font-size:9px}.canonical-axis-week-v185 span{font-size:8px}.canonical-axis-day-v185{padding:2px 3px}.canonical-axis-day-v185 strong{font-size:9px}
 }
 @media(max-width:560px){
-  .canonical-planning-board[data-canonical-planning="1"]{margin-left:-10px!important;padding-left:8px!important;padding-right:8px!important}
+  .canonical-planning-board[data-canonical-planning="1"]{margin-left:0!important;padding-left:8px!important;padding-right:8px!important}
   .canonical-plan-scroll{max-height:calc(100vh - 138px)}
   .canonical-plan-toolbar{grid-template-columns:1fr!important}
   .canonical-domain-inline,.canonical-zoom-toolbar{overflow:visible!important}
@@ -2886,3 +2886,8 @@ body,#page,.modal,.report{letter-spacing:normal!important;word-spacing:normal;li
 .canonical-booking,.canonical-booking span{min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
 @media(max-width:900px){.canonical-project-dates{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}.canonical-lane-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}}
 @media(max-width:480px){.canonical-project-dates{grid-template-columns:1fr!important}.canonical-lane-actions{grid-template-columns:1fr!important}}
+
+/* TEST-9: actual-viewport swim-lane width. Runtime measures the real visible sidebar;
+   no fixed sidebar reservation is allowed to steal horizontal planning space. */
+.canonical-planning-board[data-canonical-planning="1"]{width:100%!important;margin-right:0!important;}
+.canonical-planning-board[data-canonical-planning="1"] .canonical-plan-scroll{width:100%!important;max-width:100%!important;}

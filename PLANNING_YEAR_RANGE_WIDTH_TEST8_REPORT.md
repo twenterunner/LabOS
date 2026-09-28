@@ -1,4 +1,4 @@
-# TEST-8 Planning year-range + width
+# TEST-9 Planning year-range + width
 
 - Minimum 366 days past and 366 days future.
 - Zoom changes pixels/day, not date availability.

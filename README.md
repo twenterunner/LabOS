@@ -188,5 +188,5 @@ Planning/Validation UX restoration: Prototype-style Validation search, six inter
 Planning and Audit Readiness are registered with the application router through the canonical view-renderer registry. Planning is always visible under Shared operations; the actual menu navigation path is regression-tested across all demo roles.
 
 
-## TEST-8 Planning timeline
+## TEST-9 Planning timeline
 The canonical Planning swim lanes now break out to the measured viewport width and provide a minimum one-year-past / one-year-future scrollable timeline. +/- changes temporal scale without removing dates.
