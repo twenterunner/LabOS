@@ -1,65 +1,65 @@
 # LabOS Architectural Invariants
 
-These invariants are derived from accepted Stage-1/Stage-2 architecture, Stage-3 controlled evidence and canonical source boundaries. They are stronger than incidental implementation details.
+Protected through Stage 3; Stage-4 Readiness invariants below are candidate invariants pending manual acceptance.
 
-## A. State, persistence and audit
+## A. State / persistence / audit — protected
 
-1. **One canonical business-state authority.** Session/UI context may project or scope state, but read/render code must not silently become a second business-state authority.
-2. **Ordinary persistence is not a business-normalization engine.** Ownership inference, replanning and domain reconciliation do not belong in ordinary save operations.
-3. **`StateTransactionService` is the validated atomic mutation boundary** for governed multi-step state changes that require commit/rollback semantics.
-4. **Persistence failure must roll back atomically.** No half-applied business mutation may remain LIVE after a rejected/failed commit.
-5. **Audit events use the canonical audit boundary** and retain actor/role/lab/entity/reason/reference/correlation context where applicable.
-6. **Import/load/reset are explicit canonicalization boundaries.** Compatibility repair is explicit and idempotent, not hidden in ordinary reads.
+1. One canonical business-state authority; session/UI/view projections are not business state.
+2. Read/render operations do not mutate canonical business state.
+3. Ordinary persistence is not a normalization/replanning engine.
+4. `StateTransactionService` is the validated atomic governed mutation boundary.
+5. Persistence failure rolls back; no half-applied LIVE state.
+6. Audit uses structured canonical actor/role/lab/entity/reason/reference context.
+7. Import/load/reset are explicit idempotent compatibility-repair boundaries.
 
-## B. Planning
+## B. Planning — protected
 
-7. **One canonical Planning architecture.** Prototype and Validation compile into the common Stage-2 planning contracts and use one resource-feasibility kernel.
-8. **Prototype and Validation share planning semantics and enterprise capacity.** A resource already consumed by one domain cannot be silently invisible to the other domain's feasibility calculation.
-9. **Manual planning, feasible-slot search, replanning, portfolio/scenario planning and recovery/escalation must delegate to the canonical Planning architecture rather than competing schedulers.**
-10. **Canonical commit route:** `PlanningProposal/candidate → PlanningDelta → PlanCommitService → StateTransactionService → repository/audit`.
-11. **UI actions must not bypass planning/state authority.** A Green/Yellow/other control may select or confirm a canonical candidate; it must not directly mutate canonical bookings as an alternative commit path.
-12. **One governed commit means one canonical persistence transaction.** Duplicate save paths for the same accepted action are not allowed.
-13. **Forecasts derive from the active canonical plan**, not stale cache fields.
-14. **Historical planning bodies may remain physically present only as compatibility/history.** Effective runtime entry points must delegate to the canonical Stage-2 architecture; historical bodies are not competing authorities.
+8. One canonical Planning architecture for Prototype and Validation.
+9. One shared enterprise resource/capacity ledger.
+10. Manual/auto/portfolio/scenario/recovery/escalation delegate to the canonical kernel.
+11. Canonical commit: candidate → `PlanningDelta` → `PlanCommitService` → `StateTransactionService` → repository/audit.
+12. UI cannot directly mutate bookings as a planning commit path.
+13. Green/Yellow manual replans require non-empty rationale/formal acceptance; selection alone persists nothing.
+14. One governed planning commit equals exactly one persistence transaction.
+15. Validation committable candidates contain exactly one active booking per canonical activity; missing/duplicate/orphan coverage is rejected.
+16. Replanning one Validation activity may move downstream work but cannot delete the remaining sequence.
 
-## C. Network / Sister-Lab
+### Stage-2 predecessor-anchor correction candidate — pending browser acceptance
 
-15. **One governed Network/Sister-Lab architecture.** Comparison/proposal, authorization, transfer lifecycle, SiteAssignment and transaction responsibilities remain separate canonical services rather than ad-hoc UI state changes.
-16. **No SiteAssignment before governed acceptance.** Comparison, proposal and read-only revalidation must not silently change LIVE execution ownership.
-17. **Task-level SiteAssignments remain task-level.** A remote task/activity assignment must not silently rewrite the programme's `homeSiteId` or programme execution ownership unless the governed transfer scope is whole-programme and acceptance semantics explicitly require it.
-18. **Receiving-lab capacity and competing reservations must be revalidated before acceptance.** The current request's own reservation may be ignored where the canonical collision check explicitly supports that identity; competing active reservations may not be ignored.
-19. **Network acceptance must remain atomic with planning/state validation.** Planning deltas and SiteAssignment/network deltas are simulated/validated before canonical commit.
-20. **Reject/cancel/accept authorization must respect sender/receiver governance.** UI convenience is not an authorization bypass.
+16a. When one Validation activity is manually replanned, every already-booked transitive predecessor is anchored to its existing start/end/resources/site for that solve. The selected activity and its downstream successors may be re-solved; an infeasible requested date is rejected rather than moving predecessors. Temporary solve anchors must not persist as permanent user locks.
 
-## D. Repository evidence and regression protection
+## C. Network / Sister-Lab — protected
 
-21. **Historical evidence is immutable.** Old Test-N reports/checksums remain descriptions of that historical build.
-22. **A new build identity is earned by a completed gate.** Chat language or an in-progress working tree does not create a controlled build.
-23. **Interrupted/timed-out test invocations are not PASS.** Required assertions must finish in a completed invocation/range.
-24. **Tests protect behavior/architecture, not obsolete implementation shape.** An implementation-detail assertion may be updated only when the replacement protects the stronger accepted architecture.
-25. **Behavioral requirements are never weakened merely to obtain PASS.**
-26. **Repository continuity files are the engineering context authority.** A new chat must reconstruct current state from repository evidence before changing source.
+17. One governed Network/Sister-Lab architecture; no separate sister-lab scheduler.
+18. No SiteAssignment before governed acceptance.
+19. Task-level SiteAssignments stay task-level and do not silently rewrite programme ownership.
+20. Receiving capacity/reservations are revalidated before acceptance.
+21. Network acceptance is atomic with planning/state validation.
+22. Expired proposal assumptions require governed revalidation; Refresh preserves request identity/scope but does not create LIVE SiteAssignment.
+23. Active-site Escalation uses the active site's canonical PlanningEngine population.
+24. Planning view/perspective/action and touch/pan ownership remain separated.
 
-## E. Enterprise portability
+## D. Stage-4 Readiness — candidate invariants
 
-27. **Business rules remain behind replaceable adapters/services.** The browser-local IndexedDB PoC may later be replaced by API/database persistence without rewriting domain/planning/network rules.
-28. **Session/identity boundaries remain separable from programme ownership.** This preserves a path to SSO/server authorization without conflating logged-in lab context with business ownership.
-29. **Stable IDs, explicit deltas and structured audit are preserved** to support future relational storage, centralized audit and multi-user concurrency.
+25. There is one canonical `ReadinessEngine`, shared by Prototype and Validation.
+26. Readiness evaluation is deterministic for canonical state plus explicit `ReadinessContext.asOf`.
+27. Readiness evaluation is read-only and side-effect free.
+28. Readiness status semantics are explicit: `READY`, `BLOCKED`, `WARNING`, `NOT_APPLICABLE`.
+29. Every material readiness blocker/warning is explainable with stable code, dimension, entity and relevant site/planned-use context.
+30. Equipment readiness is evaluated at planned use for capability, governance/status, calibration and maintenance.
+31. Staff readiness is evaluated at planned use for availability, qualification/skill and training/certificate validity.
+32. Applicable material/DUT/sample/process/method/Control Plan/EHS prerequisites use one structured assessment contract.
+33. Remote task readiness resolves the protected task-level `SiteAssignmentResolver` execution site without changing programme ownership.
+34. External-execution readiness derives from governed Stage-3 external request/order state.
+35. Readiness resource reassignment is a governed Planning change and uses `PlanningEngine → PlanningDelta/PlanCommitService → StateTransactionService`; direct UI booking mutation/persistence is forbidden.
+36. The legacy `P.ReadinessService` may exist only as a compatibility facade delegating to the canonical engine.
 
-## F. TEST-13 accepted interaction/network invariants
+## E. Evidence / continuity / portability
 
-30. **Planning board state cannot impersonate a command.** Board context uses non-command perspective state; only genuine view controls own the Planning view-command attribute.
-31. **Progressive manual search preserves active command identity.** Once a Green/Yellow alternative is published, progress refresh must not destroy/recreate the active keyed control in a way that can steal a touch/click gesture.
-32. **Active-site Escalation is canonical-site scoped.** Escalation population and analysis/review scope derive from the active site's `PlanningEngine.rows({siteId,...})` programme population; a site switch must not reuse a global programme list.
-33. **Governed network Refresh renews proposal validity.** A successful stale-proposal Refresh preserves formal request identity/scope and writes the refreshed proposal assumptions including the new `expiresAt` in one canonical transaction.
-34. **Stale-proposal preview/Refresh is not LIVE execution.** It may not create a SiteAssignment or silently accept a transfer. A fresh explicit receiver decision and final live revalidation are required.
-
-
-## G. TEST-14 Validation replanning invariants
-
-1. Validation Green and Yellow manual alternatives are rationale-gated; selecting a date alone performs zero persistence.
-2. Empty rationale cannot formally accept a Validation manual replan.
-3. Accepted Validation manual replans use the existing PlanningEngine → PlanningDelta/PlanCommitService → StateTransactionService route and persist exactly once.
-4. A committable Validation planning candidate contains exactly one active booking for every canonical Validation activity.
-5. Missing, duplicate or orphan Validation activity bookings fail with `PLANNING_CANDIDATE_INCOMPLETE` before LIVE replacement.
-6. Replanning one Validation test may move dependent downstream tests but may not make the rest of the Validation sequence disappear.
+37. Historical packages/reports/checksums are immutable.
+38. A new controlled identity is earned only by a completed gate.
+39. Interrupted/timed-out tests are not PASS.
+40. Tests protect behavior/architecture; behavioral requirements are not weakened to obtain PASS.
+41. Repository continuity files are engineering authority.
+42. Stable IDs/services/deltas/audit preserve future API/database/SSO/server portability.
+43. Stage 4 remains unprotected until manual testing of the exact frozen TEST package and explicit user acceptance.

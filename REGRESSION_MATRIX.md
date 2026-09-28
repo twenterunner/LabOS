@@ -1,85 +1,83 @@
-# LabOS Regression Matrix — TEST-14
+# LabOS Regression Matrix — Stage-4 Browser Candidate
 
-This is the canonical automated gate inventory for the current `STAGE3-GITHUB-TEST-14` browser-acceptance candidate. Interrupted/timed-out runs do not count as PASS. Historical reports remain immutable evidence.
+Candidate: `STAGE4-GITHUB-TEST-1` / `REV 1.0.185 · S4 TEST-1`  
+Protected baseline: Stage-3 RC1, SHA-256 `bb90f0dd8b3951278a7a171301f7e901cd25677ce2dce4bb4187c45882541d24`.
 
-## Stage 1 — Data & State Integrity
+Interrupted/timed-out runs are not PASS. Only completed invocations/ranges below are counted.
 
-| Suite | File | Expected | TEST-14 result |
-|---|---|---:|---:|
-| Architecture/read purity | `qa/stage1-red-tests.js` | 10 | **10/10 PASS** |
-| Integrity | `qa/stage1-integrity-tests.js` | 17 | **17/17 PASS** |
-| Load/import/reset boundaries | `qa/stage1-boundary-tests.js` | 3 | **3/3 PASS** |
-| Functional regression | `qa/stage1-regression.js` | 16 | **16/16 PASS** |
+## Protected Stage 1
 
-**Stage 1 total: 46/46 PASS.**
+- `qa/stage1-red-tests.js` — **10/10 PASS**
+- `qa/stage1-integrity-tests.js` — **17/17 PASS**
+- `qa/stage1-boundary-tests.js` — **3/3 PASS**
+- `qa/stage1-regression.js` — **16/16 PASS**
 
-## Stage 2 — Planning Engine
+**Stage 1: 46/46 PASS.**
 
-| Suite | File | Expected | TEST-14 result |
-|---|---|---:|---:|
-| Graph/single-programme | `qa/stage2-graph-tests.js` | 27 | **27/27 PASS** |
-| Portfolio/scenario | `qa/stage2-portfolio-tests.js` | 24 | **24/24 PASS** |
-| Hardening | `qa/stage2-hardening-tests.js` | 19 | **19/19 PASS** |
-| Browser/planning | `qa/stage2-browser-feedback-tests.js` | 5 | **5/5 PASS** |
-| Real-state AUTO/performance/equivalence | `qa/stage2-test9-performance.js` | 2 | **2/2 PASS** |
+## Protected Stage 2
 
-Real-state fixture: `/mnt/data/LabOS_backup_2026-09-19_1.0.185_test9state.json`.
+- graph/single-programme — **27/27 PASS**
+- portfolio/scenario — **24/24 PASS**
+- hardening — **19/19 PASS**
+- browser/planning — **5/5 PASS**
+- real-state performance/equivalence — **2/2 PASS**
 
-**Stage 2 total: 77/77 PASS.**
+**Stage 2: 77/77 PASS.**
 
-## Stage 3 — protected/build matrix
+## Protected Stage 3 core/build
 
-| Suite | File | Expected | TEST-14 result |
-|---|---|---:|---:|
-| Network architecture | `qa/stage3-network-tests.js` | 77 | **77/77 PASS** |
-| Application integration | `qa/stage3-app-tests.js` | 14 | **14/14 PASS** |
-| Transactions/reservations/lifecycle/external | `qa/stage3-transaction-tests.js` | 18 | **18/18 PASS** |
-| Release hardening | `qa/stage3-release-hardening-tests.js` | 10 | **10/10 PASS** |
-| Caller/governance audit | `qa/stage3-caller-audit.js` | 15 | **15/15 PASS** |
-| Manual feedback | `qa/stage3-manual-feedback-tests.js` | 5 | **5/5 PASS** |
-| Validation identity continuity | `qa/stage3-validation-identity-continuity-tests.js` | 8 | **8/8 PASS** |
-| Real-state regression | `qa/stage3-realstate-regression-tests.js` | 8 | **8/8 PASS** |
-| Test-4 feedback | `qa/stage3-test4-feedback-tests.js` | 9 | **9/9 PASS** |
-| Test-6 deployment/build guard | `qa/stage3-test6-feedback-tests.js` | 8 | **8/8 PASS** |
-| Test-8 static | `qa/stage3-test8-feedback-tests.js` | 11 | **11/11 PASS** |
-| Test-8 dynamic | `qa/stage3-test8-feedback-dynamic-tests.js` | 6 | **6/6 PASS** |
-| Test-9 static | `qa/stage3-test9-feedback-tests.js` | 7 | **7/7 PASS** |
-| Test-9 dynamic | `qa/stage3-test9-feedback-dynamic-tests.js` | 4 | **4/4 PASS** |
-| Test-11 shared governed boundary/manual | `qa/stage3-test11-manual-feedback-tests.js` | 3 | **3/3 PASS** |
-| Test-11 exact partial Validation in-lane | `qa/stage3-test11-inlane-commit-test.js` | 1 | **1/1 PASS** |
-| Test-11 rollback/Prototype | `qa/stage3-test11-rollback-prototype-tests.js` | 2 | **2/2 PASS** |
-| Test-11 Yellow/Red | `qa/stage3-test11-yellow-red-tests.js` | 3 | **3/3 PASS** |
-| Strengthened Test-12 persisted-state/manual path | `qa/stage3-test12-manual-browser-path-tests.js` | 7 | **7/7 PASS** |
-| Build identification | `qa/stage3-build-identification-tests.js` | 11 | **11/11 PASS** |
+- network architecture **77/77**
+- app integration **14/14**
+- transactions/reservations/lifecycle/external **18/18**
+- release hardening **10/10**
+- caller/governance audit **15/15**
+- manual feedback **5/5**
+- Validation identity continuity **8/8**
+- real-state regression **8/8**
+- Test-4 **9/9**
+- Test-6 deployment/build **8/8**
+- Test-8 static/dynamic **17/17**
+- Test-9 static/dynamic **11/11**
+- Test-11 protected paths **9/9**
+- Test-12 persisted/manual path **7/7**
+- Stage-3 build identification **11/11** (pre Stage-4 identity assignment)
 
-**Stage-3 protected/build total: 227/227 PASS.**
+**Stage-3 core/build: 227/227 PASS.**
 
-Historical Test-11 implementation-detail assertions that required immediate Validation commit were strengthened after TEST-13 acceptance rejected that behavior. Current Test-11 protection requires common rationale governance, canonical Stage-2 commit, exactly-once persistence and complete Validation sequence retention.
+Retained TEST-13:
+- command ownership **4/4**
+- active-site Escalation **5/5**
+- stale proposal expiry/revalidation **8/8**
+- Chromium mobile/touch **5/5**
 
-## TEST-13 additional protection retained in TEST-14
+**TEST-13: 22/22 PASS.**
 
-| Suite | File | Expected | TEST-14 result |
-|---|---|---:|---:|
-| Planning command ownership | `qa/stage3-test13-command-ownership-tests.js` | 4 | **4/4 PASS** |
-| Active-site Escalation | `qa/stage3-test13-escalation-site-scope-tests.js` | 5 | **5/5 PASS** |
-| Expiry/revalidation lifecycle | `qa/stage3-test13-expiry-revalidation-tests.js` | 8 | **8/8 PASS** |
-| Chromium mobile/touch | `qa/stage3-test13-browser-command-ownership.py` | 5 | **5/5 PASS** |
+TEST-14:
+- Validation manual governance/completeness **5/5**
+- Validation Chromium **3/3**
 
-**TEST-13 additional total retained: 22/22 PASS.**
+**TEST-14: 8/8 PASS.**
 
-## TEST-14 Validation governance/completeness protection
+**Protected controlled total: 380/380 PASS, 0 FAIL.**
 
-| Suite | File | Expected | TEST-14 result |
-|---|---|---:|---:|
-| Validation manual governance/completeness | `qa/stage3-test14-validation-manual-governance-tests.js` | 5 | **5/5 PASS** |
-| Validation Chromium governance | `qa/stage3-test14-validation-browser.py` | 3 | **3/3 PASS** |
+## Stage 4 — Readiness Engine
 
-**TEST-14 additional total: 8/8 PASS.**
+- `qa/stage4-readiness-red-tests.js` — **12/12 PASS** after RED baseline was recorded
+- `qa/stage4-readiness-boundary-red-tests.js` — **3/3 PASS** after Stage-2 bypass reproduction/correction
+- `qa/stage4-readiness-realstate-tests.js` — **4/4 PASS** on persisted-state export
+- `qa/stage4-readiness-browser.py` — **9/9 PASS** in Chromium/mobile actual runtime
+- `qa/stage4-build-identification-tests.js` — **11/11 PASS** after `STAGE4-GITHUB-TEST-1` identity assignment
+- production JavaScript parse — **11/11 PASS**
+- runtime script existence/build-key/module-order checks — **PASS**
 
-## Controlled automated total
+## Controlled QA fixture notes
 
-**380/380 PASS, 0 FAIL** = 46 Stage 1 + 77 Stage 2 + 227 Stage-3 protected/build + 22 retained TEST-13 + 8 TEST-14.
+- Test-11 rollback fixture: the old 45-day Green search stopped reaching a valid alternative as relative demo dates advanced. The same failure reproduced on protected RC1. QA fixture now uses the canonical planning horizon; rollback/atomicity/Green assertions are unchanged.
+- TEST-13 Chromium fixture: old `P26-1007-S2` no longer produced both Green and Yellow alternatives. The same failure reproduced on protected RC1. Fixture moved to deterministic `P26-1006-S2`; the five interaction/governance assertions are unchanged.
+- Stage-4 browser Prototype render test uses the actual detached production render boundary. A legacy QA `show()` helper was not used because it invokes `buildGuidedSteps()` on live state before render and is not the production render boundary.
 
-## Manual acceptance gate
+## Manual acceptance
 
-Automated green status does not close Stage 3. `STAGE3_TEST14_MANUAL_BROWSER_CHECKLIST.md` remains **MANUAL PENDING** against the exact frozen TEST-14 ZIP with existing IndexedDB/site data preserved.
+Stage 4 remains **OPEN / NOT PROTECTED**. The exact frozen `STAGE4-GITHUB-TEST-1` package must pass `STAGE4_MANUAL_BROWSER_CHECKLIST.md` and receive explicit user acceptance before any Stage-4 RC/protected checkpoint exists.
+| Manual Validation replan preserves transitive predecessors | Stage 2 | `qa/stage2-manual-predecessor-anchor-tests.js` | 2/2 PASS | Correction candidate `STAGE2-PREDECESSOR-FIX-TEST1`; browser acceptance pending |
+

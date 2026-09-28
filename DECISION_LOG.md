@@ -148,3 +148,35 @@
 **Rejected/avoided:** immediate Green persistence, UI-only confirmation, post-commit patching of missing tests, a second Validation planner, or weakening protected tests.  
 **Resulting invariants:** zero persistence before rationale acceptance; exactly one persistence on accepted move; exactly one active booking per canonical Validation activity; `PLANNING_CANDIDATE_INCOMPLETE` on missing/duplicate/orphan coverage.  
 **Regression coverage:** strengthened Test-11 and Test-12 suites, `qa/stage3-test14-validation-manual-governance-tests.js` 5/5 PASS and `qa/stage3-test14-validation-browser.py` 3/3 PASS; full controlled matrix 380/380 PASS.
+
+## 2026-09-20 — Stage 3 RC1 — protected baseline established
+
+**Status:** ACCEPTED / PROTECTED.  
+**Decision:** the exact accepted TEST-14 archive was promoted byte-for-byte to `ProtoLabOS_Prototype_Build_POC_v1.0.185_STAGE3_RC1_WEB.zip`, SHA-256 `bb90f0dd8b3951278a7a171301f7e901cd25677ce2dce4bb4187c45882541d24`, without changing its tested internal identity `STAGE3-GITHUB-TEST-14` / `REV 1.0.185 · S3 TEST-14`.  
+**Result:** Stage 1, Stage 2 and Stage 3 became protected; Stage 4 became the next eligible stage.
+
+## 2026-09-21 — Stage 4 entry — canonical deterministic Readiness authority
+
+**Status:** implementation decision; Stage 4 still OPEN.  
+**Problem:** legacy Readiness was Prototype-specific, boolean-centric and performed mutation/normalization during nominal evaluation; Readiness equipment/staff resolution could bypass the protected Planning commit boundary. Validation lacked the same pre-execution readiness authority.  
+**Reproduction:** RED gate on untouched RC1 produced 12/12 intended architecture/purity failures and 3/3 governed-boundary failures, including direct Readiness booking/persistence bypass.  
+**Decision:** introduce one deterministic cross-domain `ReadinessEngine` plus `ReadinessContext`, structured `ReadinessAssessment` and governed `ReadinessCommandService`; legacy `P.ReadinessService` becomes a compatibility facade. Reuse protected State/Planning/Network services rather than duplicating them.  
+**Rejected/avoided:** separate Prototype/Validation engines, a second scheduler, Readiness-owned SiteAssignment logic, direct UI booking mutation, hidden normalization in readiness reads, Stage-5 workflow redesign.  
+**Result:** focused Stage-4 architecture/purity 12/12 PASS, governed resource boundary 3/3 PASS, persisted-state 4/4 PASS and Chromium/mobile 9/9 PASS.
+
+## 2026-09-21 — Stage 4 TEST-1 — browser-acceptance candidate earned
+
+**Status:** **OPEN / BROWSER ACCEPTANCE CANDIDATE ONLY — NOT RC / NOT PROTECTED.**  
+**Acceptance trigger for TEST identity:** protected matrix restored to 380/380 PASS; Stage-4 additional automated/real-state/Chromium gates green; all production JavaScript and runtime references valid.  
+**Decision:** assign `STAGE4-GITHUB-TEST-1` / `REV 1.0.185 · S4 TEST-1` and freeze a Stage-4 browser-acceptance package. Identity-only build-key changes were made after the behavioral matrix was green and followed by dedicated post-identity deployment/reference/browser checks.  
+**QA-fixture governance:** Test-11 horizon and TEST-13 Chromium fixture were changed only after the exact same fixture failures reproduced on protected RC1; behavioral assertions were retained. A legacy QA `show()` helper that mutates live state before the protected render boundary is not used to judge production render purity.  
+**Resulting candidate invariant:** Stage 4 remains unprotected until the exact frozen package passes `STAGE4_MANUAL_BROWSER_CHECKLIST.md` and the user explicitly accepts it. Stage 5 remains not started.  
+**Deferred:** Stage-10 sticky Planning timeline/date/lane/`−`/`+`/`FIT` requirement remains deferred.
+## 2026-09-27 — Manual Validation replan predecessor boundary
+
+- Reproduced the Stage-2 policy mismatch: manually moving an activity could re-solve and move preceding activities in the same Validation dependency chain.
+- Accepted correction rule for this candidate: active transitive predecessors are temporary hard anchors for the manual solve; the selected activity and downstream successors may replan.
+- If the selected date would require moving a predecessor, the candidate is rejected instead.
+- Temporary anchor metadata is removed before the planning candidate is returned, so predecessors do not become permanently protected locks.
+- Candidate build: `STAGE2-PREDECESSOR-FIX-TEST1`. Protected Stage-4 RC1 remains the baseline until browser acceptance.
+

@@ -1,77 +1,63 @@
-# LabOS New-Chat Continuity Prompt
-
-Copy and paste the block below into a completely new chat. Attach/provide the repository or working tree containing these canonical files and the frozen package named by `CURRENT_HANDOFF.md` where available.
+# LabOS New-Chat Continuity Prompt — Stage 4 Manual Acceptance
 
 ```text
-CONTINUE LABOS CONTROLLED REBUILD FROM REPOSITORY SOURCE OF TRUTH.
+CONTINUE LABOS CONTROLLED REBUILD FROM THE CANONICAL REPOSITORY SOURCE OF TRUTH — STAGE 4 OF 10 — MANUAL BROWSER ACCEPTANCE OF THE EXACT STAGE4 TEST-1 CANDIDATE.
 
-Do not rely on conversational memory or assumptions from prior chats.
-The repository is authoritative.
+Do not rely on conversational memory.
+Do not start Stage 5.
+Do not create a Stage-4 RC or protected checkpoint unless I explicitly accept Stage 4 after manual testing.
+Do not make ad-hoc patches.
+Keep Stage-10 sticky Planning timeline/date/lane/−/+ /FIT deferred.
 
-FIRST — MAKE NO SOURCE CHANGE.
+START WITH THE FULL 10-STEP DASHBOARD.
 
-Read completely, in this exact order:
+Expected position:
+Stage 1 — COMPLETE / PROTECTED
+Stage 2 — COMPLETE / PROTECTED
+Stage 3 — COMPLETE / PROTECTED
+Stage 4 — OPEN / browser acceptance candidate only / NOT PROTECTED
+Stage 5–10 — NOT STARTED
 
+READ FIRST:
 1. CURRENT_HANDOFF.md
 2. CONTROLLED_REBUILD.md
 3. LABOS_INVARIANTS.md
 4. LABOS_ARCHITECTURE.md
 5. REGRESSION_MATRIX.md
-6. the latest relevant entries in DECISION_LOG.md
-7. NEW_CHAT_CONTINUITY_PROMPT.md
+6. latest DECISION_LOG.md entries
+7. STAGE4_READINESS_ENTRY_AUDIT.md
+8. STAGE4_RED_GATE_EVIDENCE.md
+9. STAGE4_IMPLEMENTATION_REGRESSION_EVIDENCE_REPORT.md
+10. STAGE4_MANUAL_BROWSER_CHECKLIST.md
+11. STAGE3_ACCEPTANCE_REPORT_v1.0.185_RC1.md
 
-Then physically verify, where artifacts are available:
+Verify the exact frozen Stage-4 TEST candidate named in CURRENT_HANDOFF.md against its SHA-256 sidecar before interpreting browser results.
 
-8. every protected/frozen SHA-256 listed in CURRENT_HANDOFF.md;
-9. current labos-version.json and index.html build identity;
-10. the exact working-tree delta versus the frozen baseline named in CURRENT_HANDOFF.md;
-11. whether temporary/debug/range-runner artifacts are present.
+The automated position before manual acceptance is:
+- protected Stage 1–3 matrix: 380/380 PASS;
+- Stage-4 architecture/purity: 12/12 PASS;
+- Stage-4 governed boundary: 3/3 PASS;
+- Stage-4 persisted-state: 4/4 PASS;
+- Stage-4 Chromium/mobile: 9/9 PASS;
+- Stage-4 build identification: 11/11 PASS;
+- production JS parse: 11/11 PASS.
 
-If this is a Git checkout, also report branch, HEAD commit and git status. If it is not a Git checkout, say so and use file/package/hash evidence instead.
+My next input should be the manual checklist result against the exact frozen package.
 
-RECONSTRUCT BEFORE EDITING
+If I report any FAIL:
+- classify it into Stage 1–10;
+- reproduce it against the exact candidate;
+- reopen an earlier protected stage only when the regression is reproduced;
+- fix the generic architectural cause;
+- rerun every affected protected gate;
+- freeze a new Stage-4 TEST candidate, never overwrite historical evidence.
 
-Report:
+If I explicitly report all required manual checks PASS and accept Stage 4:
+- perform the formal Stage-4 acceptance gate;
+- verify exact package/hash/manifest and continuity evidence;
+- create the protected Stage-4 RC/checkpoint only then;
+- update continuity to Stage 4 COMPLETE / PROTECTED;
+- do NOT implement Stage 5 in the same acceptance step.
 
-- the full Stage 1–10 controlled-rebuild dashboard;
-- protected baselines and which hashes were physically reverified versus historically documented only;
-- current open stage;
-- active controlled runtime identity;
-- classification of the current working tree (for example frozen build vs unlabelled candidate);
-- exact production files differing from the frozen baseline;
-- unresolved/reproduced regressions supported by repository evidence;
-- completed regression gates that remain valid;
-- stale/invalidated gates that must be rerun;
-- the exact remaining regression matrix;
-- the exact next safe controlled action.
-
-Do not make any source change until this reconstruction is complete.
-
-CONTROLLED-REBUILD RULES
-
-- Never make ad-hoc patches.
-- Classify every defect/change into Stage 1–10 before implementation.
-- Correct generic architectural root causes only.
-- Do not create duplicate engines or competing state/persistence paths.
-- Earlier protected stages may be reopened only for a reproduced regression.
-- Rerun every affected protected gate after a correction.
-- Do not weaken behavioral tests to obtain PASS.
-- Interrupted/timed-out tests are not PASS.
-- Historical reports/checksums are immutable evidence.
-- Do not assign a new controlled build identity until the required behavioral matrix is fully green.
-- Do not create an RC/checkpoint until automated, structural and required manual acceptance gates pass and the user explicitly accepts the stage.
-- Do not advance to the next stage without explicit user acceptance.
-- Preserve future API/database/SSO/server compatibility boundaries.
-- Update CURRENT_HANDOFF.md after every meaningful controlled checkpoint.
-- Append decisions to DECISION_LOG.md; do not silently rewrite old decisions.
-- Keep REGRESSION_MATRIX.md synchronized with the actual QA suites/results.
-- Keep LABOS_ARCHITECTURE.md and LABOS_INVARIANTS.md authoritative and concise.
-- Always start every controlled-rebuild response with the full 10-step dashboard.
-- Always end with the exact copy-paste prompt for the next controlled step.
-
-SPECIAL CURRENT RULE
-
-Use the exact current state recorded in CURRENT_HANDOFF.md. Do not infer any later build, RC or stage from chat history. Preserve the handoff's exact frozen/candidate/manual-acceptance designation until the repository-defined gate changes it.
-
-Continue only after the repository-source-of-truth reconstruction is complete.
+Always end with the exact copy-paste prompt for the next controlled step.
 ```

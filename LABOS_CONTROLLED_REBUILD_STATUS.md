@@ -1,13 +1,14 @@
 # LabOS Controlled Rebuild Status
 
 Product revision: **1.0.185**  
-Current controlled checkpoint: **STAGE3-GITHUB-TEST-14**  
-Status: **Stage 3 manual-browser acceptance gate — TEST-14 automated matrix green; NOT RC**
+Current controlled browser candidate: **STAGE4-GITHUB-TEST-1**  
+Visible identity: **REV 1.0.185 · S4 TEST-1**  
+Status: **Stage 4 OPEN — browser acceptance candidate; NOT RC / NOT PROTECTED**
 
-1. Data & State Integrity — **COMPLETE / PROTECTED** — 46/46 TEST-14 PASS
-2. Planning Engine — **COMPLETE / PROTECTED baseline** — TEST-13 manual regression corrected; 77/77 TEST-14 PASS
-3. Network / Sister-Lab Capability — **OPEN / CURRENT STAGE** — preserved TEST-13 network/escalation protections green; awaiting TEST-14 preserved-state browser acceptance
-4. Readiness Engine — **NOT STARTED**
+1. Data & State Integrity — **COMPLETE / PROTECTED — 46/46 PASS**
+2. Planning Engine — **COMPLETE / PROTECTED — 77/77 PASS**
+3. Network / Sister-Lab Capability — **COMPLETE / PROTECTED — Stage-3 RC1; protected matrix 380/380 PASS through TEST-14**
+4. Readiness Engine — **OPEN — automated/structural/Chromium candidate gate green; manual acceptance pending**
 5. Workflow Engine — **NOT STARTED**
 6. Execution & Evidence Engine — **NOT STARTED**
 7. Reporting Engine — **NOT STARTED**
@@ -15,12 +16,8 @@ Status: **Stage 3 manual-browser acceptance gate — TEST-14 automated matrix gr
 9. KPI Engine — **NOT STARTED**
 10. Tab / UI / UX Review — **NOT STARTED**
 
-Controlled TEST-14 automated assertion position: **380/380 PASS, 0 FAIL**.
+Stage-4 additional automated evidence: 12/12 architecture/purity, 3/3 governed boundary, 4/4 persisted-state, 9/9 Chromium/mobile, 11/11 Stage-4 identity, 11/11 production JS parse.
 
-TEST-14 specifically protects rationale-gated Validation Green/Yellow manual replanning and programme-complete Validation planning candidates. Replanning one Validation test may move downstream work but may not remove the rest of the Validation sequence.
+Do not create a Stage-4 RC and do not start Stage 5 until the exact frozen Stage-4 TEST package passes manual browser acceptance and the user explicitly accepts Stage 4.
 
-Preserved TEST-13 invariants remain active: Planning command ownership/touch stability, active-site Escalation scope, and governed stale-proposal Refresh/revalidation.
-
-Deferred Stage-10 requirement: make the Planning swimlane date/timeline header, lane context and `−`, `+`, `FIT` controls sticky during vertical scrolling while preserving horizontal synchronization and global-header clearance.
-
-Do not create a protected Stage-3 checkpoint and do not start Stage 4 until the user explicitly accepts Stage 3 after TEST-14 browser testing.
+Deferred Stage-10 requirement: sticky Planning date/timeline/lane context and `−`/`+`/`FIT` controls.
