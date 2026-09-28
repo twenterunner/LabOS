@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0c5862" />
   <meta name="description" content="Laboratory Operations System proof-of-concept for automotive prototype, validation and engineering laboratory operations." />
-  <title>LabOS — REV 1.0.185 · DEPLOYMENT HARDENED + MY WORK CLEANUP TEST-6</title>
-  <link rel="manifest" href="manifest.webmanifest?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" />
+  <title>LabOS — REV 1.0.185 · MY WORK RESOURCE CARE CLEANUP TEST-7</title>
+  <link rel="manifest" href="manifest.webmanifest?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=1.0.185" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=1.0.185" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.0.185" />
@@ -19,10 +19,10 @@
     // can be distinguished without changing the product revision.
     (function(){
       const EXPECTED_REVISION='1.0.185';
-      const EXPECTED_BUILD='DEPLOYMENT-HARDENED-MYWORK-TEST6';
+      const EXPECTED_BUILD='MYWORK-RESOURCE-CARE-CLEANUP-TEST7';
       window.__LABOS_EXPECTED_REVISION__=EXPECTED_REVISION;
       window.__LABOS_EXPECTED_BUILD__=EXPECTED_BUILD;
-      window.__LABOS_EXPECTED_BUILD_LABEL__='REV 1.0.185 · DEPLOYMENT HARDENED + MY WORK CLEANUP TEST-6';
+      window.__LABOS_EXPECTED_BUILD_LABEL__='REV 1.0.185 · MY WORK RESOURCE CARE CLEANUP TEST-7';
       const versionUrl='labos-version.json?ts='+Date.now();
       fetch(versionUrl,{cache:'no-store',headers:{'Cache-Control':'no-cache'}}).then(r=>{
         if(!r.ok) throw new Error('version '+r.status);
@@ -53,7 +53,7 @@
       }).catch(err=>console.warn('LabOS revision/build check skipped',err));
     })();
   </script>
-  <link rel="stylesheet" href="labos-styles-1.0.185-test6.css?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.185-test6.css')" />
+  <link rel="stylesheet" href="labos-styles-1.0.185-test7.css?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="window.LabOSBootFail&&LabOSBootFail('labos-styles-1.0.185-test7.css')" />
   <script>
     (function(){
       const bootErrors=[];window.__LABOS_BOOT_FATAL__=false;window.__LABOS_BOOT_PHASE__='shell';
@@ -95,7 +95,7 @@
       <button id="menuButton" class="icon-button mobile-only" aria-label="Open navigation">☰</button>
       <div class="brand" role="button" tabindex="0" data-nav="dashboard" aria-label="Go to dashboard">
         <img class="brand-logo" src="labos-wordmark.png" alt="LabOS" />
-        <span id="versionBadge" class="version-badge" title="Deployment-hardened cumulative candidate: DEPLOYMENT-HARDENED-MYWORK-TEST6" aria-label="Revision 1.0.185, deployment-hardened cumulative TEST-6 build">REV 1.0.185 · DEPLOYMENT HARDENED + MY WORK CLEANUP TEST-6</span>
+        <span id="versionBadge" class="version-badge" title="Deployment-hardened cumulative candidate: MYWORK-RESOURCE-CARE-CLEANUP-TEST7" aria-label="Revision 1.0.185, deployment-hardened cumulative TEST-7 build">REV 1.0.185 · MY WORK RESOURCE CARE CLEANUP TEST-7</span>
       </div>
       <div class="top-actions">
         <div class="global-search-wrap">
@@ -113,25 +113,25 @@
       </div>
       <nav id="mainNav"></nav>
       <div class="sidebar-footer">
-        <div class="compliance-note">IATF 16949-aligned control support<br><small>POC — organisation configuration required</small><br><small id="controlledBuildId">Controlled build: DEPLOYMENT-HARDENED-MYWORK-TEST6</small></div>
+        <div class="compliance-note">IATF 16949-aligned control support<br><small>POC — organisation configuration required</small><br><small id="controlledBuildId">Controlled build: MYWORK-RESOURCE-CARE-CLEANUP-TEST7</small></div>
         <button class="nav-link" data-nav="help">? Help &amp; Manual</button>
       </div>
     </aside>
     <main id="main" class="main" tabindex="-1">
-      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.185 · DEPLOYMENT HARDENED + MY WORK CLEANUP TEST-6…</div></div>
+      <div id="page"><div style="padding:24px;font:14px system-ui,sans-serif;color:#587078">Starting LabOS REV 1.0.185 · MY WORK RESOURCE CARE CLEANUP TEST-7…</div></div>
     </main>
   </div>
   <div id="modalRoot"></div>
   <div id="toastRoot" aria-live="polite" aria-atomic="true"></div>
-  <script src="labos-core-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-core-1.0.185-test6.js')"></script>
-  <script src="labos-demo-data-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-demo-data-1.0.185-test6.js')"></script>
-  <script src="labos-repository-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-repository-1.0.185-test6.js')"></script>
-  <script src="labos-state-1.0.185-stage1-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-state-1.0.185-stage1-test6.js')"></script>
-  <script src="labos-services-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-services-1.0.185-test6.js')"></script>
-  <script src="labos-planning-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-planning-1.0.185-test6.js')"></script>
-  <script src="labos-planning-stage2-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-planning-stage2-1.0.185-test6.js')"></script>
-  <script src="labos-network-stage3-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-network-stage3-1.0.185-test6.js')"></script>
-  <script src="labos-readiness-stage4-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-readiness-stage4-1.0.185-test6.js')"></script>
-  <script src="labos-app-1.0.185-test6.js?build=DEPLOYMENT-HARDENED-MYWORK-TEST6" onerror="LabOSBootFail('labos-app-1.0.185-test6.js')"></script>
+  <script src="labos-core-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-core-1.0.185-test7.js')"></script>
+  <script src="labos-demo-data-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-demo-data-1.0.185-test7.js')"></script>
+  <script src="labos-repository-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-repository-1.0.185-test7.js')"></script>
+  <script src="labos-state-1.0.185-stage1-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-state-1.0.185-stage1-test7.js')"></script>
+  <script src="labos-services-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-services-1.0.185-test7.js')"></script>
+  <script src="labos-planning-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-planning-1.0.185-test7.js')"></script>
+  <script src="labos-planning-stage2-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-planning-stage2-1.0.185-test7.js')"></script>
+  <script src="labos-network-stage3-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-network-stage3-1.0.185-test7.js')"></script>
+  <script src="labos-readiness-stage4-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-readiness-stage4-1.0.185-test7.js')"></script>
+  <script src="labos-app-1.0.185-test7.js?build=MYWORK-RESOURCE-CARE-CLEANUP-TEST7" onerror="LabOSBootFail('labos-app-1.0.185-test7.js')"></script>
 </body>
 </html>

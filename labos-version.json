@@ -4,7 +4,7 @@
   "deployment": "2026-09-28",
   "cachePolicy": "immutable-build-files-plus-network-build-check",
   "stage": 3,
-  "stageStatus": "DEPLOYMENT_HARDENED_MYWORK_TEST",
-  "buildId": "DEPLOYMENT-HARDENED-MYWORK-TEST6",
-  "buildLabel": "REV 1.0.185 · DEPLOYMENT HARDENED + MY WORK CLEANUP TEST-6"
+  "stageStatus": "MYWORK_RESOURCE_CARE_CLEANUP_TEST",
+  "buildId": "MYWORK-RESOURCE-CARE-CLEANUP-TEST7",
+  "buildLabel": "REV 1.0.185 \u00b7 MY WORK RESOURCE CARE CLEANUP TEST-7"
 }

@@ -1,0 +1,5 @@
+LabOS REV 1.0.185 · MY WORK RESOURCE CARE CLEANUP TEST-7
+Build ID: MYWORK-RESOURCE-CARE-CLEANUP-TEST7
+
+After uploading the extracted package contents to the GitHub Pages source, open deploy-test7.html.
+It must report PASS before relying on the application badge.
