@@ -1,10 +1,10 @@
 {
   "revision": "1.0.185",
   "runtime": "1.0.185-poc",
-  "deployment": "2026-09-28",
+  "deployment": "2026-09-29",
   "cachePolicy": "immutable-build-files-plus-network-build-check",
   "stage": 3,
-  "stageStatus": "EXTERNAL_EXECUTION_FULL_BLEED_TEST",
-  "buildId": "EXTERNAL-EXECUTION-FULL-BLEED-TEST10",
-  "buildLabel": "REV 1.0.185 \u00b7 EXTERNAL EXECUTION + FULL-BLEED PLANNING TEST-10"
+  "stageStatus": "COST_STANDARDS_EDITOR_TEST",
+  "buildId": "COST-STANDARDS-EDITOR-TEST12",
+  "buildLabel": "REV 1.0.185 · COST STANDARDS EDITOR TEST-12"
 }

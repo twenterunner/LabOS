@@ -1,4 +1,4 @@
-# LabOS REV 1.0.185 — External Execution + Full-Bleed Planning TEST-10
+# LabOS REV 1.0.185 — External Execution + Full-Bleed Planning TEST-11
 
 ## Scope
 
@@ -89,7 +89,7 @@ Both Prototype and Validation task identities are preserved.
 
 The TEST-9 screenshot showed that the right edge had reached the viewport, but the board's natural parent-column offset remained on the left.
 
-TEST-10 now:
+TEST-11 now:
 - removes fixed sidebar-width assumptions;
 - measures the actual visible sidebar geometry;
 - with hidden sidebar: target left = `0`, width = viewport width;
@@ -117,6 +117,6 @@ Focused checks executed after implementation:
 
 Total focused checks: 61 PASS.
 
-All TEST-10 JavaScript files pass `node --check`.
+All TEST-11 JavaScript files pass `node --check`.
 
 A local Chromium page-level run could not be used as the final visual gate because the environment blocks localhost and file URLs. The viewport correction is therefore additionally covered by deterministic DOM-geometry tests using the same left-offset condition shown in the user's screenshot. Manual GitHub Pages acceptance remains required.

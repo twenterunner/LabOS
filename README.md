@@ -191,8 +191,14 @@ Planning and Audit Readiness are registered with the application router through 
 ## TEST-9 Planning timeline
 The canonical Planning swim lanes now break out to the measured viewport width and provide a minimum one-year-past / one-year-future scrollable timeline. +/- changes temporal scale without removing dates.
 
-## TEST-10 cumulative update
+## TEST-11 cumulative update
 
-Build identity: `REV 1.0.185 · EXTERNAL EXECUTION + FULL-BLEED PLANNING TEST-10`.
+Build identity: `REV 1.0.185 · EXTERNAL ROUTING MOBILE RESTORE TEST-11`.
 
-Adds complete governed external execution after PO through supplier confirmation, canonical replanning, logistics, execution, results/evidence, technical disposition/retest, sample return/disposition and commercial closeout. Also fixes the remaining Planning swim-lane left-offset so a hidden sidebar produces a true edge-to-edge viewport board. See `EXTERNAL_EXECUTION_FULL_BLEED_TEST10_REPORT.md`.
+Adds complete governed external execution after PO through supplier confirmation, canonical replanning, logistics, execution, results/evidence, technical disposition/retest, sample return/disposition and commercial closeout. Also fixes the remaining Planning swim-lane left-offset so a hidden sidebar produces a true edge-to-edge viewport board. See `EXTERNAL_ROUTING_MOBILE_RESTORE_TEST11_REPORT.md`.
+
+## TEST-12 cumulative update
+
+Build identity: `REV 1.0.185 · COST STANDARDS EDITOR TEST-12`.
+
+The canonical **Lab Standards & Resources → Methods, standards & cost basis** section now exposes cost master data directly. Each Process has **Edit planning & cost** for setup/cycle time, fixed process charge and consumables; each Standard Test has **Edit planning & cost** for internal fixed/consumable cost plus the controlled external supplier benchmark (pricing basis, price, setup/admin, transport, lead time and quote/evidence). The section is open by default and shows the current cost basis in the table before editing.
